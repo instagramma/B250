@@ -1,0 +1,192 @@
+{
+  "title": "ClaudeBank: Endocrine System",
+  "group": "claudebank",
+  "questions": [
+    {
+      "q": "The anterior pituitary (adenohypophysis) secretes which set of hormones?",
+      "options": ["A. ADH and oxytocin only", "B. Only GH and TSH", "C. GH, TSH, ACTH, FSH, LH, PRL, and MSH", "D. Melatonin and GnRH", "E. Insulin and glucagon"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Growth hormone (GH) exerts most of its growth-promoting effects via:",
+      "options": ["A. Direct stimulation of bone epiphyseal plates", "B. Insulin-like growth factors (IGFs/somatomedins) produced mainly by the liver", "C. Direct binding to muscle cells to increase protein synthesis only", "D. Stimulating TSH release from the thyroid gland", "E. Negative feedback on the hypothalamus only"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The zona glomerulosa of the adrenal cortex produces:",
+      "options": ["A. Glucocorticoids (cortisol)", "B. Androgens (DHEA, androstenedione)", "C. Catecholamines (epinephrine, norepinephrine)", "D. Mineralocorticoids (aldosterone)", "E. Estrogens"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "The zona fasciculata of the adrenal cortex primarily produces:",
+      "options": ["A. Aldosterone", "B. Androgens", "C. Glucocorticoids (cortisol)", "D. Epinephrine and norepinephrine", "E. Mineralocorticoids"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Cortisol (a glucocorticoid) has which of the following effects?",
+      "options": ["A. Promotes inflammation and immune responses", "B. Lowers blood glucose and promotes fat storage", "C. Raises blood glucose, suppresses inflammation, and mobilizes resources during long-term stress", "D. Promotes sodium excretion and potassium retention", "E. Stimulates aldosterone secretion from the zona glomerulosa"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Aldosterone raises blood pressure primarily by:",
+      "options": ["A. Directly increasing heart rate", "B. Causing the kidneys to retain Na+ (and thus water) while excreting K+", "C. Stimulating ADH release from the posterior pituitary", "D. Constricting peripheral arterioles directly", "E. Increasing cardiac output via sympathetic stimulation"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Alpha cells of the islets of Langerhans in the pancreas secrete ________ in response to low blood glucose.",
+      "options": ["A. Insulin", "B. Glucagon", "C. Somatostatin", "D. Pancreatic polypeptide", "E. Amylin"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Insulin, secreted by beta cells of the pancreatic islets, lowers blood glucose by:",
+      "options": ["A. Inhibiting glycolysis in the liver", "B. Stimulating gluconeogenesis", "C. Promoting glucose uptake into cells (especially muscle and adipose) and glycogen synthesis in the liver", "D. Stimulating glucagon release from alpha cells", "E. Inhibiting insulin receptors via negative feedback"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The pineal gland secretes ________, which regulates circadian rhythms and is produced primarily during darkness.",
+      "options": ["A. Serotonin", "B. Melatonin", "C. ADH", "D. ACTH", "E. GnRH"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Parathyroid hormone (PTH) raises blood calcium by:",
+      "options": ["A. Stimulating calcitonin release from the thyroid", "B. Decreasing calcium absorption in the small intestine", "C. Stimulating osteoclast activity (bone resorption), increasing renal Ca2+ reabsorption, and activating vitamin D (calcitriol)", "D. Increasing calcium deposition into bone matrix", "E. Inhibiting calcitriol synthesis in the kidney"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Calcitonin (from thyroid parafollicular/C cells) opposes PTH by:",
+      "options": ["A. Stimulating osteoclasts to release calcium from bone", "B. Increasing intestinal calcium absorption", "C. Inhibiting osteoclast activity and reducing blood calcium levels", "D. Promoting renal calcium excretion only", "E. Stimulating PTH release via positive feedback"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The hypothalamus controls the anterior pituitary through releasing and inhibiting hormones that travel via:",
+      "options": ["A. Direct synaptic connections to anterior pituitary cells", "B. The hypophyseal portal system (specialized portal capillary network between hypothalamus and anterior pituitary)", "C. The bloodstream via the posterior pituitary stalk", "D. Direct nerve axons projecting through the infundibulum to anterior pituitary cells", "E. The cerebrospinal fluid in the third ventricle"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Prolactin (PRL), produced by the anterior pituitary, primarily targets:",
+      "options": ["A. The thyroid gland", "B. The ovaries", "C. The mammary glands, stimulating milk production", "D. The adrenal cortex", "E. The kidneys"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The adrenal medulla (derived from neural crest cells) secretes:",
+      "options": ["A. Cortisol and aldosterone", "B. Epinephrine (adrenaline) and norepinephrine (noradrenaline)", "C. Androgens and estrogens", "D. ADH and oxytocin", "E. Insulin and glucagon"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The neurohypophysis (posterior pituitary) stores and releases hormones that are actually SYNTHESIZED in the:",
+      "options": ["A. Anterior pituitary cells", "B. Adrenal cortex", "C. Hypothalamus (paraventricular and supraoptic nuclei)", "D. Pineal gland", "E. Thyroid follicles"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Which of the following correctly pairs an anterior pituitary hormone with its primary target and effect?",
+      "options": ["A. TSH → adrenal cortex → cortisol release", "B. LH → Leydig cells of testis → testosterone production", "C. ACTH → thyroid → T3/T4 release", "D. FSH → Sertoli cells → testosterone production", "E. PRL → islets of Langerhans → insulin release"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Thyroid hormones (T3 and T4) are synthesized from which two components?",
+      "options": ["A. Cholesterol and iodine", "B. Tyrosine (amino acid) and iodine", "C. Glucose and sulfur", "D. Phenylalanine and chloride", "E. Tryptophan and fluoride"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Which thyroid hormone is more biologically potent, and how is it primarily produced?",
+      "options": ["A. T4 is more potent; T3 is produced peripherally from T4", "B. T3 (triiodothyronine) is more potent; it is produced largely by peripheral deiodination of T4", "C. T3 and T4 are equal in potency", "D. T4 binds nuclear receptors more effectively than T3", "E. T3 has a much longer half-life than T4, making it more potent"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Diabetes mellitus Type 1 is characterized by:",
+      "options": ["A. Insulin resistance in peripheral tissues due to obesity", "B. Autoimmune destruction of pancreatic beta cells leading to absolute insulin deficiency", "C. Excessive cortisol production from the adrenal cortex", "D. Overproduction of glucagon from alpha cells", "E. Absence of insulin receptors on target cells"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The zona reticularis of the adrenal cortex produces:",
+      "options": ["A. Mineralocorticoids (aldosterone)", "B. Glucocorticoids (cortisol)", "C. Androgens (DHEA and androstenedione)", "D. Catecholamines", "E. Estrogens and progesterone"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Lipid-soluble hormones (steroids and thyroid hormones) differ from water-soluble hormones in that they:",
+      "options": ["A. Bind to membrane receptors and activate second messenger systems like cAMP", "B. Cannot cross cell membranes due to their chemical structure", "C. Diffuse across cell membranes and bind to intracellular receptors, directly influencing gene transcription", "D. Have much shorter half-lives than water-soluble hormones", "E. Do not require carrier proteins for transport in the blood"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Oxytocin, stored in the posterior pituitary, is released in response to:",
+      "options": ["A. High blood calcium", "B. Low blood osmolarity", "C. Stretch of the uterine wall during labor and suckling stimulus at the breast", "D. Cortisol excess during stress", "E. Low blood glucose levels"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Which condition results from deficient ADH secretion or kidney unresponsiveness to ADH, causing production of large volumes of very dilute urine?",
+      "options": ["A. Diabetes mellitus", "B. SIADH (syndrome of inappropriate ADH secretion)", "C. Diabetes insipidus", "D. Addison's disease", "E. Hyperaldosteronism (Conn's syndrome)"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Delta cells of the pancreatic islets secrete ________, which inhibits both insulin and glucagon secretion.",
+      "options": ["A. Insulin", "B. Glucagon", "C. Somatostatin", "D. Pancreatic polypeptide", "E. Amylase"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The anterior pituitary hormone that stimulates cortisol secretion from the adrenal cortex is:",
+      "options": ["A. TSH", "B. GH", "C. ACTH (adrenocorticotropic hormone)", "D. LH", "E. CRH (corticotropin-releasing hormone)"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "A patient presents with hypertension, central obesity, moon face, buffalo hump, thin skin, and muscle weakness. This is most consistent with:",
+      "options": ["A. Addison's disease (primary adrenal insufficiency)", "B. Cushing's syndrome (excess glucocorticoids/cortisol)", "C. Hypothyroidism", "D. Primary hyperaldosteronism (Conn's syndrome)", "E. Type 1 diabetes mellitus"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The renin-angiotensin-aldosterone system (RAAS) is activated by:",
+      "options": ["A. High blood sodium concentration", "B. Low blood pressure or decreased plasma volume (detected by JG cells)", "C. High blood potassium only", "D. High cortisol levels", "E. Excess atrial natriuretic peptide (ANP)"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Which anterior pituitary hormone stimulates thyroid hormone (T3/T4) production and release?",
+      "options": ["A. ACTH", "B. TSH (thyroid-stimulating hormone)", "C. FSH", "D. GH", "E. PRL"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Clusters of endocrine cells within the pancreas that regulate blood glucose and other metabolic functions are called:",
+      "options": ["A. Exocrine acinar cells", "B. Pancreatic islets (islets of Langerhans)", "C. Ductal cells producing bicarbonate", "D. Connective tissue septa between lobules", "E. Kupffer cells of the pancreas"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The fight-or-flight response (acute stress response) is primarily mediated by release of ________ from the adrenal medulla.",
+      "options": ["A. Cortisol and aldosterone", "B. Epinephrine and norepinephrine", "C. CRH from the hypothalamus only", "D. ACTH from the anterior pituitary", "E. Glucagon from the pancreas"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Hypothyroidism (insufficient thyroid hormone) results in which of the following clinical features?",
+      "options": ["A. Weight loss, heat intolerance, rapid heart rate", "B. Weight gain, cold intolerance, fatigue, slow heart rate, and myxedema", "C. Exophthalmos and goiter from hyperthyroidism", "D. Cushing-like features (central obesity, hypertension)", "E. Hypocalcemia and tetany"],
+      "correct": 1,
+      "tf": false
+    }
+  ]
+}

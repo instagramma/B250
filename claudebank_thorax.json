@@ -1,0 +1,306 @@
+{
+  "title": "ClaudeBank: Thorax — Respiratory & Heart",
+  "group": "claudebank",
+  "questions": [
+    {
+      "q": "Which of the following is part of the UPPER respiratory system?",
+      "options": ["A. Trachea", "B. Larynx", "C. Bronchi", "D. Nasopharynx", "E. Alveoli"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "The typical respiratory epithelium lining most of the respiratory tract is classified as:",
+      "options": ["A. Simple squamous", "B. Simple cuboidal", "C. Pseudostratified ciliated columnar with mucous cells", "D. Stratified squamous", "E. Transitional"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Which structures project from the lateral walls of the nasal cavity and create turbulence that warms, humidifies, and filters inhaled air?",
+      "options": ["A. Vibrissae", "B. Meatuses", "C. Paranasal sinuses", "D. Nasal conchae (turbinates)", "E. Choanae"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "The spaces between adjacent nasal conchae through which air flows are called:",
+      "options": ["A. Nares", "B. Choanae (posterior nasal apertures)", "C. Meatuses", "D. Paranasal sinuses", "E. Nasal vestibules"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The bony portion of the nasal septum is formed by fusion of which two structures?",
+      "options": ["A. Maxilla and vomer", "B. Perpendicular plate of the ethmoid and vomer", "C. Nasal bone and ethmoid", "D. Vomer and frontal bone", "E. Maxilla and palatine bone"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Stiff hairs in the nasal vestibule called ________ trap large airborne particles before they enter the nasal cavity.",
+      "options": ["A. Cilia", "B. Microvilli", "C. Mucous cells", "D. Vibrissae", "E. Conchae"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "Which region of the pharynx is lined by pseudostratified ciliated columnar epithelium and contains the pharyngeal tonsil?",
+      "options": ["A. Oropharynx", "B. Laryngopharynx", "C. Nasopharynx", "D. Hypopharynx", "E. Mesopharynx"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The laryngopharynx extends between:",
+      "options": ["A. The posterior nasal apertures and soft palate", "B. The soft palate and hyoid bone", "C. The hyoid bone and the entrance to the esophagus", "D. The epiglottis and the trachea", "E. The vocal folds and the cricoid cartilage"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Which cartilage of the larynx is the largest and forms the laryngeal prominence (Adam's apple)?",
+      "options": ["A. Cricoid", "B. Epiglottis", "C. Arytenoid", "D. Thyroid", "E. Corniculate"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "Which laryngeal cartilage is unique in being the only complete ring of cartilage in the respiratory tract?",
+      "options": ["A. Thyroid", "B. Epiglottis", "C. Cricoid", "D. Arytenoid", "E. Cuneiform"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The glottis consists of:",
+      "options": ["A. The epiglottis and aryepiglottic folds", "B. The vocal folds and the rima glottidis (opening between them)", "C. The thyroid and cricoid cartilages only", "D. The trachea and laryngeal inlet", "E. The true and false vocal cords fused together"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The posterior wall of the trachea contains a band of smooth muscle called the ________, which allows the esophagus to expand during swallowing.",
+      "options": ["A. Cricopharyngeus", "B. Trachealis", "C. Cricoarytenoid", "D. Thyropharyngeus", "E. Tracheal sphincter"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The ridge of cartilage at the bifurcation of the trachea into the two main bronchi is called the:",
+      "options": ["A. Epiglottis", "B. Carina", "C. Bronchopulmonary septum", "D. Carinal angle", "E. Tracheal bifurcation plate"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "In the correct order, air passes through which sequence of airways in the bronchial tree?",
+      "options": ["A. Primary → tertiary → secondary bronchi → bronchioles", "B. Primary → secondary → tertiary bronchi → bronchioles", "C. Bronchioles → tertiary → secondary → primary bronchi", "D. Secondary → primary → tertiary bronchi → alveoli", "E. Terminal → respiratory bronchioles → alveoli → alveolar ducts"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The right lung has ________ lobes, while the left lung has ________ lobes.",
+      "options": ["A. 2; 3", "B. 3; 2", "C. 2; 2", "D. 3; 3", "E. 4; 3"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Which fissure is present in the right lung but absent in the left lung?",
+      "options": ["A. Oblique fissure", "B. Sagittal fissure", "C. Horizontal fissure", "D. Medial fissure", "E. Longitudinal fissure"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Type II alveolar cells (Type II pneumocytes) serve which primary function?",
+      "options": ["A. Gas exchange across the respiratory membrane", "B. Phagocytosis of inhaled debris", "C. Secretion of surfactant to reduce alveolar surface tension", "D. Production of angiotensin-converting enzyme (ACE)", "E. Cilia-driven mucus clearance"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Without sufficient surfactant, alveoli tend to:",
+      "options": ["A. Over-expand during inspiration", "B. Collapse (atelectasis) during expiration due to high surface tension", "C. Fill with fluid causing pneumonia", "D. Develop abnormally thick walls", "E. Fuse with adjacent alveoli"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The pleural cavity is a potential space between the:",
+      "options": ["A. Parietal pleura and visceral pleura", "B. Lung lobes", "C. Diaphragm and lung base", "D. Mediastinum and lung", "E. Chest wall and pericardium"],
+      "correct": 0,
+      "tf": false
+    },
+    {
+      "q": "The primary muscle of inspiration is the:",
+      "options": ["A. External intercostals", "B. Sternocleidomastoid", "C. Diaphragm", "D. Internal intercostals", "E. Scalenes"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "During quiet breathing (eupnea), exhalation is:",
+      "options": ["A. Active, powered by internal intercostal muscle contraction", "B. Passive, driven by elastic recoil of the lungs and chest wall", "C. Driven primarily by contraction of abdominal muscles", "D. Equal in work to inhalation", "E. Driven by diaphragm relaxation only, with no elastic recoil contribution"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Tidal volume is defined as:",
+      "options": ["A. The maximum volume of air that can be inhaled beyond a normal breath", "B. The volume of air inhaled or exhaled during a single normal resting breath (~500 mL)", "C. The air remaining in the lungs after maximal exhalation", "D. The sum of all lung volumes", "E. The maximum air forcefully exhaled after maximal inhalation"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The residual volume is:",
+      "options": ["A. The maximum additional air inhaled beyond tidal volume", "B. The maximum additional air exhaled beyond tidal volume", "C. The air remaining in the lungs after maximum exhalation (cannot be exhaled)", "D. The air remaining at the end of quiet exhalation", "E. The total air in the lungs at full inspiration"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Vital capacity is calculated as:",
+      "options": ["A. Tidal volume + inspiratory reserve volume only", "B. Tidal volume + inspiratory reserve volume + expiratory reserve volume", "C. Total lung capacity minus functional residual capacity", "D. Inspiratory reserve volume + expiratory reserve volume only", "E. Total lung capacity minus tidal volume"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The dorsal respiratory group (DRG) in the medulla primarily:",
+      "options": ["A. Controls forced exhalation", "B. Establishes the basic rhythm of breathing by controlling inspiration", "C. Limits the duration of inspiration during deep breathing", "D. Responds to changes in arterial blood pressure only", "E. Activates accessory respiratory muscles during exercise"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The pneumotaxic centers of the pons function to:",
+      "options": ["A. Generate the basic respiratory rhythm", "B. Control forced exhalation exclusively", "C. Adjust the rate and depth of breathing by limiting the duration of inspiration", "D. Detect CO2 levels in cerebrospinal fluid", "E. Activate the respiratory muscles during sleep"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The mucociliary escalator refers to the mechanism by which:",
+      "options": ["A. Vibrissae filter large particles from inhaled air", "B. Cilia beat toward the pharynx to sweep mucus and trapped debris out of the respiratory tract", "C. Mucus flows down into the alveoli for clearance", "D. Goblet cells continuously replenish the mucus layer", "E. Surfactant is spread across alveolar surfaces by respiratory movements"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The epithelium lining the oropharynx and laryngopharynx is:",
+      "options": ["A. Pseudostratified ciliated columnar", "B. Simple columnar", "C. Nonkeratinized stratified squamous", "D. Transitional", "E. Simple squamous"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "During swallowing, the epiglottis:",
+      "options": ["A. Vibrates to produce sound", "B. Opens the glottis to allow increased airflow", "C. Folds over the glottis to seal the larynx and prevent food from entering the airway", "D. Separates the oropharynx from the nasopharynx", "E. Anchors the vocal folds"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Endothelial cells of the alveolar capillaries are the primary source of which clinically important enzyme?",
+      "options": ["A. Renin", "B. Pepsin", "C. Angiotensin-converting enzyme (ACE)", "D. Aldosterone synthase", "E. Carbonic anhydrase"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Cystic fibrosis causes respiratory problems because:",
+      "options": ["A. The cilia in the respiratory tract fail to form", "B. Abnormally thick mucus obstructs the bronchial tree and impairs the mucociliary escalator, leading to frequent infections", "C. Surfactant production is severely decreased", "D. The alveoli develop abnormally thick walls impeding gas exchange", "E. The trachea collapses during inspiration"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "During forced exhalation (active expiration), which muscle group becomes active?",
+      "options": ["A. External intercostals", "B. Diaphragm (contracts harder)", "C. Sternocleidomastoid and scalenes", "D. Abdominal muscles (compress abdominal contents, push diaphragm up)", "E. Serratus anterior"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "The posterior nasal apertures that connect the nasal cavity to the nasopharynx are also called the:",
+      "options": ["A. Nares", "B. Choanae", "C. Meatuses", "D. Internal nares", "E. Nasal vestibules"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The functional residual capacity (FRC) represents:",
+      "options": ["A. The maximum volume of air that can be exhaled forcefully", "B. The volume remaining in the lungs after a quiet exhalation (ERV + RV)", "C. The total lung capacity minus the tidal volume", "D. The volume of the anatomical dead space", "E. The maximum inspiratory capacity above tidal volume"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Terminal bronchioles lead directly to:",
+      "options": ["A. Alveolar sacs", "B. Respiratory bronchioles", "C. Alveolar ducts", "D. Alveoli", "E. Secondary bronchi"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Alveolar macrophages (dust cells) serve which function?",
+      "options": ["A. They produce surfactant to reduce surface tension", "B. They are Type I pneumocytes specialized for rapid gas exchange", "C. They are phagocytes that engulf debris, pathogens, and dead cells within the alveoli", "D. They produce angiotensin-converting enzyme", "E. They secrete mucus to protect the alveolar surface"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Emphysema is characterized by:",
+      "options": ["A. Smooth muscle spasm narrowing the bronchial lumen", "B. Excess mucus production obstructing airways", "C. Destruction and enlargement of alveoli resulting in trapped air and loss of elastic recoil", "D. Inflammation of the pleural membranes", "E. Collapse of alveoli due to insufficient surfactant"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Inflammation of the pleural membranes that may cause them to adhere or produce excess fluid is called:",
+      "options": ["A. Pneumothorax", "B. Atelectasis", "C. Pleurisy", "D. Pulmonary edema", "E. Hemothorax"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The conducting portion of the respiratory system:",
+      "options": ["A. Includes only the trachea and main bronchi", "B. Extends from the nasal cavity entrance to the bronchioles but does NOT participate in gas exchange", "C. Includes the alveolar ducts but not the bronchioles", "D. Is limited to the upper respiratory system", "E. Participates in gas exchange at the terminal bronchioles"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The right coronary artery (RCA) branches to supply which structures?",
+      "options": ["A. Anterior two-thirds of the interventricular septum and most of the left ventricle", "B. The SA node, AV node, right ventricular wall, and posterior interventricular sulcus", "C. The left atrium and most of the left ventricle", "D. The circumflex territory and left marginal region", "E. The bundle branches and Purkinje fibers exclusively"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The anterior interventricular branch (LAD) of the left coronary artery primarily supplies:",
+      "options": ["A. The SA node and AV node", "B. The posterior wall of the left ventricle only", "C. The anterior walls of both ventricles and the anterior two-thirds of the interventricular septum", "D. The right atrium and right marginal region", "E. The circumflex territory exclusively"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The coronary sinus, which drains most cardiac venous blood, empties into the:",
+      "options": ["A. Superior vena cava", "B. Right ventricle", "C. Left atrium", "D. Right atrium", "E. Pulmonary trunk"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "During the first phase of ventricular systole (isovolumetric contraction), which event occurs?",
+      "options": ["A. Blood is ejected into the aorta as semilunar valves open", "B. All four valves are open simultaneously", "C. The AV valves close (S1) but ventricular pressure has not yet exceeded arterial pressure, so semilunar valves remain closed", "D. The ventricles are in complete relaxation filling with blood", "E. Atrial systole provides the final 'atrial kick' of blood"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The first heart sound (S1, 'lub') is produced by:",
+      "options": ["A. Closure of the semilunar valves at the end of ventricular systole", "B. Closure of the AV (mitral and tricuspid) valves at the beginning of ventricular systole", "C. Atrial contraction forcing blood into the ventricles", "D. Turbulent blood flow through the aortic valve", "E. Ventricular relaxation beginning"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The second heart sound (S2, 'dub') is produced by:",
+      "options": ["A. Atrial systole", "B. Opening of the AV valves", "C. Closure of the aortic and pulmonary (semilunar) valves at the beginning of ventricular diastole", "D. Closure of the AV valves", "E. Ventricular filling completing"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The AV node delays the electrical impulse by approximately 100 ms; this delay is important because:",
+      "options": ["A. It allows the Purkinje fibers to fully depolarize first", "B. It allows the atria to complete contraction and fill the ventricles before ventricular contraction begins", "C. It prevents re-entry arrhythmias by blocking backward conduction", "D. It allows the SA node to reset before the next impulse", "E. It permits the papillary muscles to contract before the ventricular walls"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The intrinsic heart rate established by SA node automaticity, before autonomic modification, is approximately:",
+      "options": ["A. 40–60 bpm", "B. 60–70 bpm", "C. 70–75 bpm", "D. 80–100 bpm", "E. 100–120 bpm"],
+      "correct": 3,
+      "tf": false
+    },
+    {
+      "q": "The cardioacceleratory center in the medulla oblongata:",
+      "options": ["A. Activates parasympathetic neurons via the vagus nerve", "B. Activates sympathetic neurons that increase heart rate and force of contraction", "C. Inhibits the SA node directly", "D. Releases acetylcholine to slow the heart", "E. Decreases stroke volume by reducing ventricular filling time"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The Frank-Starling law of the heart states that:",
+      "options": ["A. Heart rate increases proportionally with blood volume", "B. Greater ventricular filling (increased preload) produces a more forceful contraction and increased stroke volume", "C. Stroke volume is inversely related to heart rate", "D. Cardiac output is independent of venous return", "E. Sympathetic stimulation is required before the heart can respond to increased blood volume"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The left coronary artery gives rise to which four major branches?",
+      "options": ["A. Right marginal, posterior interventricular, SA node branch, AV node branch", "B. Anterior interventricular (LAD), circumflex, left marginal, and posterior interventricular", "C. LAD, circumflex, right marginal, and coronary sinus branch", "D. Circumflex, left marginal, SA node branch, and LAD", "E. Anterior and posterior interventricular, right marginal, and circumflex"],
+      "correct": 1,
+      "tf": false
+    }
+  ]
+}
