@@ -2,7 +2,7 @@
 // Generated 2026-07 · covers Martini 9e content between GR sections
 const CLAUDEBANK = [
   {
-    "title": "ClaudeBank: Thorax \u2014 Respiratory & Heart",
+    "title": "ClaudeBank: Thorax — Respiratory & Heart",
     "questions": [
       {
         "q": "Which of the following is part of the UPPER respiratory system?",
@@ -14,7 +14,8 @@ const CLAUDEBANK = [
           "E. Alveoli"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0001"
       },
       {
         "q": "The typical respiratory epithelium lining most of the respiratory tract is classified as:",
@@ -26,7 +27,8 @@ const CLAUDEBANK = [
           "E. Transitional"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0002"
       },
       {
         "q": "Which structures project from the lateral walls of the nasal cavity and create turbulence that warms, humidifies, and filters inhaled air?",
@@ -38,7 +40,8 @@ const CLAUDEBANK = [
           "E. Choanae"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0003"
       },
       {
         "q": "The spaces between adjacent nasal conchae through which air flows are called:",
@@ -50,7 +53,8 @@ const CLAUDEBANK = [
           "E. Nasal vestibules"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0004"
       },
       {
         "q": "The bony portion of the nasal septum is formed by fusion of which two structures?",
@@ -62,7 +66,8 @@ const CLAUDEBANK = [
           "E. Maxilla and palatine bone"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0005"
       },
       {
         "q": "Stiff hairs in the nasal vestibule called ________ trap large airborne particles before they enter the nasal cavity.",
@@ -74,7 +79,8 @@ const CLAUDEBANK = [
           "E. Conchae"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0006"
       },
       {
         "q": "Which region of the pharynx is lined by pseudostratified ciliated columnar epithelium and contains the pharyngeal tonsil?",
@@ -86,7 +92,8 @@ const CLAUDEBANK = [
           "E. Mesopharynx"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0007"
       },
       {
         "q": "The laryngopharynx extends between:",
@@ -98,7 +105,8 @@ const CLAUDEBANK = [
           "E. The vocal folds and the cricoid cartilage"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0008"
       },
       {
         "q": "Which cartilage of the larynx is the largest and forms the laryngeal prominence (Adam's apple)?",
@@ -110,7 +118,8 @@ const CLAUDEBANK = [
           "E. Corniculate"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0009"
       },
       {
         "q": "Which laryngeal cartilage is unique in being the only complete ring of cartilage in the respiratory tract?",
@@ -122,7 +131,8 @@ const CLAUDEBANK = [
           "E. Cuneiform"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0010"
       },
       {
         "q": "The glottis consists of:",
@@ -134,7 +144,8 @@ const CLAUDEBANK = [
           "E. The true and false vocal cords fused together"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0011"
       },
       {
         "q": "The posterior wall of the trachea contains a band of smooth muscle called the ________, which allows the esophagus to expand during swallowing.",
@@ -146,7 +157,8 @@ const CLAUDEBANK = [
           "E. Tracheal sphincter"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0012"
       },
       {
         "q": "The ridge of cartilage at the bifurcation of the trachea into the two main bronchi is called the:",
@@ -158,19 +170,21 @@ const CLAUDEBANK = [
           "E. Tracheal bifurcation plate"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0013"
       },
       {
         "q": "In the correct order, air passes through which sequence of airways in the bronchial tree?",
         "options": [
-          "A. Primary \u2192 tertiary \u2192 secondary bronchi \u2192 bronchioles",
-          "B. Primary \u2192 secondary \u2192 tertiary bronchi \u2192 bronchioles",
-          "C. Bronchioles \u2192 tertiary \u2192 secondary \u2192 primary bronchi",
-          "D. Secondary \u2192 primary \u2192 tertiary bronchi \u2192 alveoli",
-          "E. Terminal \u2192 respiratory bronchioles \u2192 alveoli \u2192 alveolar ducts"
+          "A. Primary → tertiary → secondary bronchi → bronchioles",
+          "B. Primary → secondary → tertiary bronchi → bronchioles",
+          "C. Bronchioles → tertiary → secondary → primary bronchi",
+          "D. Secondary → primary → tertiary bronchi → alveoli",
+          "E. Terminal → respiratory bronchioles → alveoli → alveolar ducts"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0014"
       },
       {
         "q": "The right lung has ________ lobes, while the left lung has ________ lobes.",
@@ -182,7 +196,8 @@ const CLAUDEBANK = [
           "E. 4; 3"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0015"
       },
       {
         "q": "Which fissure is present in the right lung but absent in the left lung?",
@@ -194,7 +209,8 @@ const CLAUDEBANK = [
           "E. Longitudinal fissure"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0016"
       },
       {
         "q": "Type II alveolar cells (Type II pneumocytes) serve which primary function?",
@@ -206,7 +222,8 @@ const CLAUDEBANK = [
           "E. Cilia-driven mucus clearance"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0017"
       },
       {
         "q": "Without sufficient surfactant, alveoli tend to:",
@@ -218,7 +235,8 @@ const CLAUDEBANK = [
           "E. Fuse with adjacent alveoli"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0018"
       },
       {
         "q": "The pleural cavity is a potential space between the:",
@@ -230,7 +248,8 @@ const CLAUDEBANK = [
           "E. Chest wall and pericardium"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "CB-0019"
       },
       {
         "q": "The primary muscle of inspiration is the:",
@@ -242,7 +261,8 @@ const CLAUDEBANK = [
           "E. Scalenes"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0020"
       },
       {
         "q": "During quiet breathing (eupnea), exhalation is:",
@@ -254,7 +274,8 @@ const CLAUDEBANK = [
           "E. Driven by diaphragm relaxation only, with no elastic recoil contribution"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0021"
       },
       {
         "q": "Tidal volume is defined as:",
@@ -266,7 +287,8 @@ const CLAUDEBANK = [
           "E. The maximum air forcefully exhaled after maximal inhalation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0022"
       },
       {
         "q": "The residual volume is:",
@@ -278,7 +300,8 @@ const CLAUDEBANK = [
           "E. The total air in the lungs at full inspiration"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0023"
       },
       {
         "q": "Vital capacity is calculated as:",
@@ -290,7 +313,8 @@ const CLAUDEBANK = [
           "E. Total lung capacity minus tidal volume"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0024"
       },
       {
         "q": "The dorsal respiratory group (DRG) in the medulla primarily:",
@@ -302,7 +326,8 @@ const CLAUDEBANK = [
           "E. Activates accessory respiratory muscles during exercise"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0025"
       },
       {
         "q": "The pneumotaxic centers of the pons function to:",
@@ -314,7 +339,8 @@ const CLAUDEBANK = [
           "E. Activate the respiratory muscles during sleep"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0026"
       },
       {
         "q": "The mucociliary escalator refers to the mechanism by which:",
@@ -326,7 +352,8 @@ const CLAUDEBANK = [
           "E. Surfactant is spread across alveolar surfaces by respiratory movements"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0027"
       },
       {
         "q": "The epithelium lining the oropharynx and laryngopharynx is:",
@@ -338,7 +365,8 @@ const CLAUDEBANK = [
           "E. Simple squamous"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0028"
       },
       {
         "q": "During swallowing, the epiglottis:",
@@ -350,7 +378,8 @@ const CLAUDEBANK = [
           "E. Anchors the vocal folds"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0029"
       },
       {
         "q": "Endothelial cells of the alveolar capillaries are the primary source of which clinically important enzyme?",
@@ -362,7 +391,8 @@ const CLAUDEBANK = [
           "E. Carbonic anhydrase"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0030"
       },
       {
         "q": "Cystic fibrosis causes respiratory problems because:",
@@ -374,7 +404,8 @@ const CLAUDEBANK = [
           "E. The trachea collapses during inspiration"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0031"
       },
       {
         "q": "During forced exhalation (active expiration), which muscle group becomes active?",
@@ -386,7 +417,8 @@ const CLAUDEBANK = [
           "E. Serratus anterior"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0032"
       },
       {
         "q": "The posterior nasal apertures that connect the nasal cavity to the nasopharynx are also called the:",
@@ -398,7 +430,8 @@ const CLAUDEBANK = [
           "E. Nasal vestibules"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0033"
       },
       {
         "q": "The functional residual capacity (FRC) represents:",
@@ -410,7 +443,8 @@ const CLAUDEBANK = [
           "E. The maximum inspiratory capacity above tidal volume"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0034"
       },
       {
         "q": "Terminal bronchioles lead directly to:",
@@ -422,7 +456,8 @@ const CLAUDEBANK = [
           "E. Secondary bronchi"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0035"
       },
       {
         "q": "Alveolar macrophages (dust cells) serve which function?",
@@ -434,7 +469,8 @@ const CLAUDEBANK = [
           "E. They secrete mucus to protect the alveolar surface"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0036"
       },
       {
         "q": "Emphysema is characterized by:",
@@ -446,7 +482,8 @@ const CLAUDEBANK = [
           "E. Collapse of alveoli due to insufficient surfactant"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0037"
       },
       {
         "q": "Inflammation of the pleural membranes that may cause them to adhere or produce excess fluid is called:",
@@ -458,7 +495,8 @@ const CLAUDEBANK = [
           "E. Hemothorax"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0038"
       },
       {
         "q": "The conducting portion of the respiratory system:",
@@ -470,7 +508,8 @@ const CLAUDEBANK = [
           "E. Participates in gas exchange at the terminal bronchioles"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0039"
       },
       {
         "q": "The right coronary artery (RCA) branches to supply which structures?",
@@ -482,7 +521,8 @@ const CLAUDEBANK = [
           "E. The bundle branches and Purkinje fibers exclusively"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0040"
       },
       {
         "q": "The anterior interventricular branch (LAD) of the left coronary artery primarily supplies:",
@@ -494,7 +534,8 @@ const CLAUDEBANK = [
           "E. The circumflex territory exclusively"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0041"
       },
       {
         "q": "The coronary sinus, which drains most cardiac venous blood, empties into the:",
@@ -506,7 +547,8 @@ const CLAUDEBANK = [
           "E. Pulmonary trunk"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0042"
       },
       {
         "q": "During the first phase of ventricular systole (isovolumetric contraction), which event occurs?",
@@ -518,7 +560,8 @@ const CLAUDEBANK = [
           "E. Atrial systole provides the final 'atrial kick' of blood"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0043"
       },
       {
         "q": "The first heart sound (S1, 'lub') is produced by:",
@@ -530,7 +573,8 @@ const CLAUDEBANK = [
           "E. Ventricular relaxation beginning"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0044"
       },
       {
         "q": "The second heart sound (S2, 'dub') is produced by:",
@@ -542,7 +586,8 @@ const CLAUDEBANK = [
           "E. Ventricular filling completing"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0045"
       },
       {
         "q": "The AV node delays the electrical impulse by approximately 100 ms; this delay is important because:",
@@ -554,19 +599,21 @@ const CLAUDEBANK = [
           "E. It permits the papillary muscles to contract before the ventricular walls"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0046"
       },
       {
         "q": "The intrinsic heart rate established by SA node automaticity, before autonomic modification, is approximately:",
         "options": [
-          "A. 40\u201360 bpm",
-          "B. 60\u201370 bpm",
-          "C. 70\u201375 bpm",
-          "D. 80\u2013100 bpm",
-          "E. 100\u2013120 bpm"
+          "A. 40–60 bpm",
+          "B. 60–70 bpm",
+          "C. 70–75 bpm",
+          "D. 80–100 bpm",
+          "E. 100–120 bpm"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0047"
       },
       {
         "q": "The cardioacceleratory center in the medulla oblongata:",
@@ -578,7 +625,8 @@ const CLAUDEBANK = [
           "E. Decreases stroke volume by reducing ventricular filling time"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0048"
       },
       {
         "q": "The Frank-Starling law of the heart states that:",
@@ -590,7 +638,8 @@ const CLAUDEBANK = [
           "E. Sympathetic stimulation is required before the heart can respond to increased blood volume"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0049"
       },
       {
         "q": "The left coronary artery gives rise to which four major branches?",
@@ -602,12 +651,13 @@ const CLAUDEBANK = [
           "E. Anterior and posterior interventricular, right marginal, and circumflex"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0050"
       }
     ]
   },
   {
-    "title": "ClaudeBank: Abdomen \u2014 Digestive System",
+    "title": "ClaudeBank: Abdomen — Digestive System",
     "questions": [
       {
         "q": "The wall of the GI tract, from inner to outer, consists of which four layers?",
@@ -619,7 +669,8 @@ const CLAUDEBANK = [
           "E. Mucosa, muscularis, submucosa, serosa"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0051"
       },
       {
         "q": "The enteric nervous system consists of which two major plexuses?",
@@ -631,7 +682,8 @@ const CLAUDEBANK = [
           "E. Submucosal and autonomic plexuses only"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0052"
       },
       {
         "q": "Which plexus of the enteric nervous system is located between the inner circular and outer longitudinal smooth muscle layers and primarily controls GI motility?",
@@ -643,7 +695,8 @@ const CLAUDEBANK = [
           "E. Hypogastric plexus"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0053"
       },
       {
         "q": "The four regions of the stomach from proximal (esophageal end) to distal (duodenal end) are:",
@@ -655,7 +708,8 @@ const CLAUDEBANK = [
           "E. Cardia, body, antrum, fundus"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0054"
       },
       {
         "q": "The stomach is unique among GI organs in having a third muscle layer. What is it?",
@@ -667,7 +721,8 @@ const CLAUDEBANK = [
           "E. Rugal muscle layer"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0055"
       },
       {
         "q": "The mucosal folds of the empty or distended stomach are called:",
@@ -679,7 +734,8 @@ const CLAUDEBANK = [
           "E. Plicae circulares"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0056"
       },
       {
         "q": "Chief cells of the gastric glands secrete:",
@@ -691,7 +747,8 @@ const CLAUDEBANK = [
           "E. Bicarbonate buffer"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0057"
       },
       {
         "q": "Parietal cells of the gastric glands secrete which two products?",
@@ -703,7 +760,8 @@ const CLAUDEBANK = [
           "E. CCK and secretin"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0058"
       },
       {
         "q": "The hormone gastrin, secreted by G cells of the stomach, primarily stimulates:",
@@ -715,7 +773,8 @@ const CLAUDEBANK = [
           "E. Insulin release from the pancreas"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0059"
       },
       {
         "q": "Secretin, released from S cells of the duodenum in response to acidic chyme, primarily stimulates:",
@@ -727,7 +786,8 @@ const CLAUDEBANK = [
           "E. Mucus secretion by goblet cells only"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0060"
       },
       {
         "q": "Which structural adaptation of the small intestine consists of permanent transverse folds visible to the naked eye that increase surface area ~3-fold?",
@@ -739,7 +799,8 @@ const CLAUDEBANK = [
           "E. Haustra"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0061"
       },
       {
         "q": "Within each intestinal villus, the central lymphatic capillary responsible for absorbing dietary fat is called the:",
@@ -751,7 +812,8 @@ const CLAUDEBANK = [
           "E. Central vein of the villus"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0062"
       },
       {
         "q": "Brunner's glands (duodenal glands), found in the submucosa of the duodenum, secrete:",
@@ -763,7 +825,8 @@ const CLAUDEBANK = [
           "E. Bile salts"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0063"
       },
       {
         "q": "The sphincter that controls the flow of bile and pancreatic secretions into the duodenum at the ampulla of Vater is the:",
@@ -775,7 +838,8 @@ const CLAUDEBANK = [
           "E. Internal anal sphincter"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0064"
       },
       {
         "q": "The three longitudinal bands of smooth muscle along the outer surface of the large intestine are called:",
@@ -787,7 +851,8 @@ const CLAUDEBANK = [
           "E. Plicae circulares"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0065"
       },
       {
         "q": "The sacculations (pouches) of the large intestine wall, formed by the contraction of the taeniae coli, are called:",
@@ -795,11 +860,12 @@ const CLAUDEBANK = [
           "A. Taeniae coli",
           "B. Haustra",
           "C. Epiploic appendages",
-          "D. Crypts of Lieberk\u00fchn",
+          "D. Crypts of Lieberkühn",
           "E. Rugae"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0066"
       },
       {
         "q": "The liver is divided into right and left lobes by the:",
@@ -811,7 +877,8 @@ const CLAUDEBANK = [
           "E. Common bile duct"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0067"
       },
       {
         "q": "A hepatic portal triad consists of which three structures running together in the liver?",
@@ -823,7 +890,8 @@ const CLAUDEBANK = [
           "E. Central vein, sinusoids, and portal triad"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0068"
       },
       {
         "q": "Which cells lining the hepatic sinusoids serve as resident macrophages, phagocytizing debris, old RBCs, and pathogens from portal blood?",
@@ -835,7 +903,8 @@ const CLAUDEBANK = [
           "E. Sinusoidal endothelial cells"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0069"
       },
       {
         "q": "Which of the following is NOT a function of hepatocytes?",
@@ -847,7 +916,8 @@ const CLAUDEBANK = [
           "E. Production of digestive enzymes (amylase, lipase) for the small intestine"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "CB-0070"
       },
       {
         "q": "Dietary fats (long-chain triglycerides) are absorbed from the intestinal wall into:",
@@ -859,7 +929,8 @@ const CLAUDEBANK = [
           "E. Via carrier-mediated transport into portal capillaries"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0071"
       },
       {
         "q": "Salivary amylase begins digesting which macromolecule in the oral cavity?",
@@ -871,7 +942,8 @@ const CLAUDEBANK = [
           "E. Cellulose"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0072"
       },
       {
         "q": "Pepsinogen is activated to the active enzyme pepsin by:",
@@ -883,7 +955,8 @@ const CLAUDEBANK = [
           "E. Salivary amylase"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0073"
       },
       {
         "q": "Bile's primary role in fat digestion is:",
@@ -895,19 +968,21 @@ const CLAUDEBANK = [
           "E. Converting fatty acids to chylomicrons within the intestinal lumen"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0074"
       },
       {
         "q": "The intestinal enzyme enterokinase (enteropeptidase) activates which pancreatic proenzyme, which then activates other pancreatic proenzymes?",
         "options": [
-          "A. Pepsinogen \u2192 pepsin",
-          "B. Trypsinogen \u2192 trypsin",
-          "C. Chymotrypsinogen \u2192 chymotrypsin",
-          "D. Proelastase \u2192 elastase",
+          "A. Pepsinogen → pepsin",
+          "B. Trypsinogen → trypsin",
+          "C. Chymotrypsinogen → chymotrypsin",
+          "D. Proelastase → elastase",
           "E. Pancreatic lipase (already active)"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0075"
       },
       {
         "q": "The terminal ileum is the only segment specialized for absorption of:",
@@ -919,7 +994,8 @@ const CLAUDEBANK = [
           "E. Fat-soluble vitamins A, D, E, K"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0076"
       },
       {
         "q": "Gastric inhibitory peptide (GIP), released from the small intestine in response to glucose and fat, primarily acts to:",
@@ -931,7 +1007,8 @@ const CLAUDEBANK = [
           "E. Increase bile production by hepatocytes"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0077"
       },
       {
         "q": "The submandibular salivary gland:",
@@ -943,7 +1020,8 @@ const CLAUDEBANK = [
           "E. Secretes salivary amylase exclusively"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0078"
       },
       {
         "q": "The layer of the GI tract wall that contains the submucosal (Meissner's) nerve plexus and blood and lymphatic vessels is the:",
@@ -955,7 +1033,8 @@ const CLAUDEBANK = [
           "E. Adventitia"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0079"
       },
       {
         "q": "The large intestine functions primarily to:",
@@ -967,7 +1046,8 @@ const CLAUDEBANK = [
           "E. Absorb fat-soluble vitamins from bile micelles"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0080"
       },
       {
         "q": "Finger-like projections of the intestinal mucosa that dramatically increase absorptive surface area are called:",
@@ -979,7 +1059,8 @@ const CLAUDEBANK = [
           "E. Taeniae coli"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0081"
       },
       {
         "q": "The brush border (microvilli) of intestinal enterocytes contains membrane-bound enzymes that complete the final digestion of:",
@@ -991,7 +1072,8 @@ const CLAUDEBANK = [
           "E. Starch into dextrins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0082"
       },
       {
         "q": "Which of the following correctly describes bile?",
@@ -1003,7 +1085,8 @@ const CLAUDEBANK = [
           "E. A secretion containing pepsin and amylase"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0083"
       },
       {
         "q": "Fat-filled pouches (fatty tabs) attached to the outer surface of the large intestine are called:",
@@ -1015,7 +1098,8 @@ const CLAUDEBANK = [
           "E. Lacteals"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0084"
       },
       {
         "q": "The ileocecal valve controls the passage of material from the:",
@@ -1027,7 +1111,8 @@ const CLAUDEBANK = [
           "E. Duodenum to the jejunum"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0085"
       },
       {
         "q": "The organ that continuously produces approximately 1 liter of bile per day (even without a meal) is the:",
@@ -1039,7 +1124,8 @@ const CLAUDEBANK = [
           "E. Stomach"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0086"
       },
       {
         "q": "Protein digestion in the stomach is initiated by pepsin acting on:",
@@ -1051,7 +1137,8 @@ const CLAUDEBANK = [
           "E. Only short peptides, not intact proteins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0087"
       },
       {
         "q": "The liver's two smaller anatomical lobes (in addition to the large right and left lobes) are the:",
@@ -1063,19 +1150,21 @@ const CLAUDEBANK = [
           "E. Hepatic and biliary lobes"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0088"
       },
       {
         "q": "Blood flow through the liver sinusoids travels from the portal triad toward the:",
         "options": [
           "A. Portal vein",
           "B. Hepatic artery",
-          "C. Central vein (which drains into the hepatic veins \u2192 inferior vena cava)",
+          "C. Central vein (which drains into the hepatic veins → inferior vena cava)",
           "D. Common bile duct",
           "E. Gallbladder"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0089"
       },
       {
         "q": "Intrinsic factor, secreted by parietal cells of the stomach, is required for:",
@@ -1087,24 +1176,26 @@ const CLAUDEBANK = [
           "E. Stimulation of CCK release"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0090"
       },
       {
         "q": "Which is the correct sequence of carbohydrate digestion from ingestion to absorption?",
         "options": [
-          "A. Pancreatic lipase \u2192 salivary amylase \u2192 glucose",
-          "B. Salivary amylase \u2192 pancreatic amylase \u2192 brush border disaccharidases \u2192 monosaccharides (glucose, galactose, fructose)",
-          "C. Pepsin \u2192 trypsin \u2192 peptidases \u2192 glucose",
-          "D. Gastric acid \u2192 amylase \u2192 sucrase \u2192 fructose",
-          "E. Brush border enzymes \u2192 salivary amylase \u2192 glucose"
+          "A. Pancreatic lipase → salivary amylase → glucose",
+          "B. Salivary amylase → pancreatic amylase → brush border disaccharidases → monosaccharides (glucose, galactose, fructose)",
+          "C. Pepsin → trypsin → peptidases → glucose",
+          "D. Gastric acid → amylase → sucrase → fructose",
+          "E. Brush border enzymes → salivary amylase → glucose"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0091"
       }
     ]
   },
   {
-    "title": "ClaudeBank: Pelvis \u2014 Urinary & Reproductive",
+    "title": "ClaudeBank: Pelvis — Urinary & Reproductive",
     "questions": [
       {
         "q": "The functional unit of the kidney is the:",
@@ -1116,7 +1207,8 @@ const CLAUDEBANK = [
           "E. Renal tubule only"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "CB-0092"
       },
       {
         "q": "The outer region of the kidney that contains renal corpuscles and most of the tubules is the:",
@@ -1128,7 +1220,8 @@ const CLAUDEBANK = [
           "E. Renal column"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0093"
       },
       {
         "q": "The renal corpuscle consists of:",
@@ -1140,7 +1233,8 @@ const CLAUDEBANK = [
           "E. The macula densa and afferent arteriole"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0094"
       },
       {
         "q": "Podocytes form filtration slits that allow selective passage of materials in the:",
@@ -1152,7 +1246,8 @@ const CLAUDEBANK = [
           "E. Collecting duct"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0095"
       },
       {
         "q": "The proximal convoluted tubule (PCT) reabsorbs which of the following from the filtrate?",
@@ -1161,10 +1256,11 @@ const CLAUDEBANK = [
           "B. Glucose, amino acids, sodium, and approximately 65% of the filtrate water (obligatory reabsorption)",
           "C. Only urea and creatinine",
           "D. Potassium and chloride exclusively",
-          "E. Nothing \u2014 it is only a secretory segment"
+          "E. Nothing — it is only a secretory segment"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0096"
       },
       {
         "q": "The descending limb of the loop of Henle is ________ to water, while the thick ascending limb is ________ to water.",
@@ -1176,7 +1272,8 @@ const CLAUDEBANK = [
           "E. Highly permeable to both water and Na+; impermeable to both"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0097"
       },
       {
         "q": "Antidiuretic hormone (ADH/vasopressin) acts on the collecting duct to:",
@@ -1188,7 +1285,8 @@ const CLAUDEBANK = [
           "E. Dilate the afferent arteriole and increase GFR"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0098"
       },
       {
         "q": "The hormone erythropoietin (EPO), produced by the kidneys in response to low blood oxygen, stimulates:",
@@ -1200,7 +1298,8 @@ const CLAUDEBANK = [
           "E. Antidiuretic hormone release from the posterior pituitary"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0099"
       },
       {
         "q": "Renin, secreted by juxtaglomerular (JG) cells in response to low blood pressure, initiates:",
@@ -1212,7 +1311,8 @@ const CLAUDEBANK = [
           "E. Decreased sodium reabsorption in the PCT"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0100"
       },
       {
         "q": "Calcitriol (active vitamin D), synthesized in the kidney, promotes:",
@@ -1224,7 +1324,8 @@ const CLAUDEBANK = [
           "E. Potassium secretion in the DCT"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0101"
       },
       {
         "q": "The micturition (voiding) reflex is initiated by:",
@@ -1236,7 +1337,8 @@ const CLAUDEBANK = [
           "E. ACh binding to nicotinic receptors in the bladder wall"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0102"
       },
       {
         "q": "The juxtaglomerular apparatus consists of juxtaglomerular (JG) cells AND the:",
@@ -1248,7 +1350,8 @@ const CLAUDEBANK = [
           "E. Glomerular basement membrane"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0103"
       },
       {
         "q": "The normal glomerular filtration rate (GFR) in a healthy adult is approximately:",
@@ -1260,7 +1363,8 @@ const CLAUDEBANK = [
           "E. 500 mL/min"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0104"
       },
       {
         "q": "Juxtamedullary nephrons are important for concentrating urine because they possess:",
@@ -1272,7 +1376,8 @@ const CLAUDEBANK = [
           "E. Additional collecting ducts"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0105"
       },
       {
         "q": "Aldosterone acts on the distal convoluted tubule and collecting duct to:",
@@ -1284,7 +1389,8 @@ const CLAUDEBANK = [
           "E. Increase hydrogen ion reabsorption"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0106"
       },
       {
         "q": "The thick ascending limb of the loop of Henle creates the medullary osmotic gradient by:",
@@ -1296,7 +1402,8 @@ const CLAUDEBANK = [
           "E. Preventing all movement of any ions"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0107"
       },
       {
         "q": "The interstitial cells of Leydig, located between the seminiferous tubules of the testis, produce ________ in response to LH stimulation.",
@@ -1308,7 +1415,8 @@ const CLAUDEBANK = [
           "E. FSH"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0108"
       },
       {
         "q": "Sertoli cells (sustentacular cells) within the seminiferous tubules:",
@@ -1320,7 +1428,8 @@ const CLAUDEBANK = [
           "E. Store mature sperm until ejaculation"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0109"
       },
       {
         "q": "The epididymis functions primarily to:",
@@ -1332,7 +1441,8 @@ const CLAUDEBANK = [
           "E. Produce testosterone"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0110"
       },
       {
         "q": "After ovulation, the ruptured follicle transforms into the:",
@@ -1344,7 +1454,8 @@ const CLAUDEBANK = [
           "E. Atretic follicle"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0111"
       },
       {
         "q": "The corpus luteum primarily secretes:",
@@ -1356,7 +1467,8 @@ const CLAUDEBANK = [
           "E. GnRH and oxytocin"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0112"
       },
       {
         "q": "When fertilization does NOT occur, the corpus luteum:",
@@ -1368,7 +1480,8 @@ const CLAUDEBANK = [
           "E. Is maintained by sustained elevated LH levels"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0113"
       },
       {
         "q": "The functional layer of the endometrium (stratum functionalis):",
@@ -1380,19 +1493,21 @@ const CLAUDEBANK = [
           "E. Regenerates the endometrium after each shedding cycle"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0114"
       },
       {
         "q": "The LH surge (dramatic rise in LH at mid-cycle) triggers:",
         "options": [
           "A. Follicular growth to the tertiary (Graafian) stage",
           "B. Corpus luteum production of progesterone only",
-          "C. Ovulation \u2014 rupture of the Graafian follicle and release of the secondary oocyte",
+          "C. Ovulation — rupture of the Graafian follicle and release of the secondary oocyte",
           "D. Progesterone secretion by the follicle before ovulation",
           "E. Menstruation"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0115"
       },
       {
         "q": "Oogenesis differs from spermatogenesis in that:",
@@ -1404,7 +1519,8 @@ const CLAUDEBANK = [
           "E. Both processes produce equal numbers of functional gametes"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0116"
       },
       {
         "q": "The ovarian follicle ready for ovulation, characterized by a large fluid-filled antrum and a cumulus oophorus, is the:",
@@ -1416,7 +1532,8 @@ const CLAUDEBANK = [
           "E. Corpus luteum"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0117"
       },
       {
         "q": "Progesterone secreted by the corpus luteum during the luteal phase primarily acts on the endometrium to:",
@@ -1428,7 +1545,8 @@ const CLAUDEBANK = [
           "E. Promote follicle growth for the next ovulation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0118"
       },
       {
         "q": "Fertilization normally occurs in the:",
@@ -1440,7 +1558,8 @@ const CLAUDEBANK = [
           "E. Fimbriae"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0119"
       },
       {
         "q": "Human chorionic gonadotropin (HCG), produced by the trophoblast of the early embryo, is essential because it:",
@@ -1452,7 +1571,8 @@ const CLAUDEBANK = [
           "E. Is detectable in urine only after delivery"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0120"
       },
       {
         "q": "Capacitation of sperm refers to:",
@@ -1464,7 +1584,8 @@ const CLAUDEBANK = [
           "E. Sperm motility development in the efferent ductules"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0121"
       },
       {
         "q": "The bulbourethral (Cowper's) glands contribute to seminal fluid by secreting:",
@@ -1476,7 +1597,8 @@ const CLAUDEBANK = [
           "E. Lysosomal enzymes for capacitation"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0122"
       },
       {
         "q": "The seminal vesicles contribute which component to seminal fluid?",
@@ -1488,7 +1610,8 @@ const CLAUDEBANK = [
           "E. Testosterone"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0123"
       },
       {
         "q": "The prostate gland secretes into seminal fluid:",
@@ -1500,7 +1623,8 @@ const CLAUDEBANK = [
           "E. Testosterone and dihydrotestosterone"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0124"
       },
       {
         "q": "The structure covering the head of each testis and serving as the site for sperm storage and final maturation is the:",
@@ -1512,7 +1636,8 @@ const CLAUDEBANK = [
           "E. Prostate"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0125"
       },
       {
         "q": "During the follicular phase of the ovarian cycle, FSH stimulates:",
@@ -1524,7 +1649,8 @@ const CLAUDEBANK = [
           "E. Regression of the corpus luteum"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0126"
       },
       {
         "q": "Inhibin, secreted by Sertoli cells (and by ovarian granulosa cells in females), acts to:",
@@ -1536,7 +1662,8 @@ const CLAUDEBANK = [
           "E. Increase GnRH pulsatile release"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0127"
       },
       {
         "q": "In the male, LH acts on Leydig cells while FSH acts on:",
@@ -1548,7 +1675,8 @@ const CLAUDEBANK = [
           "E. The epididymis to promote sperm maturation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0128"
       }
     ]
   },
@@ -1565,7 +1693,8 @@ const CLAUDEBANK = [
           "E. Insulin and glucagon"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0129"
       },
       {
         "q": "Growth hormone (GH) exerts most of its growth-promoting effects via:",
@@ -1577,7 +1706,8 @@ const CLAUDEBANK = [
           "E. Negative feedback on the hypothalamus only"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0130"
       },
       {
         "q": "The zona glomerulosa of the adrenal cortex produces:",
@@ -1589,7 +1719,8 @@ const CLAUDEBANK = [
           "E. Estrogens"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0131"
       },
       {
         "q": "The zona fasciculata of the adrenal cortex primarily produces:",
@@ -1601,7 +1732,8 @@ const CLAUDEBANK = [
           "E. Mineralocorticoids"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0132"
       },
       {
         "q": "Cortisol (a glucocorticoid) has which of the following effects?",
@@ -1613,7 +1745,8 @@ const CLAUDEBANK = [
           "E. Stimulates aldosterone secretion from the zona glomerulosa"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0133"
       },
       {
         "q": "Aldosterone raises blood pressure primarily by:",
@@ -1625,7 +1758,8 @@ const CLAUDEBANK = [
           "E. Increasing cardiac output via sympathetic stimulation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0134"
       },
       {
         "q": "Alpha cells of the islets of Langerhans in the pancreas secrete ________ in response to low blood glucose.",
@@ -1637,7 +1771,8 @@ const CLAUDEBANK = [
           "E. Amylin"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0135"
       },
       {
         "q": "Insulin, secreted by beta cells of the pancreatic islets, lowers blood glucose by:",
@@ -1649,7 +1784,8 @@ const CLAUDEBANK = [
           "E. Inhibiting insulin receptors via negative feedback"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0136"
       },
       {
         "q": "The pineal gland secretes ________, which regulates circadian rhythms and is produced primarily during darkness.",
@@ -1661,7 +1797,8 @@ const CLAUDEBANK = [
           "E. GnRH"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0137"
       },
       {
         "q": "Parathyroid hormone (PTH) raises blood calcium by:",
@@ -1673,7 +1810,8 @@ const CLAUDEBANK = [
           "E. Inhibiting calcitriol synthesis in the kidney"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0138"
       },
       {
         "q": "Calcitonin (from thyroid parafollicular/C cells) opposes PTH by:",
@@ -1685,7 +1823,8 @@ const CLAUDEBANK = [
           "E. Stimulating PTH release via positive feedback"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0139"
       },
       {
         "q": "The hypothalamus controls the anterior pituitary through releasing and inhibiting hormones that travel via:",
@@ -1697,7 +1836,8 @@ const CLAUDEBANK = [
           "E. The cerebrospinal fluid in the third ventricle"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0140"
       },
       {
         "q": "Prolactin (PRL), produced by the anterior pituitary, primarily targets:",
@@ -1709,7 +1849,8 @@ const CLAUDEBANK = [
           "E. The kidneys"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0141"
       },
       {
         "q": "The adrenal medulla (derived from neural crest cells) secretes:",
@@ -1721,7 +1862,8 @@ const CLAUDEBANK = [
           "E. Insulin and glucagon"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0142"
       },
       {
         "q": "The neurohypophysis (posterior pituitary) stores and releases hormones that are actually SYNTHESIZED in the:",
@@ -1733,19 +1875,21 @@ const CLAUDEBANK = [
           "E. Thyroid follicles"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0143"
       },
       {
         "q": "Which of the following correctly pairs an anterior pituitary hormone with its primary target and effect?",
         "options": [
-          "A. TSH \u2192 adrenal cortex \u2192 cortisol release",
-          "B. LH \u2192 Leydig cells of testis \u2192 testosterone production",
-          "C. ACTH \u2192 thyroid \u2192 T3/T4 release",
-          "D. FSH \u2192 Sertoli cells \u2192 testosterone production",
-          "E. PRL \u2192 islets of Langerhans \u2192 insulin release"
+          "A. TSH → adrenal cortex → cortisol release",
+          "B. LH → Leydig cells of testis → testosterone production",
+          "C. ACTH → thyroid → T3/T4 release",
+          "D. FSH → Sertoli cells → testosterone production",
+          "E. PRL → islets of Langerhans → insulin release"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0144"
       },
       {
         "q": "Thyroid hormones (T3 and T4) are synthesized from which two components?",
@@ -1757,7 +1901,8 @@ const CLAUDEBANK = [
           "E. Tryptophan and fluoride"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0145"
       },
       {
         "q": "Which thyroid hormone is more biologically potent, and how is it primarily produced?",
@@ -1769,7 +1914,8 @@ const CLAUDEBANK = [
           "E. T3 has a much longer half-life than T4, making it more potent"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0146"
       },
       {
         "q": "Diabetes mellitus Type 1 is characterized by:",
@@ -1781,7 +1927,8 @@ const CLAUDEBANK = [
           "E. Absence of insulin receptors on target cells"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0147"
       },
       {
         "q": "The zona reticularis of the adrenal cortex produces:",
@@ -1793,7 +1940,8 @@ const CLAUDEBANK = [
           "E. Estrogens and progesterone"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0148"
       },
       {
         "q": "Lipid-soluble hormones (steroids and thyroid hormones) differ from water-soluble hormones in that they:",
@@ -1805,7 +1953,8 @@ const CLAUDEBANK = [
           "E. Do not require carrier proteins for transport in the blood"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0149"
       },
       {
         "q": "Oxytocin, stored in the posterior pituitary, is released in response to:",
@@ -1817,7 +1966,8 @@ const CLAUDEBANK = [
           "E. Low blood glucose levels"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0150"
       },
       {
         "q": "Which condition results from deficient ADH secretion or kidney unresponsiveness to ADH, causing production of large volumes of very dilute urine?",
@@ -1829,7 +1979,8 @@ const CLAUDEBANK = [
           "E. Hyperaldosteronism (Conn's syndrome)"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0151"
       },
       {
         "q": "Delta cells of the pancreatic islets secrete ________, which inhibits both insulin and glucagon secretion.",
@@ -1841,7 +1992,8 @@ const CLAUDEBANK = [
           "E. Amylase"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0152"
       },
       {
         "q": "The anterior pituitary hormone that stimulates cortisol secretion from the adrenal cortex is:",
@@ -1853,7 +2005,8 @@ const CLAUDEBANK = [
           "E. CRH (corticotropin-releasing hormone)"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0153"
       },
       {
         "q": "A patient presents with hypertension, central obesity, moon face, buffalo hump, thin skin, and muscle weakness. This is most consistent with:",
@@ -1865,7 +2018,8 @@ const CLAUDEBANK = [
           "E. Type 1 diabetes mellitus"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0154"
       },
       {
         "q": "The renin-angiotensin-aldosterone system (RAAS) is activated by:",
@@ -1877,7 +2031,8 @@ const CLAUDEBANK = [
           "E. Excess atrial natriuretic peptide (ANP)"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0155"
       },
       {
         "q": "Which anterior pituitary hormone stimulates thyroid hormone (T3/T4) production and release?",
@@ -1889,7 +2044,8 @@ const CLAUDEBANK = [
           "E. PRL"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0156"
       },
       {
         "q": "Clusters of endocrine cells within the pancreas that regulate blood glucose and other metabolic functions are called:",
@@ -1901,7 +2057,8 @@ const CLAUDEBANK = [
           "E. Kupffer cells of the pancreas"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0157"
       },
       {
         "q": "The fight-or-flight response (acute stress response) is primarily mediated by release of ________ from the adrenal medulla.",
@@ -1913,7 +2070,8 @@ const CLAUDEBANK = [
           "E. Glucagon from the pancreas"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0158"
       },
       {
         "q": "Hypothyroidism (insufficient thyroid hormone) results in which of the following clinical features?",
@@ -1925,7 +2083,8 @@ const CLAUDEBANK = [
           "E. Hypocalcemia and tetany"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0159"
       }
     ]
   },
@@ -1942,7 +2101,8 @@ const CLAUDEBANK = [
           "E. Vitamin K-dependent factor activation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0160"
       },
       {
         "q": "The extrinsic pathway of coagulation is activated by:",
@@ -1954,19 +2114,21 @@ const CLAUDEBANK = [
           "E. Fibrinogen conversion to fibrin"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0161"
       },
       {
         "q": "The final common pathway of coagulation involves:",
         "options": [
           "A. Platelet aggregation directly creating the fibrin clot",
-          "B. Factor X activation \u2192 prothrombinase complex \u2192 prothrombin \u2192 thrombin \u2192 fibrinogen \u2192 fibrin clot",
+          "B. Factor X activation → prothrombinase complex → prothrombin → thrombin → fibrinogen → fibrin clot",
           "C. Factor XII activation only",
           "D. ADP release from platelets",
           "E. Vitamin K binding to calcium ions only"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0162"
       },
       {
         "q": "Fibrinolysis, which dissolves a blood clot after vessel repair, is accomplished by:",
@@ -1978,7 +2140,8 @@ const CLAUDEBANK = [
           "E. Vasoconstriction reducing blood flow to the clot"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0163"
       },
       {
         "q": "Vitamin K is essential for blood clotting because it:",
@@ -1990,7 +2153,8 @@ const CLAUDEBANK = [
           "E. Stimulates thromboxane A2 production from platelets"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0164"
       },
       {
         "q": "Thrombocytopenia refers to:",
@@ -2002,7 +2166,8 @@ const CLAUDEBANK = [
           "E. Excessive fibrin deposition in vessels"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0165"
       },
       {
         "q": "Hemophilia A is caused by a deficiency of:",
@@ -2014,7 +2179,8 @@ const CLAUDEBANK = [
           "E. Von Willebrand factor"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0166"
       },
       {
         "q": "Iron-deficiency anemia is characterized by:",
@@ -2026,7 +2192,8 @@ const CLAUDEBANK = [
           "E. Abnormal hemoglobin that polymerizes under low-O2 conditions"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0167"
       },
       {
         "q": "Megaloblastic (pernicious) anemia results from deficiency of vitamin B12 or folic acid, producing:",
@@ -2038,7 +2205,8 @@ const CLAUDEBANK = [
           "E. Sickle-cell hemoglobin polymerization"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0168"
       },
       {
         "q": "Sickle cell disease is caused by:",
@@ -2050,7 +2218,8 @@ const CLAUDEBANK = [
           "E. Excess erythropoietin causing RBC overproduction"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0169"
       },
       {
         "q": "A Type A recipient receives Type B blood in a transfusion. The result is:",
@@ -2062,7 +2231,8 @@ const CLAUDEBANK = [
           "E. Rh factor incompatibility triggers the primary reaction"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0170"
       },
       {
         "q": "Type AB individuals are considered universal recipients for packed RBCs because:",
@@ -2074,7 +2244,8 @@ const CLAUDEBANK = [
           "E. Their RBCs have a unique protective surface coating"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "CB-0171"
       },
       {
         "q": "Which leukocyte is the FIRST to arrive at a site of acute bacterial infection?",
@@ -2086,19 +2257,21 @@ const CLAUDEBANK = [
           "E. Monocytes"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0172"
       },
       {
         "q": "The three steps of hemostasis in correct order are:",
         "options": [
-          "A. Coagulation \u2192 vascular spasm \u2192 platelet plug",
-          "B. Platelet plug \u2192 coagulation \u2192 vascular spasm",
-          "C. Vascular spasm \u2192 platelet plug (primary hemostasis) \u2192 coagulation cascade (secondary hemostasis)",
-          "D. Coagulation \u2192 platelet plug \u2192 vascular spasm",
-          "E. Vascular spasm \u2192 coagulation \u2192 platelet plug"
+          "A. Coagulation → vascular spasm → platelet plug",
+          "B. Platelet plug → coagulation → vascular spasm",
+          "C. Vascular spasm → platelet plug (primary hemostasis) → coagulation cascade (secondary hemostasis)",
+          "D. Coagulation → platelet plug → vascular spasm",
+          "E. Vascular spasm → coagulation → platelet plug"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0173"
       },
       {
         "q": "Heparin, an anticoagulant, works by:",
@@ -2110,7 +2283,8 @@ const CLAUDEBANK = [
           "E. Increasing fibrinogen production by the liver"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0174"
       },
       {
         "q": "The plasma protein that is converted to insoluble fibrin threads forming the clot scaffold is:",
@@ -2122,7 +2296,8 @@ const CLAUDEBANK = [
           "E. Thrombin"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0175"
       },
       {
         "q": "Type O-negative blood is often called the universal donor for RBCs because:",
@@ -2134,7 +2309,8 @@ const CLAUDEBANK = [
           "E. O-negative blood contains only plasma without formed elements"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0176"
       },
       {
         "q": "The process by which leukocytes squeeze between endothelial cells of capillary walls to enter infected tissues is called:",
@@ -2146,7 +2322,8 @@ const CLAUDEBANK = [
           "E. Margination"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0177"
       },
       {
         "q": "Eosinophils are most important in defense against:",
@@ -2158,7 +2335,8 @@ const CLAUDEBANK = [
           "E. Tumor cell destruction"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0178"
       },
       {
         "q": "In aplastic anemia, the bone marrow fails to produce adequate numbers of:",
@@ -2170,7 +2348,8 @@ const CLAUDEBANK = [
           "E. Plasma proteins"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0179"
       },
       {
         "q": "Clotting factor II (prothrombin) is converted to thrombin by:",
@@ -2182,7 +2361,8 @@ const CLAUDEBANK = [
           "E. Vitamin K directly"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0180"
       },
       {
         "q": "An immature erythrocyte that still contains ribosomes (visible as a reticular pattern) and circulates in blood for 1-2 days before fully maturing is called a:",
@@ -2194,19 +2374,21 @@ const CLAUDEBANK = [
           "E. Proerythroblast"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0181"
       },
       {
         "q": "The normal life span of an erythrocyte is approximately:",
         "options": [
-          "A. 7\u201310 days",
-          "B. 30\u201360 days",
-          "C. 90\u2013120 days",
+          "A. 7–10 days",
+          "B. 30–60 days",
+          "C. 90–120 days",
           "D. 1 year",
           "E. Several years (they do not turn over significantly)"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0182"
       },
       {
         "q": "Bilirubin is produced from:",
@@ -2218,7 +2400,8 @@ const CLAUDEBANK = [
           "E. Plasma protein catabolism in the liver"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0183"
       },
       {
         "q": "The normal hematocrit (packed cell volume) in a healthy adult male is approximately:",
@@ -2230,7 +2413,8 @@ const CLAUDEBANK = [
           "E. 65%"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0184"
       },
       {
         "q": "Monocytes leaving the bloodstream differentiate into ________ in peripheral tissues.",
@@ -2242,19 +2426,21 @@ const CLAUDEBANK = [
           "E. Dendritic cells and natural killer cells exclusively"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0185"
       },
       {
         "q": "The normal WBC count in a healthy adult is approximately:",
         "options": [
-          "A. 500\u20131,000/\u03bcL",
-          "B. 5,000\u201310,000/\u03bcL",
-          "C. 100,000\u2013200,000/\u03bcL",
-          "D. 1,000,000/\u03bcL",
-          "E. 50/\u03bcL"
+          "A. 500–1,000/μL",
+          "B. 5,000–10,000/μL",
+          "C. 100,000–200,000/μL",
+          "D. 1,000,000/μL",
+          "E. 50/μL"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0186"
       },
       {
         "q": "Von Willebrand factor (vWF) plays a critical role in hemostasis by:",
@@ -2266,7 +2452,8 @@ const CLAUDEBANK = [
           "E. Activating Factor X in the common pathway"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0187"
       },
       {
         "q": "Serum differs from plasma in that serum:",
@@ -2278,7 +2465,8 @@ const CLAUDEBANK = [
           "E. Is identical to plasma in composition"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0188"
       }
     ]
   },
@@ -2295,7 +2483,8 @@ const CLAUDEBANK = [
           "E. Venules"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0189"
       },
       {
         "q": "The innermost layer of all blood vessels, composed of simple squamous endothelium on a basement membrane, is the:",
@@ -2307,7 +2496,8 @@ const CLAUDEBANK = [
           "E. Subendothelial layer only"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0190"
       },
       {
         "q": "The tunica media of arteries primarily consists of:",
@@ -2319,7 +2509,8 @@ const CLAUDEBANK = [
           "E. Adipose tissue and unmyelinated nerves"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0191"
       },
       {
         "q": "Baroreceptors that monitor systemic arterial blood pressure are located in the:",
@@ -2331,7 +2522,8 @@ const CLAUDEBANK = [
           "E. Hepatic portal vein"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0192"
       },
       {
         "q": "The vasomotor center in the medulla oblongata controls blood pressure primarily by:",
@@ -2343,7 +2535,8 @@ const CLAUDEBANK = [
           "E. Controlling respiratory rate"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0193"
       },
       {
         "q": "Which mechanism of venous return draws blood toward the heart by creating negative intrathoracic pressure during inspiration?",
@@ -2355,7 +2548,8 @@ const CLAUDEBANK = [
           "E. Sympathetic venoconstriction"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0194"
       },
       {
         "q": "Edema (abnormal fluid accumulation in tissues) can result from:",
@@ -2367,7 +2561,8 @@ const CLAUDEBANK = [
           "E. Arteriolar vasoconstriction reducing capillary flow"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0195"
       },
       {
         "q": "The three branches arising from the aortic arch, from proximal (right side) to distal (left side), are:",
@@ -2379,7 +2574,8 @@ const CLAUDEBANK = [
           "E. Brachiocephalic, left subclavian, left common carotid"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0196"
       },
       {
         "q": "The hepatic portal system:",
@@ -2391,7 +2587,8 @@ const CLAUDEBANK = [
           "E. Connects the liver directly to the gallbladder"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0197"
       },
       {
         "q": "Local autoregulation of blood flow to tissues involves:",
@@ -2403,7 +2600,8 @@ const CLAUDEBANK = [
           "E. Neural reflexes from the hypothalamus only"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0198"
       },
       {
         "q": "Which type of capillary, found in the liver, bone marrow, and spleen, lacks a complete basement membrane and allows passage of large proteins and blood cells?",
@@ -2415,7 +2613,8 @@ const CLAUDEBANK = [
           "E. Thoroughfare channel capillaries"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0199"
       },
       {
         "q": "Vascular compliance refers to a vessel's:",
@@ -2427,7 +2626,8 @@ const CLAUDEBANK = [
           "E. Permeability to gases and small molecules"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0200"
       },
       {
         "q": "Pulse pressure is defined as:",
@@ -2439,7 +2639,8 @@ const CLAUDEBANK = [
           "E. Pressure measured in the portal vein"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0201"
       },
       {
         "q": "According to Poiseuille's law, blood vessel resistance is related to radius by:",
@@ -2451,7 +2652,8 @@ const CLAUDEBANK = [
           "E. Resistance equals 1/radius (simple inverse relationship)"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0202"
       },
       {
         "q": "The superior vena cava (SVC) drains venous blood from:",
@@ -2463,19 +2665,21 @@ const CLAUDEBANK = [
           "E. The liver via the hepatic veins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0203"
       },
       {
         "q": "Hypertension is generally defined as blood pressure of:",
         "options": [
-          "A. \u226590/60 mmHg",
-          "B. \u2265110/70 mmHg",
-          "C. \u2265120/80 mmHg",
-          "D. \u2265130/80 mmHg",
-          "E. \u2265160/100 mmHg"
+          "A. ≥90/60 mmHg",
+          "B. ≥110/70 mmHg",
+          "C. ≥120/80 mmHg",
+          "D. ≥130/80 mmHg",
+          "E. ≥160/100 mmHg"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "CB-0204"
       },
       {
         "q": "The great saphenous vein is clinically important because it:",
@@ -2487,19 +2691,21 @@ const CLAUDEBANK = [
           "E. Drains directly into the inferior vena cava"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0205"
       },
       {
         "q": "Mean arterial pressure (MAP) is best approximated by:",
         "options": [
           "A. (Systolic + Diastolic) / 2",
           "B. Diastolic pressure + 1/3 pulse pressure",
-          "C. Systolic pressure \u2212 diastolic pressure",
+          "C. Systolic pressure − diastolic pressure",
           "D. Diastolic pressure alone",
-          "E. Pulse pressure \u00d7 2"
+          "E. Pulse pressure × 2"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0206"
       },
       {
         "q": "Vasodilation of arterioles is promoted by all of the following EXCEPT:",
@@ -2511,7 +2717,8 @@ const CLAUDEBANK = [
           "E. Increased local tissue temperature"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0207"
       },
       {
         "q": "At the arterial end of a capillary, net filtration of fluid into the tissues occurs when:",
@@ -2523,7 +2730,8 @@ const CLAUDEBANK = [
           "E. Venous pressure increases enough to reverse flow"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0208"
       },
       {
         "q": "The circle of Willis is an arterial anastomosis located:",
@@ -2535,7 +2743,8 @@ const CLAUDEBANK = [
           "E. Connecting the brachial and radial arteries at the elbow"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0209"
       },
       {
         "q": "A thrombus is:",
@@ -2547,7 +2756,8 @@ const CLAUDEBANK = [
           "E. Increased platelet count in circulation"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0210"
       },
       {
         "q": "An embolus differs from a thrombus in that an embolus:",
@@ -2559,7 +2769,8 @@ const CLAUDEBANK = [
           "E. Is identical to an atherosclerotic plaque"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0211"
       },
       {
         "q": "The renal arteries are direct paired branches of the:",
@@ -2571,7 +2782,8 @@ const CLAUDEBANK = [
           "E. Inferior mesenteric artery"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0212"
       },
       {
         "q": "Varicose veins result from:",
@@ -2583,7 +2795,8 @@ const CLAUDEBANK = [
           "E. Increased blood viscosity"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0213"
       },
       {
         "q": "The external iliac artery continues as the ________ artery after passing under the inguinal ligament.",
@@ -2595,7 +2808,8 @@ const CLAUDEBANK = [
           "E. Tibial"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0214"
       },
       {
         "q": "The pulmonary circulation differs from the systemic circulation in that:",
@@ -2607,7 +2821,8 @@ const CLAUDEBANK = [
           "E. It does not involve capillary exchange"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0215"
       },
       {
         "q": "Angiogenesis (formation of new capillaries from pre-existing vessels) is stimulated primarily by:",
@@ -2619,7 +2834,8 @@ const CLAUDEBANK = [
           "E. Elevated plasma protein concentration"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0216"
       },
       {
         "q": "Deep vein thrombosis (DVT) most commonly occurs in the deep veins of the:",
@@ -2631,7 +2847,8 @@ const CLAUDEBANK = [
           "E. Coronary veins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0217"
       },
       {
         "q": "Atrial natriuretic peptide (ANP), released by atrial myocytes in response to increased blood volume stretching the atria, acts to:",
@@ -2643,7 +2860,8 @@ const CLAUDEBANK = [
           "E. Stimulate ADH release from the posterior pituitary"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0218"
       }
     ]
   },
@@ -2660,7 +2878,8 @@ const CLAUDEBANK = [
           "E. The right arm and right thorax only"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0219"
       },
       {
         "q": "The right lymphatic duct drains lymph from:",
@@ -2672,7 +2891,8 @@ const CLAUDEBANK = [
           "E. The entire thoracic cavity"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0220"
       },
       {
         "q": "The cisterna chyli is:",
@@ -2684,7 +2904,8 @@ const CLAUDEBANK = [
           "E. A lymphatic capillary plexus within the intestinal villi"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0221"
       },
       {
         "q": "In a lymph node, B lymphocytes are concentrated in the:",
@@ -2696,7 +2917,8 @@ const CLAUDEBANK = [
           "E. Trabeculae"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0222"
       },
       {
         "q": "The paracortex (deep cortex) of a lymph node is primarily populated by:",
@@ -2708,7 +2930,8 @@ const CLAUDEBANK = [
           "E. NK cells"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0223"
       },
       {
         "q": "The thymus is a primary lymphoid organ because:",
@@ -2720,7 +2943,8 @@ const CLAUDEBANK = [
           "E. It produces hematopoietic stem cells directly"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0224"
       },
       {
         "q": "The tonsils and Peyer's patches are classified as:",
@@ -2732,7 +2956,8 @@ const CLAUDEBANK = [
           "E. Red pulp structures of the spleen"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0225"
       },
       {
         "q": "Peyer's patches are aggregations of lymphoid tissue found in the:",
@@ -2744,7 +2969,8 @@ const CLAUDEBANK = [
           "E. Lung parenchyma"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0226"
       },
       {
         "q": "The white pulp of the spleen consists of:",
@@ -2756,7 +2982,8 @@ const CLAUDEBANK = [
           "E. Plasma cells actively secreting immunoglobulins only"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0227"
       },
       {
         "q": "The red pulp of the spleen primarily functions to:",
@@ -2768,7 +2995,8 @@ const CLAUDEBANK = [
           "E. Serve as the primary site for B cell maturation"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0228"
       },
       {
         "q": "Primary lymphoid organs, where lymphocytes are produced and mature, are the:",
@@ -2780,7 +3008,8 @@ const CLAUDEBANK = [
           "E. Lymph nodes and red bone marrow"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0229"
       },
       {
         "q": "Secondary lymphoid organs, where lymphocytes encounter antigens and initiate immune responses, include:",
@@ -2792,7 +3021,8 @@ const CLAUDEBANK = [
           "E. Bone marrow, lymph nodes, and thymus combined"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0230"
       },
       {
         "q": "Germinal centers within lymphoid follicles are sites of:",
@@ -2804,7 +3034,8 @@ const CLAUDEBANK = [
           "E. Hematopoiesis (blood cell production)"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0231"
       },
       {
         "q": "The intestinal lymphatic trunk, which collects fat-laden lymph (chyle) from the small intestine lacteals, is the:",
@@ -2816,7 +3047,8 @@ const CLAUDEBANK = [
           "E. Subclavian trunk"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0232"
       },
       {
         "q": "Compared to blood capillaries, lymphatic capillaries are:",
@@ -2828,7 +3060,8 @@ const CLAUDEBANK = [
           "E. Found only in the thoracic and abdominal cavities"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0233"
       },
       {
         "q": "In addition to immune functions, the spleen also serves as a reservoir for:",
@@ -2840,7 +3073,8 @@ const CLAUDEBANK = [
           "E. Vitamin B12 for erythropoiesis"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0234"
       },
       {
         "q": "Lymphedema (tissue swelling) results from:",
@@ -2852,7 +3086,8 @@ const CLAUDEBANK = [
           "E. Low albumin causing reduced plasma oncotic pressure"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0235"
       },
       {
         "q": "MALT (mucosa-associated lymphoid tissue) provides immune surveillance specifically at:",
@@ -2864,7 +3099,8 @@ const CLAUDEBANK = [
           "E. The bloodstream as circulating lymphoid tissue"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0236"
       },
       {
         "q": "Innate immunity differs from adaptive immunity in that innate immunity:",
@@ -2876,7 +3112,8 @@ const CLAUDEBANK = [
           "E. Produces antigen-specific antibodies"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0237"
       },
       {
         "q": "The lymph node hilum is:",
@@ -2888,7 +3125,8 @@ const CLAUDEBANK = [
           "E. Where afferent lymphatic vessels enter the node"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0238"
       }
     ]
   },
@@ -2905,7 +3143,8 @@ const CLAUDEBANK = [
           "E. The placenta directly to the fetal heart"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0239"
       },
       {
         "q": "The foramen ovale in fetal circulation is an opening in the:",
@@ -2917,7 +3156,8 @@ const CLAUDEBANK = [
           "E. Pulmonary artery wall"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0240"
       },
       {
         "q": "The ductus venosus in fetal circulation:",
@@ -2929,7 +3169,8 @@ const CLAUDEBANK = [
           "E. Connects the right and left ventricles"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0241"
       },
       {
         "q": "In fetal circulation, the umbilical vein carries ________ blood from the placenta to the fetal liver.",
@@ -2941,7 +3182,8 @@ const CLAUDEBANK = [
           "E. Blood identical in composition to maternal blood"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0242"
       },
       {
         "q": "In fetal circulation, the umbilical arteries (two) carry:",
@@ -2953,7 +3195,8 @@ const CLAUDEBANK = [
           "E. Blood to the head and upper extremities"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0243"
       },
       {
         "q": "At birth, the foramen ovale closes because:",
@@ -2965,7 +3208,8 @@ const CLAUDEBANK = [
           "E. Oxygen triggers smooth muscle contraction in the septum"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0244"
       },
       {
         "q": "The ductus arteriosus closes shortly after birth primarily due to:",
@@ -2977,7 +3221,8 @@ const CLAUDEBANK = [
           "E. Umbilical vein closure reducing systemic pressure"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0245"
       },
       {
         "q": "The morula stage of early development is:",
@@ -2989,7 +3234,8 @@ const CLAUDEBANK = [
           "E. The trophoblast layer that invades the endometrium"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0246"
       },
       {
         "q": "The inner cell mass (embryoblast) of the blastocyst ultimately gives rise to:",
@@ -3001,7 +3247,8 @@ const CLAUDEBANK = [
           "E. The umbilical cord connective tissue only"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0247"
       },
       {
         "q": "Monozygotic (identical) twins arise from:",
@@ -3013,7 +3260,8 @@ const CLAUDEBANK = [
           "E. Two simultaneous ovulations of the same follicle"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0248"
       },
       {
         "q": "Neural crest cells are remarkable because they:",
@@ -3025,7 +3273,8 @@ const CLAUDEBANK = [
           "E. Give rise only to the autonomic ganglia and adrenal medulla"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0249"
       },
       {
         "q": "Somites, blocks of paraxial mesoderm flanking the neural tube, give rise to:",
@@ -3037,7 +3286,8 @@ const CLAUDEBANK = [
           "E. Blood vessels exclusively"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0250"
       },
       {
         "q": "The syncytiotrophoblast (outer trophoblast layer) during implantation:",
@@ -3049,7 +3299,8 @@ const CLAUDEBANK = [
           "E. Develops into fetal blood vessels in the umbilical cord"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0251"
       },
       {
         "q": "The placenta is formed from contributions of both:",
@@ -3061,7 +3312,8 @@ const CLAUDEBANK = [
           "E. Yolk sac and allantois contributing equally"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0252"
       },
       {
         "q": "Maternal and fetal blood in a normal placenta:",
@@ -3073,7 +3325,8 @@ const CLAUDEBANK = [
           "E. Are identical in composition due to diffusion equilibrium"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0253"
       },
       {
         "q": "The process of induction in embryology refers to:",
@@ -3085,7 +3338,8 @@ const CLAUDEBANK = [
           "E. Migration of neural crest cells from the dorsal neural tube"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0254"
       },
       {
         "q": "The amniotic fluid surrounding the fetus primarily functions to:",
@@ -3097,19 +3351,21 @@ const CLAUDEBANK = [
           "E. Only prevent desiccation during fetal development"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0255"
       },
       {
         "q": "The fetal heart begins to beat at approximately:",
         "options": [
           "A. 1 week of gestation",
-          "B. 3\u20134 weeks of gestation (approximately day 22\u201323)",
-          "C. 6\u20138 weeks of gestation",
-          "D. At the end of the first trimester (week 12\u201313)",
+          "B. 3–4 weeks of gestation (approximately day 22–23)",
+          "C. 6–8 weeks of gestation",
+          "D. At the end of the first trimester (week 12–13)",
           "E. At the beginning of the second trimester (week 14)"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "CB-0256"
       },
       {
         "q": "Gastrulation transforms the bilaminar embryonic disc into a trilaminar disc by generating a third layer called the:",
@@ -3121,7 +3377,8 @@ const CLAUDEBANK = [
           "E. Syncytiotrophoblast"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0257"
       },
       {
         "q": "The endoderm germ layer gives rise to:",
@@ -3133,7 +3390,8 @@ const CLAUDEBANK = [
           "E. The dermis and cartilage of the face"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "CB-0258"
       }
     ]
   }

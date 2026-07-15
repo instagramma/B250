@@ -278,21 +278,33 @@ const RESUME_KEY = "biol250_resume_v1";
 const PROGRESS_KEY = "biol250_progress_v1";
 const MISSED_KEY = "biol250_missedQs_v1";
 
+/* ---------- MULTI-USER PROFILES (Gabe / Sam / Darren) ----------
+   Each profile's data is namespaced in localStorage (key "base::Name"), so
+   results are locked to that person and never cross over — even on a shared
+   device. The chosen profile is remembered on this device, so you auto sign-in
+   and don't have to pick every time. "Switch profile" changes it. */
+const PROFILES = ["Gabe", "Sam", "Darren"];
+const PROFILE_KEY = "biol250_profile";
+let currentProfile = null;
+try { currentProfile = localStorage.getItem(PROFILE_KEY); } catch (e) {}
+function ns(base) { return base + "::" + (currentProfile || "guest"); }
+
 function loadMissedQs() {
-  try { return JSON.parse(localStorage.getItem(MISSED_KEY)) || []; } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem(ns(MISSED_KEY))) || []; } catch(e) { return []; }
 }
 function saveMissedQs(arr) {
-  try { localStorage.setItem(MISSED_KEY, JSON.stringify(arr)); } catch(e) {}
+  try { localStorage.setItem(ns(MISSED_KEY), JSON.stringify(arr)); } catch(e) {}
 }
 function recordMissedQs(answerLog) {
   const pool = loadMissedQs();
-  const existingKeys = new Set(pool.map(m => m.q.slice(0, 80)));
+  const idOf = (o) => (o && o.id) ? o.id : (o && o.q ? o.q.slice(0, 80) : "");
+  const existingKeys = new Set(pool.map(m => m.id || (m.q ? m.q.slice(0, 80) : "")));
   let changed = false;
   answerLog.forEach(entry => {
     if (entry.timedOut || entry.selected !== entry.correct) {
-      const key = entry.q.q.slice(0, 80);
-      if (!existingKeys.has(key)) {
-        pool.push({ q: entry.q.q, options: entry.q.options, correct: entry.q.correct, tf: entry.q.tf || false });
+      const key = idOf(entry.q);
+      if (key && !existingKeys.has(key)) {
+        pool.push({ id: entry.q.id, q: entry.q.q, options: entry.q.options, correct: entry.q.correct, tf: entry.q.tf || false });
         existingKeys.add(key);
         changed = true;
       }
@@ -306,17 +318,17 @@ let missedDeck = [], missedIndex = 0, missedAnswered = false, missedSelected = -
 
 function loadLocalProgress() {
   try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
+    const raw = localStorage.getItem(ns(PROGRESS_KEY));
     return raw ? JSON.parse(raw) : { flashcards: {}, quizzes: {} };
   } catch (e) { return { flashcards: {}, quizzes: {} }; }
 }
 function saveLocalProgress() {
-  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressState)); } catch (e) {}
+  try { localStorage.setItem(ns(PROGRESS_KEY), JSON.stringify(progressState)); } catch (e) {}
 }
 function saveResumeState() {
   try {
-    if (["home", "login", "loading"].includes(state.route)) {
-      localStorage.removeItem(RESUME_KEY);
+    if (["home", "login", "loading", "profile"].includes(state.route)) {
+      localStorage.removeItem(ns(RESUME_KEY));
       return;
     }
     const snapshot = {
@@ -326,12 +338,12 @@ function saveResumeState() {
       fc: { fcDeck, fcIndex, fcFlipped, fcKnown, fcUnknown },
       lab: { labDeck, labIndex, labScore, labTotalBlanks, labSkippedBlanks, lblItemIndex, lblAssignments, lblSelectedChip, lblChecked },
     };
-    localStorage.setItem(RESUME_KEY, JSON.stringify(snapshot));
+    localStorage.setItem(ns(RESUME_KEY), JSON.stringify(snapshot));
   } catch (e) {}
 }
 function restoreResumeState() {
   try {
-    const raw = localStorage.getItem(RESUME_KEY);
+    const raw = localStorage.getItem(ns(RESUME_KEY));
     if (!raw) return false;
     const snap = JSON.parse(raw);
     Object.assign(state, snap.state);
@@ -365,7 +377,38 @@ function restoreResumeState() {
   } catch (e) { return false; }
 }
 
+function selectProfile(name) {
+  currentProfile = name;
+  try { localStorage.setItem(PROFILE_KEY, name); } catch (e) {}
+  progressState = loadLocalProgress();      // load THIS profile's data
+  if (!restoreResumeState()) state.route = "home";
+  render();
+}
+function switchProfile() {
+  // don't wipe anything — just return to the picker; data stays under each name
+  state.route = "profile"; state.sectionKey = null;
+  render();
+}
+function renderProfilePicker(main) {
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:440px;margin:52px auto 0;text-align:center;padding:0 18px;";
+  wrap.innerHTML = `
+    <div style="font-size:2.4rem;margin-bottom:6px;">👥</div>
+    <div style="font-weight:800;font-size:1.3rem;color:var(--navy,#1F3864);">Who's studying?</div>
+    <div style="color:#666;font-size:.9rem;margin:6px 0 24px;">Your scores, progress, and preparedness are kept separate for each person. We'll remember your pick on this device.</div>`;
+  PROFILES.forEach((name, i) => {
+    const b = document.createElement("button");
+    const colors = ["#1F3864", "#2E74B5", "#2E7D32"];
+    b.style.cssText = `display:block;width:100%;margin:11px 0;background:${colors[i % 3]};color:#fff;border:none;border-radius:14px;padding:16px;font-size:1.15rem;font-weight:700;cursor:pointer;`;
+    b.textContent = name;
+    b.onclick = () => selectProfile(name);
+    wrap.appendChild(b);
+  });
+  main.appendChild(wrap);
+}
+
 async function initApp() {
+  if (!currentProfile) { state.route = "profile"; render(); return; }  // first run on this device → pick a profile
   progressState = loadLocalProgress();
   if (!CLOUD_ENABLED) {
     if (!restoreResumeState()) state.route = "home";
@@ -405,8 +448,8 @@ async function saveProgress() {
 
 /* Study mode: "closed" = closed-book (true recall) vs "open" = with notes.
    Stored per device; each quiz result is tagged with the active mode. */
-function getStudyMode() { try { return localStorage.getItem("biol250_studyMode") === "open" ? "open" : "closed"; } catch (e) { return "closed"; } }
-function setStudyMode(m) { try { localStorage.setItem("biol250_studyMode", m); } catch (e) {} }
+function getStudyMode() { try { return localStorage.getItem(ns("biol250_studyMode")) === "open" ? "open" : "closed"; } catch (e) { return "closed"; } }
+function setStudyMode(m) { try { localStorage.setItem(ns("biol250_studyMode"), m); } catch (e) {} }
 
 function recordQuizResult(key, score, total, avgSec) {
   const pct = Math.round((score / total) * 100);
@@ -481,6 +524,7 @@ function render() {
 
   if (state.route === "loading") renderLoading(main);
   else if (state.route === "login") renderLogin(main);
+  else if (state.route === "profile") renderProfilePicker(main);
   else if (state.route === "home") renderHome(main);
   else if (state.route === "modes") renderModes(main);
   else if (state.route === "sectionMenu") renderSectionMenu(main);
@@ -520,7 +564,7 @@ function buildTopbar() {
   left.style.display = "flex";
   left.style.alignItems = "center";
 
-  const noBackRoutes = ["home", "login", "loading"];
+  const noBackRoutes = ["home", "login", "loading", "profile"];
   if (!noBackRoutes.includes(state.route)) {
     const back = document.createElement("button");
     back.className = "backBtn";
@@ -701,6 +745,17 @@ function renderLogin(main) {
 }
 
 function renderHome(main) {
+  // Signed-in-as banner (which person's stats are being tracked)
+  const who = document.createElement("div");
+  who.style.cssText = "display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;color:#666;margin:2px 0 10px;";
+  who.innerHTML = `<span>👤 Signed in as <b style="color:var(--navy,#1F3864);">${escapeHtml(currentProfile || "guest")}</b></span>`;
+  const sw = document.createElement("button");
+  sw.textContent = "Switch";
+  sw.style.cssText = "border:1px solid #ccc;background:#fff;color:#2E74B5;border-radius:14px;padding:3px 12px;font-size:.78rem;font-weight:700;cursor:pointer;";
+  sw.onclick = () => switchProfile();
+  who.appendChild(sw);
+  main.appendChild(who);
+
   const sub = document.createElement("div");
   sub.className = "subtitle";
   sub.textContent = "Choose a lecture unit or a lab unit — or jump into Cumulative for full-course review.";
@@ -1047,7 +1102,7 @@ function renderQuiz(main) {
   let sourceQuiz, deckKey;
   if (state.quizSource === "custom" || state.quizSource === "stuvia") {
     sourceQuiz = quizDeck.length ? quizDeck : [];
-    deckKey = state.quizSource;
+    deckKey = state.quizDeckKey || state.quizSource;
   } else if (state.quizSource === "claudebank" && typeof CLAUDEBANK !== "undefined") {
     const pool = state.cbIndex >= 0 ? CLAUDEBANK[state.cbIndex].questions
                                     : CLAUDEBANK.flatMap(cb => cb.questions);
@@ -1778,7 +1833,24 @@ function prepKeyToSystems(key) {
     const S = {0:["Respiratory","Heart"],1:["Respiratory","Heart"],2:["Respiratory","Heart"],3:["Respiratory","Heart"],4:["Respiratory","Heart"],5:["Respiratory","Heart"],6:["Digestive","Urinary"],7:["Digestive","Urinary"],8:["Digestive","Urinary"],9:["Digestive","Urinary"],10:["Digestive","Urinary"],11:["Digestive","Urinary"],12:["Digestive","Urinary"],13:["Reproductive","Urinary"],14:["Reproductive","Urinary"],15:["Endocrine"],16:["Blood"],17:["Heart"],18:["Vessels & Circulation"],19:["Lymphatic"],20:["Digestive"],21:["Urinary"],22:["Reproductive"],23:["Embryology"]};
     return S[parseInt(m[1])] || null;
   }
-  return null; // section-wide exams/stuvia — not attributed to one system
+  if (key.indexOf("stuvia:torso:") === 0) { // per-section Stuvia (topic index 0=Thorax,1=Abdomen,2=Pelvis; ':all'/':3'=too broad)
+    const t = key.split(":")[2];
+    const M = { "0": ["Respiratory","Heart"], "1": ["Digestive","Urinary"], "2": ["Reproductive","Urinary"] };
+    return M[t] || null;
+  }
+  return null; // section-wide/mixed exams — surfaced in the Practice-Test block instead
+}
+// Best full-length practice-test result (a direct mock of the 200-question exam), for the selected mode.
+function prepMockBest(mode) {
+  const Q = progressState.quizzes || {};
+  let best = null, sec = null;
+  Object.keys(Q).forEach(k => {
+    if (!/^(fullExam:torso|exam:torso:|sim:torso)/.test(k) && !(k === "stuvia:torso:all") && !(k === "stuvia:torso:3")) return;
+    const pm = (Q[k].modes || {})[mode];
+    const bs = pm ? pm.bestScore : (Q[k].modes ? null : Q[k].bestScore);
+    if (typeof bs === "number" && (best === null || bs > best)) { best = bs; if (pm && pm.bestSec) sec = pm.bestSec; }
+  });
+  return best === null ? null : { score: best, sec };
 }
 function prepGather() {
   const data = {}; PREP_SYSTEMS.forEach(s => data[s] = { closed: null, open: null, secC: null, secO: null, attempts: 0 });
@@ -1853,6 +1925,19 @@ function renderPreparedness(main) {
     <div style="color:#888;font-size:.85rem;margin-top:4px;">${md==="closed"?"true (closed-book)":"with-notes"} readiness · ${tested}/${PREP_SYSTEMS.length} systems practiced</div>
     <div style="color:#aaa;font-size:.75rem;margin-top:2px;">Goal: 90% on every system. Untested systems count as 0.</div>`;
   main.appendChild(head);
+
+  // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
+  const mock = prepMockBest(md);
+  const mc = document.createElement("div");
+  mc.style.cssText = "margin:12px 0;padding:11px 14px;border-radius:12px;background:#EEF4FB;border:1px solid #cfe0f2;display:flex;justify-content:space-between;align-items:center;";
+  if (mock) {
+    const mb = prepBand(mock.score);
+    mc.innerHTML = `<span style="font-size:.88rem;color:#333;">🎓 <b>Mock exam</b> (Practice Tests best)</span>
+      <span style="font-weight:800;color:${mb.color};font-size:1.05rem;">${mock.score}%${mock.sec?` · ${mock.sec}s/q`:""}</span>`;
+  } else {
+    mc.innerHTML = `<span style="font-size:.85rem;color:#777;">🎓 <b>Mock exam</b> — take a full Simulation / Practice Exam in ${md==="closed"?"closed-book":"with-notes"} mode for a true 200-question readiness check.</span>`;
+  }
+  main.appendChild(mc);
 
   // per-system bars
   const list = document.createElement("div");
@@ -3158,7 +3243,7 @@ function renderExamMenu(main) {
   mrBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Re-do questions you got wrong</span>`;
   mrBtn.onclick = () => {
     const key = "missed:" + state.sectionKey;
-    const missed = JSON.parse(localStorage.getItem(key) || "[]");
+    const missed = JSON.parse(localStorage.getItem(ns(key)) || "[]");
     if (!missed.length) { alert("No missed questions recorded yet. Try a practice exam first!"); return; }
     missedDeck = shuffle([...missed]);
     state.route = "missedReview";
@@ -3350,8 +3435,8 @@ function renderCustomBuilder(main) {
   //   "gr:secKey:si"   — GR subtopic question pool
   //   "stuvia:ti"      — Stuvia topic (index into STUVIA_BANK)
   //   "exam:secKey:ei" — Practice exam question pool
-  let cbState = JSON.parse(localStorage.getItem("customBuilderV2") || '{"selectedKeys":[],"count":20,"mode":"quiz"}');
-  const save = () => localStorage.setItem("customBuilderV2", JSON.stringify(cbState));
+  let cbState = JSON.parse(localStorage.getItem(ns("customBuilderV2")) || '{"selectedKeys":[],"count":20,"mode":"quiz"}');
+  const save = () => localStorage.setItem(ns("customBuilderV2"), JSON.stringify(cbState));
 
   // ── helpers ──
   const toggle = (key) => {
@@ -3588,6 +3673,7 @@ function renderStuviaMenu(main) {
     bank.forEach(t => pool.push(...(t.questions || [])));
     quizDeck = shuffle([...pool]);
     state.quizSource = "stuvia";
+    state.quizDeckKey = "stuvia:" + state.sectionKey + ":all";
     state.prevRoute = "stuviaMenu";
     state.route = "quiz";
     render();
@@ -3612,6 +3698,7 @@ function renderStuviaMenu(main) {
       btn.onclick = () => {
         quizDeck = shuffle([...(topic.questions || [])]);
         state.quizSource = "stuvia";
+        state.quizDeckKey = "stuvia:" + state.sectionKey + ":" + ti;
         state.prevRoute = "stuviaMenu";
         state.route = "quiz";
         render();

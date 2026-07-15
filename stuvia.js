@@ -13,7 +13,8 @@ const STUVIA_BANK = [
           "pterygopalatine ganglia"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0001"
       },
       {
         "q": "Which of the following organs secrete hormones?  (1) pancreas  (2) liver  (3) brain  (4) suprarenal cortex  (5) suprarenal medulla  (6) thymus  (7) ovary  (8) testis  (9) thyroid gland  (10) pineal gland",
@@ -25,7 +26,8 @@ const STUVIA_BANK = [
           "6, 7, 8, 9, 10"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0002"
       },
       {
         "q": "What organ(s) is(are) nervous in structure but endocrine in function?",
@@ -37,7 +39,8 @@ const STUVIA_BANK = [
           "gonads"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0003"
       },
       {
         "q": "Which hormone decreases the concentration of calcium ions in body fluids?",
@@ -49,7 +52,8 @@ const STUVIA_BANK = [
           "thyroxin"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0004"
       },
       {
         "q": "Which of the following hormones contains iodine in its structure?",
@@ -61,7 +65,8 @@ const STUVIA_BANK = [
           "thymosins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0005"
       },
       {
         "q": "The hormone that acts to oppose the effects of calcitonin is",
@@ -73,7 +78,8 @@ const STUVIA_BANK = [
           "growth hormone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0006"
       },
       {
         "q": "An enzyme produced by the kidneys that is important for the regulation of blood pressure and blood volume is",
@@ -85,7 +91,8 @@ const STUVIA_BANK = [
           "bilirubin."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0007"
       },
       {
         "q": "Myxedema and cretinism can result from the underproduction of",
@@ -97,7 +104,8 @@ const STUVIA_BANK = [
           "androgens."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0008"
       },
       {
         "q": "TSH affects the thymus.",
@@ -106,7 +114,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0009"
       },
       {
         "q": "The ability of the blood to supply oxygen and remove carbon dioxide from the tissues depends upon",
@@ -118,7 +127,8 @@ const STUVIA_BANK = [
           "the osmotic balance, as controlled by the kidneys."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0010"
       },
       {
         "q": "Blood that is transported to and from all of the tissues of the body with the exception of the lungs is in the",
@@ -130,7 +140,8 @@ const STUVIA_BANK = [
           "venous circuit."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0011"
       },
       {
         "q": "Blood vessels traveling away from the heart are",
@@ -142,7 +153,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0012"
       },
       {
         "q": "The heart has the unique ability to change its workload. On average the heart can pump between and liters of blood per minute.",
@@ -154,7 +166,8 @@ const STUVIA_BANK = [
           "5; 30"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0013"
       },
       {
         "q": "The serous membrane lining the pericardial cavity is the",
@@ -166,7 +179,8 @@ const STUVIA_BANK = [
           "endocardium."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0014"
       },
       {
         "q": "The visceral pericardium is also called the",
@@ -178,7 +192,8 @@ const STUVIA_BANK = [
           "fibrous pericardium."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0015"
       },
       {
         "q": "The reinforcing layer of the pericardium is the layer.",
@@ -190,7 +205,8 @@ const STUVIA_BANK = [
           "epicardial"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0016"
       },
       {
         "q": "The tough structure that surrounds the heart and helps reinforce and maintain position of the heart is the",
@@ -202,7 +218,8 @@ const STUVIA_BANK = [
           "epicardium."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0017"
       },
       {
         "q": "The heart wall is composed of layers of tissues.",
@@ -214,7 +231,8 @@ const STUVIA_BANK = [
           "5"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0018"
       },
       {
         "q": "The innermost layer of the heart wall is the",
@@ -226,7 +244,8 @@ const STUVIA_BANK = [
           "connective tissue."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0019"
       },
       {
         "q": "Cardiac muscle differs from other muscle tissue in",
@@ -238,7 +257,8 @@ const STUVIA_BANK = [
           "having larger sized fibers than other striated muscles."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0020"
       },
       {
         "q": "The contraction of any one cardiac muscle fiber",
@@ -250,7 +270,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0021"
       },
       {
         "q": "Cardiac muscle cells obtain energy almost exclusively through",
@@ -262,7 +283,8 @@ const STUVIA_BANK = [
           "protein stores."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0022"
       },
       {
         "q": "Cardiac muscle cells do not need to contract.",
@@ -274,7 +296,8 @@ const STUVIA_BANK = [
           "nervous stimulation"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0023"
       },
       {
         "q": "One of the major differences between skeletal muscle and cardiac muscle is that cardiac muscle",
@@ -286,7 +309,8 @@ const STUVIA_BANK = [
           "has a very large sarcoplasmic reticulum."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0024"
       },
       {
         "q": "The connective tissues of the heart",
@@ -298,7 +322,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0025"
       },
       {
         "q": "The fibrous skeleton of the heart functions to",
@@ -310,7 +335,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0026"
       },
       {
         "q": "The fibrous skeleton of the heart is located",
@@ -322,7 +348,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0027"
       },
       {
         "q": "Externally the posterior and inferior portions of the left ventricle form the",
@@ -334,7 +361,8 @@ const STUVIA_BANK = [
           "superior border."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0028"
       },
       {
         "q": "Grooves on the external surface of the heart that divide the right and left ventricles include the",
@@ -346,7 +374,8 @@ const STUVIA_BANK = [
           "interventricular septum."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0029"
       },
       {
         "q": "The anterior and posterior interventricular sulci on the outside of the heart contain",
@@ -358,7 +387,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0030"
       },
       {
         "q": "The broad, superior portion of the heart is the",
@@ -370,7 +400,8 @@ const STUVIA_BANK = [
           "anterior surface."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0031"
       },
       {
         "q": "The wall between the atria is called the",
@@ -382,7 +413,8 @@ const STUVIA_BANK = [
           "coronary sulcus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0032"
       },
       {
         "q": "Prominent muscular ridges that run along the inner surface of the auricle and across the adjacent atrial wall are the",
@@ -394,7 +426,8 @@ const STUVIA_BANK = [
           "trabeculae carneae."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0033"
       },
       {
         "q": "The thick muscular partition that separates the two ventricles entire heart is the",
@@ -406,7 +439,8 @@ const STUVIA_BANK = [
           "left atrium."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0034"
       },
       {
         "q": "The right ventricle",
@@ -418,7 +452,8 @@ const STUVIA_BANK = [
           "is connected to the pulmonary veins."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0035"
       },
       {
         "q": "The superior end of the right ventricle near the pulmonary valve is called (the)",
@@ -430,7 +465,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0036"
       },
       {
         "q": "The moderator band is located in the",
@@ -442,7 +478,8 @@ const STUVIA_BANK = [
           "interventricular sulcus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0037"
       },
       {
         "q": "Which of the chambers of the heart can generate the greatest pressure?",
@@ -454,7 +491,8 @@ const STUVIA_BANK = [
           "Both ventricles create greater pressures simultaneously than do the atria."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0038"
       },
       {
         "q": "The right ventricle is associated exclusively with which of the following?",
@@ -466,7 +504,8 @@ const STUVIA_BANK = [
           "trabeculae carneae"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0039"
       },
       {
         "q": "The left ventricle pumps blood into the",
@@ -478,7 +517,8 @@ const STUVIA_BANK = [
           "vena cava."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0040"
       },
       {
         "q": "The left atrium receives blood from the",
@@ -490,7 +530,8 @@ const STUVIA_BANK = [
           "pulmonary trunk."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0041"
       },
       {
         "q": "Which of the following empty directly into the right atrium?",
@@ -502,7 +543,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0042"
       },
       {
         "q": "Blood travels from the left atrium to the left ventricle through the",
@@ -514,7 +556,8 @@ const STUVIA_BANK = [
           "conus arteriosus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0043"
       },
       {
         "q": "Which of the following valves is assisted in functioning by the papillary muscles?",
@@ -526,7 +569,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0044"
       },
       {
         "q": "Which of the following is an incorrect association?",
@@ -538,7 +582,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0045"
       },
       {
         "q": "Valves of the heart open and close due to",
@@ -550,7 +595,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0046"
       },
       {
         "q": "Blood is supplied to the muscle of the heart through the",
@@ -562,7 +608,8 @@ const STUVIA_BANK = [
           "conus arteriosus."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0047"
       },
       {
         "q": "Which of the following is true of the coronary arteries?",
@@ -574,7 +621,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0048"
       },
       {
         "q": "The most serious place for a blockage of a coronary artery is",
@@ -586,7 +634,8 @@ const STUVIA_BANK = [
           "left anterior descending artery."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0049"
       },
       {
         "q": "Which of the following is supplied with blood by the left anterior descending artery?",
@@ -598,7 +647,8 @@ const STUVIA_BANK = [
           "posterior heart wall"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0050"
       },
       {
         "q": "The coronary artery found under the right atrium is (the)",
@@ -610,7 +660,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0051"
       },
       {
         "q": "When a clot forms in a coronary vessel and obstructs blood flow to the muscle, the condition is referred to as a(n)",
@@ -622,7 +673,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0052"
       },
       {
         "q": "If a small blood clot passes through the heart and heart vessels, where is it most likely to cause damage if it becomes immobilized?",
@@ -634,7 +686,8 @@ const STUVIA_BANK = [
           "Severe damage could occur if a small blood clot became immobilized at any of these"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0053"
       },
       {
         "q": "The main pacemaker region of the heart is",
@@ -646,7 +699,8 @@ const STUVIA_BANK = [
           "in the wall of the right atrium."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0054"
       },
       {
         "q": "Papillary muscles of the right ventricle receive a signal to contract from (the)",
@@ -658,7 +712,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0055"
       },
       {
         "q": "Which of the following is a major component of the conduction system located in the interventricular septum?",
@@ -670,7 +725,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0056"
       },
       {
         "q": "Structures in the heart that carry electrical signals from the SA node to the AV node are called",
@@ -682,7 +738,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0057"
       },
       {
         "q": "Which of the following is true of the contraction of the heart?",
@@ -694,7 +751,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0058"
       },
       {
         "q": "Pacemaker cells of the SA node depolarize about",
@@ -706,7 +764,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0059"
       },
       {
         "q": "The phase of the cardiac cycle during which each chamber contracts and pushes blood into the next structure is",
@@ -718,7 +777,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0060"
       },
       {
         "q": "During most of ventricular diastole, the",
@@ -730,7 +790,8 @@ const STUVIA_BANK = [
           "the ventricles are filling."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0061"
       },
       {
         "q": "During one cardiac cycle the ventricles spend most of their time in",
@@ -742,7 +803,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0062"
       },
       {
         "q": "The chambers of the heart empty during",
@@ -754,7 +816,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0063"
       },
       {
         "q": "During their period of systole, the inner volume of the atrial chambers",
@@ -766,7 +829,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0064"
       },
       {
         "q": "The most important factor in ensuring that blood moves in correct order through the heart is (the)",
@@ -778,7 +842,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0065"
       },
       {
         "q": "In terms of time, at rest one cardiac cycle lasts",
@@ -790,7 +855,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0066"
       },
       {
         "q": "Which of the following conditions would cause the amount of blood entering the ascending aorta with each contraction of the heart to increase?",
@@ -802,7 +868,8 @@ const STUVIA_BANK = [
           "The amount of blood sent to the lungs for oxygenation would decrease."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0067"
       },
       {
         "q": "Nodal activity of the heart may be influenced or modified by",
@@ -814,7 +881,8 @@ const STUVIA_BANK = [
           "enzymes released from the kidney."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0068"
       },
       {
         "q": "At rest the heart rate is usually by parasympathetic control.",
@@ -826,7 +894,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0069"
       },
       {
         "q": "How would the heart rate be affected if there were a blockage of the AV node?",
@@ -838,7 +907,8 @@ const STUVIA_BANK = [
           "The heart rate would slow dramatically, and become extremely irregular, contracting only"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0070"
       },
       {
         "q": "Pulmonary arteries carry oxygen-deprived blood.",
@@ -847,7 +917,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0071"
       },
       {
         "q": "The pulmonary trunk carries blood to the body cells.",
@@ -856,7 +927,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0072"
       },
       {
         "q": "The bicuspid valve is the exit of the right ventricle.",
@@ -865,7 +937,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0073"
       },
       {
         "q": "The pulmonary veins bring blood from the lungs back to the heart.",
@@ -874,7 +947,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0074"
       },
       {
         "q": "The pacemaker of the heart is the AV node.",
@@ -883,7 +957,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0075"
       },
       {
         "q": "The SA node is located in the upper wall of the right atrium.",
@@ -892,7 +967,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0076"
       },
       {
         "q": "The Purkinje cells are tightly bound together to form the AV bundle.",
@@ -901,7 +977,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0077"
       },
       {
         "q": "Describe the differences between carditis, endocarditis, and myocarditis?",
@@ -910,7 +987,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0078"
       },
       {
         "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have,",
@@ -919,7 +997,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0079"
       },
       {
         "q": "What method does not remove plaques, but nevertheless opens blood vessels without major",
@@ -928,7 +1007,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0080"
       },
       {
         "q": "What factors have been identified that can cause an increased risk of heart attack?",
@@ -937,7 +1017,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0081"
       },
       {
         "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of",
@@ -946,7 +1027,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0082"
       },
       {
         "q": "Large veins include the",
@@ -958,7 +1040,8 @@ const STUVIA_BANK = [
           "superior and inferior venae cavae."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0083"
       },
       {
         "q": "The smallest arteries in the lungs that provide blood to the capillary networks that surround the lung air saccules are the",
@@ -970,7 +1053,8 @@ const STUVIA_BANK = [
           "pulmonary veins."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0084"
       },
       {
         "q": "The pericardium is supplied by (the)",
@@ -982,7 +1066,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0085"
       },
       {
         "q": "The cerebral arterial circle \"encircles\" which of the following?",
@@ -994,7 +1079,8 @@ const STUVIA_BANK = [
           "all vessels and passageways passing through the mediastinum"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0086"
       },
       {
         "q": "The brachiocephalic vein receives blood from the",
@@ -1006,7 +1092,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0087"
       },
       {
         "q": "The right common carotid artery and right subclavian arteries are branches of (the)",
@@ -1018,7 +1105,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0088"
       },
       {
         "q": "Age-related changes in the heart include",
@@ -1030,7 +1118,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0089"
       },
       {
         "q": "Components of the lymphoid system include the:  (1) pancreas  (2) spleen  (3) lymphatic vessels  (4) thymus  (5) lymph nodes  (6) thoracic duct",
@@ -1042,7 +1131,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0090"
       },
       {
         "q": "The smallest of the organs of the lymphoid system is (are) the",
@@ -1054,7 +1144,8 @@ const STUVIA_BANK = [
           "kidneys."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0091"
       },
       {
         "q": "Most of the lymph returns to the venous circulation by way of the",
@@ -1066,7 +1157,8 @@ const STUVIA_BANK = [
           "hepatic portal vein."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0092"
       },
       {
         "q": "The cisterna chyli receives lymph from which of the following?",
@@ -1078,7 +1170,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0093"
       },
       {
         "q": "Clinical symptoms that would indicate that there is a blockage in the right lymphatic duct would include",
@@ -1090,7 +1183,8 @@ const STUVIA_BANK = [
           "a greatly increased cisterna chyli."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0094"
       },
       {
         "q": "Cells obtain energy primarily",
@@ -1102,7 +1196,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0095"
       },
       {
         "q": "The last passageway of the conducting portion of the respiratory tract is called the",
@@ -1114,7 +1209,8 @@ const STUVIA_BANK = [
           "air sac."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0096"
       },
       {
         "q": "The mucous membrane or mucosa of the respiratory system",
@@ -1126,7 +1222,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0097"
       },
       {
         "q": "Together, the epithelium and the lamina propria of the respiratory tract constitute (a)",
@@ -1138,7 +1235,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0098"
       },
       {
         "q": "Which of the following statements is true of the respiratory epithelium?",
@@ -1150,7 +1248,8 @@ const STUVIA_BANK = [
           "protects respiratory surfaces from dehydration"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0099"
       },
       {
         "q": "The _____ is lined by squamous epithelium.",
@@ -1162,7 +1261,8 @@ const STUVIA_BANK = [
           "trachea"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0100"
       },
       {
         "q": "The separates the nasal and oral cavities.",
@@ -1174,7 +1274,8 @@ const STUVIA_BANK = [
           "nasal septum"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0101"
       },
       {
         "q": "Which of the following is a function of the glottis?",
@@ -1186,7 +1287,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0102"
       },
       {
         "q": "The larynx is composed of cartilages.",
@@ -1198,7 +1300,8 @@ const STUVIA_BANK = [
           "12"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0103"
       },
       {
         "q": "The area of the respiratory system that includes the larynx and bronchial tree is called the",
@@ -1210,7 +1313,8 @@ const STUVIA_BANK = [
           "bronchi."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0104"
       },
       {
         "q": "A thick midline ridge in the thyroid cartilage that is sometimes referred to as the Adam's apple is technically named the",
@@ -1222,7 +1326,8 @@ const STUVIA_BANK = [
           "Adam's apple."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0105"
       },
       {
         "q": "The large cartilage of the larynx with an expansive posterior surface is (the)",
@@ -1234,7 +1339,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0106"
       },
       {
         "q": "Which of the following cartilages are attached to the vocal ligaments?",
@@ -1246,7 +1352,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0107"
       },
       {
         "q": "The false vocal cords are also called (the)",
@@ -1258,7 +1365,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0108"
       },
       {
         "q": "If the epiglottis fails to cover the glottis at the appropriate time, which of the following is the most likely consequence?",
@@ -1270,7 +1378,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0109"
       },
       {
         "q": "Changing of the diameter of the trachea is provided by (the)",
@@ -1282,7 +1391,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0110"
       },
       {
         "q": "The septa of the lungs divide the lungs into",
@@ -1294,7 +1404,8 @@ const STUVIA_BANK = [
           "segments."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0111"
       },
       {
         "q": "Compared with the left primary bronchus, the right primary bronchus is",
@@ -1306,7 +1417,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0112"
       },
       {
         "q": "The irregular surface of the lungs that contains the hilum is called the",
@@ -1318,7 +1430,8 @@ const STUVIA_BANK = [
           "costal surface."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0113"
       },
       {
         "q": "The left lung contains some features the right lung does not. Which of the following are only found in the left lung?",
@@ -1330,7 +1443,8 @@ const STUVIA_BANK = [
           "cardiac impression and root"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0114"
       },
       {
         "q": "The the tertiary bronchi ultimately branch into 6500",
@@ -1342,7 +1456,8 @@ const STUVIA_BANK = [
           "terminal bronchioles."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0115"
       },
       {
         "q": "Secondary bronchi are also termed bronchi.",
@@ -1354,7 +1469,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0116"
       },
       {
         "q": "Compared to the primary bronchi, the secondary and tertiary bronchi have",
@@ -1366,7 +1482,8 @@ const STUVIA_BANK = [
           "both less cartilage and more smooth muscle."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0117"
       },
       {
         "q": "Each tertiary bronchus leads to one",
@@ -1378,7 +1495,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0118"
       },
       {
         "q": "The middle lobar bronchus is found",
@@ -1390,7 +1508,8 @@ const STUVIA_BANK = [
           "only in males."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0119"
       },
       {
         "q": "The superior and inferior lobes of the left lung are separated by (the)",
@@ -1402,7 +1521,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0120"
       },
       {
         "q": "What is the function of the converting enzyme secreted by the alveolar capillaries?",
@@ -1414,7 +1534,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0121"
       },
       {
         "q": "Histologically, the epithelium of the alveoli includes which of the following structures?  (1) cornified epithelial cells  (2) simple squamous epithelium, type I cells  (3) septal, or surfactant, type II cells  (4) bony trabeculae  (5) roaming macrophages",
@@ -1426,7 +1547,8 @@ const STUVIA_BANK = [
           "1, 3, 5"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0122"
       },
       {
         "q": "The structures that form the respiratory membrane include:  (1) elastic fibers  (2) secondary bronchioles  (3) the basement membrane of the alveolar epithelium  (4) the pulmonary nerve plexus  (5) capillary walls",
@@ -1438,7 +1560,8 @@ const STUVIA_BANK = [
           "2, 4, 5"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0123"
       },
       {
         "q": "The function of surfactant is to",
@@ -1450,7 +1573,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0124"
       },
       {
         "q": "Physical factors that facilitate gas exchange in the lungs include which of the following?",
@@ -1462,7 +1586,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0125"
       },
       {
         "q": "The cell types of the alveoli include which of the following?",
@@ -1474,7 +1599,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0126"
       },
       {
         "q": "Which of the following covers the external surfaces of the lungs?",
@@ -1486,7 +1612,8 @@ const STUVIA_BANK = [
           "pleural pericardium"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0127"
       },
       {
         "q": "The physical movement of air into and out of the lungs is called",
@@ -1498,7 +1625,8 @@ const STUVIA_BANK = [
           "pulmonary ventilation."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0128"
       },
       {
         "q": "During extreme bouts of exercise, inspiration may be aided by (the)",
@@ -1510,7 +1638,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0129"
       },
       {
         "q": "The most important skeletal muscles involved in making normal, relaxed, respiratory movements include (the)",
@@ -1522,7 +1651,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0130"
       },
       {
         "q": "Forced breathing is also called",
@@ -1534,7 +1664,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0131"
       },
       {
         "q": "Respiratory muscles that become active when the depth and frequency of respiration must be increased markedly include the",
@@ -1546,7 +1677,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0132"
       },
       {
         "q": "When is costal breathing most likely to occur?",
@@ -1558,7 +1690,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0133"
       },
       {
         "q": "During exhalation of the first breath, the lungs do not collapse completely again in a newborn infant because",
@@ -1570,7 +1703,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0134"
       },
       {
         "q": "Important differences between the respiratory system of a newborn infant and a fetus that relates to the cardiovascular system includes which of the following?",
@@ -1582,7 +1716,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0135"
       },
       {
         "q": "Sympathetic stimulation of the terminal bronchioles causes",
@@ -1594,7 +1729,8 @@ const STUVIA_BANK = [
           "secretion of less surfactant."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0136"
       },
       {
         "q": "The respiratory centers regulate the activities of the respiratory muscles by",
@@ -1606,7 +1742,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0137"
       },
       {
         "q": "Reflexes involved in the regulation of respiration include:  (1) mechanoreceptor reflexes  (2) temperature reception and response reflexes  (3) chemoreceptor reflexes  (4) cerebrospinal fluid circulation pressure adjustment reflexes  (5) protective reflexes",
@@ -1618,7 +1755,8 @@ const STUVIA_BANK = [
           "2, 4, 5"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0138"
       },
       {
         "q": "Chemoreceptor reflexes regulate the response to",
@@ -1630,7 +1768,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0139"
       },
       {
         "q": "The area of the brain stem involved in controlling forced expirations is called (the)",
@@ -1642,7 +1781,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0140"
       },
       {
         "q": "Which of the following is found in the medulla?",
@@ -1654,7 +1794,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0141"
       },
       {
         "q": "As individuals age, the efficiency of the respiratory system typically",
@@ -1666,7 +1807,8 @@ const STUVIA_BANK = [
           "responds more rapidly to immediate changes but cannot maintain the response over as long a"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0142"
       },
       {
         "q": "A lethal inherited disease in which mucus secretions become too sticky to be transported",
@@ -1675,7 +1817,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0143"
       },
       {
         "q": "Method of applying abdominal pressure to dislodge objects from the respiratory passageways",
@@ -1684,7 +1827,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0144"
       },
       {
         "q": "A tracheostomy is an incision in the anterior trachea.",
@@ -1693,7 +1837,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0145"
       },
       {
         "q": "A pulmonary embolism is a blood clot in the pulmonary blood vessels that traveled there from",
@@ -1702,7 +1847,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0146"
       },
       {
         "q": "Collapse of the lungs due to insufficient surfactant is called respiratory distress syndrome.",
@@ -1711,7 +1857,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0147"
       },
       {
         "q": "A chronic and progressive condition characterized by shortness of breath, resulting from the",
@@ -1720,7 +1867,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0148"
       },
       {
         "q": "The apneustic center adjusts the pace of respiration.",
@@ -1729,7 +1877,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0149"
       },
       {
         "q": "Part of the ventral respiratory group makes up the inspiratory center.",
@@ -1738,7 +1887,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0150"
       },
       {
         "q": "The dorsal respiratory group functions in every respiratory cycle.",
@@ -1747,7 +1897,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0151"
       },
       {
         "q": "Respiratory centers are located throughout the brainstem.",
@@ -1756,7 +1907,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0152"
       },
       {
         "q": "If a child swallows a small marble, and it lodges in the respiratory tract, where is it most likely",
@@ -1765,7 +1917,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0153"
       },
       {
         "q": "A seventy-five-year-old man goes to his doctor to complain of shortness of breath and a",
@@ -1774,7 +1927,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0154"
       },
       {
         "q": "When the diaphragm contracts, air _____ the lungs.",
@@ -1783,7 +1937,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0155"
       },
       {
         "q": "The anterior, middle, and posterior _____ muscles, the oblique muscles of the neck, elevate the ribs and cause flexion of the neck.",
@@ -1792,7 +1947,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0156"
       },
       {
         "q": "The bony projection that occurs bilaterally on the posterior aspect at mid-thorax is the _____ of the scapula.",
@@ -1801,7 +1957,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0157"
       },
       {
         "q": "The _____ muscle forms the widest part of the back and appears on the lateral surface of the lower thoracic and upper abdominal regions.",
@@ -1810,7 +1967,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0158"
       },
       {
         "q": "Preganglionic neurons send their axons to synapse on _____.",
@@ -1819,7 +1977,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0159"
       },
       {
         "q": "The cell bodies of ganglionic neurons are located in _____.",
@@ -1828,7 +1987,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0160"
       },
       {
         "q": "Both divisions of the autonomic nervous system affect target organs through the controlled release of chemicals known as _____.",
@@ -1837,7 +1997,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0161"
       },
       {
         "q": "In the ANS, it is the axons of _____ neurons that reach the target organs.",
@@ -1846,7 +2007,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0162"
       },
       {
         "q": "All postganglionic parasympathetic fibers release _____ at their effector.",
@@ -1855,7 +2017,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0163"
       },
       {
         "q": "Visceral motor neurons with cell bodies in the CNS are called _____ neurons.",
@@ -1864,7 +2027,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0164"
       },
       {
         "q": "Preganglionic parasympathetic fibers synapse on neurons of _____ ganglia.",
@@ -1873,7 +2037,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0165"
       },
       {
         "q": "The neurotransmitter _____ is released from most postganglionic sympathetic neurons.",
@@ -1882,7 +2047,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0166"
       },
       {
         "q": "Upon stimulation, sympathetic preganglionic fibers release acetylcholine (ACh) at synapses with _____ neurons.",
@@ -1891,7 +2057,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0167"
       },
       {
         "q": "Cholinergic synapses always have _____ effects upon the ganglionic neurons.",
@@ -1900,7 +2067,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0168"
       },
       {
         "q": "The thoracolumbar division of the ANS is also called the _____ division.",
@@ -1909,7 +2077,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0169"
       },
       {
         "q": "The ganglia of the sympathetic chain contain preganglionic fibers that enter the chain via the _____.",
@@ -1918,7 +2087,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0170"
       },
       {
         "q": "Preganglionic sympathetic fibers that innervate the abdominopelvic viscera synapse within _____ ganglia.",
@@ -1927,7 +2097,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0171"
       },
       {
         "q": "The postganglionic fibers that control sweat glands are from the _____ division.",
@@ -1936,7 +2107,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0172"
       },
       {
         "q": "The superior and _____ mesenteric ganglia surround the base of the similarly names arteries.",
@@ -1945,7 +2117,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0173"
       },
       {
         "q": "The two types of sympathetic receptors are _____ and beta.",
@@ -1954,7 +2127,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0174"
       },
       {
         "q": "Both alpha and beta receptors are stimulated by _____.",
@@ -1963,7 +2137,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0175"
       },
       {
         "q": "Blood flow to skeletal muscles is controlled by the distribution of _____ fibers of the sympathetic division of the ANS.",
@@ -1972,7 +2147,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0176"
       },
       {
         "q": "All of the synapses and neuroeffector synapses of the parasympathetic division of the ANS use the neurotransmitter _____.",
@@ -1981,7 +2157,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0177"
       },
       {
         "q": "Receptors found at the cholinergic neuroeffector synapses in the parasympathetic division of the ANS are called _____.",
@@ -1990,7 +2167,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0178"
       },
       {
         "q": "In the parasympathetic division, the postsynaptic membrane of a ganglionic neuron has _____ receptors that are excited by acetylcholine.",
@@ -1999,7 +2177,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0179"
       },
       {
         "q": "Smooth muscle contractions that propel materials and mix them with secretions in the digestive tract are controlled by output of the _____ nerve.",
@@ -2008,7 +2187,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0180"
       },
       {
         "q": "Descending branches of the vagus nerve and splanchnic nerves leaving the sympathetic chain are contained within the _____ plexus.",
@@ -2017,7 +2197,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0181"
       },
       {
         "q": "The _____ plexus contains the parasympathetic outflow of the pelvic nerves, sympathetic postganglionic fibers from the inferior mesenteric ganglion, and splanchnic nerves from the sacral sympathetic chain.",
@@ -2026,7 +2207,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0182"
       },
       {
         "q": "The changes in the diameter of peripheral blood vessels is the _____ reflex.",
@@ -2035,7 +2217,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0183"
       },
       {
         "q": "Irritation of the digestive lining activates the _____ reflex, which reverses the pattern of movement of the smooth muscle in the walls of the stomach.",
@@ -2044,7 +2227,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0184"
       },
       {
         "q": "The _____ carries blood to and from the gas exchange surfaces of the lungs.",
@@ -2053,7 +2237,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0185"
       },
       {
         "q": "The exchange vessels in the cardiovascular system are called _____.",
@@ -2062,7 +2247,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0186"
       },
       {
         "q": "The primary function of the pericardial fluid is to provide _____ between the pericardial membranes.",
@@ -2071,7 +2257,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0187"
       },
       {
         "q": "The pericardial cavity contains _____, which acts as a lubricant, reducing friction between the opposing surfaces.",
@@ -2080,7 +2267,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0188"
       },
       {
         "q": "The visceral pericardium, which covers the surface of the heart, is also known as the _____.",
@@ -2089,7 +2277,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0189"
       },
       {
         "q": "Because cardiac muscles are mechanically, chemically, and electrically connected to one another, cardiac muscle functions as a single enormous fiber, i.e., a _____.",
@@ -2098,7 +2287,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0190"
       },
       {
         "q": "Cardiocytes are individual cardiac _____ cells.",
@@ -2107,7 +2297,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0191"
       },
       {
         "q": "The internal connective tissue network of the heart is called the _____ of the heart.",
@@ -2116,7 +2307,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0192"
       },
       {
         "q": "The expansible portion of an atrium is called an _____ because it reminded early anatomists of the external ear.",
@@ -2125,7 +2317,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0193"
       },
       {
         "q": "The diaphragm is attached to the inferior tip of the heart, called the _____.",
@@ -2134,7 +2327,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0194"
       },
       {
         "q": "The _____ border of the heart includes the bases of the major vessels.",
@@ -2143,7 +2337,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0195"
       },
       {
         "q": "The _____ are the folds of muscular tissue inside the ventricles.",
@@ -2152,7 +2347,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0196"
       },
       {
         "q": "Muscular ridges in the right atrium are called _____.",
@@ -2161,7 +2357,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0197"
       },
       {
         "q": "Blood passing through the tricuspid valve is going into the _____.",
@@ -2170,7 +2367,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0198"
       },
       {
         "q": "Blood exiting the left ventricle must pass through the _____ valve.",
@@ -2179,7 +2377,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0199"
       },
       {
         "q": "Blood leaves the right ventricle by passing through the _____ into the pulmonary trunk.",
@@ -2188,7 +2387,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0200"
       },
       {
         "q": "If the cusps of an atrioventricular valve are damaged or too short to meet at the center of the valve or do not close completely during the normal point in the pumping cycle, blood may flow backwards. This is called _____.",
@@ -2197,7 +2397,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0201"
       },
       {
         "q": "A gurgling sound of blood caused by regurgitation in the heart is called a _____.",
@@ -2206,7 +2407,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0202"
       },
       {
         "q": "There are many interconnections between the branches of the coronary circulation, which function to maintain a constant blood supply to the muscle of the heart. These connections are called _____.",
@@ -2215,7 +2417,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0203"
       },
       {
         "q": "The process of contraction without either neural or hormonal stimuli as occurs in the cardiac muscle is called _____.",
@@ -2224,7 +2427,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0204"
       },
       {
         "q": "The term _____ refers to degenerative changes in the coronary circulation.",
@@ -2233,7 +2437,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0205"
       },
       {
         "q": "The period between the start of one heartbeat and the beginning of the next is a single _____.",
@@ -2242,7 +2447,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0206"
       },
       {
         "q": "A condition in which the heart does not beat regularly is called a(n) _____.",
@@ -2251,7 +2457,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0207"
       },
       {
         "q": "The parasympathetic neurons of the autonomic nervous system decrease the rate at which the pacemaker cells of the sinoatrial node drive the heart rate by secreting the neurotransmitter _____.",
@@ -2260,7 +2467,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0208"
       },
       {
         "q": "There are usually four _____ that return blood to the left atrium.",
@@ -2269,7 +2477,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0209"
       },
       {
         "q": "Blood returning to the heart from the systemic circulation drains via the superior vena cava and the _____.",
@@ -2278,7 +2487,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0210"
       },
       {
         "q": "The _____ is an expanded, saclike chamber at the base of the thoracic duct.",
@@ -2287,7 +2497,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0211"
       },
       {
         "q": "The process that allows cells to obtain energy, which requires the oxygen delivered by and the carbon dioxide removed by the respiratory system, is _____.",
@@ -2296,7 +2507,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0212"
       },
       {
         "q": "The airways that carry air to and from the exchange surfaces of the lungs are collectively called the _____.",
@@ -2305,7 +2517,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0213"
       },
       {
         "q": "Contamination of the inspired air can damage the delicate surfaces of the respiratory system. The respiratory mechanisms that are responsible for the filtration that prevents this occurrence are called the _____.",
@@ -2314,7 +2527,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0214"
       },
       {
         "q": "The respiratory epithelium consists of a _____ epithelium with numerous goblet cells.",
@@ -2323,7 +2537,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0215"
       },
       {
         "q": "The _____ consists of the nose, nasal cavity, paranasal sinuses, and pharynx.",
@@ -2332,7 +2547,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0216"
       },
       {
         "q": "The nasal cavity is divided into left and right portions by the _____.",
@@ -2341,7 +2557,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0217"
       },
       {
         "q": "The nasal cavity connects to the external environment at the _____.",
@@ -2350,7 +2567,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0218"
       },
       {
         "q": "The _____ is the middle portion of the pharynx, posterior to the tongue.",
@@ -2359,7 +2577,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0219"
       },
       {
         "q": "Most of the posterior walls of the larynx are formed by the _____ cartilage.",
@@ -2368,7 +2587,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0220"
       },
       {
         "q": "Vocal folds that prevent foreign objects from entering the glottis are known as the _____.",
@@ -2377,7 +2597,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0221"
       },
       {
         "q": "During swallowing, the _____ folds back over the glottis, preventing the entry of liquids or solids into the respiratory passageways.",
@@ -2386,7 +2607,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0222"
       },
       {
         "q": "The _____ connects the larynx and the bronchi.",
@@ -2395,7 +2617,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0223"
       },
       {
         "q": "The left and right bronchi form as the trachea splits in an area called the _____.",
@@ -2404,7 +2627,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0224"
       },
       {
         "q": "The fibrous partitions of the lungs that contain smooth muscles, elastic fibers, and lymphoid structures are the _____.",
@@ -2413,7 +2637,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0225"
       },
       {
         "q": "Two lobes form the left lung, and _____ lobes form the right lung. (Note: Be sure to spell out your answer).",
@@ -2422,7 +2647,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0226"
       },
       {
         "q": "Each lobe of the lung can be subdivided into smaller units called _____.",
@@ -2431,7 +2657,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0227"
       },
       {
         "q": "Sympathetic activation leads to widening of the bronchiole passageway, a process also called _____.",
@@ -2440,7 +2667,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0228"
       },
       {
         "q": "_____ cells, which secrete surfactant, are scattered among the squamous cells of the alveolar epithelium. (Note: Be sure to capitalize the first letter of your answer).",
@@ -2449,7 +2677,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0229"
       },
       {
         "q": "Alveolar macrophages are also called _____ cells.",
@@ -2458,7 +2687,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0230"
       },
       {
         "q": "A chronic, progressive condition characterized by shortness of breath is _____.",
@@ -2467,7 +2697,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0231"
       },
       {
         "q": "An inflammation of the pleurae is called _____.",
@@ -2476,7 +2707,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0232"
       },
       {
         "q": "The lungs are contained in cavities called the _____ cavities.",
@@ -2485,7 +2717,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0233"
       },
       {
         "q": "The type of breathing in which the thoracic volume changes because the rib cage changes shape, and inhalation occurs when contraction of the external intercostals elevates the ribs and enlarges the thoracic cavity, is called _____.",
@@ -2494,7 +2727,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0234"
       },
       {
         "q": "Another name for quiet breathing is _____.",
@@ -2503,7 +2737,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0235"
       },
       {
         "q": "During the first breath, a newborn infant fills all of the structures of the lungs except some of the _____.",
@@ -2512,7 +2747,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0236"
       },
       {
         "q": "The respiratory centers include three pairs of loosely organized nuclei in the _____ of the pons and the medulla.",
@@ -2521,7 +2757,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0237"
       },
       {
         "q": "The _____ is sometimes called the expiratory center.",
@@ -2530,7 +2767,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0238"
       },
       {
         "q": "In addition to a need to acquire oxygen and to eliminate carbon dioxide, other responses such as emotional and _____ often affect the pace and depth of respiration.",
@@ -2539,7 +2777,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0239"
       },
       {
         "q": "One factor responsible for the decreased ability of ribs to expand in older individuals is the _____ flexibility of the costal cartilages.",
@@ -2548,7 +2787,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0240"
       }
     ]
   },
@@ -2565,7 +2805,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0241"
       },
       {
         "q": "Most ganglia of the ANS are paired; however, the _____ are unpaired.",
@@ -2577,7 +2818,8 @@ const STUVIA_BANK = [
           "pterygopalatine ganglia"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0242"
       },
       {
         "q": "Which of the following is (are) unique to the suprarenal medullae?",
@@ -2589,7 +2831,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0243"
       },
       {
         "q": "Which of the following organs secrete hormones?  (1) pancreas  (2) liver  (3) brain  (4) suprarenal cortex  (5) suprarenal medulla  (6) thymus  (7) ovary  (8) testis  (9) thyroid gland  (10) pineal gland",
@@ -2601,7 +2844,8 @@ const STUVIA_BANK = [
           "6, 7, 8, 9, 10"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0244"
       },
       {
         "q": "Which of the following is an example of positive feedback?",
@@ -2613,7 +2857,8 @@ const STUVIA_BANK = [
           "ADH release due to low blood pressure"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0245"
       },
       {
         "q": "Inhibiting hormones (IH) directly cause",
@@ -2625,7 +2870,8 @@ const STUVIA_BANK = [
           "androgen secretion."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0246"
       },
       {
         "q": "Adrenocorticotropic hormone (ACTH) causes the release of",
@@ -2637,7 +2883,8 @@ const STUVIA_BANK = [
           "glucocorticoids by the suprarenal cortex."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0247"
       },
       {
         "q": "The only hormone to target all cells to some degree is",
@@ -2649,7 +2896,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0248"
       },
       {
         "q": "Which gland stores its hormone extracellularly?",
@@ -2661,7 +2909,8 @@ const STUVIA_BANK = [
           "suprarenal cortex"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0249"
       },
       {
         "q": "Which of the following is true of the suprarenal cortex?",
@@ -2673,7 +2922,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0250"
       },
       {
         "q": "The _____ is firmly attached to the superior border of the kidney.",
@@ -2685,7 +2935,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0251"
       },
       {
         "q": "Which of the following is (are) a mineralocorticoid?",
@@ -2697,7 +2948,8 @@ const STUVIA_BANK = [
           "cortisol"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0252"
       },
       {
         "q": "The zona glomerulosa is so named because its glandular cells are arranged as",
@@ -2709,7 +2961,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0253"
       },
       {
         "q": "Over three-quarters of the suprarenal cortex is the",
@@ -2721,7 +2974,8 @@ const STUVIA_BANK = [
           "capsule."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0254"
       },
       {
         "q": "Special neural cells develop into the",
@@ -2733,7 +2987,8 @@ const STUVIA_BANK = [
           "pancreas."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0255"
       },
       {
         "q": "The zona reticularis releases very small amounts of",
@@ -2745,7 +3000,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0256"
       },
       {
         "q": "How do the cells of the suprarenal medulla differ from other glandular cells?",
@@ -2757,7 +3013,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0257"
       },
       {
         "q": "Damage to the zona fasciculata of the suprarenal cortex would result in",
@@ -2769,7 +3026,8 @@ const STUVIA_BANK = [
           "decreased blood glucose levels."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0258"
       },
       {
         "q": "A kidney hormone that stimulates red blood cell production by the bone marrow is",
@@ -2781,7 +3039,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0259"
       },
       {
         "q": "Which of the following cell types produces insulin?",
@@ -2793,7 +3052,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0260"
       },
       {
         "q": "About 1 percent of the pancreas is located in structures known as",
@@ -2805,7 +3065,8 @@ const STUVIA_BANK = [
           "pancreatic arteries."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0261"
       },
       {
         "q": "Subcutaneous swelling, dry skin, hair loss, low body temperature, muscular weakness, and slowed reflexes are symptoms of",
@@ -2817,7 +3078,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0262"
       },
       {
         "q": "The conditions of polyuria, low blood volume, and high blood potassium concentrations result from the underproduction of",
@@ -2829,7 +3091,8 @@ const STUVIA_BANK = [
           "testosterone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0263"
       },
       {
         "q": "Diabetes insipidus is caused by",
@@ -2841,7 +3104,8 @@ const STUVIA_BANK = [
           "increased levels of aldosterone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0264"
       },
       {
         "q": "Myxedema and cretinism can result from the underproduction of",
@@ -2853,7 +3117,8 @@ const STUVIA_BANK = [
           "androgens."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0265"
       },
       {
         "q": "Early menopause in women will occur if",
@@ -2865,7 +3130,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0266"
       },
       {
         "q": "Aldosterone is released from the suprarenal cortex.",
@@ -2874,7 +3140,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0267"
       },
       {
         "q": "Growth hormone is released from the suprarenal cortex.",
@@ -2883,7 +3150,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0268"
       },
       {
         "q": "Epinephrine is secreted in greater amounts than norepinephrine in the adrenal medulla.",
@@ -2892,7 +3160,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0269"
       },
       {
         "q": "The hormone somatostatin is secreted by beta cells.",
@@ -2901,7 +3170,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0270"
       },
       {
         "q": "The hormone glucagon is secreted by G-cells.",
@@ -2910,7 +3180,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0271"
       },
       {
         "q": "Insulin is secreted by beta cells.",
@@ -2919,7 +3190,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0272"
       },
       {
         "q": "Which of the following is a paired branch of the abdominal aorta?",
@@ -2931,7 +3203,8 @@ const STUVIA_BANK = [
           "median sacral"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0273"
       },
       {
         "q": "Unpaired arteries that branch from the abdominal aorta include the",
@@ -2943,7 +3216,8 @@ const STUVIA_BANK = [
           "lumbar."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0274"
       },
       {
         "q": "Which of the following is the right branch of the celiac trunk?",
@@ -2955,7 +3229,8 @@ const STUVIA_BANK = [
           "gastroduodenal artery"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0275"
       },
       {
         "q": "The hepatic portal vein carries blood",
@@ -2967,7 +3242,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0276"
       },
       {
         "q": "Which of these is a tributary of the inferior vena cava or azygous system?",
@@ -2979,7 +3255,8 @@ const STUVIA_BANK = [
           "splenic vein"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0277"
       },
       {
         "q": "Which of the following organs drains its blood through the hepatic portal system?",
@@ -2991,7 +3268,8 @@ const STUVIA_BANK = [
           "urinary bladder"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0278"
       },
       {
         "q": "The first paired branches of the abdominal aorta are the",
@@ -3003,7 +3281,8 @@ const STUVIA_BANK = [
           "common iliac arteries."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0279"
       },
       {
         "q": "Which of the following empties directly into the hepatic portal vein?",
@@ -3015,7 +3294,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0280"
       },
       {
         "q": "What problem will occur in a newborn in whom the foramen ovale has failed to close?",
@@ -3027,7 +3307,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0281"
       },
       {
         "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small",
@@ -3036,7 +3317,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0282"
       },
       {
         "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior",
@@ -3045,7 +3327,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0283"
       },
       {
         "q": "Long, thin arteries, present only in males, that originate between the superior and inferior",
@@ -3054,7 +3337,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0284"
       },
       {
         "q": "The liver, stomach, and spleen are supplied by the celiac trunk.",
@@ -3063,7 +3347,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0285"
       },
       {
         "q": "Components of the lymphoid system include the:  (1) pancreas  (2) spleen  (3) lymphatic vessels  (4) thymus  (5) lymph nodes  (6) thoracic duct",
@@ -3075,7 +3360,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0286"
       },
       {
         "q": "The lymphoid system is composed of",
@@ -3087,7 +3373,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0287"
       },
       {
         "q": "The smallest of the organs of the lymphoid system is (are) the",
@@ -3099,7 +3386,8 @@ const STUVIA_BANK = [
           "kidneys."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0288"
       },
       {
         "q": "Which organ or tissue contains equal numbers of B and T cells?",
@@ -3111,7 +3399,8 @@ const STUVIA_BANK = [
           "liver"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0289"
       },
       {
         "q": "Which of the following is not an example of MALT?",
@@ -3123,7 +3412,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0290"
       },
       {
         "q": "Which lymph nodes would likely become inflamed with an ear infection?",
@@ -3135,7 +3425,8 @@ const STUVIA_BANK = [
           "thoracic lymph nodes"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0291"
       },
       {
         "q": "If the thyroid gland of a person is removed because of hyperthyroidism or some other disease, what lymphoid organ may also be removed or damaged inadvertently?",
@@ -3147,7 +3438,8 @@ const STUVIA_BANK = [
           "None of the lymphoid organs are at risk when the thyroid gland is removed."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0292"
       },
       {
         "q": "Which of these is a unique part of the spleen?",
@@ -3159,7 +3451,8 @@ const STUVIA_BANK = [
           "cortex"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0293"
       },
       {
         "q": "The spleen",
@@ -3171,7 +3464,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0294"
       },
       {
         "q": "Which of the following is not a function of the spleen?",
@@ -3183,7 +3477,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0295"
       },
       {
         "q": "Which of the following is (are) true of the spleen?",
@@ -3195,7 +3490,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0296"
       },
       {
         "q": "Lymphoid functions of the spleen include",
@@ -3207,7 +3503,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0297"
       },
       {
         "q": "Functions of the digestive system include which of the following?",
@@ -3219,7 +3516,8 @@ const STUVIA_BANK = [
           "both ingestion and processing of food materials and liquids"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0298"
       },
       {
         "q": "The correct order of the digestive tube layers, from lumen outward, is:  (1) mucosa  (2) muscularis externa  (3) serosa  (4) submucosa",
@@ -3231,7 +3529,8 @@ const STUVIA_BANK = [
           "1, 4, 3, 2"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0299"
       },
       {
         "q": "Sandwiched between the layer of circular and longitudinal muscle in the muscularis externa is the",
@@ -3243,7 +3542,8 @@ const STUVIA_BANK = [
           "mesocolon."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0300"
       },
       {
         "q": "The lining of the digestive tract plays a defensive role by protecting surrounding tissues against",
@@ -3255,7 +3555,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0301"
       },
       {
         "q": "The areolar connective tissue found immediately beneath the epithelium of the digestive tract is called",
@@ -3267,7 +3568,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0302"
       },
       {
         "q": "The muscular layer farthest from the lumen is (the)",
@@ -3279,7 +3581,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0303"
       },
       {
         "q": "Control of secretions of the digestive tract is via the",
@@ -3291,7 +3594,8 @@ const STUVIA_BANK = [
           "Control is different in various areas of the tract."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0304"
       },
       {
         "q": "In areas where the digestive tract is not covered in serosa it is covered by a fibrous connective tissue called",
@@ -3303,7 +3607,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0305"
       },
       {
         "q": "Peristalsis",
@@ -3315,7 +3620,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0306"
       },
       {
         "q": "Long reflexes",
@@ -3327,7 +3633,8 @@ const STUVIA_BANK = [
           "provide a higher level of control over digestive functions."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0307"
       },
       {
         "q": "What intestinal functions do the short reflexes control?",
@@ -3339,7 +3646,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0308"
       },
       {
         "q": "A retroperitoneal structure",
@@ -3351,7 +3659,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0309"
       },
       {
         "q": "Which of the following is an intraperitoneal organ?",
@@ -3363,7 +3672,8 @@ const STUVIA_BANK = [
           "duodenum"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0310"
       },
       {
         "q": "Organs that develop in the peritoneal cavity but later fuse to the posterior abdominal wall include the _____.",
@@ -3375,7 +3685,8 @@ const STUVIA_BANK = [
           "urinary bladder"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0311"
       },
       {
         "q": "Each day about liter(s) of peritoneal fluid enters and leaves the peritoneal cavity.",
@@ -3387,7 +3698,8 @@ const STUVIA_BANK = [
           "26"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0312"
       },
       {
         "q": "The tissue that suspends from the stomach and anteriorly across most of the abdominal cavity is (the)",
@@ -3399,7 +3711,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0313"
       },
       {
         "q": "Functions of the greater omentum include",
@@ -3411,7 +3724,8 @@ const STUVIA_BANK = [
           "padding of the abdominal viscera and storage of fat."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0314"
       },
       {
         "q": "Which of the following are true of the mesenteries?  (1) They are sheets of serous membrane.  (2) They suspend portions of the digestive tract within the peritoneal cavity.  (3) They are double sheets of peritoneal membrane.  (4) They provide an access route to digestive structures for nerves, lymphoids and blood vessels.  (5) They provide proprioceptive information to the spinal cord regarding the digestive organs.",
@@ -3423,7 +3737,8 @@ const STUVIA_BANK = [
           "2, 4, and 5 are true."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0315"
       },
       {
         "q": "A blockage of the ducts from the parotid salivary glands would",
@@ -3435,7 +3750,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0316"
       },
       {
         "q": "The surfaces of the first incisors touch one another.",
@@ -3447,7 +3763,8 @@ const STUVIA_BANK = [
           "lingual"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0317"
       },
       {
         "q": "The opening in the diaphragm that the esophagus passes through is (the)",
@@ -3459,7 +3776,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0318"
       },
       {
         "q": "Which of the following is the outer part of the esophageal wall?",
@@ -3471,7 +3789,8 @@ const STUVIA_BANK = [
           "esophageal glands"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0319"
       },
       {
         "q": "The lining of the stomach",
@@ -3483,7 +3802,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0320"
       },
       {
         "q": "The stomach lining contains numerous depressions called",
@@ -3495,7 +3815,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0321"
       },
       {
         "q": "Which of the following is a function of the stomach?",
@@ -3507,7 +3828,8 @@ const STUVIA_BANK = [
           "partial digestion of carbohydrates by a salivary enzyme"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0322"
       },
       {
         "q": "Protection for the interior surface of the stomach against the acids and enzymes in the gastric lumen is afforded by",
@@ -3519,7 +3841,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0323"
       },
       {
         "q": "Parietal cells, chief cells, and G cells compose the",
@@ -3531,7 +3854,8 @@ const STUVIA_BANK = [
           "gastric glands."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0324"
       },
       {
         "q": "Parietal cells secrete",
@@ -3543,7 +3867,8 @@ const STUVIA_BANK = [
           "mucus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0325"
       },
       {
         "q": "The medial surface of the stomach is (the)",
@@ -3555,7 +3880,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0326"
       },
       {
         "q": "The longest portion of the small intestine is the",
@@ -3567,7 +3893,8 @@ const STUVIA_BANK = [
           "appendix."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0327"
       },
       {
         "q": "Which of the following is a small intestinal feature that increases the surface area for digestion and absorption?",
@@ -3579,7 +3906,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0328"
       },
       {
         "q": "The second intestinal segment is (the)",
@@ -3591,7 +3919,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0329"
       },
       {
         "q": "Which of the following supplies blood to the small intestine?",
@@ -3603,7 +3932,8 @@ const STUVIA_BANK = [
           "superior mesenteric artery"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0330"
       },
       {
         "q": "Which of the following blood vessels supplies the most blood to the large intestine?",
@@ -3615,7 +3945,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0331"
       },
       {
         "q": "When a person has diarrhea, how is intestinal function different than normal?",
@@ -3627,7 +3958,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0332"
       },
       {
         "q": "Problems caused by a blockage of the cystic duct would include",
@@ -3639,7 +3971,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0333"
       },
       {
         "q": "The hormone cholecystokinin",
@@ -3651,7 +3984,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0334"
       },
       {
         "q": "In response to the hormone secretin, the pancreas secretes",
@@ -3663,7 +3997,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0335"
       },
       {
         "q": "Functions of the gallbladder include",
@@ -3675,7 +4010,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0336"
       },
       {
         "q": "Which of the following produces bile?",
@@ -3687,7 +4023,8 @@ const STUVIA_BANK = [
           "gallbladder"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0337"
       },
       {
         "q": "Structures that unite to form the common bile duct include:  (1) hepatopancreatic sphincter  (2) porta hepatis  (3) cystic duct  (4) common hepatic duct  (5) duodenal papilla",
@@ -3699,7 +4036,8 @@ const STUVIA_BANK = [
           "2, 4"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0338"
       },
       {
         "q": "The tail of the pancreas is most closely associated with the",
@@ -3711,7 +4049,8 @@ const STUVIA_BANK = [
           "body of the gallbladder."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0339"
       },
       {
         "q": "The basic functional unit of the liver is (the)",
@@ -3723,7 +4062,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0340"
       },
       {
         "q": "A hepatic (portal) triad consists of branches of the",
@@ -3735,7 +4075,8 @@ const STUVIA_BANK = [
           "hepatic portal vein, central vein, hepatic artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0341"
       },
       {
         "q": "Aging may be detrimental to the function of the digestive tract because",
@@ -3747,7 +4088,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0342"
       },
       {
         "q": "Inflammation of the serous membranes of the abdominopelvic cavity is called peritonitis.",
@@ -3756,7 +4098,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0343"
       },
       {
         "q": "Inflammation caused by erosion due to gastric reflux is called a peptic ulcer.",
@@ -3765,7 +4108,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0344"
       },
       {
         "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the",
@@ -3774,7 +4118,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0345"
       },
       {
         "q": "Chief cells produce pepsinogen.",
@@ -3783,7 +4128,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0346"
       },
       {
         "q": "Parietal cells produce intrinsic factor.",
@@ -3792,7 +4138,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0347"
       },
       {
         "q": "Enteroendocrine cells produce hormones.",
@@ -3801,7 +4148,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0348"
       },
       {
         "q": "Goblet cells produce gastrin.",
@@ -3810,7 +4158,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0349"
       },
       {
         "q": "Inflammation of the gastric mucosa is called an ulcer.",
@@ -3819,7 +4168,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0350"
       },
       {
         "q": "Irritation of the colon, leading to abnormal bowel function is called colitis.",
@@ -3828,7 +4178,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0351"
       },
       {
         "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection,",
@@ -3837,7 +4188,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0352"
       },
       {
         "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even",
@@ -3846,7 +4198,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0353"
       },
       {
         "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was",
@@ -3855,7 +4208,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0354"
       },
       {
         "q": "Urine is carried to the exterior of the body by the",
@@ -3867,7 +4221,8 @@ const STUVIA_BANK = [
           "urachus."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0355"
       },
       {
         "q": "Urine is formed in the",
@@ -3879,7 +4234,8 @@ const STUVIA_BANK = [
           "ureter and urethra."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0356"
       },
       {
         "q": "Which of the following sits atop the kidneys?",
@@ -3891,7 +4247,8 @@ const STUVIA_BANK = [
           "suprarenal glands"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0357"
       },
       {
         "q": "The position of the kidneys in the abdominal cavity is maintained, in part, by (the)",
@@ -3903,7 +4260,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0358"
       },
       {
         "q": "Kidneys are often difficult to see without dissection because they are surrounded by a layer of fat. What is the significance of this fat?",
@@ -3915,7 +4273,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0359"
       },
       {
         "q": "The kidneys are located",
@@ -3927,7 +4286,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0360"
       },
       {
         "q": "Most often, the kidney is confused with the _____ when viewed superficially.",
@@ -3939,7 +4299,8 @@ const STUVIA_BANK = [
           "liver"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0361"
       },
       {
         "q": "The large passageways into which the minor calyces empty are the",
@@ -3951,7 +4312,8 @@ const STUVIA_BANK = [
           "renal calyx."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0362"
       },
       {
         "q": "The blood vessels at the boundary of the cortex and medulla of the kidney are the",
@@ -3963,7 +4325,8 @@ const STUVIA_BANK = [
           "arcuate artery and vein."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0363"
       },
       {
         "q": "Blood exits the nephron via",
@@ -3975,7 +4338,8 @@ const STUVIA_BANK = [
           "lobar artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0364"
       },
       {
         "q": "Each kidney ultimately receives blood from",
@@ -3987,7 +4351,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0365"
       },
       {
         "q": "In juxtamedullary nephrons, the efferent arterioles and peritubular capillaries are connected to a long, slender series of capillaries that accompany the nephron loops into the medulla. These are (the)",
@@ -3999,7 +4364,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0366"
       },
       {
         "q": "The kidneys are innervated by the",
@@ -4011,7 +4377,8 @@ const STUVIA_BANK = [
           "sacral nerves."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0367"
       },
       {
         "q": "The known functions of the sympathetic innervation of the kidneys include",
@@ -4023,7 +4390,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0368"
       },
       {
         "q": "A glomerulus",
@@ -4035,7 +4403,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0369"
       },
       {
         "q": "The filtrate that escapes from the glomerular capillaries includes which of the following?",
@@ -4047,7 +4416,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0370"
       },
       {
         "q": "A nephron has two parts:",
@@ -4059,7 +4429,8 @@ const STUVIA_BANK = [
           "renal tubule and collecting duct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0371"
       },
       {
         "q": "The last part of the renal tubule is the",
@@ -4071,7 +4442,8 @@ const STUVIA_BANK = [
           "distal convoluted tubule."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0372"
       },
       {
         "q": "The distal convoluted tubule of the nephron is responsible for",
@@ -4083,7 +4455,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0373"
       },
       {
         "q": "Which of the following drains into the minor calyx?",
@@ -4095,7 +4468,8 @@ const STUVIA_BANK = [
           "distal convoluted tubule"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0374"
       },
       {
         "q": "The main homeostatic function that occurs as a result of the work of the nephron loop is",
@@ -4107,7 +4481,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0375"
       },
       {
         "q": "About 85 percent of the nephrons are classified as",
@@ -4119,7 +4494,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0376"
       },
       {
         "q": "Which of the following is a function of the glomerular capsule?",
@@ -4131,7 +4507,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0377"
       },
       {
         "q": "The parietal and visceral epithelia of the glomerular capsule are separated by (the)",
@@ -4143,7 +4520,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0378"
       },
       {
         "q": "The glomerulus is made up of many",
@@ -4155,7 +4533,8 @@ const STUVIA_BANK = [
           "arteries."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0379"
       },
       {
         "q": "Cells found between the capillary endothelium and the glomerular epithelium that are important in regulating glomerular blood flow are the",
@@ -4167,7 +4546,8 @@ const STUVIA_BANK = [
           "pyramidal cells."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0380"
       },
       {
         "q": "The gaps between the pedicles of the podocytes are called (the)",
@@ -4179,7 +4559,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0381"
       },
       {
         "q": "The glomerular capsule and the glomerulus make up the",
@@ -4191,7 +4572,8 @@ const STUVIA_BANK = [
           "renal papilla."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0382"
       },
       {
         "q": "The expanded end of the nephron is the",
@@ -4203,7 +4585,8 @@ const STUVIA_BANK = [
           "nephron loop."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0383"
       },
       {
         "q": "The structure directly opposite the vascular pole of the glomerulus is the",
@@ -4215,7 +4598,8 @@ const STUVIA_BANK = [
           "nephron loop."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0384"
       },
       {
         "q": "Which area of the nephron completely lacks microvilli and is under hormonal control for the reabsorption of sodium?",
@@ -4227,7 +4611,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0385"
       },
       {
         "q": "The nephron loop is composed of (the)",
@@ -4239,7 +4624,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0386"
       },
       {
         "q": "The thick ascending limb functions to",
@@ -4251,7 +4637,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0387"
       },
       {
         "q": "The primary function of the distal convoluted tubule is",
@@ -4263,7 +4650,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0388"
       },
       {
         "q": "Compared to the PCT, the DCT has",
@@ -4275,7 +4663,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0389"
       },
       {
         "q": "The fluid outside the renal tubule is called",
@@ -4287,7 +4676,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0390"
       },
       {
         "q": "The secondary function of the DCT to reabsorb sodium is controlled by the hormone(s)",
@@ -4299,7 +4689,8 @@ const STUVIA_BANK = [
           "aldosterone and ADH."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0391"
       },
       {
         "q": "ADH acts mostly on the",
@@ -4311,7 +4702,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0392"
       },
       {
         "q": "Tall cells of the DCT near the vascular pole are called (the)",
@@ -4323,7 +4715,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0393"
       },
       {
         "q": "In the nephron loop",
@@ -4335,7 +4728,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0394"
       },
       {
         "q": "After draining through the collecting system, tubular fluid enters (the)",
@@ -4347,7 +4741,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0395"
       },
       {
         "q": "Damage, disease, or irritation of the renal cortex would impair the function of which kidney structures?",
@@ -4359,7 +4754,8 @@ const STUVIA_BANK = [
           "the nephron units"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0396"
       },
       {
         "q": "An obstruction in the glomerulus would increase the blood pressure in the",
@@ -4371,7 +4767,8 @@ const STUVIA_BANK = [
           "lobular vein."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0397"
       },
       {
         "q": "Damage to the renal medulla would interfere first with the functioning of the",
@@ -4383,7 +4780,8 @@ const STUVIA_BANK = [
           "glomerulus."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0398"
       },
       {
         "q": "The ureters",
@@ -4395,7 +4793,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0399"
       },
       {
         "q": "The best diagnostic test to determine whether or not a person has a kidney stone is",
@@ -4407,7 +4806,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0400"
       },
       {
         "q": "Urine leaves the renal pelvis and enters the ureter because of",
@@ -4419,7 +4819,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0401"
       },
       {
         "q": "Urine reaches the urinary bladder by",
@@ -4431,7 +4832,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0402"
       },
       {
         "q": "Age-related changes in the urinary system include",
@@ -4443,7 +4845,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0403"
       },
       {
         "q": "The mechanism whereby benign enlargement of the prostate affects urinary function in older men includes which of the following?",
@@ -4455,7 +4858,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0404"
       },
       {
         "q": "The collecting ducts are formed by merging distal convoluted tubules.",
@@ -4464,7 +4868,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0405"
       },
       {
         "q": "The papillary duct empties into the minor calyx.",
@@ -4473,7 +4878,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0406"
       },
       {
         "q": "Juxtaglomerular cells are a special cell in the distal convoluted tubule.",
@@ -4482,7 +4888,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0407"
       },
       {
         "q": "Most reabsorption takes place in the nephron loop.",
@@ -4491,7 +4898,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0408"
       },
       {
         "q": "Ascending and descending limbs are parts of the proximal convoluted tubule.",
@@ -4500,7 +4908,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0409"
       },
       {
         "q": "A technique in which an artificial membrane regulates the composition of the blood is called",
@@ -4509,7 +4918,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0410"
       },
       {
         "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been",
@@ -4518,7 +4928,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0411"
       },
       {
         "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the",
@@ -4527,7 +4938,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0412"
       },
       {
         "q": "A condition in which kidney stones are present in the kidneys is called nephrolithiasis.",
@@ -4536,7 +4948,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0413"
       },
       {
         "q": "Muscle fibers do not cross the anterior middle region of the body wall because of the presence of the _____.",
@@ -4545,7 +4958,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0414"
       },
       {
         "q": "Flexion of the spinal column is accomplished by the _____ group of muscles in the abdominal wall.",
@@ -4554,7 +4968,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0415"
       },
       {
         "q": "The anterior, middle, and posterior _____ muscles, the oblique muscles of the neck, elevate the ribs and cause flexion of the neck.",
@@ -4563,7 +4978,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0416"
       },
       {
         "q": "The _____ muscle forms the widest part of the back and appears on the lateral surface of the lower thoracic and upper abdominal regions.",
@@ -4572,7 +4988,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0417"
       },
       {
         "q": "The _____ form the prominent bony features located bilaterally in the lower abdomen.",
@@ -4581,7 +4998,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0418"
       },
       {
         "q": "Preganglionic neurons send their axons to synapse on _____.",
@@ -4590,7 +5008,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0419"
       },
       {
         "q": "The cell bodies of ganglionic neurons are located in _____.",
@@ -4599,7 +5018,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0420"
       },
       {
         "q": "Both divisions of the autonomic nervous system affect target organs through the controlled release of chemicals known as _____.",
@@ -4608,7 +5028,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0421"
       },
       {
         "q": "In the ANS, it is the axons of _____ neurons that reach the target organs.",
@@ -4617,7 +5038,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0422"
       },
       {
         "q": "All postganglionic parasympathetic fibers release _____ at their effector.",
@@ -4626,7 +5048,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0423"
       },
       {
         "q": "Visceral motor neurons with cell bodies in the CNS are called _____ neurons.",
@@ -4635,7 +5058,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0424"
       },
       {
         "q": "Preganglionic parasympathetic fibers synapse on neurons of _____ ganglia.",
@@ -4644,7 +5068,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0425"
       },
       {
         "q": "The neurotransmitter _____ is released from most postganglionic sympathetic neurons.",
@@ -4653,7 +5078,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0426"
       },
       {
         "q": "Upon stimulation, sympathetic preganglionic fibers release acetylcholine (ACh) at synapses with _____ neurons.",
@@ -4662,7 +5088,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0427"
       },
       {
         "q": "Cholinergic synapses always have _____ effects upon the ganglionic neurons.",
@@ -4671,7 +5098,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0428"
       },
       {
         "q": "The thoracolumbar division of the ANS is also called the _____ division.",
@@ -4680,7 +5108,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0429"
       },
       {
         "q": "The ganglia of the sympathetic chain contain preganglionic fibers that enter the chain via the _____.",
@@ -4689,7 +5118,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0430"
       },
       {
         "q": "Preganglionic sympathetic fibers that innervate the abdominopelvic viscera synapse within _____ ganglia.",
@@ -4698,7 +5128,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0431"
       },
       {
         "q": "The postganglionic fibers that control sweat glands are from the _____ division.",
@@ -4707,7 +5138,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0432"
       },
       {
         "q": "The superior and _____ mesenteric ganglia surround the base of the similarly names arteries.",
@@ -4716,7 +5148,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0433"
       },
       {
         "q": "The two types of sympathetic receptors are _____ and beta.",
@@ -4725,7 +5158,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0434"
       },
       {
         "q": "Both alpha and beta receptors are stimulated by _____.",
@@ -4734,7 +5168,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0435"
       },
       {
         "q": "Blood flow to skeletal muscles is controlled by the distribution of _____ fibers of the sympathetic division of the ANS.",
@@ -4743,7 +5178,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0436"
       },
       {
         "q": "All of the synapses and neuroeffector synapses of the parasympathetic division of the ANS use the neurotransmitter _____.",
@@ -4752,7 +5188,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0437"
       },
       {
         "q": "Receptors found at the cholinergic neuroeffector synapses in the parasympathetic division of the ANS are called _____.",
@@ -4761,7 +5198,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0438"
       },
       {
         "q": "In the parasympathetic division, the postsynaptic membrane of a ganglionic neuron has _____ receptors that are excited by acetylcholine.",
@@ -4770,7 +5208,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0439"
       },
       {
         "q": "Smooth muscle contractions that propel materials and mix them with secretions in the digestive tract are controlled by output of the _____ nerve.",
@@ -4779,7 +5218,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0440"
       },
       {
         "q": "Descending branches of the vagus nerve and splanchnic nerves leaving the sympathetic chain are contained within the _____ plexus.",
@@ -4788,7 +5228,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0441"
       },
       {
         "q": "The _____ plexus contains the parasympathetic outflow of the pelvic nerves, sympathetic postganglionic fibers from the inferior mesenteric ganglion, and splanchnic nerves from the sacral sympathetic chain.",
@@ -4797,7 +5238,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0442"
       },
       {
         "q": "The changes in the diameter of peripheral blood vessels is the _____ reflex.",
@@ -4806,7 +5248,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0443"
       },
       {
         "q": "Irritation of the digestive lining activates the _____ reflex, which reverses the pattern of movement of the smooth muscle in the walls of the stomach.",
@@ -4815,7 +5258,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0444"
       },
       {
         "q": "The primary hormones secreted by the zona fasciculata of the suprarenal cortex are collectively known as the _____.",
@@ -4824,7 +5268,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0445"
       },
       {
         "q": "The zona reticularis of the suprarenal cortex secretes _____.",
@@ -4833,7 +5278,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0446"
       },
       {
         "q": "The _____, the outermost suprarenal cortical region, accounts for about 15 percent of the cortical volume.",
@@ -4842,7 +5288,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0447"
       },
       {
         "q": "Converted to its active form in the lung capillaries, the hormone _____ stimulates the suprarenal production of aldosterone.",
@@ -4851,7 +5298,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0448"
       },
       {
         "q": "Large quantities of _____ are contained in the red pulp of the spleen.",
@@ -4860,7 +5308,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0449"
       },
       {
         "q": "Arteries that radiate outward toward the capsule of the spleen, which are branches of the splenic arteries, are the _____.",
@@ -4869,7 +5318,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0450"
       },
       {
         "q": "The elimination of fecal material from the body is called _____.",
@@ -4878,7 +5328,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0451"
       },
       {
         "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function",
@@ -4887,7 +5338,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0452"
       },
       {
         "q": "The _____ are folds in the digestive lining.",
@@ -4896,7 +5348,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0453"
       },
       {
         "q": "The ability of a smooth muscle fiber to tolerate extreme stretching is called _____.",
@@ -4905,7 +5358,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0454"
       },
       {
         "q": "The muscle tissue of the digestive system is called _____ muscle.",
@@ -4914,7 +5368,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0455"
       },
       {
         "q": "The space located within the teeth is the _____.",
@@ -4923,7 +5378,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0456"
       },
       {
         "q": "The _____ phase of swallowing is the last phase.",
@@ -4932,7 +5388,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0457"
       },
       {
         "q": "The _____ is the most superior region of the stomach.",
@@ -4941,7 +5398,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0458"
       },
       {
         "q": "_____ cells in the gastric glands produce the hormone gastrin.",
@@ -4950,7 +5408,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0459"
       },
       {
         "q": "At the base of intestinal villi are the entrances to the _____.",
@@ -4959,7 +5418,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0460"
       },
       {
         "q": "The submucosa of the duodenum contains _____ that produce copious amounts of",
@@ -4968,7 +5428,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0461"
       },
       {
         "q": "The secretions of the small intestine are collectively known as _____.",
@@ -4977,7 +5438,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0462"
       },
       {
         "q": "The ilium ends at a sphincter, the _____.",
@@ -4986,7 +5448,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0463"
       },
       {
         "q": "The _____ is the last and longest segment of the small intestine.",
@@ -4995,7 +5458,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0464"
       },
       {
         "q": "Large aggregate lymphoid nodules, called _____, occur in the submucosa of the ileum.",
@@ -5004,7 +5468,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0465"
       },
       {
         "q": "The _____ attaches the transverse colon to the greater curvature of the stomach.",
@@ -5013,7 +5478,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0466"
       },
       {
         "q": "The _____ is the last part of the large intestine.",
@@ -5022,7 +5488,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0467"
       },
       {
         "q": "A band of mesentery, the _____, connects the appendix to the cecum.",
@@ -5031,7 +5498,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0468"
       },
       {
         "q": "The wall of the colon forms a series of pouches called the _____.",
@@ -5040,7 +5508,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0469"
       },
       {
         "q": "The turn between the ascending colon and the transverse colon is called the _____.",
@@ -5049,7 +5518,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0470"
       },
       {
         "q": "The S-shaped portion of the colon is called the _____.",
@@ -5058,7 +5528,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0471"
       },
       {
         "q": "Longitudinal folds in the distal rectum are called _____.",
@@ -5067,7 +5538,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0472"
       },
       {
         "q": "The muscle under voluntary control that guards the exit of the rectum is the _____.",
@@ -5076,7 +5548,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0473"
       },
       {
         "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than",
@@ -5085,7 +5558,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0474"
       },
       {
         "q": "Sacs of fat contained within the serosa of the colon are called _____.",
@@ -5094,7 +5568,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0475"
       },
       {
         "q": "The _____ leads from the gallbladder to the common bile duct.",
@@ -5103,7 +5578,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0476"
       },
       {
         "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary.",
@@ -5112,7 +5588,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0477"
       },
       {
         "q": "The liver is suspended from the inferior surface of the diaphragm by the _____.",
@@ -5121,7 +5598,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0478"
       },
       {
         "q": "Sinusoids of the liver drain into the _____.",
@@ -5130,7 +5608,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0479"
       },
       {
         "q": "Urine leaves the kidney and travels to the urinary bladder through the _____.",
@@ -5139,7 +5618,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0480"
       },
       {
         "q": "Adipose tissue that surrounds the renal capsule is called the _____.",
@@ -5148,7 +5628,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0481"
       },
       {
         "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the",
@@ -5157,7 +5638,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0482"
       },
       {
         "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found",
@@ -5166,7 +5648,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0483"
       },
       {
         "q": "The point of entry of the arteries, veins, nerves, and exit of the renal pelvis is the _____.",
@@ -5175,7 +5658,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0484"
       },
       {
         "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the",
@@ -5184,7 +5668,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0485"
       },
       {
         "q": "The _____ is the inner layer of the kidney that communicates with the calcyes.",
@@ -5193,7 +5678,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0486"
       },
       {
         "q": "The _____ is internal to the renal cortex.",
@@ -5202,7 +5688,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0487"
       },
       {
         "q": "Each kidney usually empties blood into one _____.",
@@ -5211,7 +5698,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0488"
       },
       {
         "q": "Blood enters at the glomerular capillaries from the _____.",
@@ -5220,7 +5708,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0489"
       },
       {
         "q": "The long, slender capillaries that parallel the loops of Henle are the _____.",
@@ -5229,7 +5718,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0490"
       },
       {
         "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the",
@@ -5238,7 +5728,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0491"
       },
       {
         "q": "The juxtaglomerular complex secretes the hormones _____ and erythropoietin.",
@@ -5247,7 +5738,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0492"
       },
       {
         "q": "Each nephron has a long _____ that has both straight and convoluted segments.",
@@ -5256,7 +5748,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0493"
       },
       {
         "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent",
@@ -5265,7 +5758,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0494"
       },
       {
         "q": "The nephron loops of the _____ extend deeply into the medulla.",
@@ -5274,7 +5768,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0495"
       },
       {
         "q": "The primary function of the proximal convoluted tubule is _____.",
@@ -5283,7 +5778,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0496"
       },
       {
         "q": "The area where PCT exits the renal corpuscle is the _____.",
@@ -5292,7 +5788,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0497"
       }
     ]
   },
@@ -5309,7 +5806,8 @@ const STUVIA_BANK = [
           "pterygopalatine ganglia"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0498"
       },
       {
         "q": "In the leg, the femoral artery becomes the",
@@ -5321,7 +5819,8 @@ const STUVIA_BANK = [
           "iliac artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0499"
       },
       {
         "q": "The common iliac arteries divide to form a branch that enters the pelvic cavity and a branch called the that proceeds to the lower limb.",
@@ -5333,7 +5832,8 @@ const STUVIA_BANK = [
           "sacral arteries."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0500"
       },
       {
         "q": "The first paired branches of the abdominal aorta are the",
@@ -5345,7 +5845,8 @@ const STUVIA_BANK = [
           "common iliac arteries."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0501"
       },
       {
         "q": "Which of the following drains into the external iliac veins?",
@@ -5357,7 +5858,8 @@ const STUVIA_BANK = [
           "lateral sacral veins."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0502"
       },
       {
         "q": "In fetal circulation, deoxygenated blood goes away from the fetus in (the)",
@@ -5369,7 +5871,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0503"
       },
       {
         "q": "Urine is carried to the exterior of the body by the",
@@ -5381,7 +5884,8 @@ const STUVIA_BANK = [
           "urachus."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0504"
       },
       {
         "q": "Urine is formed in the",
@@ -5393,7 +5897,8 @@ const STUVIA_BANK = [
           "ureter and urethra."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0505"
       },
       {
         "q": "Which of the following sits atop the kidneys?",
@@ -5405,7 +5910,8 @@ const STUVIA_BANK = [
           "suprarenal glands"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0506"
       },
       {
         "q": "Kidneys are often difficult to see without dissection because they are surrounded by a layer of fat. What is the significance of this fat?",
@@ -5417,7 +5923,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0507"
       },
       {
         "q": "Most often, the kidney is confused with the _____ when viewed superficially.",
@@ -5429,7 +5936,8 @@ const STUVIA_BANK = [
           "liver"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0508"
       },
       {
         "q": "The ureters",
@@ -5441,7 +5949,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0509"
       },
       {
         "q": "The parts of the urethra in the male, in correct order from the bladder to the exterior, are:  (1) urachus  (2) spongy urethra  (3) dysuria  (4) membranous urethra  (5) prostatic urethra",
@@ -5453,7 +5962,8 @@ const STUVIA_BANK = [
           "1, 2, 3, 4, 5"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0510"
       },
       {
         "q": "Urine reaches the urinary bladder by",
@@ -5465,7 +5975,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0511"
       },
       {
         "q": "The muscle responsible for stopping the micturition reflex and allowing a person to stop voiding is the",
@@ -5477,7 +5988,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0512"
       },
       {
         "q": "Voluntary urination involves",
@@ -5489,7 +6001,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0513"
       },
       {
         "q": "The mechanism whereby benign enlargement of the prostate affects urinary function in older men includes which of the following?",
@@ -5501,7 +6014,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0514"
       },
       {
         "q": "Inflammation of the lining of the urinary bladder is called cystitis.",
@@ -5510,7 +6024,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0515"
       },
       {
         "q": "An inflammation of the urethral wall is called cystitis.",
@@ -5519,7 +6034,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0516"
       },
       {
         "q": "The human reproductive system",
@@ -5531,7 +6047,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0517"
       },
       {
         "q": "Reproductive cells are called",
@@ -5543,7 +6060,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0518"
       },
       {
         "q": "The process of fertilization forms (the)",
@@ -5555,7 +6073,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0519"
       },
       {
         "q": "Which of the following is part of the male reproductive system only?",
@@ -5567,7 +6086,8 @@ const STUVIA_BANK = [
           "vagina"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0520"
       },
       {
         "q": "Contraction of the cremaster muscle",
@@ -5579,7 +6099,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0521"
       },
       {
         "q": "How are sperm acted upon by the reproductive system of the female?",
@@ -5591,7 +6112,8 @@ const STUVIA_BANK = [
           "They undergo capacitation."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0522"
       },
       {
         "q": "The structure that assists in descent of the testes is (the)",
@@ -5603,7 +6125,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0523"
       },
       {
         "q": "Major functions of the testis is",
@@ -5615,7 +6138,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0524"
       },
       {
         "q": "The contents of the spermatic cord includes the",
@@ -5627,7 +6151,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0525"
       },
       {
         "q": "Contraction of the cremaster muscle occurs because of",
@@ -5639,7 +6164,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0526"
       },
       {
         "q": "The outer covering of the testis and inner lining of the scrotum is the",
@@ -5651,7 +6177,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0527"
       },
       {
         "q": "The dermis of the scrotum contains a thin muscle, the",
@@ -5663,7 +6190,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0528"
       },
       {
         "q": "Descent of the testes",
@@ -5675,7 +6203,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0529"
       },
       {
         "q": "Which of the following is the most distal structure of the penis?",
@@ -5687,7 +6216,8 @@ const STUVIA_BANK = [
           "bulb"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0530"
       },
       {
         "q": "Which of the following muscles inserts along the sides of the penis?",
@@ -5699,7 +6229,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0531"
       },
       {
         "q": "The specific structures that make up the root of the penis are (the)",
@@ -5711,7 +6242,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0532"
       },
       {
         "q": "The female gonads are the",
@@ -5723,7 +6255,8 @@ const STUVIA_BANK = [
           "straight tubules."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0533"
       },
       {
         "q": "What additional function(s), beyond those that occur in the male reproductive system, occur in the female reproductive system?",
@@ -5735,7 +6268,8 @@ const STUVIA_BANK = [
           "nourishment and maturation of gametes"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0534"
       },
       {
         "q": "The thickened, cord-like connection of the uterus to the anterior pelvic wall is the",
@@ -5747,7 +6281,8 @@ const STUVIA_BANK = [
           "cardinal ligament."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0535"
       },
       {
         "q": "The lateral surface of the ovary is connected to the pelvic wall by (the)",
@@ -5759,7 +6294,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0536"
       },
       {
         "q": "The ovaries are supported by (the)",
@@ -5771,7 +6307,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0537"
       },
       {
         "q": "The vagina is lined by (a)",
@@ -5783,7 +6320,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0538"
       },
       {
         "q": "Straight tubules originate at the seminiferous tubules and form a maze of passageways called the",
@@ -5795,7 +6333,8 @@ const STUVIA_BANK = [
           "epididymis."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0539"
       },
       {
         "q": "The septa of the testis are formed from a part of (the)",
@@ -5807,7 +6346,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0540"
       },
       {
         "q": "The seminiferous tubules",
@@ -5819,7 +6359,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0541"
       },
       {
         "q": "In correct order, from external to internal, the layers of the testis include:  (1) dartos muscle  (2) cremaster muscle  (3) tunica vaginalis  (4) scrotal cavity  (5) tunica albuginea  (6) septa",
@@ -5831,7 +6372,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0542"
       },
       {
         "q": "The bundle that contains the pampiniform plexus, testicular artery, ductus deferens, iliofemoral, and genitofemoral nerves is called the",
@@ -5843,7 +6385,8 @@ const STUVIA_BANK = [
           "cremaster bundle."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0543"
       },
       {
         "q": "Compartments within the testes are (the)",
@@ -5855,7 +6398,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0544"
       },
       {
         "q": "The cells of the testes that produce testosterone are the",
@@ -5867,7 +6411,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0545"
       },
       {
         "q": "What is the importance of the pampiniform plexus in the scrotum?",
@@ -5879,7 +6424,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0546"
       },
       {
         "q": "The muscular layer of the uterus is (the)",
@@ -5891,7 +6437,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0547"
       },
       {
         "q": "The lining of the uterus is (the)",
@@ -5903,7 +6450,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0548"
       },
       {
         "q": "Stem cells in the testes are the",
@@ -5915,7 +6463,8 @@ const STUVIA_BANK = [
           "haploids."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0549"
       },
       {
         "q": "The process whereby spermatids go through morphological changes and become spermatozoa is called",
@@ -5927,7 +6476,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0550"
       },
       {
         "q": "Gametes are called haploid because",
@@ -5939,7 +6489,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0551"
       },
       {
         "q": "Spermatogenesis ends with the production of spermatids.",
@@ -5951,7 +6502,8 @@ const STUVIA_BANK = [
           "16"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0552"
       },
       {
         "q": "The process of a sperm cell being released into the lumen of the seminiferous tubule is called",
@@ -5963,7 +6515,8 @@ const STUVIA_BANK = [
           "fertilization."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0553"
       },
       {
         "q": "Which of the following is a function of spermatogonia?",
@@ -5975,7 +6528,8 @@ const STUVIA_BANK = [
           "secretion of ABP"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0554"
       },
       {
         "q": "The area of the sperm with densely packed mitochondria is the",
@@ -5987,7 +6541,8 @@ const STUVIA_BANK = [
           "cap."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0555"
       },
       {
         "q": "Which structure in a spermatozoan contains the only structure of its kind found in the human body?",
@@ -5999,7 +6554,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0556"
       },
       {
         "q": "The of the epididymis receives spermatozoa via the efferent ducts of the mediastinum of the testis.",
@@ -6011,7 +6567,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0557"
       },
       {
         "q": "Which of the following is a function of the ductus deferens?",
@@ -6023,7 +6580,8 @@ const STUVIA_BANK = [
           "transports sperm to the prostatic urethra."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0558"
       },
       {
         "q": "The enlarged distal end of the ductus deferens is called (the)",
@@ -6035,7 +6593,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0559"
       },
       {
         "q": "When the ductus deferens fuses with the base of the seminal gland, it forms (the)",
@@ -6047,7 +6606,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0560"
       },
       {
         "q": "Which of the following provides an antibiotic called seminalplasmin?",
@@ -6059,7 +6619,8 @@ const STUVIA_BANK = [
           "epididymis"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0561"
       },
       {
         "q": "Which of the following is a function of the seminal fluid?",
@@ -6071,7 +6632,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0562"
       },
       {
         "q": "If the seminal glands of the male reproductive tract ceased to function, how would the male reproductive tract be affected?",
@@ -6083,7 +6645,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0563"
       },
       {
         "q": "Erection of the penis is caused by",
@@ -6095,7 +6658,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0564"
       },
       {
         "q": "The process of forcefully expelling semen from the urethra is called",
@@ -6107,7 +6671,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0565"
       },
       {
         "q": "The average length of the uterine cycle is",
@@ -6119,7 +6684,8 @@ const STUVIA_BANK = [
           "40 days."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0566"
       },
       {
         "q": "The uterine cycle begins with",
@@ -6131,7 +6697,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0567"
       },
       {
         "q": "During the process of oogenesis there is a possibility of up to two small \"extra\" cells produced. These are called _____.",
@@ -6143,7 +6710,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0568"
       },
       {
         "q": "In the correct order, the steps involved in oogenesis are:  (1) formation of a tertiary follicle  (2) ovulation  (3) formation and degeneration of the corpus luteum  (4) formation of primary follicles  (5) formation of secondary follicles",
@@ -6155,7 +6723,8 @@ const STUVIA_BANK = [
           "3, 5, 1, 4, 2"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0569"
       },
       {
         "q": "During the ovarian cycle,",
@@ -6167,7 +6736,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0570"
       },
       {
         "q": "In the follicular phase of the uterine cycle, the ovary is",
@@ -6179,7 +6749,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0571"
       },
       {
         "q": "The milk-producing cells of the breast are activated by which of the following?",
@@ -6191,7 +6762,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0572"
       },
       {
         "q": "Milk production in the mammary glands",
@@ -6203,7 +6775,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0573"
       },
       {
         "q": "The central, raised area of the breast where the newborn suckles is called the",
@@ -6215,7 +6788,8 @@ const STUVIA_BANK = [
           "nipple."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0574"
       },
       {
         "q": "What would be the effect on a pregnancy if the placenta failed to begin functioning during the third month of gestation?",
@@ -6227,7 +6801,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0575"
       },
       {
         "q": "A function of the placenta is to",
@@ -6239,7 +6814,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0576"
       },
       {
         "q": "Premature menopause",
@@ -6251,7 +6827,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0577"
       },
       {
         "q": "The change in function of the male reproductive system that is comparable to menopause in women is",
@@ -6263,7 +6840,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0578"
       },
       {
         "q": "The penis is the primary male reproductive organ.",
@@ -6272,7 +6850,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0579"
       },
       {
         "q": "The ovarian ligament attaches the uterus to the anterior abdominal wall.",
@@ -6281,7 +6860,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0580"
       },
       {
         "q": "The outer area of the ovary where gametes are produced is the cortex.",
@@ -6290,7 +6870,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0581"
       },
       {
         "q": "The stem cells in the seminiferous tubules are called spermatogonia.",
@@ -6299,7 +6880,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0582"
       },
       {
         "q": "The secondary spermatocytes are haploid cells.",
@@ -6308,7 +6890,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0583"
       },
       {
         "q": "The semen contains large amounts of glucose.",
@@ -6317,7 +6900,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0584"
       },
       {
         "q": "The outer layer of the uterine wall is the peritoneum.",
@@ -6326,7 +6910,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0585"
       },
       {
         "q": "A mature ovum is ovulated once per month.",
@@ -6335,7 +6920,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0586"
       },
       {
         "q": "Follicle maturation is stimulated by FSH.",
@@ -6344,7 +6930,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0587"
       },
       {
         "q": "HCG is the \"pregnancy hormone.\"",
@@ -6353,7 +6940,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0588"
       },
       {
         "q": "Describe the structure of a spermatozoon.",
@@ -6362,7 +6950,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0589"
       },
       {
         "q": "Describe the mechanism that permits the penis to become erect.",
@@ -6371,7 +6960,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0590"
       },
       {
         "q": "Fertilization is the process whereby",
@@ -6383,7 +6973,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0591"
       },
       {
         "q": "The process of cells specializing during development is",
@@ -6395,7 +6986,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0592"
       },
       {
         "q": "Because of the great loss of spermatozoa during the process of traveling from the vagina to the ampulla of the uterine tube where fertilization occurs, a male must have at least _____ spermatozoa per milliliter, or he will be functionally sterile.",
@@ -6407,7 +6999,8 @@ const STUVIA_BANK = [
           "500,000,000"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0593"
       },
       {
         "q": "Sperm cannot perform fertilization until they",
@@ -6419,7 +7012,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0594"
       },
       {
         "q": "The flagellum is used to",
@@ -6431,7 +7025,8 @@ const STUVIA_BANK = [
           "penetrate the oocyte."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0595"
       },
       {
         "q": "Fusion of the pronuclei forming the zygote is known as",
@@ -6443,7 +7038,8 @@ const STUVIA_BANK = [
           "amphimixis."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0596"
       },
       {
         "q": "After oocyte activation and completion of meiosis, the female chromosomes reorganize as the",
@@ -6455,7 +7051,8 @@ const STUVIA_BANK = [
           "copulation."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0597"
       },
       {
         "q": "If a woman gives birth to identical triplets, how many ova were fertilized?",
@@ -6467,7 +7064,8 @@ const STUVIA_BANK = [
           "from one to three"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0598"
       },
       {
         "q": "Among the important and complex events that occur during development are which of the following?  (1) cleavage  (2) embryogenesis  (3) ovulation  (4) spermiogenesis  (5) placentation  (6) implantation",
@@ -6479,7 +7077,8 @@ const STUVIA_BANK = [
           "2, 3, 4"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0599"
       },
       {
         "q": "Once cleavage starts, the zygote starts dividing, forming cells that are",
@@ -6491,7 +7090,8 @@ const STUVIA_BANK = [
           "blastocysts."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0600"
       },
       {
         "q": "A hollow ball of cells is (the)",
@@ -6503,7 +7103,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0601"
       },
       {
         "q": "In the early blastocyst, the placenta will develop from (the)",
@@ -6515,7 +7116,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0602"
       },
       {
         "q": "The fluid-filled cavity separating the inner cell mass from the trophoblast is the",
@@ -6527,7 +7129,8 @@ const STUVIA_BANK = [
           "hypoblast."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0603"
       },
       {
         "q": "If the mother is exposed to teratogens during pregnancy, what can happen to the fetus?",
@@ -6539,7 +7142,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0604"
       },
       {
         "q": "Burrowing of the embryo into the endometrium is called",
@@ -6551,7 +7155,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0605"
       },
       {
         "q": "During implantation, the developing blastocyst receives nutrients from (the)",
@@ -6563,7 +7168,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0606"
       },
       {
         "q": "During implantation, why doesn't the hyaluronidase erode the trophoblast as well as the endometrium?",
@@ -6575,7 +7181,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0607"
       },
       {
         "q": "At about nine days gestation, the inner cell mass is organized in two layers; of these layers, (the) faces the amnion.",
@@ -6587,7 +7194,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0608"
       },
       {
         "q": "Formation of the germ layer is the process of",
@@ -6599,7 +7207,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0609"
       },
       {
         "q": "The extraembryonic membrane that persists as part of the urinary bladder is (the)",
@@ -6611,7 +7220,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0610"
       },
       {
         "q": "The chorion forms from the",
@@ -6623,7 +7233,8 @@ const STUVIA_BANK = [
           "endoderm."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0611"
       },
       {
         "q": "The first of the extraembryonic membranes to appear, which ultimately becomes involved in blood cell formation, is (the)",
@@ -6635,7 +7246,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0612"
       },
       {
         "q": "The mesoderm associated with the allantois spreads to cover the entire inside of the trophoblast. This combination of mesoderm and trophoblast is the",
@@ -6647,7 +7259,8 @@ const STUVIA_BANK = [
           "yolk sac."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0613"
       },
       {
         "q": "Within the first twelve weeks of development, the basis for organ formation is established. This process is called",
@@ -6659,7 +7272,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0614"
       },
       {
         "q": "The has mesoderm on the outside and endoderm on the inside.",
@@ -6671,7 +7285,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0615"
       },
       {
         "q": "Problems with the formation of the chorion would affect",
@@ -6683,7 +7298,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0616"
       },
       {
         "q": "The relatively thin portion of the endometrium that covers the embryo and separates it from the uterine cavity is called the",
@@ -6695,7 +7311,8 @@ const STUVIA_BANK = [
           "decidua capsularis."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0617"
       },
       {
         "q": "During the second trimester, the organ systems",
@@ -6707,7 +7324,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0618"
       },
       {
         "q": "The process of muscular activity that results in the forcible expulsion of the fetus from the uterus is called",
@@ -6719,7 +7337,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0619"
       },
       {
         "q": "If an ultrasound scan reveals that a fetus at six weeks of gestation is approximately the size of Lincoln on a penny,",
@@ -6731,7 +7350,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0620"
       },
       {
         "q": "The _____ muscle ejects urine or semen in the male.",
@@ -6740,7 +7360,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0621"
       },
       {
         "q": "Preganglionic neurons send their axons to synapse on _____.",
@@ -6749,7 +7370,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0622"
       },
       {
         "q": "The cell bodies of ganglionic neurons are located in _____.",
@@ -6758,7 +7380,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0623"
       },
       {
         "q": "Both divisions of the autonomic nervous system affect target organs through the controlled release of chemicals known as _____.",
@@ -6767,7 +7390,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0624"
       },
       {
         "q": "In the ANS, it is the axons of _____ neurons that reach the target organs.",
@@ -6776,7 +7400,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0625"
       },
       {
         "q": "All postganglionic parasympathetic fibers release _____ at their effector.",
@@ -6785,7 +7410,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0626"
       },
       {
         "q": "Visceral motor neurons with cell bodies in the CNS are called _____ neurons.",
@@ -6794,7 +7420,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0627"
       },
       {
         "q": "Preganglionic parasympathetic fibers synapse on neurons of _____ ganglia.",
@@ -6803,7 +7430,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0628"
       },
       {
         "q": "The neurotransmitter _____ is released from most postganglionic sympathetic neurons.",
@@ -6812,7 +7440,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0629"
       },
       {
         "q": "Upon stimulation, sympathetic preganglionic fibers release acetylcholine (ACh) at synapses with _____ neurons.",
@@ -6821,7 +7450,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0630"
       },
       {
         "q": "Cholinergic synapses always have _____ effects upon the ganglionic neurons.",
@@ -6830,7 +7460,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0631"
       },
       {
         "q": "The thoracolumbar division of the ANS is also called the _____ division.",
@@ -6839,7 +7470,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0632"
       },
       {
         "q": "The ganglia of the sympathetic chain contain preganglionic fibers that enter the chain via the _____.",
@@ -6848,7 +7480,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0633"
       },
       {
         "q": "Preganglionic sympathetic fibers that innervate the abdominopelvic viscera synapse within _____ ganglia.",
@@ -6857,7 +7490,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0634"
       },
       {
         "q": "The postganglionic fibers that control sweat glands are from the _____ division.",
@@ -6866,7 +7500,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0635"
       },
       {
         "q": "The superior and _____ mesenteric ganglia surround the base of the similarly names arteries.",
@@ -6875,7 +7510,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0636"
       },
       {
         "q": "The two types of sympathetic receptors are _____ and beta.",
@@ -6884,7 +7520,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0637"
       },
       {
         "q": "Both alpha and beta receptors are stimulated by _____.",
@@ -6893,7 +7530,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0638"
       },
       {
         "q": "Blood flow to skeletal muscles is controlled by the distribution of _____ fibers of the sympathetic division of the ANS.",
@@ -6902,7 +7540,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0639"
       },
       {
         "q": "All of the synapses and neuroeffector synapses of the parasympathetic division of the ANS use the neurotransmitter _____.",
@@ -6911,7 +7550,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0640"
       },
       {
         "q": "Receptors found at the cholinergic neuroeffector synapses in the parasympathetic division of the ANS are called _____.",
@@ -6920,7 +7560,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0641"
       },
       {
         "q": "In the parasympathetic division, the postsynaptic membrane of a ganglionic neuron has _____ receptors that are excited by acetylcholine.",
@@ -6929,7 +7570,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0642"
       },
       {
         "q": "Smooth muscle contractions that propel materials and mix them with secretions in the digestive tract are controlled by output of the _____ nerve.",
@@ -6938,7 +7580,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0643"
       },
       {
         "q": "Descending branches of the vagus nerve and splanchnic nerves leaving the sympathetic chain are contained within the _____ plexus.",
@@ -6947,7 +7590,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0644"
       },
       {
         "q": "The _____ plexus contains the parasympathetic outflow of the pelvic nerves, sympathetic postganglionic fibers from the inferior mesenteric ganglion, and splanchnic nerves from the sacral sympathetic chain.",
@@ -6956,7 +7600,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0645"
       },
       {
         "q": "The changes in the diameter of peripheral blood vessels is the _____ reflex.",
@@ -6965,7 +7610,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0646"
       },
       {
         "q": "Irritation of the digestive lining activates the _____ reflex, which reverses the pattern of movement of the smooth muscle in the walls of the stomach.",
@@ -6974,7 +7620,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0647"
       },
       {
         "q": "The umbilical artery carries blood that is relatively _____ in oxygen concentration.",
@@ -6983,7 +7630,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0648"
       },
       {
         "q": "Urine leaves the kidney and travels to the urinary bladder through the _____.",
@@ -6992,7 +7640,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0649"
       },
       {
         "q": "The urinary bladder is lined by _____ epithelium.",
@@ -7001,7 +7650,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0650"
       },
       {
         "q": "The urethra is _____ in the male than in the female.",
@@ -7010,7 +7660,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0651"
       },
       {
         "q": "Compared to the male urethra, the female urethra is much _____.",
@@ -7019,7 +7670,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0652"
       },
       {
         "q": "The smooth muscle involved in contracting the bladder during micturition is the _____.",
@@ -7028,7 +7680,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0653"
       },
       {
         "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary",
@@ -7037,7 +7690,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0654"
       },
       {
         "q": "The male gametes, _____ cells, are produced in the testes.",
@@ -7046,7 +7700,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0655"
       },
       {
         "q": "Spermatic cords enter the abdominal cavity through _____.",
@@ -7055,7 +7710,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0656"
       },
       {
         "q": "Each testis is covered by connective tissue called the _____.",
@@ -7064,7 +7720,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0657"
       },
       {
         "q": "The _____ extends from the uterine tube to the broad ligament.",
@@ -7073,7 +7730,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0658"
       },
       {
         "q": "A short passageway that connects the uterus with the exterior of the body is the _____.",
@@ -7082,7 +7740,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0659"
       },
       {
         "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the",
@@ -7091,7 +7750,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0660"
       },
       {
         "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which",
@@ -7100,7 +7760,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0661"
       },
       {
         "q": "Each seminiferous tubule has the form of a U connected to a single _____.",
@@ -7109,7 +7770,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0662"
       },
       {
         "q": "The epithelium of the _____ has both ciliated and non-ciliated simple columnar cells.",
@@ -7118,7 +7780,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0663"
       },
       {
         "q": "Cells that support spermatogenesis are called _____ cells.",
@@ -7127,7 +7790,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0664"
       },
       {
         "q": "The division of each primary spermatocyte produces a pair of _____.",
@@ -7136,7 +7800,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0665"
       },
       {
         "q": "The special form of cell division that leads to the production of gametes is _____.",
@@ -7145,7 +7810,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0666"
       },
       {
         "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be",
@@ -7154,7 +7820,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0667"
       },
       {
         "q": "An antibiotic component of semen produced by the prostate gland is _____.",
@@ -7163,7 +7830,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0668"
       },
       {
         "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the",
@@ -7172,7 +7840,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0669"
       },
       {
         "q": "The endometrium is thickest during the _____ phase of the uterine cycle.",
@@ -7181,7 +7850,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0670"
       },
       {
         "q": "The uterine cycle begins with the onset of _____.",
@@ -7190,7 +7860,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0671"
       },
       {
         "q": "The degeneration of oocytes prior to puberty is known as _____.",
@@ -7199,7 +7870,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0672"
       },
       {
         "q": "The cells around the ovulated oocyte are the _____.",
@@ -7208,7 +7880,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0673"
       },
       {
         "q": "Progesterone levels are highest during the _____ phase of the ovarian cycle.",
@@ -7217,7 +7890,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0674"
       },
       {
         "q": "In females the first meiotic division produces a secondary oocyte and a _____.",
@@ -7226,7 +7900,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0675"
       },
       {
         "q": "Just before ovulation, the mature follicle contains a(n) _____ oocyte.",
@@ -7235,7 +7910,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0676"
       },
       {
         "q": "After ovulation, granulosa cells remaining in the follicle form the _____.",
@@ -7244,7 +7920,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0677"
       },
       {
         "q": "The corpus luteum secretes _____.",
@@ -7253,7 +7930,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0678"
       },
       {
         "q": "Degeneration of primary oocytes occurs by a process called _____.",
@@ -7262,7 +7940,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0679"
       },
       {
         "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer",
@@ -7271,7 +7950,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0680"
       },
       {
         "q": "The secondary oocyte is released from the ovary at _____.",
@@ -7280,7 +7960,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0681"
       },
       {
         "q": "The large fluid filled cavity within a mature ovarian follicle is called a(n) _____.",
@@ -7289,7 +7970,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0682"
       },
       {
         "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels",
@@ -7298,7 +7980,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0683"
       },
       {
         "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the",
@@ -7307,7 +7990,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0684"
       },
       {
         "q": "Circulating testosterone levels in men begin to decline at approximately age _____ years.",
@@ -7316,7 +8000,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0685"
       },
       {
         "q": "_____ considers developmental events that occur in the first two months after fertilization.",
@@ -7325,7 +8010,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0686"
       },
       {
         "q": "The inner cavity of the blastocyst is called the _____.",
@@ -7334,7 +8020,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0687"
       },
       {
         "q": "The cells of the blastocyst that become the embryo proper are the cells of the _____.",
@@ -7343,7 +8030,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0688"
       },
       {
         "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood",
@@ -7352,7 +8040,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0689"
       },
       {
         "q": "The _____ cells of the blastocyst are responsible for providing food to the developing",
@@ -7361,7 +8050,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0690"
       },
       {
         "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as",
@@ -7370,7 +8060,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0691"
       },
       {
         "q": "Blood flows to the placenta from the fetus through the _____ arteries.",
@@ -7379,7 +8070,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0692"
       },
       {
         "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially",
@@ -7388,7 +8080,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0693"
       },
       {
         "q": "Dilation, expulsion, and placental are the three stages of _____.",
@@ -7397,7 +8090,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-0694"
       }
     ]
   },
@@ -7414,7 +8108,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0695"
       },
       {
         "q": "Hormones influence cellular operations by changing which of the following features of cytoplasmic enzymes?",
@@ -7426,7 +8121,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0696"
       },
       {
         "q": "Hypothalamic centers regulate nervous and endocrine system activities by",
@@ -7438,7 +8134,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0697"
       },
       {
         "q": "Changes in the composition of extracellular fluid are called",
@@ -7450,7 +8147,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0698"
       },
       {
         "q": "Negative feedback on a releasing hormone by the presence of a peripheral hormone is an example of which type of endocrine reflex?",
@@ -7462,7 +8160,8 @@ const STUVIA_BANK = [
           "inhibitory"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0699"
       },
       {
         "q": "Amino acid derivative hormones and closely related compounds are structurally similar to individual amino acids, and include",
@@ -7474,7 +8173,8 @@ const STUVIA_BANK = [
           "eicosanoids."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0700"
       },
       {
         "q": "Most endocrine reflexes are controlled by",
@@ -7486,7 +8186,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0701"
       },
       {
         "q": "All endocrine structures develop from tissue.",
@@ -7498,7 +8199,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0702"
       },
       {
         "q": "Hormones can alter cellular operations by changing",
@@ -7510,7 +8212,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0703"
       },
       {
         "q": "A lipid that has been implicated in causing heart and blood vessel problems, but is necessary for the production of corticosteroids, is",
@@ -7522,7 +8225,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0704"
       },
       {
         "q": "Which of the following organs secrete hormones?  (1) pancreas  (2) liver  (3) brain  (4) suprarenal cortex  (5) suprarenal medulla  (6) thymus  (7) ovary  (8) testis  (9) thyroid gland  (10) pineal gland",
@@ -7534,7 +8238,8 @@ const STUVIA_BANK = [
           "6, 7, 8, 9, 10"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0705"
       },
       {
         "q": "What organ(s) is(are) nervous in structure but endocrine in function?",
@@ -7546,7 +8251,8 @@ const STUVIA_BANK = [
           "gonads"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0706"
       },
       {
         "q": "Stretch of the uterus causes the posterior lobe of the pituitary to release",
@@ -7558,7 +8264,8 @@ const STUVIA_BANK = [
           "growth hormone (GH)."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0707"
       },
       {
         "q": "Which of the following is an example of positive feedback?",
@@ -7570,7 +8277,8 @@ const STUVIA_BANK = [
           "ADH release due to low blood pressure"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0708"
       },
       {
         "q": "ADH is manufactured by the",
@@ -7582,7 +8290,8 @@ const STUVIA_BANK = [
           "anterior pituitary."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0709"
       },
       {
         "q": "The two hormones released by the neurohypophysis are",
@@ -7594,7 +8303,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0710"
       },
       {
         "q": "Inhibiting hormones (IH) directly cause",
@@ -7606,7 +8316,8 @@ const STUVIA_BANK = [
           "androgen secretion."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0711"
       },
       {
         "q": "The hypophyseal portal system allows",
@@ -7618,7 +8329,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0712"
       },
       {
         "q": "Hormones released into the interstitial fluid by the anterior pituitary enter the circulation easily because",
@@ -7630,7 +8342,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0713"
       },
       {
         "q": "Adrenocorticotropic hormone (ACTH) causes the release of",
@@ -7642,7 +8355,8 @@ const STUVIA_BANK = [
           "glucocorticoids by the suprarenal cortex."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0714"
       },
       {
         "q": "Another name for the adenohypophysis is",
@@ -7654,7 +8368,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0715"
       },
       {
         "q": "The anterior pituitary can be divided into three regions:",
@@ -7666,7 +8381,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0716"
       },
       {
         "q": "Which hormone stimulates ovulation and the secretion of progesterone by ovarian cells?",
@@ -7678,7 +8394,8 @@ const STUVIA_BANK = [
           "oxytocin (OT)"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0717"
       },
       {
         "q": "The only hormone to target all cells to some degree is",
@@ -7690,7 +8407,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0718"
       },
       {
         "q": "Which hormone decreases the concentration of calcium ions in body fluids?",
@@ -7702,7 +8420,8 @@ const STUVIA_BANK = [
           "thyroxin"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0719"
       },
       {
         "q": "Which of the following describes the function of C cells?",
@@ -7714,7 +8433,8 @@ const STUVIA_BANK = [
           "These cells do not stain as clearly as do the follicular cells."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0720"
       },
       {
         "q": "The thyroid gland is located just inferior to the",
@@ -7726,7 +8446,8 @@ const STUVIA_BANK = [
           "spinal column."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0721"
       },
       {
         "q": "The lobes of the thyroid gland are connected by the",
@@ -7738,7 +8459,8 @@ const STUVIA_BANK = [
           "cortex."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0722"
       },
       {
         "q": "Which gland stores its hormone extracellularly?",
@@ -7750,7 +8472,8 @@ const STUVIA_BANK = [
           "suprarenal cortex"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0723"
       },
       {
         "q": "Which of the following hormones contains iodine in its structure?",
@@ -7762,7 +8485,8 @@ const STUVIA_BANK = [
           "thymosins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0724"
       },
       {
         "q": "Decreased levels of parathyroid hormone could result in",
@@ -7774,7 +8498,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0725"
       },
       {
         "q": "The chief cells of the parathyroid gland monitor",
@@ -7786,7 +8511,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0726"
       },
       {
         "q": "The targets for PTH can be found in the",
@@ -7798,7 +8524,8 @@ const STUVIA_BANK = [
           "kidneys and the bones."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0727"
       },
       {
         "q": "Calcitriol is",
@@ -7810,7 +8537,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0728"
       },
       {
         "q": "The hormone that acts to oppose the effects of calcitonin is",
@@ -7822,7 +8550,8 @@ const STUVIA_BANK = [
           "growth hormone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0729"
       },
       {
         "q": "Which of the following is true of the suprarenal cortex?",
@@ -7834,7 +8563,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0730"
       },
       {
         "q": "The _____ is firmly attached to the superior border of the kidney.",
@@ -7846,7 +8576,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0731"
       },
       {
         "q": "Which of the following is (are) a mineralocorticoid?",
@@ -7858,7 +8589,8 @@ const STUVIA_BANK = [
           "cortisol"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0732"
       },
       {
         "q": "The zona glomerulosa is so named because its glandular cells are arranged as",
@@ -7870,7 +8602,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0733"
       },
       {
         "q": "Over three-quarters of the suprarenal cortex is the",
@@ -7882,7 +8615,8 @@ const STUVIA_BANK = [
           "capsule."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0734"
       },
       {
         "q": "Special neural cells develop into the",
@@ -7894,7 +8628,8 @@ const STUVIA_BANK = [
           "pancreas."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0735"
       },
       {
         "q": "The zona reticularis releases very small amounts of",
@@ -7906,7 +8641,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0736"
       },
       {
         "q": "How do the cells of the suprarenal medulla differ from other glandular cells?",
@@ -7918,7 +8654,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0737"
       },
       {
         "q": "Damage to the zona fasciculata of the suprarenal cortex would result in",
@@ -7930,7 +8667,8 @@ const STUVIA_BANK = [
           "decreased blood glucose levels."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0738"
       },
       {
         "q": "An enzyme produced by the kidneys that is important for the regulation of blood pressure and blood volume is",
@@ -7942,7 +8680,8 @@ const STUVIA_BANK = [
           "bilirubin."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0739"
       },
       {
         "q": "A kidney hormone that stimulates red blood cell production by the bone marrow is",
@@ -7954,7 +8693,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0740"
       },
       {
         "q": "Which of the following cell types produces insulin?",
@@ -7966,7 +8706,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0741"
       },
       {
         "q": "About 1 percent of the pancreas is located in structures known as",
@@ -7978,7 +8719,8 @@ const STUVIA_BANK = [
           "pancreatic arteries."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0742"
       },
       {
         "q": "The testis in the male produces androgens in (the)",
@@ -7990,7 +8732,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0743"
       },
       {
         "q": "The main hormone(s) secreted by the female ovaries include",
@@ -8002,7 +8745,8 @@ const STUVIA_BANK = [
           "follicle-stimulating hormone."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0744"
       },
       {
         "q": "Sustentacular cells, which help support sperm development, release the hormone",
@@ -8014,7 +8758,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0745"
       },
       {
         "q": "The hormone most important in supporting the maturation of the oocyte and growth of the uterine lining is",
@@ -8026,7 +8771,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0746"
       },
       {
         "q": "The most important hormone produced by the pineal gland is",
@@ -8038,7 +8784,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0747"
       },
       {
         "q": "Subcutaneous swelling, dry skin, hair loss, low body temperature, muscular weakness, and slowed reflexes are symptoms of",
@@ -8050,7 +8797,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0748"
       },
       {
         "q": "The conditions of polyuria, low blood volume, and high blood potassium concentrations result from the underproduction of",
@@ -8062,7 +8810,8 @@ const STUVIA_BANK = [
           "testosterone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0749"
       },
       {
         "q": "Diabetes insipidus is caused by",
@@ -8074,7 +8823,8 @@ const STUVIA_BANK = [
           "increased levels of aldosterone."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0750"
       },
       {
         "q": "Myxedema and cretinism can result from the underproduction of",
@@ -8086,7 +8836,8 @@ const STUVIA_BANK = [
           "androgens."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0751"
       },
       {
         "q": "Gigantism and acromegaly occur as a result of",
@@ -8098,7 +8849,8 @@ const STUVIA_BANK = [
           "overproduction of mineralocorticoids."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0752"
       },
       {
         "q": "Early menopause in women will occur if",
@@ -8110,7 +8862,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0753"
       },
       {
         "q": "Which of the following results from the overproduction of thyroid hormone?",
@@ -8122,7 +8875,8 @@ const STUVIA_BANK = [
           "diabetes mellitus"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0754"
       },
       {
         "q": "Aldosterone is released from the suprarenal cortex.",
@@ -8131,7 +8885,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0755"
       },
       {
         "q": "T4 is released from the thyroid gland.",
@@ -8140,7 +8895,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0756"
       },
       {
         "q": "Epinephrine is released for the posterior pituitary gland.",
@@ -8149,7 +8905,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0757"
       },
       {
         "q": "Oxytocin is released from the anterior pituitary gland.",
@@ -8158,7 +8915,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0758"
       },
       {
         "q": "Growth hormone is released from the suprarenal cortex.",
@@ -8167,7 +8925,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0759"
       },
       {
         "q": "Hormonal control of endocrine function is determined by other hormones.",
@@ -8176,7 +8935,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0760"
       },
       {
         "q": "Negative feedback rushes to a process to completion.",
@@ -8185,7 +8945,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0761"
       },
       {
         "q": "Chemosensitive control of endocrine function is regulated by changes in extracellular fluid.",
@@ -8194,7 +8955,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0762"
       },
       {
         "q": "The hypothalamus is controlled by negative feedback.",
@@ -8203,7 +8965,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0763"
       },
       {
         "q": "Neural control of endocrine function is determined by the arrival of neurotransmitter at a",
@@ -8212,7 +8975,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0764"
       },
       {
         "q": "ADH affects the kidneys.",
@@ -8221,7 +8985,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0765"
       },
       {
         "q": "Oxytocin (OT) affects the uterus.",
@@ -8230,7 +8995,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0766"
       },
       {
         "q": "TSH affects the thymus.",
@@ -8239,7 +9005,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0767"
       },
       {
         "q": "ACTH affects the adenoids.",
@@ -8248,7 +9015,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0768"
       },
       {
         "q": "FSH affects fat tissue.",
@@ -8257,7 +9025,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0769"
       },
       {
         "q": "Epinephrine is secreted in greater amounts than norepinephrine in the adrenal medulla.",
@@ -8266,7 +9035,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0770"
       },
       {
         "q": "The hormone somatostatin is secreted by beta cells.",
@@ -8275,7 +9045,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0771"
       },
       {
         "q": "The hormone glucagon is secreted by G-cells.",
@@ -8284,7 +9055,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0772"
       },
       {
         "q": "Insulin is secreted by beta cells.",
@@ -8293,7 +9065,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0773"
       },
       {
         "q": "What is a portal system and how does it function?",
@@ -8302,7 +9075,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0774"
       },
       {
         "q": "What type of tissue is blood?",
@@ -8314,7 +9088,8 @@ const STUVIA_BANK = [
           "Blood does not fit into any of the typical categories."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0775"
       },
       {
         "q": "Blood assists in defending the body against toxins and pathogens by",
@@ -8326,7 +9101,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0776"
       },
       {
         "q": "Plasma proteins that are important in body defense are the",
@@ -8338,7 +9114,8 @@ const STUVIA_BANK = [
           "metalloproteins."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0777"
       },
       {
         "q": "Compared to water, whole blood is",
@@ -8350,7 +9127,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0778"
       },
       {
         "q": "Formed elements include which of the following?",
@@ -8362,7 +9140,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0779"
       },
       {
         "q": "Which of the following lab values is in the normal range for adults?",
@@ -8374,7 +9153,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0780"
       },
       {
         "q": "The plasma of the blood contains about 7%",
@@ -8386,7 +9166,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0781"
       },
       {
         "q": "Which of the following would be classified as hypervolemic for the average adult male?",
@@ -8398,7 +9179,8 @@ const STUVIA_BANK = [
           "pH = 8"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0782"
       },
       {
         "q": "Composition of the plasma and the interstitial fluid differs chiefly in the concentration of",
@@ -8410,7 +9192,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0783"
       },
       {
         "q": "The major differences between plasma and interstitial fluid include",
@@ -8422,7 +9205,8 @@ const STUVIA_BANK = [
           "plasma has very different sodium ion concentrations."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0784"
       },
       {
         "q": "The class of protein involved in clotting is (the)",
@@ -8434,7 +9218,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0785"
       },
       {
         "q": "Plasma protein attached to cholesterol is a form of",
@@ -8446,7 +9231,8 @@ const STUVIA_BANK = [
           "carbohydrate."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0786"
       },
       {
         "q": "What formed element in the blood is flattened and circular, lacks a nucleus, mitochondria, and ribosomes, and is red in color because of the presence of hemoglobin?",
@@ -8458,7 +9244,8 @@ const STUVIA_BANK = [
           "platelet"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0787"
       },
       {
         "q": "exists when the oxygen-carrying capacity of the blood is reduced.",
@@ -8470,7 +9257,8 @@ const STUVIA_BANK = [
           "Reduced viscosity"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0788"
       },
       {
         "q": "An elevated hematocrit constitutes what condition?",
@@ -8482,7 +9270,8 @@ const STUVIA_BANK = [
           "rouleaux"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0789"
       },
       {
         "q": "Which blood cell lacks a nucleus?",
@@ -8494,7 +9283,8 @@ const STUVIA_BANK = [
           "erythrocyte"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0790"
       },
       {
         "q": "The molecule that binds oxygen contains globin proteins with four attached",
@@ -8506,7 +9296,8 @@ const STUVIA_BANK = [
           "fibrinogens."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0791"
       },
       {
         "q": "Besides transporting respiratory gases, what other functions are performed by erythrocytes?",
@@ -8518,7 +9309,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0792"
       },
       {
         "q": "Which of the following is not a reason for erythrocytes' flattened \"doughnut\" shape?",
@@ -8530,7 +9322,8 @@ const STUVIA_BANK = [
           "It allows the minimum distance for diffusion of gases."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0793"
       },
       {
         "q": "Why is oxygen able to diffuse out of the bloodstream and into the peripheral tissues passively?",
@@ -8542,7 +9335,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0794"
       },
       {
         "q": "Which of the following prevents an erythrocyte from using the oxygen it carries?",
@@ -8554,7 +9348,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0795"
       },
       {
         "q": "A low red cell count could cause which of the following problems?",
@@ -8566,7 +9361,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0796"
       },
       {
         "q": "The blood type of an individual is determined at the cellular level by",
@@ -8578,7 +9374,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0797"
       },
       {
         "q": "When an agglutinin meets its specific agglutinogen, what will occur?",
@@ -8590,7 +9387,8 @@ const STUVIA_BANK = [
           "The agglutinin will bind to the agglutinogen."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0798"
       },
       {
         "q": "Surface antigens are",
@@ -8602,7 +9400,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0799"
       },
       {
         "q": "Rh antigen is also called",
@@ -8614,7 +9413,8 @@ const STUVIA_BANK = [
           "the R factor."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0800"
       },
       {
         "q": "The administration of antibodies to a pregnant women with Rh- blood is used to prevent",
@@ -8626,7 +9426,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0801"
       },
       {
         "q": "The blood type that could be given to anyone without the risk of a cross reaction is",
@@ -8638,7 +9439,8 @@ const STUVIA_BANK = [
           "AB."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0802"
       },
       {
         "q": "A sample of damaged tissue indicated the presence of eosinophils. This finding signifies that the tissue is",
@@ -8650,7 +9452,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0803"
       },
       {
         "q": "A round cell whose nucleus resembles a string of beads is a(n)",
@@ -8662,7 +9465,8 @@ const STUVIA_BANK = [
           "neutrophil."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0804"
       },
       {
         "q": "The leukocyte with small granules that stain with both types of stain is the",
@@ -8674,7 +9478,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0805"
       },
       {
         "q": "A round cell with distinct bright orange-red granules is called a(n)",
@@ -8686,7 +9491,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0806"
       },
       {
         "q": "Which is the least common type of white blood cell?",
@@ -8698,7 +9504,8 @@ const STUVIA_BANK = [
           "lymphocyte"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0807"
       },
       {
         "q": "The white blood cells that contain granules with histamine are called",
@@ -8710,7 +9517,8 @@ const STUVIA_BANK = [
           "lymphocytes."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0808"
       },
       {
         "q": "Eosinophils",
@@ -8722,7 +9530,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0809"
       },
       {
         "q": "Lymphocytes",
@@ -8734,7 +9543,8 @@ const STUVIA_BANK = [
           "are produced only upon demand."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0810"
       },
       {
         "q": "To find out the amount of each type of leukocyte it is necessary to do",
@@ -8746,7 +9556,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0811"
       },
       {
         "q": "The process of moving toward an area due to chemical signals is called",
@@ -8758,7 +9569,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0812"
       },
       {
         "q": "Macrophages, Langerhans cells, and microglia are types of",
@@ -8770,7 +9582,8 @@ const STUVIA_BANK = [
           "RBCs."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0813"
       },
       {
         "q": "What blood cell type is activated in response to a damaged blood vessel?",
@@ -8782,7 +9595,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0814"
       },
       {
         "q": "Which of the following statements is true?",
@@ -8794,7 +9608,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0815"
       },
       {
         "q": "Which of the following is(are) true of leukocytes?",
@@ -8806,7 +9621,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0816"
       },
       {
         "q": "Which of the following formed element is required for hemostasis?",
@@ -8818,7 +9634,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0817"
       },
       {
         "q": "Platelets can initiate the clotting process by",
@@ -8830,7 +9647,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0818"
       },
       {
         "q": "Megakaryocytes produce",
@@ -8842,7 +9660,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0819"
       },
       {
         "q": "A condition related to the insufficient production of clotting factors is known as",
@@ -8854,7 +9673,8 @@ const STUVIA_BANK = [
           "hemophilia."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0820"
       },
       {
         "q": "During development, some embryonic blood cells",
@@ -8866,7 +9686,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0821"
       },
       {
         "q": "Progenitor cells form",
@@ -8878,7 +9699,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0822"
       },
       {
         "q": "Slightly less than one percent of the RBC population are (the)",
@@ -8890,7 +9712,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0823"
       },
       {
         "q": "For erythropoiesis to proceed normally, the progenitor cells must receive adequate supplies of which of the following?  (1) amino acids  (2) calcium  (3) iron  (4) vitamin B12  (5) vitamin K  (6) vitamin A",
@@ -8902,7 +9725,8 @@ const STUVIA_BANK = [
           "2, 3, 5, 6"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0824"
       },
       {
         "q": "Development of lymphocytes involves (the)",
@@ -8914,7 +9738,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0825"
       },
       {
         "q": "Which of the following are produced in the bone marrow?",
@@ -8926,7 +9751,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0826"
       },
       {
         "q": "Myeloid stem cells produce all of the following formed elements except:",
@@ -8938,7 +9764,8 @@ const STUVIA_BANK = [
           "monocytes."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0827"
       },
       {
         "q": "The hormone erythropoietin is produced and secreted",
@@ -8950,7 +9777,8 @@ const STUVIA_BANK = [
           "by shifting of production away from making stem cells."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0828"
       },
       {
         "q": "The matrix of the blood, which has a density only slightly greater than water is called serum.",
@@ -8959,7 +9787,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0829"
       },
       {
         "q": "Blood cells and blood cell components suspended in the matrix are collectively called the",
@@ -8968,7 +9797,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0830"
       },
       {
         "q": "Small packets of cytoplasm that contain enzymes and factors important in blood clotting are",
@@ -8977,7 +9807,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0831"
       },
       {
         "q": "Neutrophils are the most abundant formed elements in the blood.",
@@ -8986,7 +9817,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0832"
       },
       {
         "q": "Platelets are components of the immune system.",
@@ -8995,7 +9827,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0833"
       },
       {
         "q": "Neutrophils are the most numerous leukocytes.",
@@ -9004,7 +9837,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0834"
       },
       {
         "q": "Basophils contain histamine granules.",
@@ -9013,7 +9847,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0835"
       },
       {
         "q": "Eosinophils are useful against parasitic infections.",
@@ -9022,7 +9857,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0836"
       },
       {
         "q": "Monocytes become polymorphonucleocytes.",
@@ -9031,7 +9867,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0837"
       },
       {
         "q": "Lymphocytes include the B and T cells.",
@@ -9040,7 +9877,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0838"
       },
       {
         "q": "What factors contribute to the short (approximately 120-day) life span of an erythrocyte?",
@@ -9049,7 +9887,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0839"
       },
       {
         "q": "When a person has a surgical procedure scheduled, his or her blood is often cross-matched and",
@@ -9058,7 +9897,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0840"
       },
       {
         "q": "The ability of the blood to supply oxygen and remove carbon dioxide from the tissues depends upon",
@@ -9070,7 +9910,8 @@ const STUVIA_BANK = [
           "the osmotic balance, as controlled by the kidneys."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0841"
       },
       {
         "q": "Blood that is transported to and from all of the tissues of the body with the exception of the lungs is in the",
@@ -9082,7 +9923,8 @@ const STUVIA_BANK = [
           "venous circuit."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0842"
       },
       {
         "q": "Blood vessels traveling away from the heart are",
@@ -9094,7 +9936,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0843"
       },
       {
         "q": "The heart has the unique ability to change its workload. On average the heart can pump between and liters of blood per minute.",
@@ -9106,7 +9949,8 @@ const STUVIA_BANK = [
           "5; 30"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0844"
       },
       {
         "q": "The serous membrane lining the pericardial cavity is the",
@@ -9118,7 +9962,8 @@ const STUVIA_BANK = [
           "endocardium."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0845"
       },
       {
         "q": "The visceral pericardium is also called the",
@@ -9130,7 +9975,8 @@ const STUVIA_BANK = [
           "fibrous pericardium."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0846"
       },
       {
         "q": "The reinforcing layer of the pericardium is the layer.",
@@ -9142,7 +9988,8 @@ const STUVIA_BANK = [
           "epicardial"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0847"
       },
       {
         "q": "The tough structure that surrounds the heart and helps reinforce and maintain position of the heart is the",
@@ -9154,7 +10001,8 @@ const STUVIA_BANK = [
           "epicardium."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0848"
       },
       {
         "q": "The heart wall is composed of layers of tissues.",
@@ -9166,7 +10014,8 @@ const STUVIA_BANK = [
           "5"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0849"
       },
       {
         "q": "The innermost layer of the heart wall is the",
@@ -9178,7 +10027,8 @@ const STUVIA_BANK = [
           "connective tissue."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0850"
       },
       {
         "q": "Cardiac muscle differs from other muscle tissue in",
@@ -9190,7 +10040,8 @@ const STUVIA_BANK = [
           "having larger sized fibers than other striated muscles."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0851"
       },
       {
         "q": "The contraction of any one cardiac muscle fiber",
@@ -9202,7 +10053,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0852"
       },
       {
         "q": "Cardiac muscle cells obtain energy almost exclusively through",
@@ -9214,7 +10066,8 @@ const STUVIA_BANK = [
           "protein stores."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0853"
       },
       {
         "q": "Cardiac muscle cells do not need to contract.",
@@ -9226,7 +10079,8 @@ const STUVIA_BANK = [
           "nervous stimulation"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0854"
       },
       {
         "q": "One of the major differences between skeletal muscle and cardiac muscle is that cardiac muscle",
@@ -9238,7 +10092,8 @@ const STUVIA_BANK = [
           "has a very large sarcoplasmic reticulum."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0855"
       },
       {
         "q": "The connective tissues of the heart",
@@ -9250,7 +10105,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0856"
       },
       {
         "q": "The fibrous skeleton of the heart functions to",
@@ -9262,7 +10118,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0857"
       },
       {
         "q": "The fibrous skeleton of the heart is located",
@@ -9274,7 +10131,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0858"
       },
       {
         "q": "Externally the posterior and inferior portions of the left ventricle form the",
@@ -9286,7 +10144,8 @@ const STUVIA_BANK = [
           "superior border."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0859"
       },
       {
         "q": "Grooves on the external surface of the heart that divide the right and left ventricles include the",
@@ -9298,7 +10157,8 @@ const STUVIA_BANK = [
           "interventricular septum."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0860"
       },
       {
         "q": "The anterior and posterior interventricular sulci on the outside of the heart contain",
@@ -9310,7 +10170,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0861"
       },
       {
         "q": "The broad, superior portion of the heart is the",
@@ -9322,7 +10183,8 @@ const STUVIA_BANK = [
           "anterior surface."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0862"
       },
       {
         "q": "The wall between the atria is called the",
@@ -9334,7 +10196,8 @@ const STUVIA_BANK = [
           "coronary sulcus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0863"
       },
       {
         "q": "Prominent muscular ridges that run along the inner surface of the auricle and across the adjacent atrial wall are the",
@@ -9346,7 +10209,8 @@ const STUVIA_BANK = [
           "trabeculae carneae."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0864"
       },
       {
         "q": "The thick muscular partition that separates the two ventricles entire heart is the",
@@ -9358,7 +10222,8 @@ const STUVIA_BANK = [
           "left atrium."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0865"
       },
       {
         "q": "The right ventricle",
@@ -9370,7 +10235,8 @@ const STUVIA_BANK = [
           "is connected to the pulmonary veins."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0866"
       },
       {
         "q": "The superior end of the right ventricle near the pulmonary valve is called (the)",
@@ -9382,7 +10248,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0867"
       },
       {
         "q": "The moderator band is located in the",
@@ -9394,7 +10261,8 @@ const STUVIA_BANK = [
           "interventricular sulcus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0868"
       },
       {
         "q": "Which of the chambers of the heart can generate the greatest pressure?",
@@ -9406,7 +10274,8 @@ const STUVIA_BANK = [
           "Both ventricles create greater pressures simultaneously than do the atria."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0869"
       },
       {
         "q": "The right ventricle is associated exclusively with which of the following?",
@@ -9418,7 +10287,8 @@ const STUVIA_BANK = [
           "trabeculae carneae"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0870"
       },
       {
         "q": "The left ventricle pumps blood into the",
@@ -9430,7 +10300,8 @@ const STUVIA_BANK = [
           "vena cava."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0871"
       },
       {
         "q": "The left atrium receives blood from the",
@@ -9442,7 +10313,8 @@ const STUVIA_BANK = [
           "pulmonary trunk."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0872"
       },
       {
         "q": "Which of the following empty directly into the right atrium?",
@@ -9454,7 +10326,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0873"
       },
       {
         "q": "Blood travels from the left atrium to the left ventricle through the",
@@ -9466,7 +10339,8 @@ const STUVIA_BANK = [
           "conus arteriosus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0874"
       },
       {
         "q": "Which of the following valves is assisted in functioning by the papillary muscles?",
@@ -9478,7 +10352,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0875"
       },
       {
         "q": "Which of the following is an incorrect association?",
@@ -9490,7 +10365,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0876"
       },
       {
         "q": "Valves of the heart open and close due to",
@@ -9502,7 +10378,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0877"
       },
       {
         "q": "Blood is supplied to the muscle of the heart through the",
@@ -9514,7 +10391,8 @@ const STUVIA_BANK = [
           "conus arteriosus."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0878"
       },
       {
         "q": "Which of the following is true of the coronary arteries?",
@@ -9526,7 +10404,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0879"
       },
       {
         "q": "The most serious place for a blockage of a coronary artery is",
@@ -9538,7 +10417,8 @@ const STUVIA_BANK = [
           "left anterior descending artery."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0880"
       },
       {
         "q": "Which of the following is supplied with blood by the left anterior descending artery?",
@@ -9550,7 +10430,8 @@ const STUVIA_BANK = [
           "posterior heart wall"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0881"
       },
       {
         "q": "The coronary artery found under the right atrium is (the)",
@@ -9562,7 +10443,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0882"
       },
       {
         "q": "When a clot forms in a coronary vessel and obstructs blood flow to the muscle, the condition is referred to as a(n)",
@@ -9574,7 +10456,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0883"
       },
       {
         "q": "If a small blood clot passes through the heart and heart vessels, where is it most likely to cause damage if it becomes immobilized?",
@@ -9586,7 +10469,8 @@ const STUVIA_BANK = [
           "Severe damage could occur if a small blood clot became immobilized at any of these"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0884"
       },
       {
         "q": "The main pacemaker region of the heart is",
@@ -9598,7 +10482,8 @@ const STUVIA_BANK = [
           "in the wall of the right atrium."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0885"
       },
       {
         "q": "Papillary muscles of the right ventricle receive a signal to contract from (the)",
@@ -9610,7 +10495,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0886"
       },
       {
         "q": "Which of the following is a major component of the conduction system located in the interventricular septum?",
@@ -9622,7 +10508,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0887"
       },
       {
         "q": "Structures in the heart that carry electrical signals from the SA node to the AV node are called",
@@ -9634,7 +10521,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0888"
       },
       {
         "q": "Which of the following is true of the contraction of the heart?",
@@ -9646,7 +10534,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0889"
       },
       {
         "q": "Pacemaker cells of the SA node depolarize about",
@@ -9658,7 +10547,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0890"
       },
       {
         "q": "The phase of the cardiac cycle during which each chamber contracts and pushes blood into the next structure is",
@@ -9670,7 +10560,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0891"
       },
       {
         "q": "During most of ventricular diastole, the",
@@ -9682,7 +10573,8 @@ const STUVIA_BANK = [
           "the ventricles are filling."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0892"
       },
       {
         "q": "During one cardiac cycle the ventricles spend most of their time in",
@@ -9694,7 +10586,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0893"
       },
       {
         "q": "The chambers of the heart empty during",
@@ -9706,7 +10599,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0894"
       },
       {
         "q": "During their period of systole, the inner volume of the atrial chambers",
@@ -9718,7 +10612,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0895"
       },
       {
         "q": "The most important factor in ensuring that blood moves in correct order through the heart is (the)",
@@ -9730,7 +10625,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0896"
       },
       {
         "q": "In terms of time, at rest one cardiac cycle lasts",
@@ -9742,7 +10638,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0897"
       },
       {
         "q": "Which of the following conditions would cause the amount of blood entering the ascending aorta with each contraction of the heart to increase?",
@@ -9754,7 +10651,8 @@ const STUVIA_BANK = [
           "The amount of blood sent to the lungs for oxygenation would decrease."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0898"
       },
       {
         "q": "Nodal activity of the heart may be influenced or modified by",
@@ -9766,7 +10664,8 @@ const STUVIA_BANK = [
           "enzymes released from the kidney."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0899"
       },
       {
         "q": "At rest the heart rate is usually by parasympathetic control.",
@@ -9778,7 +10677,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0900"
       },
       {
         "q": "How would the heart rate be affected if there were a blockage of the AV node?",
@@ -9790,7 +10690,8 @@ const STUVIA_BANK = [
           "The heart rate would slow dramatically, and become extremely irregular, contracting only"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0901"
       },
       {
         "q": "Pulmonary arteries carry oxygen-deprived blood.",
@@ -9799,7 +10700,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0902"
       },
       {
         "q": "The pulmonary trunk carries blood to the body cells.",
@@ -9808,7 +10710,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0903"
       },
       {
         "q": "The bicuspid valve is the exit of the right ventricle.",
@@ -9817,7 +10720,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0904"
       },
       {
         "q": "The pulmonary veins bring blood from the lungs back to the heart.",
@@ -9826,7 +10730,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0905"
       },
       {
         "q": "The pacemaker of the heart is the AV node.",
@@ -9835,7 +10740,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0906"
       },
       {
         "q": "The SA node is located in the upper wall of the right atrium.",
@@ -9844,7 +10750,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0907"
       },
       {
         "q": "The Purkinje cells are tightly bound together to form the AV bundle.",
@@ -9853,7 +10760,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0908"
       },
       {
         "q": "Describe the differences between carditis, endocarditis, and myocarditis?",
@@ -9862,7 +10770,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0909"
       },
       {
         "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have,",
@@ -9871,7 +10780,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0910"
       },
       {
         "q": "What method does not remove plaques, but nevertheless opens blood vessels without major",
@@ -9880,7 +10790,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0911"
       },
       {
         "q": "What factors have been identified that can cause an increased risk of heart attack?",
@@ -9889,7 +10800,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0912"
       },
       {
         "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of",
@@ -9898,7 +10810,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0913"
       },
       {
         "q": "The total length of blood vessels in the body is estimated to be",
@@ -9910,7 +10823,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0914"
       },
       {
         "q": "Blood vessels, in correct order from the largest to the smallest, are:  (1) capillaries  (2) aorta  (3) elastic arteries  (4) arterioles  (5) muscular arteries",
@@ -9922,7 +10836,8 @@ const STUVIA_BANK = [
           "5, 3, 2 or 4, 1"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0915"
       },
       {
         "q": "The outermost layer of a blood vessel, which is very thick, composed chiefly of collagen fibers, with scattered bands of elastic fibers is the",
@@ -9934,7 +10849,8 @@ const STUVIA_BANK = [
           "internal elastic membrane."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0916"
       },
       {
         "q": "Which of the following applies to elastic arteries?",
@@ -9946,7 +10862,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0917"
       },
       {
         "q": "Muscular arteries",
@@ -9958,7 +10875,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0918"
       },
       {
         "q": "Large veins include the",
@@ -9970,7 +10888,8 @@ const STUVIA_BANK = [
           "superior and inferior venae cavae."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0919"
       },
       {
         "q": "Which of the following is true of an artery?",
@@ -9982,7 +10901,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0920"
       },
       {
         "q": "The outermost layer of a blood vessel is (the)",
@@ -9994,7 +10914,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0921"
       },
       {
         "q": "Another name for muscular arteries is",
@@ -10006,7 +10927,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0922"
       },
       {
         "q": "Underneath the endothelium of arteries is a layer of",
@@ -10018,7 +10940,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0923"
       },
       {
         "q": "Which is the layer of the arterial wall that thickens to the greatest degree in atherosclerosis?",
@@ -10030,7 +10953,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0924"
       },
       {
         "q": "A very thick connective tissue sheath, primarily composed of collagen fibers with scattered bands of elastic fibers, that blends into the surrounding tissues and assists in anchoring the blood vessel, is (the)",
@@ -10042,7 +10966,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0925"
       },
       {
         "q": "Veins are much more easily distended under pressure than are arteries",
@@ -10054,7 +10979,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0926"
       },
       {
         "q": "Vessels that sometimes do not have a basal lamina are called",
@@ -10066,7 +10992,8 @@ const STUVIA_BANK = [
           "venules."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0927"
       },
       {
         "q": "You could expect to find fenestrated capillaries in",
@@ -10078,7 +11005,8 @@ const STUVIA_BANK = [
           "skin."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0928"
       },
       {
         "q": "Which of the following is a unique mechanism of exchange used by sinusoidal capillaries?",
@@ -10090,7 +11018,8 @@ const STUVIA_BANK = [
           "vesicular transport from the lumen to the interstitium"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0929"
       },
       {
         "q": "A continuous capillary differs from a fenestrated capillary because",
@@ -10102,7 +11031,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0930"
       },
       {
         "q": "Which of the following is not one of the four mechanisms responsible for exchange in capillaries and sinusoids?",
@@ -10114,7 +11044,8 @@ const STUVIA_BANK = [
           "primary active transport"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0931"
       },
       {
         "q": "Which of the following is common around joints?",
@@ -10126,7 +11057,8 @@ const STUVIA_BANK = [
           "precapillary sphincter"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0932"
       },
       {
         "q": "Why do arteries lack the valves that are commonly present in veins?",
@@ -10138,7 +11070,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0933"
       },
       {
         "q": "Which structures or processes prevent excessive loss of blood pressure during severe bleeding?",
@@ -10150,7 +11083,8 @@ const STUVIA_BANK = [
           "arteriovenous anastomoses"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0934"
       },
       {
         "q": "The pulmonary circuit contains about percent of the total volume of blood.",
@@ -10162,7 +11096,8 @@ const STUVIA_BANK = [
           "31"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0935"
       },
       {
         "q": "Blood vessel names tend to change at",
@@ -10174,7 +11109,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0936"
       },
       {
         "q": "The pulmonary circuit is composed of arteries and veins that transport blood between",
@@ -10186,7 +11122,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0937"
       },
       {
         "q": "The smallest arteries in the lungs that provide blood to the capillary networks that surround the lung air saccules are the",
@@ -10198,7 +11135,8 @@ const STUVIA_BANK = [
           "pulmonary veins."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0938"
       },
       {
         "q": "Blood leaving the heart in the pulmonary arteries has a relatively",
@@ -10210,7 +11148,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0939"
       },
       {
         "q": "Large arteries that tend to branch after a short distance are called",
@@ -10222,7 +11161,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0940"
       },
       {
         "q": "The ascending aorta begins at (the)",
@@ -10234,7 +11174,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0941"
       },
       {
         "q": "The pericardium is supplied by (the)",
@@ -10246,7 +11187,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0942"
       },
       {
         "q": "The midbrain and lateral surfaces of the cerebral cortex receive blood from the",
@@ -10258,7 +11200,8 @@ const STUVIA_BANK = [
           "middle cerebral artery."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0943"
       },
       {
         "q": "The cerebral arterial circle \"encircles\" which of the following?",
@@ -10270,7 +11213,8 @@ const STUVIA_BANK = [
           "all vessels and passageways passing through the mediastinum"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0944"
       },
       {
         "q": "Which of the following is a paired branch of the abdominal aorta?",
@@ -10282,7 +11226,8 @@ const STUVIA_BANK = [
           "median sacral"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0945"
       },
       {
         "q": "Unpaired arteries that branch from the abdominal aorta include the",
@@ -10294,7 +11239,8 @@ const STUVIA_BANK = [
           "lumbar."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0946"
       },
       {
         "q": "Which of the following is the right branch of the celiac trunk?",
@@ -10306,7 +11252,8 @@ const STUVIA_BANK = [
           "gastroduodenal artery"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0947"
       },
       {
         "q": "In the leg, the femoral artery becomes the",
@@ -10318,7 +11265,8 @@ const STUVIA_BANK = [
           "iliac artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0948"
       },
       {
         "q": "The hepatic portal vein carries blood",
@@ -10330,7 +11278,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0949"
       },
       {
         "q": "Which of these is a tributary of the inferior vena cava or azygous system?",
@@ -10342,7 +11291,8 @@ const STUVIA_BANK = [
           "splenic vein"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0950"
       },
       {
         "q": "Because of their proximity to the surface, are usually used to obtain blood samples.",
@@ -10354,7 +11304,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0951"
       },
       {
         "q": "What is the significance of the presence of two sets of veins, one superficial and the other deep, in the neck and extremities?",
@@ -10366,7 +11317,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0952"
       },
       {
         "q": "The radial side of the upper arm and forearm contains a long superficial vein named the",
@@ -10378,7 +11330,8 @@ const STUVIA_BANK = [
           "cephalic vein."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0953"
       },
       {
         "q": "Which of the following is involved in draining blood and CSF from the lateral portion of the brain from the cavernous sinus to the internal jugular veins?",
@@ -10390,7 +11343,8 @@ const STUVIA_BANK = [
           "external jugular veins"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0954"
       },
       {
         "q": "Which of the following organs drains its blood through the hepatic portal system?",
@@ -10402,7 +11356,8 @@ const STUVIA_BANK = [
           "urinary bladder"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0955"
       },
       {
         "q": "The brachiocephalic vein receives blood from the",
@@ -10414,7 +11369,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0956"
       },
       {
         "q": "The longest vein in the body is the",
@@ -10426,7 +11382,8 @@ const STUVIA_BANK = [
           "sartorius vein."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0957"
       },
       {
         "q": "The right common carotid artery and right subclavian arteries are branches of (the)",
@@ -10438,7 +11395,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0958"
       },
       {
         "q": "After leaving the thoracic cavity and passing over the outer border of the first rib, the subclavian artery becomes the",
@@ -10450,7 +11408,8 @@ const STUVIA_BANK = [
           "ulnar artery."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0959"
       },
       {
         "q": "After passing from the thoracic cavity over the border of the first rib, the subclavian artery changes its name. The name changes continue along the arm and to the hand. In correct order, these names are:  (1) superficial palmar arch  (2) deep palmar arch  (3) brachial artery  (4) radial artery  (5) axillary artery  (6) ulnar artery",
@@ -10462,7 +11421,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0960"
       },
       {
         "q": "The parietal branches of the thoracic aorta include the",
@@ -10474,7 +11434,8 @@ const STUVIA_BANK = [
           "superior thoracic and intercostal arteries."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0961"
       },
       {
         "q": "The common iliac arteries divide to form a branch that enters the pelvic cavity and a branch called the that proceeds to the lower limb.",
@@ -10486,7 +11447,8 @@ const STUVIA_BANK = [
           "sacral arteries."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0962"
       },
       {
         "q": "The first paired branches of the abdominal aorta are the",
@@ -10498,7 +11460,8 @@ const STUVIA_BANK = [
           "common iliac arteries."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0963"
       },
       {
         "q": "At the ankle, the anterior tibial artery becomes (the)",
@@ -10510,7 +11473,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0964"
       },
       {
         "q": "The left side of the posterior thoracic wall drains blood into the",
@@ -10522,7 +11486,8 @@ const STUVIA_BANK = [
           "hemiazygos and highest intercostal veins."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0965"
       },
       {
         "q": "Which of the following drains into the external iliac veins?",
@@ -10534,7 +11499,8 @@ const STUVIA_BANK = [
           "lateral sacral veins."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0966"
       },
       {
         "q": "Which of the following empties directly into the hepatic portal vein?",
@@ -10546,7 +11512,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0967"
       },
       {
         "q": "The systemic circulation, which supplies capillaries in the majority of the body, begins at the _____ and ends at the _____.",
@@ -10558,7 +11525,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0968"
       },
       {
         "q": "In an adult, the interatrial septum bears a shallow opening that marks the site of the original foramen ovale, which is (the)",
@@ -10570,7 +11538,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0969"
       },
       {
         "q": "What problem will occur in a newborn in whom the foramen ovale has failed to close?",
@@ -10582,7 +11551,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0970"
       },
       {
         "q": "In fetal circulation, deoxygenated blood goes away from the fetus in (the)",
@@ -10594,7 +11564,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0971"
       },
       {
         "q": "The opening that permits blood to flow between the atria of the fetal heart is (the)",
@@ -10606,7 +11577,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0972"
       },
       {
         "q": "In fetal circulation, blood may bypass the pulmonary circuit by passing from the pulmonary trunk to the aorta through the",
@@ -10618,7 +11590,8 @@ const STUVIA_BANK = [
           "umbilical arteries."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0973"
       },
       {
         "q": "Age-related changes in the heart include",
@@ -10630,7 +11603,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0974"
       },
       {
         "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small",
@@ -10639,7 +11613,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0975"
       },
       {
         "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior",
@@ -10648,7 +11623,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0976"
       },
       {
         "q": "Small arteries that arise on the posterior surface of the aorta and supply the spinal cord and the",
@@ -10657,7 +11633,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0977"
       },
       {
         "q": "Long, thin arteries, present only in males, that originate between the superior and inferior",
@@ -10666,7 +11643,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0978"
       },
       {
         "q": "The liver, stomach, and spleen are supplied by the celiac trunk.",
@@ -10675,7 +11653,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0979"
       },
       {
         "q": "Veins that empty into a network of dural sinuses are the superficial cerebral veins.",
@@ -10684,7 +11663,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0980"
       },
       {
         "q": "Veins that drain the cerebral hemispheres are the internal cerebral veins.",
@@ -10693,7 +11673,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0981"
       },
       {
         "q": "The sigmoid sinus, which penetrates the jugular foramen, leaves the skull as the external",
@@ -10702,7 +11683,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0982"
       },
       {
         "q": "The cervical spinal cord and the posterior part of the skull are drained by the vertebral veins.",
@@ -10711,7 +11693,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-0983"
       },
       {
         "q": "The temporal and maxillary veins drain into the internal jugular veins.",
@@ -10720,7 +11703,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0984"
       },
       {
         "q": "How does autoregulation affect the flow of blood through the tissues?",
@@ -10729,7 +11713,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0985"
       },
       {
         "q": "What mechanisms assist venous return to the heart?",
@@ -10738,7 +11723,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0986"
       },
       {
         "q": "If a person with a wrist injury suffers damage to the radial artery, which is temporarily tied off,",
@@ -10747,7 +11733,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-0987"
       },
       {
         "q": "Most immune responses originate in",
@@ -10759,7 +11746,8 @@ const STUVIA_BANK = [
           "the liver."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0988"
       },
       {
         "q": "Which of the following are functions of the lymphoid system in the body?",
@@ -10771,7 +11759,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0989"
       },
       {
         "q": "Components of the lymphoid system include the:  (1) pancreas  (2) spleen  (3) lymphatic vessels  (4) thymus  (5) lymph nodes  (6) thoracic duct",
@@ -10783,7 +11772,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-0990"
       },
       {
         "q": "Secondary lymphoid structures may contain",
@@ -10795,7 +11785,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0991"
       },
       {
         "q": "The lymphoid system is composed of",
@@ -10807,7 +11798,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-0992"
       },
       {
         "q": "The smallest of the organs of the lymphoid system is (are) the",
@@ -10819,7 +11811,8 @@ const STUVIA_BANK = [
           "kidneys."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0993"
       },
       {
         "q": "Each day about of fluid moves from the plasma to the interstitial fluid.",
@@ -10831,7 +11824,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0994"
       },
       {
         "q": "Lipids absorbed in the digestive tract enter in the intestinal wall.",
@@ -10843,7 +11837,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0995"
       },
       {
         "q": "How do lymphatic vessels differ from those of either the arterial or the venous system?",
@@ -10855,7 +11850,8 @@ const STUVIA_BANK = [
           "They have very few significant differences."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0996"
       },
       {
         "q": "Which lymphatic vessels drain into the venous system?",
@@ -10867,7 +11863,8 @@ const STUVIA_BANK = [
           "lymphatic trunks"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-0997"
       },
       {
         "q": "Compared to regular capillaries, lymphatic capillaries are",
@@ -10879,7 +11876,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-0998"
       },
       {
         "q": "Lymphatic capillaries",
@@ -10891,7 +11889,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-0999"
       },
       {
         "q": "In cross section, a lymph vessel can be distinguished from arteries or veins because",
@@ -10903,7 +11902,8 @@ const STUVIA_BANK = [
           "the lymphatic vessels have the thinnest walls of all the vessel types."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1000"
       },
       {
         "q": "Deep lymphatic vessels are found",
@@ -10915,7 +11915,8 @@ const STUVIA_BANK = [
           "in subcutaneous tissue."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1001"
       },
       {
         "q": "Lymphatic trunks collect lymph from",
@@ -10927,7 +11928,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1002"
       },
       {
         "q": "Large lymphatic trunks and ducts are located",
@@ -10939,7 +11941,8 @@ const STUVIA_BANK = [
           "in the anterior abdomen."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1003"
       },
       {
         "q": "The bulges that give the lymphatic vessels the \"string of beads\" appearance are caused by",
@@ -10951,7 +11954,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1004"
       },
       {
         "q": "The right lymphatic duct",
@@ -10963,7 +11967,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1005"
       },
       {
         "q": "Most of the lymph returns to the venous circulation by way of the",
@@ -10975,7 +11980,8 @@ const STUVIA_BANK = [
           "hepatic portal vein."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1006"
       },
       {
         "q": "Lymph flows through lymphatic vessels due to",
@@ -10987,7 +11993,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1007"
       },
       {
         "q": "The cisterna chyli receives lymph from which of the following?",
@@ -10999,7 +12006,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1008"
       },
       {
         "q": "Clinical symptoms that would indicate that there is a blockage in the right lymphatic duct would include",
@@ -11011,7 +12019,8 @@ const STUVIA_BANK = [
           "a greatly increased cisterna chyli."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1009"
       },
       {
         "q": "Which organ or tissue contains equal numbers of B and T cells?",
@@ -11023,7 +12032,8 @@ const STUVIA_BANK = [
           "liver"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1010"
       },
       {
         "q": "Which of the following is a function of the T cells?",
@@ -11035,7 +12045,8 @@ const STUVIA_BANK = [
           "cell-mediated immunity"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1011"
       },
       {
         "q": "Cells that stay in the body and make it easier to fight off an infection the second time you get it are called",
@@ -11047,7 +12058,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1012"
       },
       {
         "q": "The lymphocytes that fight infections in the connective tissues of the body reach these areas by",
@@ -11059,7 +12071,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1013"
       },
       {
         "q": "Classes of lymphocytes in the body include",
@@ -11071,7 +12084,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1014"
       },
       {
         "q": "T cells",
@@ -11083,7 +12097,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1015"
       },
       {
         "q": "Lymphocytes are called \"wandering\" cells because",
@@ -11095,7 +12110,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1016"
       },
       {
         "q": "Approximately 10-15 percent of the circulating lymphocytes are",
@@ -11107,7 +12123,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1017"
       },
       {
         "q": "Providing antibody-mediated or humoral immunity is primarily the job of (the)",
@@ -11119,7 +12136,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1018"
       },
       {
         "q": "Lymph cells respond to which of the following?",
@@ -11131,7 +12149,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1019"
       },
       {
         "q": "The production of lymphocytes is called",
@@ -11143,7 +12162,8 @@ const STUVIA_BANK = [
           "lymphogenesis."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1020"
       },
       {
         "q": "The ability of lymphocytes to recognize an antigen is called",
@@ -11155,7 +12175,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1021"
       },
       {
         "q": "Blocking the antigen receptors on the surface of lymphocytes would interfere with",
@@ -11167,7 +12188,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1022"
       },
       {
         "q": "Antibodies specifically attack",
@@ -11179,7 +12201,8 @@ const STUVIA_BANK = [
           "proteins."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1023"
       },
       {
         "q": "NK cells attack",
@@ -11191,7 +12214,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1024"
       },
       {
         "q": "Which of the following is the first event in defense against bacteria?",
@@ -11203,7 +12227,8 @@ const STUVIA_BANK = [
           "macrophage activation"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1025"
       },
       {
         "q": "Helper T cells function as",
@@ -11215,7 +12240,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1026"
       },
       {
         "q": "HIV weakens the immune system by",
@@ -11227,7 +12253,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1027"
       },
       {
         "q": "If a person wearing a head, neck, and upper chest shield is subjected to a high dose of radiation, one of the resultant health problems might be damage to bone marrow in exposed body regions. If the bone marrow damage occurred in an adult, which cell types might initially no longer be produced in sufficient numbers for the proper immune response to be sustained?",
@@ -11239,7 +12266,8 @@ const STUVIA_BANK = [
           "B cells and NK cells"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1028"
       },
       {
         "q": "are large lymphoid nodules that are located in the walls of the pharynx.",
@@ -11251,7 +12279,8 @@ const STUVIA_BANK = [
           "Peyer's patches"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1029"
       },
       {
         "q": "Adenoids are the tonsil.",
@@ -11263,7 +12292,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1030"
       },
       {
         "q": "Tonsils located lateral walls of pharynx are called the",
@@ -11275,7 +12305,8 @@ const STUVIA_BANK = [
           "epiglottal tonsils."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1031"
       },
       {
         "q": "Areas of densely packed lymphocytes in the linings of the digestive, respiratory, urinary, and reproductive tracts are called",
@@ -11287,7 +12318,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1032"
       },
       {
         "q": "Which of the following is not an example of MALT?",
@@ -11299,7 +12331,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1033"
       },
       {
         "q": "Lymphoid nodules in the walls of the small intestine are called (the)",
@@ -11311,7 +12344,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1034"
       },
       {
         "q": "Lymph nodes",
@@ -11323,7 +12357,8 @@ const STUVIA_BANK = [
           "manufacture lymph."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1035"
       },
       {
         "q": "Which of the following is the first process to occur as the flow of lymph enters a lymph node?",
@@ -11335,7 +12370,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1036"
       },
       {
         "q": "Blood vessels and nerves attach to a lymph node at the",
@@ -11347,7 +12383,8 @@ const STUVIA_BANK = [
           "hilus."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1037"
       },
       {
         "q": "In which of the following is lymph the already processed?",
@@ -11359,7 +12396,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1038"
       },
       {
         "q": "If the medulla of a lymph node is damaged, what components of the lymphoid system will be affected?",
@@ -11371,7 +12409,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1039"
       },
       {
         "q": "In which of the following \"glands\" is a physician checking for infection when palpating under the mandible and ear?",
@@ -11383,7 +12422,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1040"
       },
       {
         "q": "Which lymph nodes might become infected as a result of a bladder infection?",
@@ -11395,7 +12435,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1041"
       },
       {
         "q": "Which lymph nodes would likely become inflamed with an ear infection?",
@@ -11407,7 +12448,8 @@ const STUVIA_BANK = [
           "thoracic lymph nodes"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1042"
       },
       {
         "q": "If the thyroid gland of a person is removed because of hyperthyroidism or some other disease, what lymphoid organ may also be removed or damaged inadvertently?",
@@ -11419,7 +12461,8 @@ const STUVIA_BANK = [
           "None of the lymphoid organs are at risk when the thyroid gland is removed."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1043"
       },
       {
         "q": "When is the thymus most active?",
@@ -11431,7 +12474,8 @@ const STUVIA_BANK = [
           "throughout life"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1044"
       },
       {
         "q": "The capsule that covers the thymus divides it into",
@@ -11443,7 +12487,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1045"
       },
       {
         "q": "Which of the following is (are) true of the thymic lobules?",
@@ -11455,7 +12500,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1046"
       },
       {
         "q": "The lobes of the thymus are separated by connective tissue into",
@@ -11467,7 +12513,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1047"
       },
       {
         "q": "The medulla of the thymus contains",
@@ -11479,7 +12526,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1048"
       },
       {
         "q": "Which of these is a unique part of the spleen?",
@@ -11491,7 +12539,8 @@ const STUVIA_BANK = [
           "cortex"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1049"
       },
       {
         "q": "The spleen",
@@ -11503,7 +12552,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1050"
       },
       {
         "q": "Which of the following is not a function of the spleen?",
@@ -11515,7 +12565,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1051"
       },
       {
         "q": "The cell population of the white pulp",
@@ -11527,7 +12578,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1052"
       },
       {
         "q": "Which of the following is (are) true of the spleen?",
@@ -11539,7 +12591,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1053"
       },
       {
         "q": "Lymphoid functions of the spleen include",
@@ -11551,7 +12604,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1054"
       },
       {
         "q": "Which of the following are not aging-dependent problems of the lymphoid system?",
@@ -11563,7 +12617,8 @@ const STUVIA_BANK = [
           "reduced number of helper T cells"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1055"
       },
       {
         "q": "Lymphedema is the general term used for swelling due to lymphatic blockage.",
@@ -11572,7 +12627,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1056"
       },
       {
         "q": "A disease that develops as a result of HIV infection is AIDS.",
@@ -11581,7 +12637,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1057"
       },
       {
         "q": "Chronic enlargement of the lymph nodes is called lymphedema.",
@@ -11590,7 +12647,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1058"
       },
       {
         "q": "Cancer of the lymphocytes is called lymphoma.",
@@ -11599,7 +12657,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1059"
       },
       {
         "q": "Discuss appendicitis and why appendectomies are sometimes necessary.",
@@ -11608,7 +12667,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1060"
       },
       {
         "q": "Paula's grandfather is diagnosed as having lung cancer. His physician orders biopsies of",
@@ -11617,7 +12677,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1061"
       },
       {
         "q": "Functions of the digestive system include which of the following?",
@@ -11629,7 +12690,8 @@ const STUVIA_BANK = [
           "both ingestion and processing of food materials and liquids"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1062"
       },
       {
         "q": "The correct order of the digestive tube layers, from lumen outward, is:  (1) mucosa  (2) muscularis externa  (3) serosa  (4) submucosa",
@@ -11641,7 +12703,8 @@ const STUVIA_BANK = [
           "1, 4, 3, 2"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1063"
       },
       {
         "q": "Sandwiched between the layer of circular and longitudinal muscle in the muscularis externa is the",
@@ -11653,7 +12716,8 @@ const STUVIA_BANK = [
           "mesocolon."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1064"
       },
       {
         "q": "The lining of the digestive tract plays a defensive role by protecting surrounding tissues against",
@@ -11665,7 +12729,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1065"
       },
       {
         "q": "The areolar connective tissue found immediately beneath the epithelium of the digestive tract is called",
@@ -11677,7 +12742,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1066"
       },
       {
         "q": "The muscular layer farthest from the lumen is (the)",
@@ -11689,7 +12755,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1067"
       },
       {
         "q": "Control of secretions of the digestive tract is via the",
@@ -11701,7 +12768,8 @@ const STUVIA_BANK = [
           "Control is different in various areas of the tract."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1068"
       },
       {
         "q": "In areas where the digestive tract is not covered in serosa it is covered by a fibrous connective tissue called",
@@ -11713,7 +12781,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1069"
       },
       {
         "q": "Peristalsis",
@@ -11725,7 +12794,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1070"
       },
       {
         "q": "Long reflexes",
@@ -11737,7 +12807,8 @@ const STUVIA_BANK = [
           "provide a higher level of control over digestive functions."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1071"
       },
       {
         "q": "What intestinal functions do the short reflexes control?",
@@ -11749,7 +12820,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1072"
       },
       {
         "q": "A retroperitoneal structure",
@@ -11761,7 +12833,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1073"
       },
       {
         "q": "Which of the following is an intraperitoneal organ?",
@@ -11773,7 +12846,8 @@ const STUVIA_BANK = [
           "duodenum"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1074"
       },
       {
         "q": "Organs that develop in the peritoneal cavity but later fuse to the posterior abdominal wall include the _____.",
@@ -11785,7 +12859,8 @@ const STUVIA_BANK = [
           "urinary bladder"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1075"
       },
       {
         "q": "Each day about liter(s) of peritoneal fluid enters and leaves the peritoneal cavity.",
@@ -11797,7 +12872,8 @@ const STUVIA_BANK = [
           "26"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1076"
       },
       {
         "q": "The tissue that suspends from the stomach and anteriorly across most of the abdominal cavity is (the)",
@@ -11809,7 +12885,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1077"
       },
       {
         "q": "Functions of the greater omentum include",
@@ -11821,7 +12898,8 @@ const STUVIA_BANK = [
           "padding of the abdominal viscera and storage of fat."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1078"
       },
       {
         "q": "Which of the following are true of the mesenteries?  (1) They are sheets of serous membrane.  (2) They suspend portions of the digestive tract within the peritoneal cavity.  (3) They are double sheets of peritoneal membrane.  (4) They provide an access route to digestive structures for nerves, lymphoids and blood vessels.  (5) They provide proprioceptive information to the spinal cord regarding the digestive organs.",
@@ -11833,7 +12911,8 @@ const STUVIA_BANK = [
           "2, 4, and 5 are true."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1079"
       },
       {
         "q": "A blockage of the ducts from the parotid salivary glands would",
@@ -11845,7 +12924,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1080"
       },
       {
         "q": "The surfaces of the first incisors touch one another.",
@@ -11857,7 +12937,8 @@ const STUVIA_BANK = [
           "lingual"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1081"
       },
       {
         "q": "The opening in the diaphragm that the esophagus passes through is (the)",
@@ -11869,7 +12950,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1082"
       },
       {
         "q": "Which of the following is the outer part of the esophageal wall?",
@@ -11881,7 +12963,8 @@ const STUVIA_BANK = [
           "esophageal glands"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1083"
       },
       {
         "q": "The lining of the stomach",
@@ -11893,7 +12976,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1084"
       },
       {
         "q": "The stomach lining contains numerous depressions called",
@@ -11905,7 +12989,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1085"
       },
       {
         "q": "Which of the following is a function of the stomach?",
@@ -11917,7 +13002,8 @@ const STUVIA_BANK = [
           "partial digestion of carbohydrates by a salivary enzyme"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1086"
       },
       {
         "q": "Protection for the interior surface of the stomach against the acids and enzymes in the gastric lumen is afforded by",
@@ -11929,7 +13015,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1087"
       },
       {
         "q": "Parietal cells, chief cells, and G cells compose the",
@@ -11941,7 +13028,8 @@ const STUVIA_BANK = [
           "gastric glands."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1088"
       },
       {
         "q": "Parietal cells secrete",
@@ -11953,7 +13041,8 @@ const STUVIA_BANK = [
           "mucus."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1089"
       },
       {
         "q": "The medial surface of the stomach is (the)",
@@ -11965,7 +13054,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1090"
       },
       {
         "q": "The longest portion of the small intestine is the",
@@ -11977,7 +13067,8 @@ const STUVIA_BANK = [
           "appendix."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1091"
       },
       {
         "q": "Which of the following is a small intestinal feature that increases the surface area for digestion and absorption?",
@@ -11989,7 +13080,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1092"
       },
       {
         "q": "The second intestinal segment is (the)",
@@ -12001,7 +13093,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1093"
       },
       {
         "q": "Which of the following supplies blood to the small intestine?",
@@ -12013,7 +13106,8 @@ const STUVIA_BANK = [
           "superior mesenteric artery"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1094"
       },
       {
         "q": "Which of the following blood vessels supplies the most blood to the large intestine?",
@@ -12025,7 +13119,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1095"
       },
       {
         "q": "When a person has diarrhea, how is intestinal function different than normal?",
@@ -12037,7 +13132,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1096"
       },
       {
         "q": "Problems caused by a blockage of the cystic duct would include",
@@ -12049,7 +13145,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1097"
       },
       {
         "q": "The hormone cholecystokinin",
@@ -12061,7 +13158,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1098"
       },
       {
         "q": "In response to the hormone secretin, the pancreas secretes",
@@ -12073,7 +13171,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1099"
       },
       {
         "q": "Functions of the gallbladder include",
@@ -12085,7 +13184,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1100"
       },
       {
         "q": "Which of the following produces bile?",
@@ -12097,7 +13197,8 @@ const STUVIA_BANK = [
           "gallbladder"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1101"
       },
       {
         "q": "Structures that unite to form the common bile duct include:  (1) hepatopancreatic sphincter  (2) porta hepatis  (3) cystic duct  (4) common hepatic duct  (5) duodenal papilla",
@@ -12109,7 +13210,8 @@ const STUVIA_BANK = [
           "2, 4"
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1102"
       },
       {
         "q": "The tail of the pancreas is most closely associated with the",
@@ -12121,7 +13223,8 @@ const STUVIA_BANK = [
           "body of the gallbladder."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1103"
       },
       {
         "q": "The basic functional unit of the liver is (the)",
@@ -12133,7 +13236,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1104"
       },
       {
         "q": "A hepatic (portal) triad consists of branches of the",
@@ -12145,7 +13249,8 @@ const STUVIA_BANK = [
           "hepatic portal vein, central vein, hepatic artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1105"
       },
       {
         "q": "Aging may be detrimental to the function of the digestive tract because",
@@ -12157,7 +13262,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1106"
       },
       {
         "q": "Inflammation of the serous membranes of the abdominopelvic cavity is called peritonitis.",
@@ -12166,7 +13272,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1107"
       },
       {
         "q": "Inflammation caused by erosion due to gastric reflux is called a peptic ulcer.",
@@ -12175,7 +13282,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1108"
       },
       {
         "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the",
@@ -12184,7 +13292,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1109"
       },
       {
         "q": "Chief cells produce pepsinogen.",
@@ -12193,7 +13302,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1110"
       },
       {
         "q": "Parietal cells produce intrinsic factor.",
@@ -12202,7 +13312,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1111"
       },
       {
         "q": "Enteroendocrine cells produce hormones.",
@@ -12211,7 +13322,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1112"
       },
       {
         "q": "Goblet cells produce gastrin.",
@@ -12220,7 +13332,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1113"
       },
       {
         "q": "Inflammation of the gastric mucosa is called an ulcer.",
@@ -12229,7 +13342,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1114"
       },
       {
         "q": "Irritation of the colon, leading to abnormal bowel function is called colitis.",
@@ -12238,7 +13352,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1115"
       },
       {
         "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection,",
@@ -12247,7 +13362,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1116"
       },
       {
         "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even",
@@ -12256,7 +13372,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1117"
       },
       {
         "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was",
@@ -12265,7 +13382,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1118"
       },
       {
         "q": "Functions of the urinary system include",
@@ -12277,7 +13395,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1119"
       },
       {
         "q": "Urine is carried to the exterior of the body by the",
@@ -12289,7 +13408,8 @@ const STUVIA_BANK = [
           "urachus."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1120"
       },
       {
         "q": "Urine is formed in the",
@@ -12301,7 +13421,8 @@ const STUVIA_BANK = [
           "ureter and urethra."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1121"
       },
       {
         "q": "Which of the following sits atop the kidneys?",
@@ -12313,7 +13434,8 @@ const STUVIA_BANK = [
           "suprarenal glands"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1122"
       },
       {
         "q": "The position of the kidneys in the abdominal cavity is maintained, in part, by (the)",
@@ -12325,7 +13447,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1123"
       },
       {
         "q": "Kidneys are often difficult to see without dissection because they are surrounded by a layer of fat. What is the significance of this fat?",
@@ -12337,7 +13460,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1124"
       },
       {
         "q": "The kidneys are located",
@@ -12349,7 +13473,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1125"
       },
       {
         "q": "Most often, the kidney is confused with the _____ when viewed superficially.",
@@ -12361,7 +13486,8 @@ const STUVIA_BANK = [
           "liver"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1126"
       },
       {
         "q": "The large passageways into which the minor calyces empty are the",
@@ -12373,7 +13499,8 @@ const STUVIA_BANK = [
           "renal calyx."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1127"
       },
       {
         "q": "The blood vessels at the boundary of the cortex and medulla of the kidney are the",
@@ -12385,7 +13512,8 @@ const STUVIA_BANK = [
           "arcuate artery and vein."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1128"
       },
       {
         "q": "Blood exits the nephron via",
@@ -12397,7 +13525,8 @@ const STUVIA_BANK = [
           "lobar artery."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1129"
       },
       {
         "q": "Each kidney ultimately receives blood from",
@@ -12409,7 +13538,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1130"
       },
       {
         "q": "In juxtamedullary nephrons, the efferent arterioles and peritubular capillaries are connected to a long, slender series of capillaries that accompany the nephron loops into the medulla. These are (the)",
@@ -12421,7 +13551,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1131"
       },
       {
         "q": "The kidneys are innervated by the",
@@ -12433,7 +13564,8 @@ const STUVIA_BANK = [
           "sacral nerves."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1132"
       },
       {
         "q": "The known functions of the sympathetic innervation of the kidneys include",
@@ -12445,7 +13577,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1133"
       },
       {
         "q": "A glomerulus",
@@ -12457,7 +13590,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1134"
       },
       {
         "q": "The filtrate that escapes from the glomerular capillaries includes which of the following?",
@@ -12469,7 +13603,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1135"
       },
       {
         "q": "A nephron has two parts:",
@@ -12481,7 +13616,8 @@ const STUVIA_BANK = [
           "renal tubule and collecting duct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1136"
       },
       {
         "q": "The last part of the renal tubule is the",
@@ -12493,7 +13629,8 @@ const STUVIA_BANK = [
           "distal convoluted tubule."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1137"
       },
       {
         "q": "The distal convoluted tubule of the nephron is responsible for",
@@ -12505,7 +13642,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1138"
       },
       {
         "q": "Which of the following drains into the minor calyx?",
@@ -12517,7 +13655,8 @@ const STUVIA_BANK = [
           "distal convoluted tubule"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1139"
       },
       {
         "q": "The main homeostatic function that occurs as a result of the work of the nephron loop is",
@@ -12529,7 +13668,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1140"
       },
       {
         "q": "About 85 percent of the nephrons are classified as",
@@ -12541,7 +13681,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1141"
       },
       {
         "q": "Which of the following is a function of the glomerular capsule?",
@@ -12553,7 +13694,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1142"
       },
       {
         "q": "The parietal and visceral epithelia of the glomerular capsule are separated by (the)",
@@ -12565,7 +13707,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1143"
       },
       {
         "q": "The glomerulus is made up of many",
@@ -12577,7 +13720,8 @@ const STUVIA_BANK = [
           "arteries."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1144"
       },
       {
         "q": "Cells found between the capillary endothelium and the glomerular epithelium that are important in regulating glomerular blood flow are the",
@@ -12589,7 +13733,8 @@ const STUVIA_BANK = [
           "pyramidal cells."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1145"
       },
       {
         "q": "The gaps between the pedicles of the podocytes are called (the)",
@@ -12601,7 +13746,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1146"
       },
       {
         "q": "The glomerular capsule and the glomerulus make up the",
@@ -12613,7 +13759,8 @@ const STUVIA_BANK = [
           "renal papilla."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1147"
       },
       {
         "q": "The expanded end of the nephron is the",
@@ -12625,7 +13772,8 @@ const STUVIA_BANK = [
           "nephron loop."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1148"
       },
       {
         "q": "The structure directly opposite the vascular pole of the glomerulus is the",
@@ -12637,7 +13785,8 @@ const STUVIA_BANK = [
           "nephron loop."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1149"
       },
       {
         "q": "Which area of the nephron completely lacks microvilli and is under hormonal control for the reabsorption of sodium?",
@@ -12649,7 +13798,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1150"
       },
       {
         "q": "The nephron loop is composed of (the)",
@@ -12661,7 +13811,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1151"
       },
       {
         "q": "The thick ascending limb functions to",
@@ -12673,7 +13824,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1152"
       },
       {
         "q": "The primary function of the distal convoluted tubule is",
@@ -12685,7 +13837,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1153"
       },
       {
         "q": "Compared to the PCT, the DCT has",
@@ -12697,7 +13850,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1154"
       },
       {
         "q": "The fluid outside the renal tubule is called",
@@ -12709,7 +13863,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1155"
       },
       {
         "q": "The secondary function of the DCT to reabsorb sodium is controlled by the hormone(s)",
@@ -12721,7 +13876,8 @@ const STUVIA_BANK = [
           "aldosterone and ADH."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1156"
       },
       {
         "q": "ADH acts mostly on the",
@@ -12733,7 +13889,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1157"
       },
       {
         "q": "Tall cells of the DCT near the vascular pole are called (the)",
@@ -12745,7 +13902,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1158"
       },
       {
         "q": "In the nephron loop",
@@ -12757,7 +13915,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1159"
       },
       {
         "q": "After draining through the collecting system, tubular fluid enters (the)",
@@ -12769,7 +13928,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1160"
       },
       {
         "q": "Damage, disease, or irritation of the renal cortex would impair the function of which kidney structures?",
@@ -12781,7 +13941,8 @@ const STUVIA_BANK = [
           "the nephron units"
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1161"
       },
       {
         "q": "An obstruction in the glomerulus would increase the blood pressure in the",
@@ -12793,7 +13954,8 @@ const STUVIA_BANK = [
           "lobular vein."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1162"
       },
       {
         "q": "Damage to the renal medulla would interfere first with the functioning of the",
@@ -12805,7 +13967,8 @@ const STUVIA_BANK = [
           "glomerulus."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1163"
       },
       {
         "q": "The ureters",
@@ -12817,7 +13980,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1164"
       },
       {
         "q": "The parts of the urethra in the male, in correct order from the bladder to the exterior, are:  (1) urachus  (2) spongy urethra  (3) dysuria  (4) membranous urethra  (5) prostatic urethra",
@@ -12829,7 +13993,8 @@ const STUVIA_BANK = [
           "1, 2, 3, 4, 5"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1165"
       },
       {
         "q": "The best diagnostic test to determine whether or not a person has a kidney stone is",
@@ -12841,7 +14006,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1166"
       },
       {
         "q": "Urine leaves the renal pelvis and enters the ureter because of",
@@ -12853,7 +14019,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1167"
       },
       {
         "q": "Urine reaches the urinary bladder by",
@@ -12865,7 +14032,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1168"
       },
       {
         "q": "In the renal pelvis, fluid processing includes",
@@ -12877,7 +14045,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1169"
       },
       {
         "q": "The muscle responsible for stopping the micturition reflex and allowing a person to stop voiding is the",
@@ -12889,7 +14058,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1170"
       },
       {
         "q": "Voluntary urination involves",
@@ -12901,7 +14071,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1171"
       },
       {
         "q": "Age-related changes in the urinary system include",
@@ -12913,7 +14084,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1172"
       },
       {
         "q": "The mechanism whereby benign enlargement of the prostate affects urinary function in older men includes which of the following?",
@@ -12925,7 +14097,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1173"
       },
       {
         "q": "The collecting ducts are formed by merging distal convoluted tubules.",
@@ -12934,7 +14107,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1174"
       },
       {
         "q": "The papillary duct empties into the minor calyx.",
@@ -12943,7 +14117,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1175"
       },
       {
         "q": "Juxtaglomerular cells are a special cell in the distal convoluted tubule.",
@@ -12952,7 +14127,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1176"
       },
       {
         "q": "Most reabsorption takes place in the nephron loop.",
@@ -12961,7 +14137,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1177"
       },
       {
         "q": "Ascending and descending limbs are parts of the proximal convoluted tubule.",
@@ -12970,7 +14147,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1178"
       },
       {
         "q": "A technique in which an artificial membrane regulates the composition of the blood is called",
@@ -12979,7 +14157,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1179"
       },
       {
         "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been",
@@ -12988,7 +14167,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1180"
       },
       {
         "q": "A condition of pain upon urination is called dysuria.",
@@ -12997,7 +14177,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1181"
       },
       {
         "q": "Inflammation of the lining of the urinary bladder is called cystitis.",
@@ -13006,7 +14187,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1182"
       },
       {
         "q": "An inflammation of the urethral wall is called cystitis.",
@@ -13015,7 +14197,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1183"
       },
       {
         "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the",
@@ -13024,7 +14207,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1184"
       },
       {
         "q": "A condition in which kidney stones are present in the kidneys is called nephrolithiasis.",
@@ -13033,7 +14217,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1185"
       },
       {
         "q": "An inability to control urination voluntarily is called incontinence.",
@@ -13042,7 +14227,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1186"
       },
       {
         "q": "Bars frequently provide snacks for their drinkers to enjoy, either free or at a nominal charge.",
@@ -13051,7 +14237,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1187"
       },
       {
         "q": "The human reproductive system",
@@ -13063,7 +14250,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1188"
       },
       {
         "q": "Reproductive cells are called",
@@ -13075,7 +14263,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1189"
       },
       {
         "q": "The process of fertilization forms (the)",
@@ -13087,7 +14276,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1190"
       },
       {
         "q": "Which of the following is part of the male reproductive system only?",
@@ -13099,7 +14289,8 @@ const STUVIA_BANK = [
           "vagina"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1191"
       },
       {
         "q": "Contraction of the cremaster muscle",
@@ -13111,7 +14302,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1192"
       },
       {
         "q": "How are sperm acted upon by the reproductive system of the female?",
@@ -13123,7 +14315,8 @@ const STUVIA_BANK = [
           "They undergo capacitation."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1193"
       },
       {
         "q": "The structure that assists in descent of the testes is (the)",
@@ -13135,7 +14328,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1194"
       },
       {
         "q": "Major functions of the testis is",
@@ -13147,7 +14341,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1195"
       },
       {
         "q": "The contents of the spermatic cord includes the",
@@ -13159,7 +14354,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1196"
       },
       {
         "q": "Contraction of the cremaster muscle occurs because of",
@@ -13171,7 +14367,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1197"
       },
       {
         "q": "The outer covering of the testis and inner lining of the scrotum is the",
@@ -13183,7 +14380,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1198"
       },
       {
         "q": "The dermis of the scrotum contains a thin muscle, the",
@@ -13195,7 +14393,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1199"
       },
       {
         "q": "Descent of the testes",
@@ -13207,7 +14406,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1200"
       },
       {
         "q": "Which of the following is the most distal structure of the penis?",
@@ -13219,7 +14419,8 @@ const STUVIA_BANK = [
           "bulb"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1201"
       },
       {
         "q": "Which of the following muscles inserts along the sides of the penis?",
@@ -13231,7 +14432,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1202"
       },
       {
         "q": "The specific structures that make up the root of the penis are (the)",
@@ -13243,7 +14445,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1203"
       },
       {
         "q": "The female gonads are the",
@@ -13255,7 +14458,8 @@ const STUVIA_BANK = [
           "straight tubules."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1204"
       },
       {
         "q": "What additional function(s), beyond those that occur in the male reproductive system, occur in the female reproductive system?",
@@ -13267,7 +14471,8 @@ const STUVIA_BANK = [
           "nourishment and maturation of gametes"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1205"
       },
       {
         "q": "The thickened, cord-like connection of the uterus to the anterior pelvic wall is the",
@@ -13279,7 +14484,8 @@ const STUVIA_BANK = [
           "cardinal ligament."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1206"
       },
       {
         "q": "The lateral surface of the ovary is connected to the pelvic wall by (the)",
@@ -13291,7 +14497,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1207"
       },
       {
         "q": "The ovaries are supported by (the)",
@@ -13303,7 +14510,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1208"
       },
       {
         "q": "The vagina is lined by (a)",
@@ -13315,7 +14523,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1209"
       },
       {
         "q": "Straight tubules originate at the seminiferous tubules and form a maze of passageways called the",
@@ -13327,7 +14536,8 @@ const STUVIA_BANK = [
           "epididymis."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1210"
       },
       {
         "q": "The septa of the testis are formed from a part of (the)",
@@ -13339,7 +14549,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1211"
       },
       {
         "q": "The seminiferous tubules",
@@ -13351,7 +14562,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1212"
       },
       {
         "q": "In correct order, from external to internal, the layers of the testis include:  (1) dartos muscle  (2) cremaster muscle  (3) tunica vaginalis  (4) scrotal cavity  (5) tunica albuginea  (6) septa",
@@ -13363,7 +14575,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1213"
       },
       {
         "q": "The bundle that contains the pampiniform plexus, testicular artery, ductus deferens, iliofemoral, and genitofemoral nerves is called the",
@@ -13375,7 +14588,8 @@ const STUVIA_BANK = [
           "cremaster bundle."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1214"
       },
       {
         "q": "Compartments within the testes are (the)",
@@ -13387,7 +14601,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1215"
       },
       {
         "q": "The cells of the testes that produce testosterone are the",
@@ -13399,7 +14614,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1216"
       },
       {
         "q": "What is the importance of the pampiniform plexus in the scrotum?",
@@ -13411,7 +14627,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1217"
       },
       {
         "q": "The muscular layer of the uterus is (the)",
@@ -13423,7 +14640,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1218"
       },
       {
         "q": "The lining of the uterus is (the)",
@@ -13435,7 +14653,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1219"
       },
       {
         "q": "Stem cells in the testes are the",
@@ -13447,7 +14666,8 @@ const STUVIA_BANK = [
           "haploids."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1220"
       },
       {
         "q": "The process whereby spermatids go through morphological changes and become spermatozoa is called",
@@ -13459,7 +14679,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1221"
       },
       {
         "q": "Gametes are called haploid because",
@@ -13471,7 +14692,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1222"
       },
       {
         "q": "Spermatogenesis ends with the production of spermatids.",
@@ -13483,7 +14705,8 @@ const STUVIA_BANK = [
           "16"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1223"
       },
       {
         "q": "The process of a sperm cell being released into the lumen of the seminiferous tubule is called",
@@ -13495,7 +14718,8 @@ const STUVIA_BANK = [
           "fertilization."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1224"
       },
       {
         "q": "Which of the following is a function of spermatogonia?",
@@ -13507,7 +14731,8 @@ const STUVIA_BANK = [
           "secretion of ABP"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1225"
       },
       {
         "q": "The area of the sperm with densely packed mitochondria is the",
@@ -13519,7 +14744,8 @@ const STUVIA_BANK = [
           "cap."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1226"
       },
       {
         "q": "Which structure in a spermatozoan contains the only structure of its kind found in the human body?",
@@ -13531,7 +14757,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1227"
       },
       {
         "q": "The of the epididymis receives spermatozoa via the efferent ducts of the mediastinum of the testis.",
@@ -13543,7 +14770,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1228"
       },
       {
         "q": "Which of the following is a function of the ductus deferens?",
@@ -13555,7 +14783,8 @@ const STUVIA_BANK = [
           "transports sperm to the prostatic urethra."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1229"
       },
       {
         "q": "The enlarged distal end of the ductus deferens is called (the)",
@@ -13567,7 +14796,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1230"
       },
       {
         "q": "When the ductus deferens fuses with the base of the seminal gland, it forms (the)",
@@ -13579,7 +14809,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1231"
       },
       {
         "q": "Which of the following provides an antibiotic called seminalplasmin?",
@@ -13591,7 +14822,8 @@ const STUVIA_BANK = [
           "epididymis"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1232"
       },
       {
         "q": "Which of the following is a function of the seminal fluid?",
@@ -13603,7 +14835,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1233"
       },
       {
         "q": "If the seminal glands of the male reproductive tract ceased to function, how would the male reproductive tract be affected?",
@@ -13615,7 +14848,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1234"
       },
       {
         "q": "Erection of the penis is caused by",
@@ -13627,7 +14861,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1235"
       },
       {
         "q": "The process of forcefully expelling semen from the urethra is called",
@@ -13639,7 +14874,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1236"
       },
       {
         "q": "The average length of the uterine cycle is",
@@ -13651,7 +14887,8 @@ const STUVIA_BANK = [
           "40 days."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1237"
       },
       {
         "q": "The uterine cycle begins with",
@@ -13663,7 +14900,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1238"
       },
       {
         "q": "During the process of oogenesis there is a possibility of up to two small \"extra\" cells produced. These are called _____.",
@@ -13675,7 +14913,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1239"
       },
       {
         "q": "In the correct order, the steps involved in oogenesis are:  (1) formation of a tertiary follicle  (2) ovulation  (3) formation and degeneration of the corpus luteum  (4) formation of primary follicles  (5) formation of secondary follicles",
@@ -13687,7 +14926,8 @@ const STUVIA_BANK = [
           "3, 5, 1, 4, 2"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1240"
       },
       {
         "q": "During the ovarian cycle,",
@@ -13699,7 +14939,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1241"
       },
       {
         "q": "In the follicular phase of the uterine cycle, the ovary is",
@@ -13711,7 +14952,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1242"
       },
       {
         "q": "The milk-producing cells of the breast are activated by which of the following?",
@@ -13723,7 +14965,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1243"
       },
       {
         "q": "Milk production in the mammary glands",
@@ -13735,7 +14978,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1244"
       },
       {
         "q": "The central, raised area of the breast where the newborn suckles is called the",
@@ -13747,7 +14991,8 @@ const STUVIA_BANK = [
           "nipple."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1245"
       },
       {
         "q": "What would be the effect on a pregnancy if the placenta failed to begin functioning during the third month of gestation?",
@@ -13759,7 +15004,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1246"
       },
       {
         "q": "A function of the placenta is to",
@@ -13771,7 +15017,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1247"
       },
       {
         "q": "Premature menopause",
@@ -13783,7 +15030,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1248"
       },
       {
         "q": "The change in function of the male reproductive system that is comparable to menopause in women is",
@@ -13795,7 +15043,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1249"
       },
       {
         "q": "The penis is the primary male reproductive organ.",
@@ -13804,7 +15053,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1250"
       },
       {
         "q": "The ovarian ligament attaches the uterus to the anterior abdominal wall.",
@@ -13813,7 +15063,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1251"
       },
       {
         "q": "The outer area of the ovary where gametes are produced is the cortex.",
@@ -13822,7 +15073,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1252"
       },
       {
         "q": "The stem cells in the seminiferous tubules are called spermatogonia.",
@@ -13831,7 +15083,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1253"
       },
       {
         "q": "The secondary spermatocytes are haploid cells.",
@@ -13840,7 +15093,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1254"
       },
       {
         "q": "The semen contains large amounts of glucose.",
@@ -13849,7 +15103,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1255"
       },
       {
         "q": "The outer layer of the uterine wall is the peritoneum.",
@@ -13858,7 +15113,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1256"
       },
       {
         "q": "A mature ovum is ovulated once per month.",
@@ -13867,7 +15123,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1257"
       },
       {
         "q": "Follicle maturation is stimulated by FSH.",
@@ -13876,7 +15133,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1258"
       },
       {
         "q": "HCG is the \"pregnancy hormone.\"",
@@ -13885,7 +15143,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1259"
       },
       {
         "q": "Describe the structure of a spermatozoon.",
@@ -13894,7 +15153,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1260"
       },
       {
         "q": "Describe the mechanism that permits the penis to become erect.",
@@ -13903,7 +15163,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1261"
       },
       {
         "q": "Fertilization is the process whereby",
@@ -13915,7 +15176,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1262"
       },
       {
         "q": "The process of cells specializing during development is",
@@ -13927,7 +15189,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1263"
       },
       {
         "q": "Because of the great loss of spermatozoa during the process of traveling from the vagina to the ampulla of the uterine tube where fertilization occurs, a male must have at least _____ spermatozoa per milliliter, or he will be functionally sterile.",
@@ -13939,7 +15202,8 @@ const STUVIA_BANK = [
           "500,000,000"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1264"
       },
       {
         "q": "Sperm cannot perform fertilization until they",
@@ -13951,7 +15215,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1265"
       },
       {
         "q": "The flagellum is used to",
@@ -13963,7 +15228,8 @@ const STUVIA_BANK = [
           "penetrate the oocyte."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1266"
       },
       {
         "q": "Fusion of the pronuclei forming the zygote is known as",
@@ -13975,7 +15241,8 @@ const STUVIA_BANK = [
           "amphimixis."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1267"
       },
       {
         "q": "After oocyte activation and completion of meiosis, the female chromosomes reorganize as the",
@@ -13987,7 +15254,8 @@ const STUVIA_BANK = [
           "copulation."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1268"
       },
       {
         "q": "If a woman gives birth to identical triplets, how many ova were fertilized?",
@@ -13999,7 +15267,8 @@ const STUVIA_BANK = [
           "from one to three"
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1269"
       },
       {
         "q": "The length of the prenatal development period is called the period.",
@@ -14011,7 +15280,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1270"
       },
       {
         "q": "The period of time after birth is called the period.",
@@ -14023,7 +15293,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1271"
       },
       {
         "q": "Among the important and complex events that occur during development are which of the following?  (1) cleavage  (2) embryogenesis  (3) ovulation  (4) spermiogenesis  (5) placentation  (6) implantation",
@@ -14035,7 +15306,8 @@ const STUVIA_BANK = [
           "2, 3, 4"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1272"
       },
       {
         "q": "Once cleavage starts, the zygote starts dividing, forming cells that are",
@@ -14047,7 +15319,8 @@ const STUVIA_BANK = [
           "blastocysts."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1273"
       },
       {
         "q": "A hollow ball of cells is (the)",
@@ -14059,7 +15332,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1274"
       },
       {
         "q": "In the early blastocyst, the placenta will develop from (the)",
@@ -14071,7 +15345,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1275"
       },
       {
         "q": "The fluid-filled cavity separating the inner cell mass from the trophoblast is the",
@@ -14083,7 +15358,8 @@ const STUVIA_BANK = [
           "hypoblast."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1276"
       },
       {
         "q": "If the mother is exposed to teratogens during pregnancy, what can happen to the fetus?",
@@ -14095,7 +15371,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1277"
       },
       {
         "q": "Muscles, bones, and connective tissues form from",
@@ -14107,7 +15384,8 @@ const STUVIA_BANK = [
           "mesoderm."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1278"
       },
       {
         "q": "Burrowing of the embryo into the endometrium is called",
@@ -14119,7 +15397,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1279"
       },
       {
         "q": "During implantation, the developing blastocyst receives nutrients from (the)",
@@ -14131,7 +15410,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1280"
       },
       {
         "q": "During implantation, why doesn't the hyaluronidase erode the trophoblast as well as the endometrium?",
@@ -14143,7 +15423,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1281"
       },
       {
         "q": "At about nine days gestation, the inner cell mass is organized in two layers; of these layers, (the) faces the amnion.",
@@ -14155,7 +15436,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1282"
       },
       {
         "q": "Formation of the germ layer is the process of",
@@ -14167,7 +15449,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1283"
       },
       {
         "q": "The germ layer located on the dorsum of the embryo is the",
@@ -14179,7 +15462,8 @@ const STUVIA_BANK = [
           "epiblast."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1284"
       },
       {
         "q": "The extraembryonic membrane that persists as part of the urinary bladder is (the)",
@@ -14191,7 +15475,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1285"
       },
       {
         "q": "The chorion forms from the",
@@ -14203,7 +15488,8 @@ const STUVIA_BANK = [
           "endoderm."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1286"
       },
       {
         "q": "The first of the extraembryonic membranes to appear, which ultimately becomes involved in blood cell formation, is (the)",
@@ -14215,7 +15501,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1287"
       },
       {
         "q": "The mesoderm associated with the allantois spreads to cover the entire inside of the trophoblast. This combination of mesoderm and trophoblast is the",
@@ -14227,7 +15514,8 @@ const STUVIA_BANK = [
           "yolk sac."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1288"
       },
       {
         "q": "Within the first twelve weeks of development, the basis for organ formation is established. This process is called",
@@ -14239,7 +15527,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1289"
       },
       {
         "q": "The has mesoderm on the outside and endoderm on the inside.",
@@ -14251,7 +15540,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1290"
       },
       {
         "q": "Which time period is the most dangerous in prenatal life?",
@@ -14263,7 +15553,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1291"
       },
       {
         "q": "Problems with the formation of the chorion would affect",
@@ -14275,7 +15566,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1292"
       },
       {
         "q": "The relatively thin portion of the endometrium that covers the embryo and separates it from the uterine cavity is called the",
@@ -14287,7 +15579,8 @@ const STUVIA_BANK = [
           "decidua capsularis."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1293"
       },
       {
         "q": "A fetus begins to look distinctly human",
@@ -14299,7 +15592,8 @@ const STUVIA_BANK = [
           "at 8 weeks when the embryo becomes the fetus."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1294"
       },
       {
         "q": "During the second trimester, the organ systems",
@@ -14311,7 +15605,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1295"
       },
       {
         "q": "Developmental events that occur during the second trimester include",
@@ -14323,7 +15618,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1296"
       },
       {
         "q": "During the third trimester, which of the following occurs?",
@@ -14335,7 +15631,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1297"
       },
       {
         "q": "A premature infant often is able to survive if born in the",
@@ -14347,7 +15644,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1298"
       },
       {
         "q": "The fetus gains the greatest amount of weight during",
@@ -14359,7 +15657,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1299"
       },
       {
         "q": "Anatomical features that appear or undergo significant change during the third trimester include",
@@ -14371,7 +15670,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1300"
       },
       {
         "q": "The process of muscular activity that results in the forcible expulsion of the fetus from the uterus is called",
@@ -14383,7 +15683,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1301"
       },
       {
         "q": "The dilation stage of labor",
@@ -14395,7 +15696,8 @@ const STUVIA_BANK = [
           "All of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1302"
       },
       {
         "q": "Full term is",
@@ -14407,7 +15709,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1303"
       },
       {
         "q": "Surgical cutting of the perineum during delivery is called",
@@ -14419,7 +15722,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1304"
       },
       {
         "q": "The last systems to complete prenatal development are (the)",
@@ -14431,7 +15735,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1305"
       },
       {
         "q": "Which of the following is the result of the immature kidneys in the neonate?",
@@ -14443,7 +15748,8 @@ const STUVIA_BANK = [
           "fetal blood vessels close"
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1306"
       },
       {
         "q": "The formation of sex-appropriate gonads begins around month",
@@ -14455,7 +15761,8 @@ const STUVIA_BANK = [
           "five."
         ],
         "correct": 2,
-        "tf": false
+        "tf": false,
+        "id": "ST-1307"
       },
       {
         "q": "The first recognizable feature of the cardiovascular system is (the)",
@@ -14467,7 +15774,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1308"
       },
       {
         "q": "Which of the following is the condition of the skull at birth?",
@@ -14479,7 +15787,8 @@ const STUVIA_BANK = [
           "Only the roof of the skull remains incomplete."
         ],
         "correct": 4,
-        "tf": false
+        "tf": false,
+        "id": "ST-1309"
       },
       {
         "q": "Which of the following forms the nucleus pulposus?",
@@ -14491,7 +15800,8 @@ const STUVIA_BANK = [
           "sclerotomes"
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1310"
       },
       {
         "q": "Muscle are the result of maturing",
@@ -14503,7 +15813,8 @@ const STUVIA_BANK = [
           "apical ridges."
         ],
         "correct": 0,
-        "tf": false
+        "tf": false,
+        "id": "ST-1311"
       },
       {
         "q": "White matter of the spinal cord develops from the",
@@ -14515,7 +15826,8 @@ const STUVIA_BANK = [
           "neurocoel."
         ],
         "correct": 3,
-        "tf": false
+        "tf": false,
+        "id": "ST-1312"
       },
       {
         "q": "The first part of the nervous system to form is (the)",
@@ -14527,7 +15839,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1313"
       },
       {
         "q": "If an ultrasound scan reveals that a fetus at six weeks of gestation is approximately the size of Lincoln on a penny,",
@@ -14539,7 +15852,8 @@ const STUVIA_BANK = [
           "None of the answers are correct."
         ],
         "correct": 1,
-        "tf": false
+        "tf": false,
+        "id": "ST-1314"
       },
       {
         "q": "A structural abnormality, present at birth is called a birthmark.",
@@ -14548,7 +15862,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1315"
       },
       {
         "q": "Anything that disrupts normal development by causing cell or chromosome damage or altering",
@@ -14557,7 +15872,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1316"
       },
       {
         "q": "A neonatal condition resulting from maternal alcohol consumption; characterized by",
@@ -14566,7 +15882,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1317"
       },
       {
         "q": "A delivery wherein the legs or buttocks of the fetus enter the vaginal canal first is called a",
@@ -14575,7 +15892,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1318"
       },
       {
         "q": "Neural tube formation occurs when the neural folds close and lose their connection with the",
@@ -14584,7 +15902,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1319"
       },
       {
         "q": "Neural folds extend from the lateral edge of the neural crest.",
@@ -14593,7 +15912,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1320"
       },
       {
         "q": "The neural groove becomes the notochord.",
@@ -14602,7 +15922,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1321"
       },
       {
         "q": "Neural crest cells develop into the autonomic motor neurons.",
@@ -14611,7 +15932,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1322"
       },
       {
         "q": "The neural plate is the first stage of development in the nervous system.",
@@ -14620,7 +15942,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1323"
       },
       {
         "q": "Pharyngeal pouch III becomes the upper portions of the parathyroid and thymus glands.",
@@ -14629,7 +15952,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1324"
       },
       {
         "q": "Pharyngeal pouch V is sometimes absent.",
@@ -14638,7 +15962,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1325"
       },
       {
         "q": "Pharyngeal arch IV is also called the hyoid arch.",
@@ -14647,7 +15972,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1326"
       },
       {
         "q": "The embryonic heart begins pumping and circulating blood during the sixth week of",
@@ -14656,7 +15982,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 1,
-        "tf": true
+        "tf": true,
+        "id": "ST-1327"
       },
       {
         "q": "Pharyngeal arch I is also called the mandibular arch.",
@@ -14665,7 +15992,8 @@ const STUVIA_BANK = [
           "False"
         ],
         "correct": 0,
-        "tf": true
+        "tf": true,
+        "id": "ST-1328"
       },
       {
         "q": "All cellular activities and metabolic reactions are controlled by _____.",
@@ -14674,7 +16002,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1329"
       },
       {
         "q": "The hormones released by the gonads belong to a class of compounds called _____.",
@@ -14683,7 +16012,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1330"
       },
       {
         "q": "The _____ extends from the hypothalamus inferiorly to the posterior and superior surfaces of the pituitary gland.",
@@ -14692,7 +16022,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1331"
       },
       {
         "q": "ADH and oxytocin are called _____ because they are produced and secreted by neurons.",
@@ -14701,7 +16032,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1332"
       },
       {
         "q": "Antidiuretic hormone is also called _____.",
@@ -14710,7 +16042,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1333"
       },
       {
         "q": "The veins that link two capillary systems are called _____.",
@@ -14719,7 +16052,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1334"
       },
       {
         "q": "The production of hormones in the anterior pituitary is controlled by the _____ as well as by feedback from the target organs.",
@@ -14728,7 +16062,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1335"
       },
       {
         "q": "The only hormone released by the pars intermedia of the pituitary is _____.",
@@ -14737,7 +16072,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1336"
       },
       {
         "q": "_____ promotes the development of oocytes (female gametes) within the ovaries of mature women. (Note: Be sure to capitalize the first letter of your answer).",
@@ -14746,7 +16082,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1337"
       },
       {
         "q": "The _____ are the small cells that secrete parathyroid hormone.",
@@ -14755,7 +16092,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1338"
       },
       {
         "q": "The steroid hormone produced by the kidneys in response to the presence of PTH is _____.",
@@ -14764,7 +16102,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1339"
       },
       {
         "q": "The primary hormones secreted by the zona fasciculata of the suprarenal cortex are collectively known as the _____.",
@@ -14773,7 +16112,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1340"
       },
       {
         "q": "The zona reticularis of the suprarenal cortex secretes _____.",
@@ -14782,7 +16122,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1341"
       },
       {
         "q": "The _____, the outermost suprarenal cortical region, accounts for about 15 percent of the cortical volume.",
@@ -14791,7 +16132,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1342"
       },
       {
         "q": "Converted to its active form in the lung capillaries, the hormone _____ stimulates the suprarenal production of aldosterone.",
@@ -14800,7 +16142,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1343"
       },
       {
         "q": "The secretion of _____ by nurse cells suppresses FSH release from the anterior pituitary.",
@@ -14809,7 +16152,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1344"
       },
       {
         "q": "_____ induces ovulation in females and production of androgens (testosterone) in males. (Note: Be sure to capitalize the first letter of your answer).",
@@ -14818,7 +16162,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1345"
       },
       {
         "q": "A high metabolic rate and elevated body temperature are symptoms of the thyroid disorder known as _____.",
@@ -14827,7 +16172,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1346"
       },
       {
         "q": "An enlarged thyroid gland associated with thyroid hyposecretion is called a _____.",
@@ -14836,7 +16182,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1347"
       },
       {
         "q": "The waste gas taken away from all cells of the body by the blood is _____.",
@@ -14845,7 +16192,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1348"
       },
       {
         "q": "Throughout the body, compounds known as _____ enable the bloodstream to deal with the acids generated by the tissues, such as lactic acid generated by the muscles.",
@@ -14854,7 +16202,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1349"
       },
       {
         "q": "Blood cells and cell fragments that are suspended in the plasma are called _____.",
@@ -14863,7 +16212,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1350"
       },
       {
         "q": "Roughly 60 percent of plasma proteins are composed of _____.",
@@ -14872,7 +16222,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1351"
       },
       {
         "q": "Separation of whole blood into components for clinical purposes is called _____.",
@@ -14881,7 +16232,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1352"
       },
       {
         "q": "The fluid portion of the blood is _____.",
@@ -14890,7 +16242,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1353"
       },
       {
         "q": "Solutions that can be used to increase blood volume temporarily are called _____.",
@@ -14899,7 +16252,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1354"
       },
       {
         "q": "The metal that is part of hemoglobin structure is _____.",
@@ -14908,7 +16262,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1355"
       },
       {
         "q": "Each globular protein subunit of hemoglobin contains a molecule of _____, which holds an iron ion to bind to oxygen.",
@@ -14917,7 +16272,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1356"
       },
       {
         "q": "The _____ indicates the percentage of whole blood occupied by cellular elements.",
@@ -14926,7 +16282,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1357"
       },
       {
         "q": "The cytoplasm of the red bloods cells are void of energy producing _____.",
@@ -14935,7 +16292,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1358"
       },
       {
         "q": "Flattened stacks of erythrocytes that pass through a blood vessel are called _____.",
@@ -14944,7 +16302,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1359"
       },
       {
         "q": "In terms of organelles, an obvious difference between an erythrocyte and a leukocyte viewed with a light microscope is that the erythrocyte lacks a _____.",
@@ -14953,7 +16312,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1360"
       },
       {
         "q": "A person who is Rh-positive has the _____ on his or her red blood cells.",
@@ -14962,7 +16322,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1361"
       },
       {
         "q": "A person with Type A blood will carry _____ agglutinins.",
@@ -14971,7 +16332,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1362"
       },
       {
         "q": "A leukocyte can migrate across a capillary wall by squeezing between adjacent endothelial cells, in a process known as _____.",
@@ -14980,7 +16342,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1363"
       },
       {
         "q": "Leukocytes without visible granular inclusions in their cytoplasm are called _____.",
@@ -14989,7 +16352,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1364"
       },
       {
         "q": "Acidophils are so named because their granules stain darkly with _____, an acidic red dye.",
@@ -14998,7 +16362,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1365"
       },
       {
         "q": "Lymphocytes known as _____ differentiate into plasmocytes, which secrete antibodies that attack foreign cells or proteins in distant portions of the body.",
@@ -15007,7 +16372,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1366"
       },
       {
         "q": "Monocytes are in circulation for a few days before entering the peripheral tissues, where they become free _____.",
@@ -15016,7 +16382,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1367"
       },
       {
         "q": "The loss of blood through the walls of damaged vessels is prevented by the process of _____.",
@@ -15025,7 +16392,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1368"
       },
       {
         "q": "Platelets are capable of shrinking after the formation of a blood clot because they contain molecules of actin and _____.",
@@ -15034,7 +16402,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1369"
       },
       {
         "q": "The process of blood cell formation is called _____.",
@@ -15043,7 +16412,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1370"
       },
       {
         "q": "Blood stem cells are called _____.",
@@ -15052,7 +16422,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1371"
       },
       {
         "q": "Red blood cells are formed by the process of _____.",
@@ -15061,7 +16432,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1372"
       },
       {
         "q": "In the adult, red blood cells are produced in areas of the _____.",
@@ -15070,7 +16442,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1373"
       },
       {
         "q": "In the case of severe blood loss, additional sites in which red blood cells can be formed arise because _____ can change into red bone marrow.",
@@ -15079,7 +16452,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1374"
       },
       {
         "q": "The _____ carries blood to and from the gas exchange surfaces of the lungs.",
@@ -15088,7 +16462,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1375"
       },
       {
         "q": "The exchange vessels in the cardiovascular system are called _____.",
@@ -15097,7 +16472,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1376"
       },
       {
         "q": "The primary function of the pericardial fluid is to provide _____ between the pericardial membranes.",
@@ -15106,7 +16482,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1377"
       },
       {
         "q": "The pericardial cavity contains _____, which acts as a lubricant, reducing friction between the opposing surfaces.",
@@ -15115,7 +16492,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1378"
       },
       {
         "q": "The visceral pericardium, which covers the surface of the heart, is also known as the _____.",
@@ -15124,7 +16502,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1379"
       },
       {
         "q": "Because cardiac muscles are mechanically, chemically, and electrically connected to one another, cardiac muscle functions as a single enormous fiber, i.e., a _____.",
@@ -15133,7 +16512,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1380"
       },
       {
         "q": "Cardiocytes are individual cardiac _____ cells.",
@@ -15142,7 +16522,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1381"
       },
       {
         "q": "The internal connective tissue network of the heart is called the _____ of the heart.",
@@ -15151,7 +16532,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1382"
       },
       {
         "q": "The expansible portion of an atrium is called an _____ because it reminded early anatomists of the external ear.",
@@ -15160,7 +16542,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1383"
       },
       {
         "q": "The diaphragm is attached to the inferior tip of the heart, called the _____.",
@@ -15169,7 +16552,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1384"
       },
       {
         "q": "The _____ border of the heart includes the bases of the major vessels.",
@@ -15178,7 +16562,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1385"
       },
       {
         "q": "The _____ are the folds of muscular tissue inside the ventricles.",
@@ -15187,7 +16572,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1386"
       },
       {
         "q": "Muscular ridges in the right atrium are called _____.",
@@ -15196,7 +16582,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1387"
       },
       {
         "q": "Blood passing through the tricuspid valve is going into the _____.",
@@ -15205,7 +16592,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1388"
       },
       {
         "q": "Blood exiting the left ventricle must pass through the _____ valve.",
@@ -15214,7 +16602,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1389"
       },
       {
         "q": "Blood leaves the right ventricle by passing through the _____ into the pulmonary trunk.",
@@ -15223,7 +16612,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1390"
       },
       {
         "q": "If the cusps of an atrioventricular valve are damaged or too short to meet at the center of the valve or do not close completely during the normal point in the pumping cycle, blood may flow backwards. This is called _____.",
@@ -15232,7 +16622,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1391"
       },
       {
         "q": "A gurgling sound of blood caused by regurgitation in the heart is called a _____.",
@@ -15241,7 +16632,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1392"
       },
       {
         "q": "There are many interconnections between the branches of the coronary circulation, which function to maintain a constant blood supply to the muscle of the heart. These connections are called _____.",
@@ -15250,7 +16642,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1393"
       },
       {
         "q": "The process of contraction without either neural or hormonal stimuli as occurs in the cardiac muscle is called _____.",
@@ -15259,7 +16652,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1394"
       },
       {
         "q": "The term _____ refers to degenerative changes in the coronary circulation.",
@@ -15268,7 +16662,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1395"
       },
       {
         "q": "The period between the start of one heartbeat and the beginning of the next is a single _____.",
@@ -15277,7 +16672,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1396"
       },
       {
         "q": "A condition in which the heart does not beat regularly is called a(n) _____.",
@@ -15286,7 +16682,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1397"
       },
       {
         "q": "The parasympathetic neurons of the autonomic nervous system decrease the rate at which the pacemaker cells of the sinoatrial node drive the heart rate by secreting the neurotransmitter _____.",
@@ -15295,7 +16692,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1398"
       },
       {
         "q": "The blood vessel type that is present in the body in the greatest numbers is the _____.",
@@ -15304,7 +16702,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1399"
       },
       {
         "q": "The smooth muscle fibers of the media decrease the diameter of the blood vessel, in a process called _____.",
@@ -15313,7 +16712,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1400"
       },
       {
         "q": "The layer of stretchy fibers found between the media and adventitia is called the _____.",
@@ -15322,7 +16722,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1401"
       },
       {
         "q": "_____ is characterized by endothelial changes and plaque accumulation. (Note: Be sure to capitalize the first letter of your answer).",
@@ -15331,7 +16732,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1402"
       },
       {
         "q": "The smaller muscular arteries and arterioles change their diameter in response to local conditions or to _____.",
@@ -15340,7 +16742,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1403"
       },
       {
         "q": "The most important blood vessels in autoregulation of blood flow are the _____.",
@@ -15349,7 +16752,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1404"
       },
       {
         "q": "The _____ resembles a capillary and provides a direct means of artery-vein communication.",
@@ -15358,7 +16762,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1405"
       },
       {
         "q": "Capillaries in the kidney are classified as _____.",
@@ -15367,7 +16772,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1406"
       },
       {
         "q": "Within the capillary bed a relatively direct means of arteriole-venule communication is provided by the _____.",
@@ -15376,7 +16782,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1407"
       },
       {
         "q": "Connections between arteries and veins that may reduce the impact of a temporary or even a permanent occlusion of a single blood vessel are _____.",
@@ -15385,7 +16792,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1408"
       },
       {
         "q": "Venules and medium-sized veins contain the most blood at about _____ percent of the blood volume at rest. (Note: Be sure your answer is a numeral, e.g. \"5\" vs \"five\").",
@@ -15394,7 +16802,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1409"
       },
       {
         "q": "If serious hemorrhaging occurs, the _____ center of the medulla causes stimulation of the smooth muscles of the walls of medium-sized blood vessels to reduce loss of blood.",
@@ -15403,7 +16812,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1410"
       },
       {
         "q": "About two-thirds of the total blood volume is in the _____.",
@@ -15412,7 +16822,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1411"
       },
       {
         "q": "The _____ circuit brings deoxygenated blood to the lungs.",
@@ -15421,7 +16832,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1412"
       },
       {
         "q": "There are usually four _____ that return blood to the left atrium.",
@@ -15430,7 +16842,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1413"
       },
       {
         "q": "The blood supply to the superior surface of the muscular diaphragm is provided by the _____.",
@@ -15439,7 +16852,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1414"
       },
       {
         "q": "Blood returning to the heart from the systemic circulation drains via the superior vena cava and the _____.",
@@ -15448,7 +16862,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1415"
       },
       {
         "q": "The vertebral arteries enter the cranium at the foramen magnum, where they fuse along the ventral surface of the medulla oblongata to form the _____.",
@@ -15457,7 +16872,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1416"
       },
       {
         "q": "The umbilical artery carries blood that is relatively _____ in oxygen concentration.",
@@ -15466,7 +16882,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1417"
       },
       {
         "q": "The region of the developing fetus that receives the least amount of blood is the _____.",
@@ -15475,7 +16892,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1418"
       },
       {
         "q": "The remnants of the ductus arteriosus in the heart persist as a fibrous cord, the _____.",
@@ -15484,7 +16902,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1419"
       },
       {
         "q": "Strokes, massive blood losses, or other problems can be caused by a(n) _____, which occurs when arterial walls thin and bulge or burst suddenly.",
@@ -15493,7 +16912,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1420"
       },
       {
         "q": "A major role of the lymphoid system is to produce, maintain, and distribute _____.",
@@ -15502,7 +16922,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1421"
       },
       {
         "q": "The lymphoid system defends the body against problems that originate in the external _____.",
@@ -15511,7 +16932,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1422"
       },
       {
         "q": "The components of the lymphoid system that transport the lymph and begin in the peripheral tissues and end in the venous system are the _____.",
@@ -15520,7 +16942,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1423"
       },
       {
         "q": "In _____, leukocytes are exposed to and fight off foreign invaders.",
@@ -15529,7 +16952,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1424"
       },
       {
         "q": "The fluid that is transported by the lymphatic vessels, similar in composition to blood plasma but lower in protein concentration, is the _____.",
@@ -15538,7 +16962,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1425"
       },
       {
         "q": "Lymphatic _____ are the smallest lymphatic vessels.",
@@ -15547,7 +16972,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1426"
       },
       {
         "q": "The lymphatic network begins with the _____, also called terminal lymphatics.",
@@ -15556,7 +16982,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1427"
       },
       {
         "q": "Lymphatic capillaries have _____ permeability than blood capillaries.",
@@ -15565,7 +16992,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1428"
       },
       {
         "q": "Lymphatic capillaries are present in almost every tissue of the body, with the exception of the _____ nervous system and a few other areas.",
@@ -15574,7 +17002,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1429"
       },
       {
         "q": "The _____ collects lymph from the right side of the body superior to the diaphragm.",
@@ -15583,7 +17012,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1430"
       },
       {
         "q": "Prominent lymphatic capillaries in the small intestine, which are important in the transport of lipids absorbed by the digestive tract, are called _____.",
@@ -15592,7 +17022,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1431"
       },
       {
         "q": "The _____ is an expanded, saclike chamber at the base of the thoracic duct.",
@@ -15601,7 +17032,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1432"
       },
       {
         "q": "Valves in lymphatic vessels resemble those of veins and allow the movement of fluid in _____.",
@@ -15610,7 +17042,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1433"
       },
       {
         "q": "When lymphoid systems do not function and affected tissues become distended and swollen, _____ occurs.",
@@ -15619,7 +17052,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1434"
       },
       {
         "q": "Cytotoxic T cells attack foreign cells or body cells infected by viruses by direct contact, and are said to confer _____ on the body tissues they defend.",
@@ -15628,7 +17062,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1435"
       },
       {
         "q": "B cells can differentiate into plasmocytes, which are responsible for the production and secretion of _____.",
@@ -15637,7 +17072,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1436"
       },
       {
         "q": "The destruction or inactivation of pathogens, the main activity of the lymphoid system, constitutes the _____ of the body.",
@@ -15646,7 +17082,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1437"
       },
       {
         "q": "In order to be able to respond to the vast number of antigens present in the environment, which the body might encounter, the lymphoid system has populations of cells with _____.",
@@ -15655,7 +17092,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1438"
       },
       {
         "q": "The continual policing of peripheral tissues by NK cells is referred to as _____.",
@@ -15664,7 +17102,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1439"
       },
       {
         "q": "Lymphopoiesis is the production of lymphocytes and it occurs in both the bone marrow and the _____.",
@@ -15673,7 +17112,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1440"
       },
       {
         "q": "Fibrous extensions from the capsule of the lymph nodes that extend part of the way into the interior are the _____.",
@@ -15682,7 +17122,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1441"
       },
       {
         "q": "The B cells that are clustered into elongated masses in the medulla of a lymph node are known as _____.",
@@ -15691,7 +17132,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1442"
       },
       {
         "q": "Thymic hormones in the thymus are produced by _____ cells.",
@@ -15700,7 +17142,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1443"
       },
       {
         "q": "The process of the decrease in size of any organ, such as the thymus gland, with age is _____.",
@@ -15709,7 +17152,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1444"
       },
       {
         "q": "The _____ prevents premature stimulation of developing T cells.",
@@ -15718,7 +17162,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1445"
       },
       {
         "q": "Cells of unknown function that are clustered together in concentric layers within the medullary region of the thymus are called _____.",
@@ -15727,7 +17172,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1446"
       },
       {
         "q": "Large quantities of _____ are contained in the red pulp of the spleen.",
@@ -15736,7 +17182,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1447"
       },
       {
         "q": "Arteries that radiate outward toward the capsule of the spleen, which are branches of the splenic arteries, are the _____.",
@@ -15745,7 +17192,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1448"
       },
       {
         "q": "In older individuals the response to an infection is lessened because the T cells are less responsive to _____.",
@@ -15754,7 +17202,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1449"
       },
       {
         "q": "The elimination of fecal material from the body is called _____.",
@@ -15763,7 +17212,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1450"
       },
       {
         "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function",
@@ -15772,7 +17222,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1451"
       },
       {
         "q": "The _____ are folds in the digestive lining.",
@@ -15781,7 +17232,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1452"
       },
       {
         "q": "The ability of a smooth muscle fiber to tolerate extreme stretching is called _____.",
@@ -15790,7 +17242,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1453"
       },
       {
         "q": "The muscle tissue of the digestive system is called _____ muscle.",
@@ -15799,7 +17252,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1454"
       },
       {
         "q": "The space located within the teeth is the _____.",
@@ -15808,7 +17262,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1455"
       },
       {
         "q": "The _____ phase of swallowing is the last phase.",
@@ -15817,7 +17272,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1456"
       },
       {
         "q": "The _____ is the most superior region of the stomach.",
@@ -15826,7 +17282,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1457"
       },
       {
         "q": "_____ cells in the gastric glands produce the hormone gastrin.",
@@ -15835,7 +17292,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1458"
       },
       {
         "q": "At the base of intestinal villi are the entrances to the _____.",
@@ -15844,7 +17302,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1459"
       },
       {
         "q": "The submucosa of the duodenum contains _____ that produce copious amounts of",
@@ -15853,7 +17312,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1460"
       },
       {
         "q": "The secretions of the small intestine are collectively known as _____.",
@@ -15862,7 +17322,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1461"
       },
       {
         "q": "The ilium ends at a sphincter, the _____.",
@@ -15871,7 +17332,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1462"
       },
       {
         "q": "The _____ is the last and longest segment of the small intestine.",
@@ -15880,7 +17342,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1463"
       },
       {
         "q": "Large aggregate lymphoid nodules, called _____, occur in the submucosa of the ileum.",
@@ -15889,7 +17352,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1464"
       },
       {
         "q": "The _____ attaches the transverse colon to the greater curvature of the stomach.",
@@ -15898,7 +17362,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1465"
       },
       {
         "q": "The _____ is the last part of the large intestine.",
@@ -15907,7 +17372,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1466"
       },
       {
         "q": "A band of mesentery, the _____, connects the appendix to the cecum.",
@@ -15916,7 +17382,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1467"
       },
       {
         "q": "The wall of the colon forms a series of pouches called the _____.",
@@ -15925,7 +17392,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1468"
       },
       {
         "q": "The turn between the ascending colon and the transverse colon is called the _____.",
@@ -15934,7 +17402,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1469"
       },
       {
         "q": "The S-shaped portion of the colon is called the _____.",
@@ -15943,7 +17412,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1470"
       },
       {
         "q": "Longitudinal folds in the distal rectum are called _____.",
@@ -15952,7 +17422,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1471"
       },
       {
         "q": "The muscle under voluntary control that guards the exit of the rectum is the _____.",
@@ -15961,7 +17432,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1472"
       },
       {
         "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than",
@@ -15970,7 +17442,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1473"
       },
       {
         "q": "Sacs of fat contained within the serosa of the colon are called _____.",
@@ -15979,7 +17452,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1474"
       },
       {
         "q": "The _____ leads from the gallbladder to the common bile duct.",
@@ -15988,7 +17462,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1475"
       },
       {
         "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary.",
@@ -15997,7 +17472,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1476"
       },
       {
         "q": "The liver is suspended from the inferior surface of the diaphragm by the _____.",
@@ -16006,7 +17482,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1477"
       },
       {
         "q": "Sinusoids of the liver drain into the _____.",
@@ -16015,7 +17492,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1478"
       },
       {
         "q": "Urea and _____ are nitrogenous wastes that must be eliminated from the body.",
@@ -16024,7 +17502,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1479"
       },
       {
         "q": "Urine leaves the kidney and travels to the urinary bladder through the _____.",
@@ -16033,7 +17512,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1480"
       },
       {
         "q": "Adipose tissue that surrounds the renal capsule is called the _____.",
@@ -16042,7 +17522,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1481"
       },
       {
         "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the",
@@ -16051,7 +17532,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1482"
       },
       {
         "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found",
@@ -16060,7 +17542,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1483"
       },
       {
         "q": "The point of entry of the arteries, veins, nerves, and exit of the renal pelvis is the _____.",
@@ -16069,7 +17552,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1484"
       },
       {
         "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the",
@@ -16078,7 +17562,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1485"
       },
       {
         "q": "The _____ is the inner layer of the kidney that communicates with the calcyes.",
@@ -16087,7 +17572,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1486"
       },
       {
         "q": "The _____ is internal to the renal cortex.",
@@ -16096,7 +17582,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1487"
       },
       {
         "q": "Each kidney usually empties blood into one _____.",
@@ -16105,7 +17592,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1488"
       },
       {
         "q": "Blood enters at the glomerular capillaries from the _____.",
@@ -16114,7 +17602,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1489"
       },
       {
         "q": "The long, slender capillaries that parallel the loops of Henle are the _____.",
@@ -16123,7 +17612,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1490"
       },
       {
         "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the",
@@ -16132,7 +17622,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1491"
       },
       {
         "q": "The juxtaglomerular complex secretes the hormones _____ and erythropoietin.",
@@ -16141,7 +17632,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1492"
       },
       {
         "q": "Each nephron has a long _____ that has both straight and convoluted segments.",
@@ -16150,7 +17642,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1493"
       },
       {
         "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent",
@@ -16159,7 +17652,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1494"
       },
       {
         "q": "The nephron loops of the _____ extend deeply into the medulla.",
@@ -16168,7 +17662,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1495"
       },
       {
         "q": "The primary function of the proximal convoluted tubule is _____.",
@@ -16177,7 +17672,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1496"
       },
       {
         "q": "The area where PCT exits the renal corpuscle is the _____.",
@@ -16186,7 +17682,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1497"
       },
       {
         "q": "Blockage of the urinary conducting system is called _____.",
@@ -16195,7 +17692,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1498"
       },
       {
         "q": "Bacteria or fungi in the conducting system result in a(n) _____.",
@@ -16204,7 +17702,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1499"
       },
       {
         "q": "The urinary bladder is lined by _____ epithelium.",
@@ -16213,7 +17712,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1500"
       },
       {
         "q": "The urethra is _____ in the male than in the female.",
@@ -16222,7 +17722,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1501"
       },
       {
         "q": "Compared to the male urethra, the female urethra is much _____.",
@@ -16231,7 +17732,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1502"
       },
       {
         "q": "The smooth muscle involved in contracting the bladder during micturition is the _____.",
@@ -16240,7 +17742,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1503"
       },
       {
         "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary",
@@ -16249,7 +17752,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1504"
       },
       {
         "q": "A secondary complication of chronic inflammation of the prostate gland is _____.",
@@ -16258,7 +17762,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1505"
       },
       {
         "q": "The male gametes, _____ cells, are produced in the testes.",
@@ -16267,7 +17772,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1506"
       },
       {
         "q": "Spermatic cords enter the abdominal cavity through _____.",
@@ -16276,7 +17782,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1507"
       },
       {
         "q": "Each testis is covered by connective tissue called the _____.",
@@ -16285,7 +17792,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1508"
       },
       {
         "q": "The _____ extends from the uterine tube to the broad ligament.",
@@ -16294,7 +17802,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1509"
       },
       {
         "q": "A short passageway that connects the uterus with the exterior of the body is the _____.",
@@ -16303,7 +17812,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1510"
       },
       {
         "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the",
@@ -16312,7 +17822,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1511"
       },
       {
         "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which",
@@ -16321,7 +17832,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1512"
       },
       {
         "q": "Each seminiferous tubule has the form of a U connected to a single _____.",
@@ -16330,7 +17842,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1513"
       },
       {
         "q": "The epithelium of the _____ has both ciliated and non-ciliated simple columnar cells.",
@@ -16339,7 +17852,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1514"
       },
       {
         "q": "Cells that support spermatogenesis are called _____ cells.",
@@ -16348,7 +17862,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1515"
       },
       {
         "q": "The division of each primary spermatocyte produces a pair of _____.",
@@ -16357,7 +17872,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1516"
       },
       {
         "q": "The special form of cell division that leads to the production of gametes is _____.",
@@ -16366,7 +17882,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1517"
       },
       {
         "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be",
@@ -16375,7 +17892,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1518"
       },
       {
         "q": "An antibiotic component of semen produced by the prostate gland is _____.",
@@ -16384,7 +17902,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1519"
       },
       {
         "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the",
@@ -16393,7 +17912,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1520"
       },
       {
         "q": "The endometrium is thickest during the _____ phase of the uterine cycle.",
@@ -16402,7 +17922,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1521"
       },
       {
         "q": "The uterine cycle begins with the onset of _____.",
@@ -16411,7 +17932,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1522"
       },
       {
         "q": "The degeneration of oocytes prior to puberty is known as _____.",
@@ -16420,7 +17942,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1523"
       },
       {
         "q": "The cells around the ovulated oocyte are the _____.",
@@ -16429,7 +17952,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1524"
       },
       {
         "q": "Progesterone levels are highest during the _____ phase of the ovarian cycle.",
@@ -16438,7 +17962,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1525"
       },
       {
         "q": "In females the first meiotic division produces a secondary oocyte and a _____.",
@@ -16447,7 +17972,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1526"
       },
       {
         "q": "Just before ovulation, the mature follicle contains a(n) _____ oocyte.",
@@ -16456,7 +17982,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1527"
       },
       {
         "q": "After ovulation, granulosa cells remaining in the follicle form the _____.",
@@ -16465,7 +17992,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1528"
       },
       {
         "q": "The corpus luteum secretes _____.",
@@ -16474,7 +18002,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1529"
       },
       {
         "q": "Degeneration of primary oocytes occurs by a process called _____.",
@@ -16483,7 +18012,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1530"
       },
       {
         "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer",
@@ -16492,7 +18022,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1531"
       },
       {
         "q": "The secondary oocyte is released from the ovary at _____.",
@@ -16501,7 +18032,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1532"
       },
       {
         "q": "The large fluid filled cavity within a mature ovarian follicle is called a(n) _____.",
@@ -16510,7 +18042,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1533"
       },
       {
         "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels",
@@ -16519,7 +18052,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1534"
       },
       {
         "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the",
@@ -16528,7 +18062,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1535"
       },
       {
         "q": "Circulating testosterone levels in men begin to decline at approximately age _____ years.",
@@ -16537,7 +18072,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1536"
       },
       {
         "q": "_____ considers developmental events that occur in the first two months after fertilization.",
@@ -16546,7 +18082,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1537"
       },
       {
         "q": "The time period of the embryo is two weeks gestation to _____.",
@@ -16555,7 +18092,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1538"
       },
       {
         "q": "The collective term for embryonic and fetal development is _____.",
@@ -16564,7 +18102,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1539"
       },
       {
         "q": "_____ development includes the changes from birth to maturity. (Note: Be sure to",
@@ -16573,7 +18112,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1540"
       },
       {
         "q": "For convenience, gestation is usually divided into three integrated _____.",
@@ -16582,7 +18122,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1541"
       },
       {
         "q": "The cells of the blastodisc that face the blastocoele are the _____.",
@@ -16591,7 +18132,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1542"
       },
       {
         "q": "The muscular system develops from the _____.",
@@ -16600,7 +18142,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1543"
       },
       {
         "q": "The mucous epithelium of the digestive tract forms from the _____.",
@@ -16609,7 +18152,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1544"
       },
       {
         "q": "The _____ is the site of early blood cell formation.",
@@ -16618,7 +18162,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1545"
       },
       {
         "q": "The inner cavity of the blastocyst is called the _____.",
@@ -16627,7 +18172,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1546"
       },
       {
         "q": "The base of the _____ later gives rise to the bladder.",
@@ -16636,7 +18182,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1547"
       },
       {
         "q": "The cells of the blastocyst that become the embryo proper are the cells of the _____.",
@@ -16645,7 +18192,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1548"
       },
       {
         "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood",
@@ -16654,7 +18202,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1549"
       },
       {
         "q": "The _____ cells of the blastocyst are responsible for providing food to the developing",
@@ -16663,7 +18212,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1550"
       },
       {
         "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as",
@@ -16672,7 +18222,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1551"
       },
       {
         "q": "Blood flows to the placenta from the fetus through the _____ arteries.",
@@ -16681,7 +18232,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1552"
       },
       {
         "q": "Surgical incision of the abdominal wall to remove the fetus is called a(n) _____.",
@@ -16690,7 +18242,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1553"
       },
       {
         "q": "The _____ begins with the onset of true labor, as the cervix dilates and the fetus begins to",
@@ -16699,7 +18252,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1554"
       },
       {
         "q": "The arrival of the newborn infant into the world is called birth, or _____.",
@@ -16708,7 +18262,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1555"
       },
       {
         "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially",
@@ -16717,7 +18272,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1556"
       },
       {
         "q": "Dilation, expulsion, and placental are the three stages of _____.",
@@ -16726,7 +18282,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1557"
       },
       {
         "q": "It is called a _____ birth when the buttocks or legs are delivered before the head.",
@@ -16735,7 +18292,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1558"
       },
       {
         "q": "The first month of extrauterine life is the _____ period.",
@@ -16744,7 +18302,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1559"
       },
       {
         "q": "Typical heart rates of _____ beats per minute and respiratory rates of 30 breaths per",
@@ -16753,7 +18312,8 @@ const STUVIA_BANK = [
         ],
         "correct": 0,
         "tf": false,
-        "fitb": true
+        "fitb": true,
+        "id": "ST-1560"
       }
     ]
   }
