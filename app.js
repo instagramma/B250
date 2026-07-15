@@ -459,6 +459,12 @@ function recordQuestionStat(q, wasCorrect) {
   const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
   s.seen += 1;
   if (!wasCorrect) { s.missed += 1; s.lastMissed = new Date().toISOString(); }
+  // per-mode mastery (closed-book vs with-notes) — powers Performance / Readiness / Book-Knowledge
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  s.m = s.m || {};
+  const mm = s.m[md] || { s: 0, c: 0, last: 0 };
+  mm.s += 1; if (wasCorrect) mm.c += 1; mm.last = wasCorrect ? 1 : 0;
+  s.m[md] = mm;
   progressState.qstats[q.id] = s;
   saveLocalProgress();
 }
@@ -2029,12 +2035,149 @@ function prepBand(pct) {
   if (pct >= 50) return { label: "Building", color: "#E67E22" };
   return { label: "Keep going", color: "#C62828" };
 }
+
+/* ===== COVERAGE ENGINE (Performance / Readiness / Book Knowledge) =====
+   Built from per-question mastery in qstats (per closed/with-notes mode):
+     Performance = known / attempted   (accuracy on what you tried)
+     Readiness   = known / total       (coverage-weighted mastery of a system)
+     Book know.  = known / total across the whole bank (GR + Stuvia + ClaudeBank)
+   "known" = your most recent answer to that question, in that mode, was correct. */
+let _covSrc = null, _bookSrc = null;
+function _grSubIds(title) {
+  const t = (typeof DATA !== "undefined" && DATA.sections.torso) ? DATA.sections.torso : null;
+  const st = t && (t.subtopics || []).find(s => s.title === title);
+  return st ? (st.quiz || []).map(q => q.id).filter(Boolean) : [];
+}
+function _cbIds(i) {
+  const c = (typeof CLAUDEBANK !== "undefined") ? CLAUDEBANK[i] : null;
+  return c ? (c.questions || []).map(q => q.id).filter(Boolean) : [];
+}
+function coverageSources() {
+  if (_covSrc) return _covSrc;
+  const S = {
+    "Respiratory":            [..._cbIds(0)],
+    "Heart":                  [..._grSubIds("Heart"), ..._cbIds(0)],
+    "Vessels & Circulation":  [..._grSubIds("Vessels and Circulation"), ..._cbIds(5)],
+    "Blood":                  [..._grSubIds("Blood"), ..._cbIds(4)],
+    "Lymphatic":              [..._grSubIds("Lymphatic"), ..._cbIds(6)],
+    "Endocrine":              [..._grSubIds("Endocrine"), ..._cbIds(3)],
+    "Digestive":              [..._grSubIds("Digestive"), ..._cbIds(1)],
+    "Urinary":                [..._grSubIds("Urinary"), ..._cbIds(2)],
+    "Reproductive":           [..._grSubIds("Reproductive"), ..._cbIds(2)],
+    "Embryology":             [..._grSubIds("Embryology and Development"), ..._cbIds(7)],
+  };
+  Object.keys(S).forEach(k => S[k] = [...new Set(S[k])]);
+  _covSrc = S; return S;
+}
+function bookSources() {
+  if (_bookSrc) return _bookSrc;
+  const gr = [], st = [], cb = [];
+  if (typeof DATA !== "undefined" && DATA.sections.torso)
+    (DATA.sections.torso.subtopics || []).forEach(s => (s.quiz || []).forEach(q => { if (q.id) gr.push(q.id); }));
+  if (typeof STUVIA_BANK !== "undefined") STUVIA_BANK.forEach(s => (s.questions || []).forEach(q => { if (q.id) st.push(q.id); }));
+  if (typeof CLAUDEBANK !== "undefined") CLAUDEBANK.forEach(s => (s.questions || []).forEach(q => { if (q.id) cb.push(q.id); }));
+  _bookSrc = { "Guided Readings": [...new Set(gr)], "Stuvia": [...new Set(st)], "ClaudeBank": [...new Set(cb)] };
+  return _bookSrc;
+}
+function _qm(id, mode) { const s = (activeProgress().qstats || {})[id]; return s && s.m && s.m[mode] ? s.m[mode] : null; }
+function covStats(ids, mode) {
+  let attempted = 0, known = 0;
+  ids.forEach(id => { const m = _qm(id, mode); if (m && m.s > 0) { attempted++; if (m.last === 1) known++; } });
+  return { total: ids.length, attempted, known };
+}
+// per-system value for the chosen metric (0..100 or null if nothing applicable)
+function prepMetricVal(system, mode, metric) {
+  const c = covStats(coverageSources()[system] || [], mode);
+  if (metric === "performance") return c.attempted === 0 ? null : Math.round(c.known / c.attempted * 100);
+  return c.total === 0 ? null : Math.round(c.known / c.total * 100); // readiness
+}
+function prepMetricToggle(main, metric) {
+  const mt = document.createElement("div");
+  mt.style.cssText = "display:flex;gap:6px;justify-content:center;margin:2px 0 8px;flex-wrap:wrap;";
+  [["performance","📊 Performance"],["readiness","🎯 Readiness"],["book","📚 Book knowledge"]].forEach(([m, lbl]) => {
+    const b = document.createElement("button"); const on = metric === m;
+    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+    b.textContent = lbl; b.onclick = () => { state.prepMetric = m; render(); }; mt.appendChild(b);
+  });
+  main.appendChild(mt);
+  const exp = document.createElement("div");
+  exp.style.cssText = "text-align:center;color:#888;font-size:.76rem;margin:0 0 10px;padding:0 14px;line-height:1.45;";
+  exp.innerHTML = metric === "performance"
+    ? "<b>Performance</b> — of the questions you've <i>attempted</i>, how many you now get right."
+    : metric === "book"
+    ? "<b>Book knowledge</b> — how much of the <i>entire</i> Torso bank (GR + Stuvia + ClaudeBank) you can get right. Untried questions count as 0."
+    : "<b>Readiness</b> — of <i>all</i> questions in each system, how many you can get right. Untried questions count against you.";
+  main.appendChild(exp);
+}
+function prepModeToggle(main, md) {
+  const toggle = document.createElement("div");
+  toggle.style.cssText = "display:flex;gap:8px;justify-content:center;margin:6px 0 10px;";
+  [["closed","🧠 Closed-book (true)"],["open","📖 With notes"]].forEach(([m, lbl]) => {
+    const b = document.createElement("button"); const on = md === m;
+    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.textContent = lbl; b.onclick = () => { setStudyMode(m); render(); }; toggle.appendChild(b);
+  });
+  main.appendChild(toggle);
+}
+function prepPeriodToggle(main) {
+  const per = document.createElement("div");
+  per.style.cssText = "display:flex;gap:8px;justify-content:center;margin:0 0 12px;";
+  [[false,"This period"],[true,"All-time"]].forEach(([v, lbl]) => {
+    const b = document.createElement("button"); const on = !!state.allTime === v;
+    b.style.cssText = `border:1px solid ${on?"#2E7D32":"#ddd"};background:${on?"#E8F5E9":"#fff"};color:${on?"#2E7D32":"#888"};border-radius:16px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;`;
+    b.textContent = lbl; b.onclick = () => { state.allTime = v; render(); }; per.appendChild(b);
+  });
+  main.appendChild(per);
+}
+function renderBookKnowledge(main, md) {
+  prepModeToggle(main, md);
+  prepPeriodToggle(main);
+  const src = bookSources();
+  let tot = 0, known = 0;
+  const rows = Object.keys(src).map(b => { const c = covStats(src[b], md); tot += c.total; known += c.known; return { b, c }; });
+  const pct = tot ? Math.round(known / tot * 100) : 0;
+  const band = prepBand(pct);
+  const head = document.createElement("div");
+  head.style.cssText = "text-align:center;margin:4px 0 8px;";
+  head.innerHTML = `<div style="font-size:3.4rem;font-weight:800;line-height:1;color:${band.color};">${pct}%</div>
+    <div style="font-weight:700;color:${band.color};margin-top:2px;">of the book known${pct>=90?" ✅":""}</div>
+    <div style="color:#888;font-size:.85rem;margin-top:4px;">${known.toLocaleString()} of ${tot.toLocaleString()} questions mastered · ${md==="closed"?"closed-book":"with-notes"}</div>
+    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">Every unique question across GR + Stuvia + ClaudeBank.</div>`;
+  main.appendChild(head);
+  const list = document.createElement("div"); list.style.cssText = "margin-top:14px;";
+  rows.forEach(({ b, c }) => {
+    const p = c.total ? Math.round(c.known / c.total * 100) : 0; const col = prepBand(p).color;
+    const row = document.createElement("div"); row.style.cssText = "margin:10px 0;";
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
+        <span style="font-weight:600;">${b}</span>
+        <span style="color:${col};font-weight:700;">${p}% · ${c.known}/${c.total}</span></div>
+      <div style="height:9px;background:#ececec;border-radius:5px;overflow:hidden;">
+        <div style="height:100%;width:${p}%;background:${col};border-radius:5px;"></div></div>`;
+    list.appendChild(row);
+  });
+  main.appendChild(list);
+  const missBtn = document.createElement("button");
+  missBtn.style.cssText = "display:block;width:100%;margin:18px 0 0;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
+  missBtn.textContent = "🔁 Questions you keep missing";
+  missBtn.onclick = () => { state.route = "missedStats"; render(); };
+  main.appendChild(missBtn);
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
+  note.textContent = "“Known” = your most recent answer to a question, in this mode, was correct. This builds as you practice — attempts logged before this update aren't mode-tagged yet.";
+  main.appendChild(note);
+}
+
 function renderPreparedness(main) {
   const md = getStudyMode();
-  const data = prepGather();
-  const readies = PREP_SYSTEMS.map(s => prepReadiness(data[s], md));
+  const metric = state.prepMetric || "readiness";
+  prepMetricToggle(main, metric);
+  // Book-Knowledge view has its own layout
+  if (metric === "book") { renderBookKnowledge(main, md); return; }
+  const readies = PREP_SYSTEMS.map(s => prepMetricVal(s, md, metric));
   const tested = readies.filter(r => r !== null).length;
-  const overall = Math.round(readies.reduce((a, r) => a + (r || 0), 0) / PREP_SYSTEMS.length);
+  const overall = metric === "performance"
+    ? (tested ? Math.round(readies.reduce((a, r) => a + (r || 0), 0) / tested) : 0)
+    : Math.round(readies.reduce((a, r) => a + (r || 0), 0) / PREP_SYSTEMS.length);
   const band = prepBand(overall);
 
   // mode toggle
@@ -2077,8 +2220,8 @@ function renderPreparedness(main) {
   head.innerHTML = `
     <div style="font-size:3.4rem;font-weight:800;line-height:1;color:${band.color};">${overall}%</div>
     <div style="font-weight:700;color:${band.color};margin-top:2px;">${band.label}${overall>=90?" ✅":""}</div>
-    <div style="color:#888;font-size:.85rem;margin-top:4px;">${md==="closed"?"true (closed-book)":"with-notes"} readiness · ${tested}/${PREP_SYSTEMS.length} systems practiced</div>
-    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">Goal: 90% on every system. Untested systems count as 0.</div>`;
+    <div style="color:#888;font-size:.85rem;margin-top:4px;">${md==="closed"?"closed-book":"with-notes"} ${metric==="performance"?"performance":"readiness"} · ${tested}/${PREP_SYSTEMS.length} systems ${metric==="performance"?"attempted":"covered"}</div>
+    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">${metric==="performance"?"Accuracy on questions you've tried. Switch to Readiness to factor coverage." : "Goal: 90% on every system. Questions you haven't tried count as 0."}</div>`;
   main.appendChild(head);
 
   // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
@@ -2149,7 +2292,9 @@ function renderPreparedness(main) {
 
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
-  note.textContent = "Score = 80% accuracy + 20% answer-speed (fast recall) per system, from your best result in each. Diagrams are excluded.";
+  note.innerHTML = metric === "performance"
+    ? "Performance = questions you now get right ÷ questions you've attempted, per system. Diagrams excluded."
+    : "Readiness = questions you now get right ÷ <b>all</b> questions in the system (GR + ClaudeBank), per system. A lucky short run no longer reads 100%. Diagrams excluded.";
   main.appendChild(note);
 }
 
