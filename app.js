@@ -2240,16 +2240,14 @@ function renderPreparedness(main) {
   // per-system bars
   const list = document.createElement("div");
   list.style.cssText = "margin-top:14px;";
-  PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i], d: data[s] }))
+  PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i], c: covStats(coverageSources()[s] || [], md) }))
     .sort((a, b) => (a.r === null ? -1 : a.r) - (b.r === null ? -1 : b.r)) // weakest first
-    .forEach(({ s, r, d }) => {
+    .forEach(({ s, r, c }) => {
       const row = document.createElement("div");
       row.style.cssText = "margin:9px 0;";
-      const acc = md === "closed" ? d.closed : d.open;
-      const sec = md === "closed" ? d.secC : d.secO;
       const col = r === null ? "#bbb" : prepBand(r).color;
-      const rightTxt = r === null ? "Not tested"
-        : `${r}%` + (sec ? ` · ${sec}s/q` : "");
+      const detail = metric === "performance" ? `${c.known}/${c.attempted}` : `${c.known}/${c.total}`;
+      const rightTxt = r === null ? "Not tried" : `${r}% · ${detail}`;
       row.innerHTML = `
         <div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
           <span style="font-weight:600;">${s}</span>
