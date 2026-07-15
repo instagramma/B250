@@ -451,6 +451,120 @@ async function saveProgress() {
 function getStudyMode() { try { return localStorage.getItem(ns("biol250_studyMode")) === "open" ? "open" : "closed"; } catch (e) { return "closed"; } }
 function setStudyMode(m) { try { localStorage.setItem(ns("biol250_studyMode"), m); } catch (e) {} }
 
+/* Per-question stats by unique ID: how often each question is seen vs missed.
+   Powers the "Questions You Keep Missing" view. */
+function recordQuestionStat(q, wasCorrect) {
+  if (!q || !q.id) return;
+  if (!progressState.qstats) progressState.qstats = {};
+  const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
+  s.seen += 1;
+  if (!wasCorrect) { s.missed += 1; s.lastMissed = new Date().toISOString(); }
+  progressState.qstats[q.id] = s;
+  saveLocalProgress();
+}
+
+/* ---------- FRESH-START RESET + ALL-TIME ARCHIVE ----------
+   "Start fresh" folds your current data into an all-time archive and clears the
+   live view, so you can study again from zero without losing anything. The
+   all-time view merges the archive with your current data. */
+const ARCHIVE_KEY = "biol250_alltime_v1";
+function loadArchive() { try { return JSON.parse(localStorage.getItem(ns(ARCHIVE_KEY))) || { quizzes:{}, qstats:{}, examAttempts:{} }; } catch (e) { return { quizzes:{}, qstats:{}, examAttempts:{} }; } }
+function saveArchive(a) { try { localStorage.setItem(ns(ARCHIVE_KEY), JSON.stringify(a)); } catch (e) {} }
+function mergeProgress(into, from) {
+  into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
+  Object.keys(from.quizzes || {}).forEach(k => {
+    const b = from.quizzes[k], a = into.quizzes[k];
+    if (!a) { into.quizzes[k] = JSON.parse(JSON.stringify(b)); return; }
+    a.bestScore = Math.max(a.bestScore || 0, b.bestScore || 0);
+    a.attempts = (a.attempts || 0) + (b.attempts || 0);
+    a.lastScore = b.lastScore; a.lastDate = b.lastDate; a.modes = a.modes || {};
+    Object.keys(b.modes || {}).forEach(md => {
+      const bm = b.modes[md], am = a.modes[md];
+      if (!am) { a.modes[md] = JSON.parse(JSON.stringify(bm)); return; }
+      am.bestScore = Math.max(am.bestScore || 0, bm.bestScore || 0);
+      am.attempts = (am.attempts || 0) + (bm.attempts || 0);
+      if (bm.bestSec) am.bestSec = am.bestSec ? Math.min(am.bestSec, bm.bestSec) : bm.bestSec;
+    });
+  });
+  Object.keys(from.qstats || {}).forEach(id => {
+    const b = from.qstats[id], a = into.qstats[id];
+    if (!a) { into.qstats[id] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = (a.seen || 0) + (b.seen || 0); a.missed = (a.missed || 0) + (b.missed || 0);
+  });
+  return into;
+}
+function getAllTimeProgress() { const m = JSON.parse(JSON.stringify(loadArchive())); return mergeProgress(m, progressState); }
+function activeProgress() { return state.allTime ? getAllTimeProgress() : progressState; }
+function resetCurrentData() {
+  const arch = loadArchive();
+  mergeProgress(arch, progressState);   // preserve everything in all-time
+  saveArchive(arch);
+  progressState = { flashcards: {}, quizzes: {}, examAttempts: {}, qstats: {} };
+  saveLocalProgress();
+  saveMissedQs([]);                     // fresh missed list too
+}
+
+/* ---------- QUESTION REPORTS (wrong answer / formatting) ----------
+   Device-wide (bank QA, not per-person stats) with reporter attribution. */
+const REPORTS_KEY = "biol250_reports_v1";
+function loadReports() { try { return JSON.parse(localStorage.getItem(REPORTS_KEY)) || []; } catch (e) { return []; } }
+function saveReports(a) { try { localStorage.setItem(REPORTS_KEY, JSON.stringify(a)); } catch (e) {} }
+function addReport(q, reason, note) {
+  if (!q) return;
+  const reports = loadReports();
+  reports.unshift({
+    id: q.id || null, q: q.q,
+    correct: (q.options && typeof q.correct === "number") ? q.options[q.correct] : null,
+    options: q.options || null, reason, note: note || "",
+    by: currentProfile || "guest", date: new Date().toISOString(), resolved: false,
+  });
+  saveReports(reports);
+}
+function toast(msg) {
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.cssText = "position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1F3864;color:#fff;padding:10px 18px;border-radius:22px;font-size:.9rem;font-weight:700;z-index:2000;box-shadow:0 4px 16px rgba(0,0,0,.3);";
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+function openReportDialog(q) {
+  const ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1500;display:flex;align-items:flex-start;justify-content:center;";
+  ov.onclick = (e) => { if (e.target === ov) ov.remove(); };
+  const box = document.createElement("div");
+  box.style.cssText = "background:#fff;max-width:430px;width:92%;margin-top:56px;border-radius:14px;padding:18px;max-height:82vh;overflow:auto;";
+  box.innerHTML = `<div style="font-weight:800;font-size:1.05rem;color:#1F3864;margin-bottom:4px;">🚩 Report this question</div>
+    <div style="font-size:.8rem;color:#888;margin-bottom:12px;">${escapeHtml((q.q || "").slice(0, 110))}${(q.q||"").length>110?"…":""}${q.id?` <span style="color:#bbb;">(${q.id})</span>`:""}</div>`;
+  let reason = null;
+  const rWrap = document.createElement("div"); rWrap.style.cssText = "display:flex;flex-direction:column;gap:8px;";
+  [["❌ Wrong answer", "wrong_answer"], ["✏️ Formatting / typo", "formatting"], ["❓ Confusing / other", "other"]].forEach(([lbl, val]) => {
+    const b = document.createElement("button"); b.textContent = lbl;
+    b.style.cssText = "text-align:left;border:1.5px solid #ddd;background:#fff;border-radius:10px;padding:11px;font-size:.92rem;cursor:pointer;";
+    b.onclick = () => { reason = val; rWrap.querySelectorAll("button").forEach(x => { x.style.background = "#fff"; x.style.borderColor = "#ddd"; }); b.style.background = "#EAF3FB"; b.style.borderColor = "#2E74B5"; };
+    rWrap.appendChild(b);
+  });
+  box.appendChild(rWrap);
+  const ta = document.createElement("textarea"); ta.placeholder = "Optional: what's wrong, or what the answer should be";
+  ta.style.cssText = "width:100%;margin-top:10px;border:1px solid #ddd;border-radius:8px;padding:8px;font-size:.85rem;min-height:54px;box-sizing:border-box;";
+  box.appendChild(ta);
+  const row = document.createElement("div"); row.style.cssText = "display:flex;gap:8px;margin-top:12px;";
+  const submit = document.createElement("button"); submit.textContent = "Submit report";
+  submit.style.cssText = "flex:1;background:#C62828;color:#fff;border:none;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;";
+  submit.onclick = () => { if (!reason) { alert("Pick a reason first."); return; } addReport(q, reason, ta.value.trim()); ov.remove(); toast("Reported — thanks! 🚩"); };
+  const cancel = document.createElement("button"); cancel.textContent = "Cancel";
+  cancel.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:10px;padding:11px 14px;cursor:pointer;";
+  cancel.onclick = () => ov.remove();
+  row.appendChild(submit); row.appendChild(cancel); box.appendChild(row);
+  ov.appendChild(box); document.body.appendChild(ov);
+}
+function reportBtn(q) {
+  const b = document.createElement("button");
+  b.textContent = "🚩 Report";
+  b.style.cssText = "background:none;border:none;color:#b06a6a;font-size:.78rem;cursor:pointer;padding:4px 6px;";
+  b.onclick = (e) => { e.stopPropagation(); openReportDialog(q); };
+  return b;
+}
+
 function recordQuizResult(key, score, total, avgSec) {
   const pct = Math.round((score / total) * 100);
   const prev = progressState.quizzes[key] || {};
@@ -533,6 +647,8 @@ function render() {
   else if (state.route === "gallery") renderGallery(main);
   else if (state.route === "diagramGallery") renderDiagramGallery(main);
   else if (state.route === "preparedness") renderPreparedness(main);
+  else if (state.route === "missedStats") renderMissedStats(main);
+  else if (state.route === "reports") renderReports(main);
   else if (state.route === "subtopics") renderSubtopics(main);
   else if (state.route === "worksheet") renderWorksheet(main);
   else if (state.route === "labeling") renderLabeling(main);
@@ -578,6 +694,8 @@ function buildTopbar() {
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
       else if (state.route === "diagramGallery") state.route = "sectionMenu";
       else if (state.route === "preparedness") state.route = "sectionMenu";
+      else if (state.route === "missedStats") state.route = "preparedness";
+      else if (state.route === "reports") state.route = "home";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
       else if (state.route === "customBuilder") state.route = "home";
       else if (state.route === "subtopics")     { state.route = state.prevRoute || "grMenu"; state.mode = null; }
@@ -623,6 +741,8 @@ function buildTopbar() {
   else if (state.route === "diagramMenu")   titleText = "Diagrams";
   else if (state.route === "diagramGallery") titleText = "Diagram Gallery";
   else if (state.route === "preparedness") titleText = "Preparedness Score";
+  else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
+  else if (state.route === "reports") titleText = "Question Reports";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "fullExam")        titleText = "Simulation";
   else if (state.route === "fullExamEnd")     titleText = "Simulation Results";
@@ -754,6 +874,12 @@ function renderHome(main) {
   sw.style.cssText = "border:1px solid #ccc;background:#fff;color:#2E74B5;border-radius:14px;padding:3px 12px;font-size:.78rem;font-weight:700;cursor:pointer;";
   sw.onclick = () => switchProfile();
   who.appendChild(sw);
+  const nRep = loadReports().filter(r => !r.resolved).length;
+  const rep = document.createElement("button");
+  rep.innerHTML = `🚩 Reports${nRep ? ` <b>${nRep}</b>` : ""}`;
+  rep.style.cssText = "border:1px solid #ccc;background:#fff;color:#C62828;border-radius:14px;padding:3px 12px;font-size:.78rem;font-weight:700;cursor:pointer;";
+  rep.onclick = () => { state.route = "reports"; render(); };
+  who.appendChild(rep);
   main.appendChild(who);
 
   const sub = document.createElement("div");
@@ -1199,14 +1325,14 @@ function renderQuiz(main) {
       gotIt.className = "nextBtn";
       gotIt.style.cssText = "flex:1;background:#27ae60;";
       gotIt.textContent = "✓ Got it";
-      gotIt.onclick = () => { quizScore++; quizAnswered = true; render(); };
+      gotIt.onclick = () => { quizScore++; quizAnswered = true; recordQuestionStat(q, true); render(); };
       selfBar.appendChild(gotIt);
 
       const missedIt = document.createElement("button");
       missedIt.className = "secondaryBtn";
       missedIt.style.cssText = "flex:1;";
       missedIt.textContent = "✗ Missed it";
-      missedIt.onclick = () => { quizAnswered = true; render(); };
+      missedIt.onclick = () => { quizAnswered = true; recordQuestionStat(q, false); render(); };
       selfBar.appendChild(missedIt);
 
       main.appendChild(selfBar);
@@ -1247,6 +1373,7 @@ function renderQuiz(main) {
       quizAnswered = true;
       quizSelected = i; // shuffled display index (for highlight)
       if (i === _qSCorr) quizScore++; // compare shuffled positions
+      recordQuestionStat(q, i === _qSCorr);
       render();
     };
     optsWrap.appendChild(b);
@@ -1261,6 +1388,7 @@ function renderQuiz(main) {
     look.innerHTML = "📖 Look it up in Martini";
     look.onclick = () => showTextbookPanel(q.q, q.options[q.correct]);
     fb.appendChild(look);
+    fb.appendChild(reportBtn(q));
     const next = document.createElement("button");
     next.className = "nextBtn";
     next.textContent = quizIndex === quizDeck.length - 1 ? "See results" : "Next question";
@@ -1842,7 +1970,7 @@ function prepKeyToSystems(key) {
 }
 // Best full-length practice-test result (a direct mock of the 200-question exam), for the selected mode.
 function prepMockBest(mode) {
-  const Q = progressState.quizzes || {};
+  const Q = activeProgress().quizzes || {};
   let best = null, sec = null;
   Object.keys(Q).forEach(k => {
     if (!/^(fullExam:torso|exam:torso:|sim:torso)/.test(k) && !(k === "stuvia:torso:all") && !(k === "stuvia:torso:3")) return;
@@ -1854,7 +1982,7 @@ function prepMockBest(mode) {
 }
 function prepGather() {
   const data = {}; PREP_SYSTEMS.forEach(s => data[s] = { closed: null, open: null, secC: null, secO: null, attempts: 0 });
-  const Q = progressState.quizzes || {};
+  const Q = activeProgress().quizzes || {};
   Object.keys(Q).forEach(key => {
     const syss = prepKeyToSystems(key); if (!syss) return;
     const entry = Q[key]; const modes = entry.modes || {};
@@ -1907,6 +2035,19 @@ function renderPreparedness(main) {
     toggle.appendChild(b);
   });
   main.appendChild(toggle);
+
+  // period toggle: this fresh-start period vs all-time
+  const per = document.createElement("div");
+  per.style.cssText = "display:flex;gap:8px;justify-content:center;margin:0 0 12px;";
+  [[false,"This period"],[true,"All-time"]].forEach(([v,lbl]) => {
+    const b = document.createElement("button");
+    const on = !!state.allTime === v;
+    b.style.cssText = `border:1px solid ${on?"#2E7D32":"#ddd"};background:${on?"#E8F5E9":"#fff"};color:${on?"#2E7D32":"#888"};border-radius:16px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;`;
+    b.textContent = lbl;
+    b.onclick = () => { state.allTime = v; render(); };
+    per.appendChild(b);
+  });
+  main.appendChild(per);
 
   if (tested === 0) {
     const none = document.createElement("div");
@@ -1973,10 +2114,179 @@ function renderPreparedness(main) {
   else foc.innerHTML = `<b>Focus next (below 90%):</b> ${weak.slice(0,5).join(", ")}${weak.length>5?` +${weak.length-5} more`:""}.`;
   main.appendChild(foc);
 
+  // actions
+  const missBtn = document.createElement("button");
+  missBtn.style.cssText = "display:block;width:100%;margin:16px 0 0;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
+  missBtn.textContent = "🔁 Questions you keep missing";
+  missBtn.onclick = () => { state.route = "missedStats"; render(); };
+  main.appendChild(missBtn);
+
+  const resetBtn = document.createElement("button");
+  resetBtn.style.cssText = "display:block;width:100%;margin:10px 0 0;background:#fff;color:#C62828;border:1.5px solid #eebcbc;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
+  resetBtn.textContent = "🔄 Start fresh (keeps an all-time record)";
+  resetBtn.onclick = () => {
+    if (confirm("Start fresh?\n\nYour current scores, missed questions, and progress will be archived to your All-time record (viewable via the All-time toggle) and the live view will reset to zero. Nothing is deleted.")) {
+      resetCurrentData();
+      state.allTime = false;
+      render();
+    }
+  };
+  main.appendChild(resetBtn);
+
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
   note.textContent = "Score = 80% accuracy + 20% answer-speed (fast recall) per system, from your best result in each. Diagrams are excluded.";
   main.appendChild(note);
+}
+
+/* ---------- QUESTIONS YOU KEEP MISSING (per-ID stats + citations) ---------- */
+const CHAP_RANGES = [[1,1,26],[6,131,171],[10,259,281],[12,325,337],[17,449,470],[19,506,527],[20,528,544],[21,545,566],[22,567,602],[23,603,623],[24,624,649],[25,650,686],[26,687,706],[27,707,738],[28,739,790]];
+function pageToChapter(pg) { if (!pg) return null; for (const r of CHAP_RANGES) if (pg >= r[1] && pg <= r[2]) return r[0]; return null; }
+const CHAP_META = {
+  1:{name:"Intro to Anatomy",gr:"regions/cavities",region:"mixed"},
+  6:{name:"Thoracic Cage",gr:"thoracic skeleton",region:"Thorax"},
+  10:{name:"Axial Musculature",gr:"body-wall muscles",region:"mixed"},
+  12:{name:"Cross-Sectional Anatomy",gr:"cross sections",region:"mixed"},
+  17:{name:"Autonomic Nervous System",gr:"ANS plexuses",region:"mixed"},
+  19:{name:"Endocrine System",gr:"Endocrine",region:"Systemic"},
+  20:{name:"Blood",gr:"Blood",region:"Systemic"},
+  21:{name:"The Heart",gr:"Heart",region:"Thorax"},
+  22:{name:"Vessels & Circulation",gr:"Vessels and Circulation",region:"Thorax / Abdomen / Pelvis"},
+  23:{name:"Lymphatic System",gr:"Lymphatic",region:"Thorax"},
+  24:{name:"Respiratory System",gr:"Respiratory",region:"Thorax"},
+  25:{name:"Digestive System",gr:"Digestive",region:"Abdomen"},
+  26:{name:"Urinary System",gr:"Urinary",region:"Abdomen / Pelvis"},
+  27:{name:"Reproductive System",gr:"Reproductive",region:"Pelvis"},
+  28:{name:"Embryology & Development",gr:"Embryology and Development",region:"Pelvis"},
+};
+let _qIndex = null;
+function buildQuestionIndex() {
+  if (_qIndex) return _qIndex;
+  const idx = {};
+  const add = (q, hintCh) => { if (q && q.id && !idx[q.id]) idx[q.id] = { q: q.q, options: q.options, correct: q.correct, tf: q.tf, hintCh }; };
+  const subHint = { "Endocrine":19,"Blood":20,"Heart":21,"Vessels and Circulation":22,"Lymphatic":23,"Digestive":25,"Urinary":26,"Reproductive":27,"Embryology and Development":28 };
+  if (typeof DATA !== "undefined" && DATA.sections) {
+    Object.values(DATA.sections).forEach(sec => {
+      (sec.subtopics || []).forEach(st => { const h = subHint[st.title] || null; (st.quiz || []).forEach(q => add(q, h)); });
+      (sec.quiz || []).forEach(q => add(q, null));
+      (sec.exams || []).forEach(ex => (ex.questions || []).forEach(q => add(q, null)));
+    });
+  }
+  if (typeof CLAUDEBANK !== "undefined") { const cbHint = {0:24,1:25,2:27,3:19,4:20,5:22,6:23,7:28}; CLAUDEBANK.forEach((sec, i) => (sec.questions || []).forEach(q => add(q, cbHint[i]))); }
+  if (typeof STUVIA_BANK !== "undefined") { STUVIA_BANK.forEach(sec => (sec.questions || []).forEach(q => add(q, null))); }
+  _qIndex = idx; return idx;
+}
+function bankOfId(id) { return id && id.indexOf("ST-") === 0 ? "Stuvia" : id.indexOf("CB-") === 0 ? "ClaudeBank" : id.indexOf("GR-") === 0 ? "Guided Reading" : id.indexOf("PE-") === 0 ? "Practice Exam" : "Question"; }
+
+function renderMissedStats(main) {
+  const idx = buildQuestionIndex();
+  const stats = activeProgress().qstats || {};
+  const rows = Object.keys(stats).map(id => ({ id, seen: stats[id].seen, missed: stats[id].missed }))
+    .filter(r => r.missed >= 1)
+    .sort((a, b) => (b.missed - a.missed) || (b.missed / b.seen - a.missed / a.seen));
+
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.textContent = "The questions you miss most — worst first. Each is cited to Martini (chapter + the exact page), its Torso region, and the Guided Reading it belongs to.";
+  main.appendChild(disc);
+
+  if (!rows.length) {
+    const none = document.createElement("div");
+    none.style.cssText = "text-align:center;color:#888;padding:26px 16px;";
+    none.innerHTML = "Nothing here yet — once you miss questions in a quiz or exam, they'll show up ranked by how often you miss them.";
+    main.appendChild(none);
+    return;
+  }
+
+  rows.slice(0, 60).forEach(r => {
+    const meta = idx[r.id];
+    if (!meta) return;
+    const ans = meta.options[meta.correct];
+    let pg = null, ch = meta.hintCh;
+    try { const res = searchTextbook(meta.q, ans); if (res && res.page) { pg = res.page; const c = pageToChapter(pg); if (c) ch = c; } } catch (e) {}
+    const cm = ch ? CHAP_META[ch] : null;
+    const rate = Math.round(r.missed / r.seen * 100);
+
+    const card = document.createElement("div");
+    card.style.cssText = "background:var(--card,#fffdf8);border-radius:12px;padding:11px 13px;margin:9px 0;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid #C62828;";
+    const cite = cm
+      ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)}${pg ? ` · <b>p. ${pg}</b>` : ""} &nbsp;·&nbsp; ${escapeHtml(cm.region)} &nbsp;·&nbsp; GR: <b>${escapeHtml(cm.gr)}</b>`
+      : `📖 Martini${pg ? ` · p. ${pg}` : ""}`;
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;">
+        <span style="font-size:.72rem;color:#999;font-weight:700;">${escapeHtml(bankOfId(r.id))} · ${escapeHtml(r.id)}</span>
+        <span style="font-size:.78rem;color:#C62828;font-weight:800;white-space:nowrap;">missed ${r.missed}/${r.seen} (${rate}%)</span>
+      </div>
+      <div style="font-size:.92rem;margin:5px 0 3px;line-height:1.35;">${escapeHtml(meta.q)}</div>
+      <div style="font-size:.86rem;color:#2E7D32;margin-bottom:6px;">✓ ${escapeHtml(ans)}</div>
+      <div style="font-size:.76rem;color:#555;">${cite}</div>`;
+    main.appendChild(card);
+  });
+
+  const foot = document.createElement("div");
+  foot.style.cssText = "text-align:center;color:#aaa;font-size:.75rem;padding:14px 0;";
+  foot.textContent = `${rows.length} question${rows.length === 1 ? "" : "s"} missed at least once · page = best-matching Martini passage`;
+  main.appendChild(foot);
+}
+
+function renderReports(main) {
+  let reports = loadReports();
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.textContent = "Questions flagged as wrong or misformatted (from anyone on this device). Review, then fix the bank and redeploy. Resolved items can be cleared.";
+  main.appendChild(disc);
+
+  if (!reports.length) {
+    const none = document.createElement("div");
+    none.style.cssText = "text-align:center;color:#888;padding:26px 16px;";
+    none.textContent = "No reports yet. Tap 🚩 Report on any question to flag a wrong answer or formatting issue.";
+    main.appendChild(none);
+    return;
+  }
+
+  const bar = document.createElement("div");
+  bar.style.cssText = "display:flex;gap:8px;margin:4px 0 10px;";
+  const copy = document.createElement("button");
+  copy.textContent = "📋 Copy all";
+  copy.style.cssText = "flex:1;background:#1F3864;color:#fff;border:none;border-radius:10px;padding:9px;font-weight:700;font-size:.85rem;cursor:pointer;";
+  copy.onclick = () => {
+    const txt = loadReports().map(r => `[${r.reason}] ${r.id || ""} — ${r.q}\n  correct: ${r.correct || ""}\n  note: ${r.note || ""}  (by ${r.by})`).join("\n\n");
+    try { navigator.clipboard.writeText(txt); toast("Copied all reports 📋"); } catch (e) { alert(txt); }
+  };
+  bar.appendChild(copy);
+  const clearR = document.createElement("button");
+  clearR.textContent = "Clear resolved";
+  clearR.style.cssText = "background:#fff;color:#555;border:1px solid #ccc;border-radius:10px;padding:9px 12px;font-size:.85rem;cursor:pointer;";
+  clearR.onclick = () => { saveReports(loadReports().filter(r => !r.resolved)); render(); };
+  bar.appendChild(clearR);
+  main.appendChild(bar);
+
+  const RLBL = { wrong_answer: "❌ Wrong answer", formatting: "✏️ Formatting", other: "❓ Other" };
+  reports.forEach((r, i) => {
+    const card = document.createElement("div");
+    card.style.cssText = `background:${r.resolved ? "#f0f0f0" : "#fffdf8"};border-radius:12px;padding:11px 13px;margin:9px 0;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid ${r.resolved ? "#9e9e9e" : "#E67E22"};${r.resolved ? "opacity:.7;" : ""}`;
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#888;">
+        <span style="font-weight:700;color:#C62828;">${RLBL[r.reason] || r.reason}</span>
+        <span>${r.by} · ${new Date(r.date).toLocaleDateString()}${r.id ? " · " + escapeHtml(r.id) : ""}</span>
+      </div>
+      <div style="font-size:.9rem;margin:5px 0 3px;line-height:1.35;">${escapeHtml(r.q || "")}</div>
+      ${r.correct ? `<div style="font-size:.83rem;color:#2E7D32;">app answer: ${escapeHtml(r.correct)}</div>` : ""}
+      ${r.note ? `<div style="font-size:.82rem;color:#555;margin-top:3px;">📝 ${escapeHtml(r.note)}</div>` : ""}`;
+    const actions = document.createElement("div");
+    actions.style.cssText = "display:flex;gap:8px;margin-top:8px;";
+    const res = document.createElement("button");
+    res.textContent = r.resolved ? "↩ Unresolve" : "✓ Resolve";
+    res.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;";
+    res.onclick = () => { const a = loadReports(); a[i].resolved = !a[i].resolved; saveReports(a); render(); };
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.style.cssText = "border:1px solid #eebcbc;color:#C62828;background:#fff;border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;";
+    del.onclick = () => { const a = loadReports(); a.splice(i, 1); saveReports(a); render(); };
+    actions.appendChild(res); actions.appendChild(del);
+    card.appendChild(actions);
+    main.appendChild(card);
+  });
 }
 
 /* ================== TIMED EXAM MODE ================== */
@@ -2017,6 +2327,7 @@ function examStartTimer() {
       examAnswered = true;
       examSelected = -1;
       examTimes.push(EXAM_SECONDS); // timed out = used the full clock
+      recordQuestionStat(examDeck[examIndex], false);
       examAnswerLog.push({ q: examDeck[examIndex], selected: -1, correct: examDeck[examIndex].correct, timedOut: true });
       // Show timed-out state briefly then advance
       const optBtns = document.querySelectorAll(".examOption");
@@ -2053,6 +2364,7 @@ function examSelectAnswer(origIdx, displayIdx) {
   examSelected = origIdx; // always store original index
   const q = examDeck[examIndex];
   if (origIdx === q.correct) examScore++;
+  recordQuestionStat(q, origIdx === q.correct);
   examAnswerLog.push({ q, selected: origIdx, correct: q.correct, timedOut: false });
   // Highlight using shuffled display positions
   const sDisplaySelected = (displayIdx !== undefined) ? displayIdx : _eShCache.opts.indexOf(q.options[origIdx]);
@@ -2282,6 +2594,11 @@ function renderExam(main) {
   fb.id = "examFeedback";
   fb.style.cssText = "min-height:28px; text-align:center; font-weight:600; font-size:1rem; padding:8px 0;";
   main.appendChild(fb);
+
+  const rprow = document.createElement("div");
+  rprow.style.cssText = "text-align:center;margin-top:2px;";
+  rprow.appendChild(reportBtn(q));
+  main.appendChild(rprow);
 
   // Start the countdown (only if not already answered — guard against re-renders)
   if (!examAnswered) examStartTimer();
