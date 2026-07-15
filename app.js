@@ -1442,16 +1442,19 @@ function renderQuiz(main) {
   main.appendChild(optsWrap);
 
   if (quizAnswered) {
-    // Martini textbook reference (chapter + best-matching page) — shown for every bank incl. Claude Bank
+    // Martini textbook reference — Claude Bank carries a curated chapter/page (q.ch/q.page);
+    // GR & Stuvia fall back to a live best-match lookup.
     try {
-      const res = searchTextbook(q.q, q.options[q.correct]);
-      if (res && res.page) {
-        const ch = pageToChapter(res.page); const cm = ch ? CHAP_META[ch] : null;
+      let ch = null, page = null;
+      if (q.ch) { ch = q.ch; page = q.page || null; }
+      else { const res = searchTextbook(q.q, q.options[q.correct]); if (res && res.page) { page = res.page; ch = pageToChapter(page); } }
+      if (ch || page) {
+        const cm = ch ? CHAP_META[ch] : null;
         const cite = document.createElement("div");
         cite.style.cssText = "text-align:center;font-size:.8rem;color:#777;margin:10px 0 2px;line-height:1.4;";
         cite.innerHTML = cm
-          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)} &nbsp;·&nbsp; <b>p. ${res.page}</b>`
-          : `📖 <b>Martini</b> &nbsp;·&nbsp; p. ${res.page}`;
+          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)}${page ? ` &nbsp;·&nbsp; <b>p. ${page}</b>` : ""}`
+          : `📖 <b>Martini</b>${page ? ` &nbsp;·&nbsp; p. ${page}` : ""}`;
         main.appendChild(cite);
       }
     } catch (e) {}
