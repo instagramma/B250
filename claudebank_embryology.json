@@ -1,0 +1,126 @@
+{
+  "title": "ClaudeBank: Embryology & Development",
+  "group": "claudebank",
+  "questions": [
+    {
+      "q": "The ductus arteriosus in fetal circulation connects:",
+      "options": ["A. The umbilical vein to the inferior vena cava, bypassing the liver", "B. The right and left atria, allowing blood to bypass the pulmonary circuit", "C. The pulmonary trunk to the aorta, shunting blood away from the non-functioning fetal lungs", "D. The umbilical arteries to the external iliac arteries", "E. The placenta directly to the fetal heart"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The foramen ovale in fetal circulation is an opening in the:",
+      "options": ["A. Interventricular septum allowing left-to-right shunting", "B. Interatrial septum that allows oxygenated blood to pass from the right to the left atrium", "C. Ductus arteriosus between pulmonary trunk and aorta", "D. Umbilical vein connecting to the inferior vena cava", "E. Pulmonary artery wall"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The ductus venosus in fetal circulation:",
+      "options": ["A. Connects the pulmonary trunk to the aorta", "B. Allows oxygenated blood from the umbilical vein to bypass the liver and flow directly into the inferior vena cava", "C. Is an opening in the interatrial septum", "D. Carries deoxygenated blood from the fetus to the placenta", "E. Connects the right and left ventricles"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "In fetal circulation, the umbilical vein carries ________ blood from the placenta to the fetal liver.",
+      "options": ["A. Deoxygenated, waste-rich blood", "B. Oxygenated, nutrient-rich blood from the placenta", "C. Both oxygenated and deoxygenated blood equally", "D. Plasma only (no formed elements)", "E. Blood identical in composition to maternal blood"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "In fetal circulation, the umbilical arteries (two) carry:",
+      "options": ["A. Oxygenated blood from the placenta to the fetus", "B. Deoxygenated, waste-laden blood from the fetus back to the placenta", "C. Blood from the fetal heart to the fetal liver", "D. Blood from the fetal liver to the right atrium", "E. Blood to the head and upper extremities"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "At birth, the foramen ovale closes because:",
+      "options": ["A. The umbilical cord is cut, stopping placental blood flow", "B. Increased left atrial pressure (from expanded lung blood flow) exceeds right atrial pressure, pressing the septum primum against the septum secundum", "C. The ductus arteriosus must close first, creating reverse pressure", "D. Prostaglandins from the placenta abruptly cease", "E. Oxygen triggers smooth muscle contraction in the septum"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The ductus arteriosus closes shortly after birth primarily due to:",
+      "options": ["A. Increased pulmonary blood flow mechanically compressing it", "B. Rising arterial oxygen tension and decreased prostaglandin E2, causing smooth muscle contraction and closure", "C. Foramen ovale closure reducing right-sided pressure", "D. Hormone secretion from the degenerating placenta", "E. Umbilical vein closure reducing systemic pressure"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The morula stage of early development is:",
+      "options": ["A. A hollow ball of cells with a blastocoele (that is the blastocyst)", "B. A solid ball of approximately 16 cells formed by cleavage of the zygote", "C. The fertilized egg immediately after syngamy (that is the zygote)", "D. The embryonic disc organized at approximately day 9", "E. The trophoblast layer that invades the endometrium"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The inner cell mass (embryoblast) of the blastocyst ultimately gives rise to:",
+      "options": ["A. The placenta and chorionic villi", "B. The amnion only", "C. The embryo proper and its associated extraembryonic membranes (amnion, yolk sac, allantois)", "D. The chorion and trophoblast only", "E. The umbilical cord connective tissue only"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Monozygotic (identical) twins arise from:",
+      "options": ["A. Fertilization of two separate oocytes by two separate sperm", "B. Splitting of a single zygote or early embryo into two separate embryos", "C. Two separate fertilization events occurring in the same ovarian cycle", "D. Polyspermy followed by equal division of chromosomes", "E. Two simultaneous ovulations of the same follicle"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Neural crest cells are remarkable because they:",
+      "options": ["A. Form only the brain and spinal cord (CNS exclusively)", "B. Are derived from lateral plate mesoderm", "C. Migrate extensively from the dorsal neural tube to form diverse structures including cranial nerve ganglia, melanocytes, and facial cartilage", "D. Remain in place to become the gray matter of the spinal cord", "E. Give rise only to the autonomic ganglia and adrenal medulla"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "Somites, blocks of paraxial mesoderm flanking the neural tube, give rise to:",
+      "options": ["A. Organs of the abdominal cavity (liver, kidneys)", "B. The neural tube and central nervous system", "C. Vertebrae, ribs, axial skeletal muscles of the trunk, and dermis of the back", "D. The digestive system lining", "E. Blood vessels exclusively"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The syncytiotrophoblast (outer trophoblast layer) during implantation:",
+      "options": ["A. Forms the inner cell mass of the blastocyst", "B. Gives rise to the amniotic cavity lining", "C. Actively invades the uterine endometrium and secretes HCG to maintain the corpus luteum", "D. Remains as a thin non-invasive layer covering the blastocyst", "E. Develops into fetal blood vessels in the umbilical cord"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The placenta is formed from contributions of both:",
+      "options": ["A. Maternal endometrium and paternal blood vessels", "B. Fetal chorion (from trophoblast) and maternal decidua (modified uterine endometrium)", "C. Maternal and fetal blood, which mix directly within placental sinusoids", "D. Amnion and chorion from the fetal side only", "E. Yolk sac and allantois contributing equally"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Maternal and fetal blood in a normal placenta:",
+      "options": ["A. Mix freely in intervillous spaces allowing direct exchange", "B. Never directly mix; exchange occurs across the placental membrane (trophoblast + fetal capillary endothelium)", "C. Mix only during the first trimester", "D. Mix only at the umbilical cord insertion site", "E. Are identical in composition due to diffusion equilibrium"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The process of induction in embryology refers to:",
+      "options": ["A. Formation of the neural tube from the neural plate (neurulation)", "B. The influence of one group of cells on the developmental fate of adjacent cells", "C. Implantation of the blastocyst into the endometrium", "D. Gastrulation creating the three primary germ layers", "E. Migration of neural crest cells from the dorsal neural tube"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "The amniotic fluid surrounding the fetus primarily functions to:",
+      "options": ["A. Provide nutrients and oxygen directly to the embryo", "B. Supply oxygen directly to fetal lungs for gas exchange", "C. Cushion and protect the fetus from mechanical trauma, allow limb movement, and maintain temperature", "D. Exchange metabolic waste products across the amnion", "E. Only prevent desiccation during fetal development"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The fetal heart begins to beat at approximately:",
+      "options": ["A. 1 week of gestation", "B. 3–4 weeks of gestation (approximately day 22–23)", "C. 6–8 weeks of gestation", "D. At the end of the first trimester (week 12–13)", "E. At the beginning of the second trimester (week 14)"],
+      "correct": 1,
+      "tf": false
+    },
+    {
+      "q": "Gastrulation transforms the bilaminar embryonic disc into a trilaminar disc by generating a third layer called the:",
+      "options": ["A. Ectoderm (the dorsal layer)", "B. Trophoblast", "C. Intraembryonic mesoderm (between existing epiblast-derived ectoderm and endoderm)", "D. Amniotic epithelium", "E. Syncytiotrophoblast"],
+      "correct": 2,
+      "tf": false
+    },
+    {
+      "q": "The endoderm germ layer gives rise to:",
+      "options": ["A. Skeletal muscles and connective tissue", "B. The nervous system and epidermis of the skin", "C. The epithelial lining of the digestive tract, respiratory tract, and urinary tract; and glandular organs (liver, pancreas, thyroid)", "D. Blood vessels, bone, and the dermis", "E. The dermis and cartilage of the face"],
+      "correct": 2,
+      "tf": false
+    }
+  ]
+}
