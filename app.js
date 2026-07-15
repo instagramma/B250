@@ -1660,37 +1660,15 @@ function renderGallery(main) {
 }
 
 /* ---------- LABELED DIAGRAM GALLERY (Torso) ----------
-   Pulls every labeled GR diagram, grouped by section, and shows each image
-   with its answer key (letter → structure) drawn from the audited quiz data. */
-function buildTorsoDiagrams() {
-  const sec = DATA.sections.torso;
-  if (!sec || !sec.subtopics) return [];
-  const groups = TORSO_GR_SECTIONS.map(g => ({ label: g.label, icon: g.icon, diagrams: [] }));
-  TORSO_GR_SECTIONS.forEach((g, gi) => {
-    g.indices.forEach(idx => {
-      const sub = sec.subtopics[idx];
-      if (!sub || !sub.quiz) return;
-      const order = [], map = {};
-      sub.quiz.forEach(q => {
-        if (!(q.images && q.images.length)) return;
-        const m = (q.q || "").match(/Label\s+([A-Z]+)/i);
-        if (!m) return; // only letter-labeled questions feed the answer key
-        q.images.forEach(img => {
-          if (!map[img]) { map[img] = { img, sub: sub.title, labels: {} }; order.push(img); }
-          map[img].labels[m[1].toUpperCase()] = q.options[q.correct];
-        });
-      });
-      order.forEach(img => groups[gi].diagrams.push(map[img]));
-    });
-  });
-  return groups.filter(g => g.diagrams.length);
-}
+   Uses DIAGRAM_KEY (diagramkey.js): labels re-derived from the Stuvia PDF figures,
+   figure numbers user-verified. GR (guided-reading) letters are shown bold+highlighted. */
+const SECTION_ICONS = { "Thorax": "🫁", "Abdomen": "🧫", "Pelvis & Perineum": "🦴", "Systemic": "🧬" };
 
 function renderDiagramGallery(main) {
-  const groups = buildTorsoDiagrams();
+  const groups = (typeof DIAGRAM_KEY !== "undefined") ? DIAGRAM_KEY : [];
   const disc = document.createElement("div");
   disc.className = "disclaimer";
-  disc.textContent = "Every labeled diagram from your Torso Guided Readings, grouped by section. Each letter printed on the image is answered below it. Tap an image to zoom.";
+  disc.textContent = "Every labeled diagram from your Torso Guided Readings, grouped by section, with its Stuvia figure number. Yellow-highlighted letters are the ones your GR tested. Tap an image to zoom.";
   main.appendChild(disc);
 
   if (!groups.length) {
@@ -1701,21 +1679,23 @@ function renderDiagramGallery(main) {
     return;
   }
 
-  const totalD = groups.reduce((a, g) => a + g.diagrams.length, 0);
+  let totalD = 0;
   groups.forEach(g => {
+    totalD += g.diagrams.length;
     const h = document.createElement("div");
     h.className = "modeGroupHdr";
     h.style.cssText = "margin-top:20px;font-size:1.02rem;";
-    h.textContent = `${g.icon} ${g.label} — ${g.diagrams.length} diagram${g.diagrams.length === 1 ? "" : "s"}`;
+    h.textContent = `${SECTION_ICONS[g.section] || "🖼️"} ${g.section} — ${g.diagrams.length} diagram${g.diagrams.length === 1 ? "" : "s"}`;
     main.appendChild(h);
 
     g.diagrams.forEach(d => {
+      const grSet = new Set(d.gr || []);
       const card = document.createElement("div");
       card.style.cssText = "background:var(--card,#fffdf8);border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 5px rgba(0,0,0,.09);";
 
       const cap = document.createElement("div");
       cap.style.cssText = "font-size:.8rem;color:#999;margin-bottom:6px;font-weight:600;";
-      cap.textContent = d.sub;
+      cap.innerHTML = `${escapeHtml(d.sub)} &nbsp;·&nbsp; <span style="color:var(--accent);">Figure ${escapeHtml(d.fig)}</span>`;
       card.appendChild(cap);
 
       const img = document.createElement("img");
@@ -1731,9 +1711,14 @@ function renderDiagramGallery(main) {
       Object.keys(d.labels)
         .sort((a, b) => a.length - b.length || a.localeCompare(b))
         .forEach(L => {
+          const isGr = grSet.has(L);
           const row = document.createElement("div");
-          row.style.cssText = "font-size:.9rem;line-height:1.4;display:flex;gap:8px;align-items:baseline;";
-          row.innerHTML = `<span style="font-weight:800;color:var(--accent);min-width:24px;flex-shrink:0;">${L}</span><span>${escapeHtml(d.labels[L])}</span>`;
+          row.style.cssText = "font-size:.9rem;line-height:1.5;display:flex;gap:8px;align-items:baseline;";
+          const letter = isGr
+            ? `<span style="font-weight:800;color:var(--accent);background:#FFE9A8;border-radius:4px;padding:0 5px;min-width:22px;text-align:center;flex-shrink:0;">${L}</span>`
+            : `<span style="font-weight:700;color:var(--accent);min-width:24px;flex-shrink:0;">${L}</span>`;
+          const val = isGr ? `<span style="font-weight:700;">${escapeHtml(d.labels[L])}</span>` : `<span>${escapeHtml(d.labels[L])}</span>`;
+          row.innerHTML = letter + val;
           leg.appendChild(row);
         });
       card.appendChild(leg);
@@ -1743,7 +1728,7 @@ function renderDiagramGallery(main) {
 
   const foot = document.createElement("div");
   foot.style.cssText = "text-align:center;color:#aaa;font-size:.8rem;padding:16px 0;";
-  foot.textContent = `${totalD} labeled diagrams total`;
+  foot.textContent = `${totalD} labeled diagrams · corrected from the Stuvia PDF`;
   main.appendChild(foot);
 }
 
