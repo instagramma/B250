@@ -1330,14 +1330,14 @@ function renderQuiz(main) {
       gotIt.className = "nextBtn";
       gotIt.style.cssText = "flex:1;background:#27ae60;";
       gotIt.textContent = "✓ Got it";
-      gotIt.onclick = () => { quizScore++; quizAnswered = true; recordQuestionStat(q, true); render(); };
+      gotIt.onclick = () => { quizScore++; quizAnswered = true; quizSelected = -3; recordQuestionStat(q, true); render(); };
       selfBar.appendChild(gotIt);
 
       const missedIt = document.createElement("button");
       missedIt.className = "secondaryBtn";
       missedIt.style.cssText = "flex:1;";
       missedIt.textContent = "✗ Missed it";
-      missedIt.onclick = () => { quizAnswered = true; recordQuestionStat(q, false); render(); };
+      missedIt.onclick = () => { quizAnswered = true; quizSelected = -3; recordQuestionStat(q, false); render(); };
       selfBar.appendChild(missedIt);
 
       main.appendChild(selfBar);
@@ -1870,13 +1870,19 @@ function renderGallery(main) {
 /* ---------- LABELED DIAGRAM GALLERY (Torso) ----------
    Uses DIAGRAM_KEY (diagramkey.js): labels re-derived from the Stuvia PDF figures,
    figure numbers user-verified. GR (guided-reading) letters are shown bold+highlighted. */
-const SECTION_ICONS = { "Thorax": "🫁", "Abdomen": "🧫", "Pelvis & Perineum": "🦴", "Systemic": "🧬" };
+const SECTION_ICONS = { "Thorax": "🫁", "Abdomen": "🧫", "Pelvis & Perineum": "🦴", "Systemic": "🧬",
+  "Head & Neck": "💀", "Spinal Cord & Column": "🦴", "Cross-Sectional, Autonomic & Senses": "🔀", "Neural Tissue": "🧠" };
 
 function renderDiagramGallery(main) {
-  const groups = (typeof DIAGRAM_KEY !== "undefined") ? DIAGRAM_KEY : [];
+  const isAxial = state.sectionKey === "axial";
+  const groups = isAxial
+    ? ((typeof AXIAL_DIAGRAM_KEY !== "undefined") ? AXIAL_DIAGRAM_KEY : [])
+    : ((typeof DIAGRAM_KEY !== "undefined") ? DIAGRAM_KEY : []);
   const disc = document.createElement("div");
   disc.className = "disclaimer";
-  disc.textContent = "Every labeled diagram from your Torso Guided Readings, grouped by section, with its Stuvia figure number. Yellow-highlighted letters are the ones your GR tested. Tap an image to zoom.";
+  disc.textContent = isAxial
+    ? "Every labeled diagram from your Axial Guided Readings, grouped by section. Labels were corrected against the Stuvia PDF (source of truth). Tap an image to zoom."
+    : "Every labeled diagram from your Torso Guided Readings, grouped by section, with its Stuvia figure number. Yellow-highlighted letters are the ones your GR tested. Tap an image to zoom.";
   main.appendChild(disc);
 
   if (!groups.length) {
@@ -1903,7 +1909,10 @@ function renderDiagramGallery(main) {
 
       const cap = document.createElement("div");
       cap.style.cssText = "font-size:.8rem;color:#999;margin-bottom:6px;font-weight:600;";
-      cap.innerHTML = `${escapeHtml(d.sub)} &nbsp;·&nbsp; <span style="color:var(--accent);">Figure ${escapeHtml(d.fig)}</span>`;
+      const figTxt = d.fig
+        ? `&nbsp;·&nbsp; <span style="color:var(--accent);">${/^[\d.]+$/.test(d.fig) ? "Figure " : ""}${escapeHtml(d.fig)}</span>`
+        : "";
+      cap.innerHTML = `${escapeHtml(d.sub)}${figTxt}`;
       card.appendChild(cap);
 
       const img = document.createElement("img");
@@ -3262,6 +3271,7 @@ function renderSectionMenu(main) {
   if (!sec) { state.route = "home"; render(); return; }
 
   const isTorso = state.sectionKey === "torso";
+  const isAxial = state.sectionKey === "axial";
 
   // Items per section — adjust for whatever the section actually has
   const items = [
@@ -3307,7 +3317,7 @@ function renderSectionMenu(main) {
       icon: "🖼️",
       title: "Diagram Gallery",
       sub: "All labeled GR diagrams, by section",
-      condition: isTorso,
+      condition: isTorso || isAxial,
     },
   ].filter(i => i.condition);
 
