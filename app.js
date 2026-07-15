@@ -258,8 +258,8 @@ const META = {
 // Fill these in after creating your free Supabase project — see supabase_setup.sql
 // and SETUP_GUIDE.md. If left as-is, the app skips login and runs local-only
 // (progress isn't saved anywhere, but everything still works offline).
-const SUPABASE_URL = "YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://tzdreklmkntpopqncada.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_PWdbyaBoBg8hM2kptSrwBA_I4lFrnQr";
 
 const CLOUD_ENABLED = !SUPABASE_URL.startsWith("YOUR_") && !SUPABASE_ANON_KEY.startsWith("YOUR_");
 const sb = CLOUD_ENABLED ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -324,6 +324,7 @@ function loadLocalProgress() {
 }
 function saveLocalProgress() {
   try { localStorage.setItem(ns(PROGRESS_KEY), JSON.stringify(progressState)); } catch (e) {}
+  if (typeof saveProgress === "function") saveProgress(false);   // debounced cloud push
 }
 function saveResumeState() {
   try {
@@ -383,6 +384,7 @@ function selectProfile(name) {
   progressState = loadLocalProgress();      // load THIS profile's data
   if (!restoreResumeState()) state.route = "home";
   render();
+  loadProgress();   // pull + merge + push this profile's cloud data
 }
 function switchProfile() {
   // don't wipe anything — just return to the picker; data stays under each name
@@ -407,43 +409,79 @@ function renderProfilePicker(main) {
   main.appendChild(wrap);
 }
 
-async function initApp() {
+function initApp() {
   if (!currentProfile) { state.route = "profile"; render(); return; }  // first run on this device → pick a profile
   progressState = loadLocalProgress();
-  if (!CLOUD_ENABLED) {
-    if (!restoreResumeState()) state.route = "home";
-    render();
-    return;
-  }
-  state.route = "loading";
+  if (!restoreResumeState()) state.route = "home";
   render();
-  const { data } = await sb.auth.getSession();
-  if (data.session) {
-    authUser = data.session.user;
-    await loadProgress();
-    if (!restoreResumeState()) state.route = "home";
-  } else {
-    state.route = "login";
-  }
-  render();
-  sb.auth.onAuthStateChange((event) => {
-    if (event === "SIGNED_OUT") {
-      authUser = null;
-      progressState = loadLocalProgress();
-      state.route = "login"; state.sectionKey = null;
-      render();
+  loadProgress();   // background: pull this profile's cloud data, merge, re-render
+}
+
+/* ---------- CLOUD SYNC (per profile, no login) ----------
+   Each profile is one row in the `progress` table keyed by name. On sign-in we
+   PULL the cloud copy and merge it into local (idempotent, best-of-both), then
+   PUSH the merged result so every device converges. Saves debounce a push. */
+let _cloudPushT = null, _cloudBusy = false;
+// idempotent "best across devices" merge — safe to run repeatedly without inflating counts
+function cloudMerge(into, from) {
+  into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
+  Object.keys(from.quizzes || {}).forEach(k => {
+    const b = from.quizzes[k], a = into.quizzes[k];
+    if (!a) { into.quizzes[k] = JSON.parse(JSON.stringify(b)); return; }
+    a.bestScore = Math.max(a.bestScore || 0, b.bestScore || 0);
+    a.attempts = Math.max(a.attempts || 0, b.attempts || 0);
+    if (b.lastDate && (!a.lastDate || b.lastDate > a.lastDate)) { a.lastScore = b.lastScore; a.lastDate = b.lastDate; }
+    a.modes = a.modes || {};
+    Object.keys(b.modes || {}).forEach(md => {
+      const bm = b.modes[md], am = a.modes[md];
+      if (!am) { a.modes[md] = JSON.parse(JSON.stringify(bm)); return; }
+      am.bestScore = Math.max(am.bestScore || 0, bm.bestScore || 0);
+      am.attempts = Math.max(am.attempts || 0, bm.attempts || 0);
+      if (bm.bestSec) am.bestSec = am.bestSec ? Math.min(am.bestSec, bm.bestSec) : bm.bestSec;
+    });
+  });
+  Object.keys(from.qstats || {}).forEach(id => {
+    const b = from.qstats[id], a = into.qstats[id];
+    if (!a) { into.qstats[id] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = Math.max(a.seen || 0, b.seen || 0); a.missed = Math.max(a.missed || 0, b.missed || 0);
+    if (b.lastMissed && (!a.lastMissed || b.lastMissed > a.lastMissed)) a.lastMissed = b.lastMissed;
+    if (b.m) { a.m = a.m || {};
+      Object.keys(b.m).forEach(md => {
+        const bm = b.m[md], am = a.m[md];
+        if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
+        am.s = Math.max(am.s || 0, bm.s || 0); am.c = Math.max(am.c || 0, bm.c || 0);
+        am.last = (am.last === 1 || bm.last === 1) ? 1 : 0;
+      });
     }
   });
+  Object.keys(from.examAttempts || {}).forEach(k => {
+    const bar = from.examAttempts[k] || [], aar = into.examAttempts[k];
+    if (!aar) { into.examAttempts[k] = JSON.parse(JSON.stringify(bar)); return; }
+    const seen = new Set(), out = [];
+    [...aar, ...bar].forEach(x => { const key = (x.date || "") + ":" + (x.pct ?? "") + ":" + (x.score ?? ""); if (!seen.has(key)) { seen.add(key); out.push(x); } });
+    out.sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+    into.examAttempts[k] = out.slice(0, 10);
+  });
+  return into;
 }
-
 async function loadProgress() {
-  const { data, error } = await sb.from("progress").select("data").eq("user_id", authUser.id).maybeSingle();
-  progressState = (!error && data && data.data) ? data.data : loadLocalProgress();
+  if (!CLOUD_ENABLED || !currentProfile || _cloudBusy) return;
+  _cloudBusy = true;
+  try {
+    const { data, error } = await sb.from("progress").select("data").eq("profile", currentProfile).maybeSingle();
+    if (!error && data && data.data && typeof data.data === "object") {
+      cloudMerge(progressState, data.data);
+      saveLocalProgress();   // persist merged copy on this device
+      render();
+    }
+  } catch (e) {}
+  _cloudBusy = false;
+  saveProgress(true);   // push the merged result so all devices converge
 }
-
-async function saveProgress() {
-  if (!CLOUD_ENABLED || !authUser) return;
-  await sb.from("progress").upsert({ user_id: authUser.id, data: progressState });
+async function saveProgress(immediate) {
+  if (!CLOUD_ENABLED || !currentProfile) return;
+  if (!immediate) { clearTimeout(_cloudPushT); _cloudPushT = setTimeout(() => saveProgress(true), 2500); return; }
+  try { await sb.from("progress").upsert({ profile: currentProfile, data: progressState, updated_at: new Date().toISOString() }); } catch (e) {}
 }
 
 /* Study mode: "closed" = closed-book (true recall) vs "open" = with notes.
@@ -496,6 +534,15 @@ function mergeProgress(into, from) {
     const b = from.qstats[id], a = into.qstats[id];
     if (!a) { into.qstats[id] = JSON.parse(JSON.stringify(b)); return; }
     a.seen = (a.seen || 0) + (b.seen || 0); a.missed = (a.missed || 0) + (b.missed || 0);
+    if (b.lastMissed && (!a.lastMissed || b.lastMissed > a.lastMissed)) a.lastMissed = b.lastMissed;
+    if (b.m) { a.m = a.m || {};
+      Object.keys(b.m).forEach(md => {
+        const bm = b.m[md], am = a.m[md];
+        if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
+        am.s = (am.s || 0) + (bm.s || 0); am.c = (am.c || 0) + (bm.c || 0);
+        am.last = (am.last === 1 || bm.last === 1) ? 1 : 0;
+      });
+    }
   });
   return into;
 }
