@@ -403,14 +403,31 @@ async function saveProgress() {
   await sb.from("progress").upsert({ user_id: authUser.id, data: progressState });
 }
 
-function recordQuizResult(key, score, total) {
+/* Study mode: "closed" = closed-book (true recall) vs "open" = with notes.
+   Stored per device; each quiz result is tagged with the active mode. */
+function getStudyMode() { try { return localStorage.getItem("biol250_studyMode") === "open" ? "open" : "closed"; } catch (e) { return "closed"; } }
+function setStudyMode(m) { try { localStorage.setItem("biol250_studyMode", m); } catch (e) {} }
+
+function recordQuizResult(key, score, total, avgSec) {
   const pct = Math.round((score / total) * 100);
-  const prev = progressState.quizzes[key];
+  const prev = progressState.quizzes[key] || {};
+  const mode = getStudyMode();
+  const modes = prev.modes || {};
+  const pm = modes[mode] || { bestScore: 0, attempts: 0 };
+  pm.attempts = (pm.attempts || 0) + 1;
+  pm.bestScore = Math.max(pm.bestScore || 0, pct);
+  pm.lastScore = pct;
+  if (typeof avgSec === "number" && isFinite(avgSec) && avgSec > 0) {
+    pm.lastSec = Math.round(avgSec * 10) / 10;
+    pm.bestSec = pm.bestSec ? Math.min(pm.bestSec, pm.lastSec) : pm.lastSec;
+  }
+  modes[mode] = pm;
   progressState.quizzes[key] = {
     lastScore: pct,
-    attempts: (prev ? prev.attempts : 0) + 1,
-    bestScore: prev ? Math.max(prev.bestScore, pct) : pct,
+    attempts: (prev.attempts || 0) + 1,
+    bestScore: Math.max(prev.bestScore || 0, pct),
     lastDate: new Date().toISOString(),
+    modes: modes,
   };
   saveLocalProgress();
   saveProgress();
@@ -471,6 +488,7 @@ function render() {
   else if (state.route === "quiz") renderQuiz(main);
   else if (state.route === "gallery") renderGallery(main);
   else if (state.route === "diagramGallery") renderDiagramGallery(main);
+  else if (state.route === "preparedness") renderPreparedness(main);
   else if (state.route === "subtopics") renderSubtopics(main);
   else if (state.route === "worksheet") renderWorksheet(main);
   else if (state.route === "labeling") renderLabeling(main);
@@ -515,6 +533,7 @@ function buildTopbar() {
       else if (state.route === "stuviaMenu")    state.route = "sectionMenu";
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
       else if (state.route === "diagramGallery") state.route = "sectionMenu";
+      else if (state.route === "preparedness") state.route = "sectionMenu";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
       else if (state.route === "customBuilder") state.route = "home";
       else if (state.route === "subtopics")     { state.route = state.prevRoute || "grMenu"; state.mode = null; }
@@ -559,6 +578,7 @@ function buildTopbar() {
   else if (state.route === "examMenu")      titleText = "Practice Tests";
   else if (state.route === "diagramMenu")   titleText = "Diagrams";
   else if (state.route === "diagramGallery") titleText = "Diagram Gallery";
+  else if (state.route === "preparedness") titleText = "Preparedness Score";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "fullExam")        titleText = "Simulation";
   else if (state.route === "fullExamEnd")     titleText = "Simulation Results";
@@ -1732,6 +1752,148 @@ function renderDiagramGallery(main) {
   main.appendChild(foot);
 }
 
+/* ---------- PREPAREDNESS SCORE (Torso) ----------
+   Turns your real quiz results into a per-system exam-readiness score.
+   - Closed-book ("true") vs open-book ("with notes") tracked separately.
+   - Blends accuracy (80%) with answer-speed fluency (20%) where timed.
+   - Diagram/labeling quizzes are excluded. 90% = exam-ready. */
+const PREP_SYSTEMS = ["Respiratory","Heart","Vessels & Circulation","Blood","Lymphatic","Endocrine","Digestive","Urinary","Reproductive","Embryology"];
+function prepKeyToSystems(key) {
+  if (/^(labeling|worksheet|flashcard|gallery)/.test(key)) return null; // exclude diagrams/labeling
+  if (key.indexOf("cb:") === 0) {
+    const CB = {0:["Respiratory","Heart"],1:["Digestive"],2:["Urinary","Reproductive"],3:["Endocrine"],4:["Blood"],5:["Vessels & Circulation"],6:["Lymphatic"],7:["Embryology"]};
+    return CB[parseInt(key.slice(3))] || null;
+  }
+  if (key.indexOf("grTimed:torso:") === 0) {
+    const t = key.slice("grTimed:torso:".length);
+    const map = [["Endocrine","Endocrine"],["Blood","Blood"],["Heart","Heart"],["Vessels","Vessels & Circulation"],["Lymphatic","Lymphatic"],["Digestive","Digestive"],["Urinary","Urinary"],["Reproductive","Reproductive"],["Embryology","Embryology"]];
+    for (const kv of map) if (t.indexOf(kv[0]) >= 0) return [kv[1]];
+    if (t.indexOf("Thorax") >= 0) return ["Respiratory","Heart"];
+    if (t.indexOf("Abdomen") >= 0) return ["Digestive","Urinary"];
+    if (t.indexOf("Pelvis") >= 0) return ["Reproductive","Urinary"];
+    return null;
+  }
+  const m = key.match(/^torso:[^:]*:(\d+)$/);
+  if (m) {
+    const S = {0:["Respiratory","Heart"],1:["Respiratory","Heart"],2:["Respiratory","Heart"],3:["Respiratory","Heart"],4:["Respiratory","Heart"],5:["Respiratory","Heart"],6:["Digestive","Urinary"],7:["Digestive","Urinary"],8:["Digestive","Urinary"],9:["Digestive","Urinary"],10:["Digestive","Urinary"],11:["Digestive","Urinary"],12:["Digestive","Urinary"],13:["Reproductive","Urinary"],14:["Reproductive","Urinary"],15:["Endocrine"],16:["Blood"],17:["Heart"],18:["Vessels & Circulation"],19:["Lymphatic"],20:["Digestive"],21:["Urinary"],22:["Reproductive"],23:["Embryology"]};
+    return S[parseInt(m[1])] || null;
+  }
+  return null; // section-wide exams/stuvia — not attributed to one system
+}
+function prepGather() {
+  const data = {}; PREP_SYSTEMS.forEach(s => data[s] = { closed: null, open: null, secC: null, secO: null, attempts: 0 });
+  const Q = progressState.quizzes || {};
+  Object.keys(Q).forEach(key => {
+    const syss = prepKeyToSystems(key); if (!syss) return;
+    const entry = Q[key]; const modes = entry.modes || {};
+    syss.forEach(s => {
+      ["closed","open"].forEach(md => {
+        const pm = modes[md];
+        if (pm && typeof pm.bestScore === "number") {
+          const cur = data[s][md]; if (cur === null || pm.bestScore > cur) data[s][md] = pm.bestScore;
+          if (pm.bestSec) { const kk = md === "closed" ? "secC" : "secO"; if (data[s][kk] === null || pm.bestSec < data[s][kk]) data[s][kk] = pm.bestSec; }
+          data[s].attempts += pm.attempts || 0;
+        }
+      });
+      if (!modes.closed && !modes.open && typeof entry.bestScore === "number") { // legacy results -> count as closed
+        if (data[s].closed === null || entry.bestScore > data[s].closed) data[s].closed = entry.bestScore;
+        data[s].attempts += entry.attempts || 0;
+      }
+    });
+  });
+  return data;
+}
+function prepFluency(sec) { if (!sec) return null; return Math.max(0, Math.min(100, Math.round((30 - sec) / 20 * 100))); }
+function prepReadiness(d, md) {
+  const acc = d[md]; if (acc === null) return null;
+  const fl = prepFluency(md === "closed" ? d.secC : d.secO);
+  return fl === null ? acc : Math.round(acc * 0.8 + fl * 0.2);
+}
+function prepBand(pct) {
+  if (pct >= 90) return { label: "Exam-ready", color: "#2E7D32" };
+  if (pct >= 75) return { label: "Almost there", color: "#2E74B5" };
+  if (pct >= 50) return { label: "Building", color: "#E67E22" };
+  return { label: "Keep going", color: "#C62828" };
+}
+function renderPreparedness(main) {
+  const md = getStudyMode();
+  const data = prepGather();
+  const readies = PREP_SYSTEMS.map(s => prepReadiness(data[s], md));
+  const tested = readies.filter(r => r !== null).length;
+  const overall = Math.round(readies.reduce((a, r) => a + (r || 0), 0) / PREP_SYSTEMS.length);
+  const band = prepBand(overall);
+
+  // mode toggle
+  const toggle = document.createElement("div");
+  toggle.style.cssText = "display:flex;gap:8px;justify-content:center;margin:6px 0 14px;";
+  [["closed","🧠 Closed-book (true)"],["open","📖 With notes"]].forEach(([m,lbl]) => {
+    const b = document.createElement("button");
+    const on = md === m;
+    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.textContent = lbl;
+    b.onclick = () => { setStudyMode(m); render(); };
+    toggle.appendChild(b);
+  });
+  main.appendChild(toggle);
+
+  if (tested === 0) {
+    const none = document.createElement("div");
+    none.style.cssText = "text-align:center;color:#888;padding:26px 16px;";
+    none.innerHTML = `No <b>${md === "closed" ? "closed-book" : "with-notes"}</b> practice recorded yet.<br>Take a timed Guided-Reading or ClaudeBank quiz in this mode and your score will appear here.`;
+    main.appendChild(none);
+    return;
+  }
+
+  // headline score ring
+  const head = document.createElement("div");
+  head.style.cssText = "text-align:center;margin:4px 0 8px;";
+  head.innerHTML = `
+    <div style="font-size:3.4rem;font-weight:800;line-height:1;color:${band.color};">${overall}%</div>
+    <div style="font-weight:700;color:${band.color};margin-top:2px;">${band.label}${overall>=90?" ✅":""}</div>
+    <div style="color:#888;font-size:.85rem;margin-top:4px;">${md==="closed"?"true (closed-book)":"with-notes"} readiness · ${tested}/${PREP_SYSTEMS.length} systems practiced</div>
+    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">Goal: 90% on every system. Untested systems count as 0.</div>`;
+  main.appendChild(head);
+
+  // per-system bars
+  const list = document.createElement("div");
+  list.style.cssText = "margin-top:14px;";
+  PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i], d: data[s] }))
+    .sort((a, b) => (a.r === null ? -1 : a.r) - (b.r === null ? -1 : b.r)) // weakest first
+    .forEach(({ s, r, d }) => {
+      const row = document.createElement("div");
+      row.style.cssText = "margin:9px 0;";
+      const acc = md === "closed" ? d.closed : d.open;
+      const sec = md === "closed" ? d.secC : d.secO;
+      const col = r === null ? "#bbb" : prepBand(r).color;
+      const rightTxt = r === null ? "Not tested"
+        : `${r}%` + (sec ? ` · ${sec}s/q` : "");
+      row.innerHTML = `
+        <div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
+          <span style="font-weight:600;">${s}</span>
+          <span style="color:${col};font-weight:700;">${rightTxt}</span>
+        </div>
+        <div style="height:9px;background:#ececec;border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:${r === null ? 0 : r}%;background:${col};border-radius:5px;"></div>
+        </div>`;
+      list.appendChild(row);
+    });
+  main.appendChild(list);
+
+  // focus recommendation
+  const weak = PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i] })).filter(x => x.r === null || x.r < 90)
+    .sort((a, b) => (a.r === null ? -1 : a.r) - (b.r === null ? -1 : b.r)).map(x => x.s);
+  const foc = document.createElement("div");
+  foc.style.cssText = "margin-top:16px;background:#FFF7E6;border-left:4px solid #E67E22;border-radius:8px;padding:10px 12px;font-size:.88rem;";
+  if (weak.length === 0) foc.innerHTML = `🎉 Every system is at 90%+ in ${md==="closed"?"closed-book":"with-notes"} mode. You're exam-ready — keep it warm with mixed review.`;
+  else foc.innerHTML = `<b>Focus next (below 90%):</b> ${weak.slice(0,5).join(", ")}${weak.length>5?` +${weak.length-5} more`:""}.`;
+  main.appendChild(foc);
+
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
+  note.textContent = "Score = 80% accuracy + 20% answer-speed (fast recall) per system, from your best result in each. Diagrams are excluded.";
+  main.appendChild(note);
+}
+
 /* ================== TIMED EXAM MODE ================== */
 let examDeck = [], examIndex = 0, examScore = 0;
 let sdDeck = [], sdIndex = 0, sdStreak = 0, sdAnswered = false, sdSelected = -1;
@@ -1741,6 +1903,8 @@ let examTimerHandle = null, examTimeLeft = 30;
 let examAnswerLog = [];  // [{q, options, selected, correct, timedOut}, ...]
 let examExamIndex = 0;   // 0 = Exam 1, 1 = Exam 2
 let EXAM_SECONDS = 30; // overridable per launch
+let examTimes = [], examQStart = 0; // per-question answer times (seconds), for the speed/fluency metric
+let sessionModeSet = false; // whether the closed/open-book prompt has been answered for the current timed session
 
 function examStopTimer() {
   if (examTimerHandle) { clearInterval(examTimerHandle); examTimerHandle = null; }
@@ -1767,6 +1931,7 @@ function examStartTimer() {
       examTimedOut = true;
       examAnswered = true;
       examSelected = -1;
+      examTimes.push(EXAM_SECONDS); // timed out = used the full clock
       examAnswerLog.push({ q: examDeck[examIndex], selected: -1, correct: examDeck[examIndex].correct, timedOut: true });
       // Show timed-out state briefly then advance
       const optBtns = document.querySelectorAll(".examOption");
@@ -1797,6 +1962,7 @@ function examAdvance() {
 
 function examSelectAnswer(origIdx, displayIdx) {
   if (examAnswered) return;
+  examTimes.push(Math.min((Date.now() - examQStart) / 1000, EXAM_SECONDS));
   examStopTimer();
   examAnswered = true;
   examSelected = origIdx; // always store original index
@@ -1924,8 +2090,29 @@ function renderExamPicker(main) {
   }
 }
 
+function renderModeGate(main) {
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
+  wrap.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+    <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this session? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score.</div>`;
+  const mk = (label, sub, mode, bg) => {
+    const b = document.createElement("button");
+    b.className = "primaryBtn";
+    b.style.cssText = `display:block;width:100%;margin:10px 0;background:${bg};color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:pointer;`;
+    b.innerHTML = `${label}<div style="font-weight:400;font-size:.78rem;opacity:.9;margin-top:2px;">${sub}</div>`;
+    b.onclick = () => { setStudyMode(mode); sessionModeSet = true; render(); };
+    return b;
+  };
+  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
+  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+  main.appendChild(wrap);
+}
+
 function renderExam(main) {
   if (!examDeck.length) { state.route = "examPicker"; render(); return; }
+  if (examIndex === 0 && !sessionModeSet) { renderModeGate(main); return; }
 
   // Timer bar row
   const timerWrap = document.createElement("div");
@@ -1958,6 +2145,8 @@ function renderExam(main) {
   main.appendChild(progWrap);
 
   const q = examDeck[examIndex];
+  if (examIndex === 0) examTimes = [];   // fresh run
+  examQStart = Date.now();               // start the answer-speed clock for this question
   const stem = document.createElement("div");
   stem.className = "qStem";
   stem.textContent = `${examIndex + 1}. ${q.q}`;
@@ -2015,16 +2204,18 @@ function renderExam(main) {
 
 function renderExamResults(main) {
   examStopTimer();
+  sessionModeSet = false; // next timed session will ask closed/open-book again
   const total = examDeck.length;
   const pct = Math.round((examScore / total) * 100);
   const timedOuts = examAnswerLog.filter(e => e.timedOut).length;
   const wrong = examAnswerLog.filter(e => !e.timedOut && e.selected !== e.correct);
 
-  // Record best score (use distinct key for GR timed vs real exam)
+  // Record best score (use distinct key per GR subtopic / exam)
   const key = state.examSource === "gr"
-    ? "grTimed:" + state.sectionKey
+    ? "grTimed:" + state.sectionKey + (state.examTitle ? ":" + state.examTitle : "")
     : "exam:" + state.sectionKey + ":" + examExamIndex;
-  recordQuizResult(key, examScore, total);
+  const avgSec = examTimes.length ? examTimes.reduce((a, b) => a + b, 0) / examTimes.length : undefined;
+  recordQuizResult(key, examScore, total, avgSec);
 
   // Save full attempt to history (keep last 10)
   if (!progressState.examAttempts) progressState.examAttempts = {};
@@ -2603,6 +2794,13 @@ function renderSectionMenu(main) {
       title: "Guided Readings",
       sub: isTorso ? "Timed GR questions by section" : "Timed GR question sets",
       condition: true,
+    },
+    {
+      id: "preparedness",
+      icon: "🎯",
+      title: "Preparedness Score",
+      sub: "How exam-ready you are, by system",
+      condition: isTorso,
     },
     {
       id: "diagramGallery",
