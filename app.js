@@ -1887,6 +1887,21 @@ function renderExam(main) {
   stem.textContent = `${examIndex + 1}. ${q.q}`;
   main.appendChild(stem);
 
+  // Diagram/labeling questions carry an image — show it so they're answerable
+  if (q.images && q.images.length) {
+    const imgWrap = document.createElement("div");
+    imgWrap.className = "qImageWrap";
+    q.images.forEach((img) => {
+      const imageEl = document.createElement("img");
+      imageEl.className = "qImage";
+      imageEl.src = "images/" + img;
+      imageEl.loading = "lazy";
+      imageEl.onclick = () => imageEl.classList.toggle("qImageZoomed");
+      imgWrap.appendChild(imageEl);
+    });
+    main.appendChild(imgWrap);
+  }
+
   // Keyboard hint
   const hint = document.createElement("div");
   hint.style.cssText = "font-size:0.75rem; color:#aaa; text-align:center; margin:-4px 0 6px;";
@@ -2624,7 +2639,8 @@ function renderGrMenu(main) {
       btn.innerHTML = `<span class="modeIcon">⏱️</span><span class="modeLabel">${sub.title}</span><span class="modeMeta">${qCount} Qs${bestTxt}</span>`;
       btn.onclick = () => {
         // launch timed GR exam directly (sets examSource = "gr", uses subtopic quiz)
-        const quiz = filterQuiz(sub.quiz || [], "content");
+        // Include ALL questions (content + diagram/labeling) so the deck matches the "N Qs" count.
+        const quiz = (sub.quiz || []);
         if (!quiz.length) return;
         state.prevRoute = "grMenu";
         state.examSource = "gr";
