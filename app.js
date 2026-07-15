@@ -1442,6 +1442,19 @@ function renderQuiz(main) {
   main.appendChild(optsWrap);
 
   if (quizAnswered) {
+    // Martini textbook reference (chapter + best-matching page) — shown for every bank incl. Claude Bank
+    try {
+      const res = searchTextbook(q.q, q.options[q.correct]);
+      if (res && res.page) {
+        const ch = pageToChapter(res.page); const cm = ch ? CHAP_META[ch] : null;
+        const cite = document.createElement("div");
+        cite.style.cssText = "text-align:center;font-size:.8rem;color:#777;margin:10px 0 2px;line-height:1.4;";
+        cite.innerHTML = cm
+          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)} &nbsp;·&nbsp; <b>p. ${res.page}</b>`
+          : `📖 <b>Martini</b> &nbsp;·&nbsp; p. ${res.page}`;
+        main.appendChild(cite);
+      }
+    } catch (e) {}
     const fb = document.createElement("div");
     fb.className = "feedbackBar";
     const look = document.createElement("button");
