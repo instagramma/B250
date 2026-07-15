@@ -470,6 +470,7 @@ function render() {
   else if (state.route === "flashcards") renderFlashcards(main);
   else if (state.route === "quiz") renderQuiz(main);
   else if (state.route === "gallery") renderGallery(main);
+  else if (state.route === "diagramGallery") renderDiagramGallery(main);
   else if (state.route === "subtopics") renderSubtopics(main);
   else if (state.route === "worksheet") renderWorksheet(main);
   else if (state.route === "labeling") renderLabeling(main);
@@ -513,6 +514,7 @@ function buildTopbar() {
       else if (state.route === "examMenu")      state.route = "sectionMenu";
       else if (state.route === "stuviaMenu")    state.route = "sectionMenu";
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
+      else if (state.route === "diagramGallery") state.route = "sectionMenu";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
       else if (state.route === "customBuilder") state.route = "home";
       else if (state.route === "subtopics")     { state.route = state.prevRoute || "grMenu"; state.mode = null; }
@@ -556,6 +558,7 @@ function buildTopbar() {
   else if (state.route === "grMenu")        titleText = "Guided Readings";
   else if (state.route === "examMenu")      titleText = "Practice Tests";
   else if (state.route === "diagramMenu")   titleText = "Diagrams";
+  else if (state.route === "diagramGallery") titleText = "Diagram Gallery";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "fullExam")        titleText = "Simulation";
   else if (state.route === "fullExamEnd")     titleText = "Simulation Results";
@@ -1656,6 +1659,94 @@ function renderGallery(main) {
   main.appendChild(grid);
 }
 
+/* ---------- LABELED DIAGRAM GALLERY (Torso) ----------
+   Pulls every labeled GR diagram, grouped by section, and shows each image
+   with its answer key (letter → structure) drawn from the audited quiz data. */
+function buildTorsoDiagrams() {
+  const sec = DATA.sections.torso;
+  if (!sec || !sec.subtopics) return [];
+  const groups = TORSO_GR_SECTIONS.map(g => ({ label: g.label, icon: g.icon, diagrams: [] }));
+  TORSO_GR_SECTIONS.forEach((g, gi) => {
+    g.indices.forEach(idx => {
+      const sub = sec.subtopics[idx];
+      if (!sub || !sub.quiz) return;
+      const order = [], map = {};
+      sub.quiz.forEach(q => {
+        if (!(q.images && q.images.length)) return;
+        const m = (q.q || "").match(/Label\s+([A-Z]+)/i);
+        if (!m) return; // only letter-labeled questions feed the answer key
+        q.images.forEach(img => {
+          if (!map[img]) { map[img] = { img, sub: sub.title, labels: {} }; order.push(img); }
+          map[img].labels[m[1].toUpperCase()] = q.options[q.correct];
+        });
+      });
+      order.forEach(img => groups[gi].diagrams.push(map[img]));
+    });
+  });
+  return groups.filter(g => g.diagrams.length);
+}
+
+function renderDiagramGallery(main) {
+  const groups = buildTorsoDiagrams();
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.textContent = "Every labeled diagram from your Torso Guided Readings, grouped by section. Each letter printed on the image is answered below it. Tap an image to zoom.";
+  main.appendChild(disc);
+
+  if (!groups.length) {
+    const none = document.createElement("div");
+    none.style.cssText = "text-align:center;color:#888;padding:20px;";
+    none.textContent = "No labeled diagrams found.";
+    main.appendChild(none);
+    return;
+  }
+
+  const totalD = groups.reduce((a, g) => a + g.diagrams.length, 0);
+  groups.forEach(g => {
+    const h = document.createElement("div");
+    h.className = "modeGroupHdr";
+    h.style.cssText = "margin-top:20px;font-size:1.02rem;";
+    h.textContent = `${g.icon} ${g.label} — ${g.diagrams.length} diagram${g.diagrams.length === 1 ? "" : "s"}`;
+    main.appendChild(h);
+
+    g.diagrams.forEach(d => {
+      const card = document.createElement("div");
+      card.style.cssText = "background:var(--card,#fffdf8);border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 5px rgba(0,0,0,.09);";
+
+      const cap = document.createElement("div");
+      cap.style.cssText = "font-size:.8rem;color:#999;margin-bottom:6px;font-weight:600;";
+      cap.textContent = d.sub;
+      card.appendChild(cap);
+
+      const img = document.createElement("img");
+      img.className = "qImage";
+      img.src = "images/" + d.img;
+      img.loading = "lazy";
+      img.style.cssText = "width:100%;border-radius:10px;cursor:zoom-in;background:#fff;";
+      img.onclick = () => img.classList.toggle("qImageZoomed");
+      card.appendChild(img);
+
+      const leg = document.createElement("div");
+      leg.style.cssText = "margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:5px 18px;";
+      Object.keys(d.labels)
+        .sort((a, b) => a.length - b.length || a.localeCompare(b))
+        .forEach(L => {
+          const row = document.createElement("div");
+          row.style.cssText = "font-size:.9rem;line-height:1.4;display:flex;gap:8px;align-items:baseline;";
+          row.innerHTML = `<span style="font-weight:800;color:var(--accent);min-width:24px;flex-shrink:0;">${L}</span><span>${escapeHtml(d.labels[L])}</span>`;
+          leg.appendChild(row);
+        });
+      card.appendChild(leg);
+      main.appendChild(card);
+    });
+  });
+
+  const foot = document.createElement("div");
+  foot.style.cssText = "text-align:center;color:#aaa;font-size:.8rem;padding:16px 0;";
+  foot.textContent = `${totalD} labeled diagrams total`;
+  main.appendChild(foot);
+}
+
 /* ================== TIMED EXAM MODE ================== */
 let examDeck = [], examIndex = 0, examScore = 0;
 let sdDeck = [], sdIndex = 0, sdStreak = 0, sdAnswered = false, sdSelected = -1;
@@ -2527,6 +2618,13 @@ function renderSectionMenu(main) {
       title: "Guided Readings",
       sub: isTorso ? "Timed GR questions by section" : "Timed GR question sets",
       condition: true,
+    },
+    {
+      id: "diagramGallery",
+      icon: "🖼️",
+      title: "Diagram Gallery",
+      sub: "All labeled GR diagrams, by section",
+      condition: isTorso,
     },
     {
       id: "examMenu",
