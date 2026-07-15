@@ -1053,6 +1053,7 @@ function renderModes(main) {
           examIndex = 0; examScore = 0;
           examAnswered = false; examSelected = -1; examTimedOut = false;
           examAnswerLog = [];
+          sessionModeSet = false; sessionDiagGateSet = false;
           state.examSource = "gr"; state.examTitle = null;
           state.route = "exam"; render();
         };
@@ -2304,6 +2305,7 @@ let examExamIndex = 0;   // 0 = Exam 1, 1 = Exam 2
 let EXAM_SECONDS = 30; // overridable per launch
 let examTimes = [], examQStart = 0; // per-question answer times (seconds), for the speed/fluency metric
 let sessionModeSet = false; // whether the closed/open-book prompt has been answered for the current timed session
+let sessionDiagGateSet = false; // whether the "include diagram questions?" prompt has been answered (GR timed only)
 
 function examStopTimer() {
   if (examTimerHandle) { clearInterval(examTimerHandle); examTimerHandle = null; }
@@ -2340,13 +2342,42 @@ function examStartTimer() {
         if (i === examDeck[examIndex].correct) b.classList.add("correct");
       });
       const fb = document.getElementById("examFeedback");
-      if (fb) { fb.textContent = "⏰ Time's up!"; fb.style.color = "#c0392b"; }
-      setTimeout(() => examAdvance(), 900);
+      if (fb) { fb.textContent = "⏰ Time's up! · " + examDeck[examIndex].options[examDeck[examIndex].correct]; fb.style.color = "#c0392b"; }
+      showExamNextBtn();
     }
   }, 1000);
 }
 
+let examAwaitingNext = false, examAutoAdvHandle = null;
+function clearExamAutoAdv() { if (examAutoAdvHandle) { clearTimeout(examAutoAdvHandle); examAutoAdvHandle = null; } }
+
+// After an answer (or timeout): show a Next button + hint, and auto-advance in ~3s.
+// The user can advance early with the button or the Spacebar so they can verify / report first.
+function showExamNextBtn() {
+  examAwaitingNext = true;
+  clearExamAutoAdv();
+  const fb = document.getElementById("examFeedback");
+  const host = fb ? fb.parentNode : document.getElementById("main");
+  if (!host || document.getElementById("examNextBtn")) return;
+  const wrap = document.createElement("div");
+  wrap.id = "examNextWrap";
+  wrap.style.cssText = "text-align:center;margin:8px auto 0;max-width:420px;";
+  const btn = document.createElement("button");
+  btn.id = "examNextBtn";
+  btn.textContent = (examIndex >= examDeck.length - 1) ? "See results →" : "Next question →";
+  btn.style.cssText = "display:block;width:100%;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;";
+  btn.onclick = () => { clearExamAutoAdv(); examAdvance(); };
+  const hint = document.createElement("div");
+  hint.style.cssText = "font-size:0.75rem;color:#aaa;margin-top:6px;";
+  hint.textContent = "Press Space or tap Next → to continue · auto-advances in 3s · 🚩 report above if it's wrong";
+  wrap.appendChild(btn); wrap.appendChild(hint);
+  host.appendChild(wrap);
+  examAutoAdvHandle = setTimeout(() => { examAutoAdvHandle = null; examAdvance(); }, 3000);
+}
+
 function examAdvance() {
+  clearExamAutoAdv();
+  examAwaitingNext = false;
   examStopTimer();
   examIndex++;
   examAnswered = false;
@@ -2383,7 +2414,7 @@ function examSelectAnswer(origIdx, displayIdx) {
     fb.textContent = origIdx === q.correct ? "✓ Correct!" : "✗ " + q.options[q.correct];
     fb.style.color = origIdx === q.correct ? "#27ae60" : "#c0392b";
   }
-  setTimeout(() => examAdvance(), 900);
+  showExamNextBtn();  // wait for the user (review / report) instead of auto-advancing
 }
 
 function renderExamPicker(main) {
@@ -2511,9 +2542,39 @@ function renderModeGate(main) {
   main.appendChild(wrap);
 }
 
+function renderDiagramGate(main) {
+  const nDiag = examDeck.filter(isDiagramQ).length;
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
+  wrap.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:6px;">🖼️</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Include diagram questions?</div>
+    <div style="color:#666;font-size:.92rem;margin-bottom:22px;">This deck has <b>${nDiag}</b> image/labeling question${nDiag === 1 ? "" : "s"}. You'll have the diagrams <b>printed</b> during the real exam, so you may not need to flash-test them here.</div>`;
+  const mk = (label, sub, keep, bg) => {
+    const b = document.createElement("button");
+    b.className = "primaryBtn";
+    b.style.cssText = `display:block;width:100%;margin:10px 0;background:${bg};color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:pointer;`;
+    b.innerHTML = `${label}<div style="font-weight:400;font-size:.78rem;opacity:.9;margin-top:2px;">${sub}</div>`;
+    b.onclick = () => {
+      if (!keep) {
+        const filtered = examDeck.filter(q => !isDiagramQ(q));
+        if (filtered.length) examDeck = filtered; // guard: never leave an empty deck
+      }
+      sessionDiagGateSet = true;
+      examIndex = 0; examScore = 0; examAnswerLog = []; examTimes = [];
+      render();
+    };
+    return b;
+  };
+  wrap.appendChild(mk("🚫 Skip diagrams", "Text/recall questions only", false, "#1F3864"));
+  wrap.appendChild(mk("🖼️ Include diagrams", "Flash-test the images too", true, "#2E74B5"));
+  main.appendChild(wrap);
+}
+
 function renderExam(main) {
   if (!examDeck.length) { state.route = "examPicker"; render(); return; }
   if (examIndex === 0 && !sessionModeSet) { renderModeGate(main); return; }
+  if (examIndex === 0 && state.examSource === "gr" && !sessionDiagGateSet && examDeck.some(isDiagramQ)) { renderDiagramGate(main); return; }
 
   // Timer bar row
   const timerWrap = document.createElement("div");
@@ -2611,6 +2672,7 @@ function renderExam(main) {
 function renderExamResults(main) {
   examStopTimer();
   sessionModeSet = false; // next timed session will ask closed/open-book again
+  sessionDiagGateSet = false; // next GR timed session will re-ask about diagram questions
   const total = examDeck.length;
   const pct = Math.round((examScore / total) * 100);
   const timedOuts = examAnswerLog.filter(e => e.timedOut).length;
@@ -2757,7 +2819,15 @@ function renderExamResults(main) {
 /* ---- Global keyboard handler for Timed Exam ---- */
 document.addEventListener("keydown", (e) => {
   if (state.route !== "exam") return;
-  if (examAnswered) return;
+  if (examAnswered) {
+    // Space / Enter advances to the next question once an answer is showing
+    if (examAwaitingNext && (e.key === " " || e.code === "Space" || e.key === "Enter")) {
+      e.preventDefault();
+      clearExamAutoAdv();
+      examAdvance();
+    }
+    return;
+  }
   const num = parseInt(e.key);
   if (isNaN(num) || num < 1) return;
   const displayIdx = num - 1;
@@ -2827,6 +2897,7 @@ function simSubmit(forced) {
   simDeck.forEach((q, i) => {
     const selected = simAnswers[i] ?? -1;
     if (selected === q.correct) examScore++;
+    if (selected !== -1) recordQuestionStat(q, selected === q.correct); // per-question stats for answered items
     examAnswerLog.push({ q, selected, correct: q.correct, timedOut: forced && selected === -1 });
   });
   // Save under "sim:" key so it doesn't mix with timed exam history
@@ -3194,13 +3265,7 @@ function renderSectionMenu(main) {
 
   // Items per section — adjust for whatever the section actually has
   const items = [
-    {
-      id: "grMenu",
-      icon: "📖",
-      title: "Guided Readings",
-      sub: isTorso ? "Timed GR questions by section" : "Timed GR question sets",
-      condition: true,
-    },
+    // Preparedness pinned to the TOP of the menu
     {
       id: "preparedness",
       icon: "🎯",
@@ -3209,11 +3274,11 @@ function renderSectionMenu(main) {
       condition: isTorso,
     },
     {
-      id: "diagramGallery",
-      icon: "🖼️",
-      title: "Diagram Gallery",
-      sub: "All labeled GR diagrams, by section",
-      condition: isTorso,
+      id: "grMenu",
+      icon: "📖",
+      title: "Guided Readings",
+      sub: isTorso ? "Timed GR questions by section" : "Timed GR question sets",
+      condition: true,
     },
     {
       id: "examMenu",
@@ -3235,6 +3300,14 @@ function renderSectionMenu(main) {
       title: "Diagrams & Labeling",
       sub: "Image galleries and labeling exercises",
       condition: sec.gallery || sec.labeling,
+    },
+    // Diagram Gallery pinned to the BOTTOM of the menu
+    {
+      id: "diagramGallery",
+      icon: "🖼️",
+      title: "Diagram Gallery",
+      sub: "All labeled GR diagrams, by section",
+      condition: isTorso,
     },
   ].filter(i => i.condition);
 
@@ -3334,6 +3407,8 @@ function renderGrMenu(main) {
         state.examTitle = sub.title;
         examDeck = shuffle([...quiz]);
         examIndex = 0; examScore = 0;
+        examAnswered = false; examSelected = -1; examTimedOut = false; examAnswerLog = [];
+        sessionModeSet = false; sessionDiagGateSet = false;
         state.route = "exam";
         render();
       };
@@ -3684,6 +3759,7 @@ function renderSuddenDeath(main) {
         sdAnswered = true;
         sdSelected = i; // shuffled display index
         const correct = i === sdSCorrect;
+        recordQuestionStat(sdDeck[sdIndex], correct);
         if (correct) {
           sdStreak++;
           // advance after short delay
@@ -4212,7 +4288,9 @@ function renderFullExamEnd(main) {
   const total = fullExamDeck.length;
   let correct = 0;
   fullExamDeck.forEach((q, i) => {
-    if (fullExamAnswers[i] === q.correct) correct++;
+    const ans = fullExamAnswers[i];
+    if (ans === q.correct) correct++;
+    if (ans !== -1) recordQuestionStat(q, ans === q.correct); // per-question stats for answered items
   });
   const pct = Math.round(correct / total * 100);
 
