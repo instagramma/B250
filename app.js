@@ -768,15 +768,25 @@ function buildTopbar() {
   left.appendChild(h1);
   bar.appendChild(left);
 
+  // Right side: persistent "signed in as" chip on every screen (tap to switch)
+  const right = document.createElement("div");
+  right.style.cssText = "display:flex;align-items:center;gap:8px;";
+  if (currentProfile && !["profile", "loading"].includes(state.route)) {
+    const idchip = document.createElement("button");
+    idchip.innerHTML = `<span style="opacity:.8;">👤</span>&nbsp;<b>${escapeHtml(currentProfile)}</b>`;
+    idchip.title = "Switch profile";
+    idchip.style.cssText = "display:flex;align-items:center;background:#1F3864;color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:.82rem;cursor:pointer;white-space:nowrap;";
+    idchip.onclick = () => switchProfile();
+    right.appendChild(idchip);
+  }
   if (CLOUD_ENABLED && authUser && !noBackRoutes.includes(state.route)) {
     const signOut = document.createElement("button");
     signOut.className = "signOutBtn";
     signOut.textContent = "Sign out";
     signOut.onclick = () => { sb.auth.signOut(); };
-    bar.appendChild(signOut);
-  } else {
-    bar.appendChild(document.createElement("div"));
+    right.appendChild(signOut);
   }
+  bar.appendChild(right);
   return bar;
 }
 
@@ -865,15 +875,9 @@ function renderLogin(main) {
 }
 
 function renderHome(main) {
-  // Signed-in-as banner (which person's stats are being tracked)
+  // Home quick-links (identity now lives permanently in the top bar)
   const who = document.createElement("div");
   who.style.cssText = "display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;color:#666;margin:2px 0 10px;";
-  who.innerHTML = `<span>👤 Signed in as <b style="color:var(--navy,#1F3864);">${escapeHtml(currentProfile || "guest")}</b></span>`;
-  const sw = document.createElement("button");
-  sw.textContent = "Switch";
-  sw.style.cssText = "border:1px solid #ccc;background:#fff;color:#2E74B5;border-radius:14px;padding:3px 12px;font-size:.78rem;font-weight:700;cursor:pointer;";
-  sw.onclick = () => switchProfile();
-  who.appendChild(sw);
   const nRep = loadReports().filter(r => !r.resolved).length;
   const rep = document.createElement("button");
   rep.innerHTML = `🚩 Reports${nRep ? ` <b>${nRep}</b>` : ""}`;
