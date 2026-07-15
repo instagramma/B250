@@ -6,6 +6,12 @@ const DIAGRAM_RE = /label\s+[A-Z]\b|indicated by|identify the structure|structur
 function isDiagramQ(q) {
   return !!(q && q.images && q.images.length) || (q && DIAGRAM_RE.test(q.q || ""));
 }
+/* Fill-in-the-blank items (single answer / no distractors) — fine for flashcard review,
+   but excluded from timed Simulations & Practice Exams (they render as a lone option). */
+function isFITBQ(q) { return !!(q && (q.fitb || (q.options || []).length <= 1)); }
+/* Out-of-scope items (imaging physics/technology, not anatomy) — never served. Reversible. */
+const OUT_OF_SCOPE_IDS = new Set(["PE-2159", "PE-2161"]);
+function isExamEligible(q) { return !!q && !isFITBQ(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
 function filterQuiz(list, filter) {
   if (!list) return [];
   if (filter === "diagram") return list.filter(isDiagramQ);
@@ -38,14 +44,16 @@ function escapeHtml(s) {
 }
 /* Inverse-document-frequency, computed once, so distinctive anatomy terms
    (e.g. "seminalplasmin") outweigh common words (e.g. "gland", "blood"). */
-let _tbIdf = null, _tbLow = null, _tbProse = null;
+let _tbIdf = null, _tbLow = null, _tbProse = null, _tbQual = null;
 // function words that flow in real prose but are sparse in figure-caption "label salad"
 const TB_FUNC = new Set("the of and a to in is that it for as with are this by be on or an which from at not but they these can when into than has have its also such may each within between through during because while where how other some more most less their his her them we you".split(" "));
+const TB_REVIEW_RE = /concept check|chapter review|reviewing facts|reviewing concepts|study outline|answers tab|see the blue answers|clinical case|clinical note|level 1|level 2|level 3|checkpoint|related clinical terms|key terms/;
 function tbBuildIndex() {
   if (_tbIdf) return;
   _tbIdf = Object.create(null);
   _tbLow = new Array(TEXTBOOK.length);
   _tbProse = new Array(TEXTBOOK.length);
+  _tbQual = new Array(TEXTBOOK.length);
   const N = TEXTBOOK.length;
   for (let i = 0; i < N; i++) {
     const low = TEXTBOOK[i][1].toLowerCase();
@@ -53,6 +61,10 @@ function tbBuildIndex() {
     const words = low.match(/[a-z][a-z\-]+/g) || [];
     let fc = 0; for (const w of words) if (TB_FUNC.has(w)) fc++;
     _tbProse[i] = words.length ? fc / words.length : 0; // high = coherent prose; low = figure-label salad
+    // quality = prose (caption penalty) × review-block penalty (end-of-section questions / answer keys)
+    const qMarks = (low.match(/\?/g) || []).length;
+    const isReview = TB_REVIEW_RE.test(low) || qMarks >= 4;
+    _tbQual[i] = Math.min(1, _tbProse[i] / 0.22) * (isReview ? 0.3 : 1);
     const seen = new Set(low.match(/[a-z][a-z\-]{2,}/g) || []);
     seen.forEach(w => { _tbIdf[w] = (_tbIdf[w] || 0) + 1; });
   }
@@ -68,14 +80,20 @@ function searchTextbook(question, answerText) {
   const add = (w, base) => { weights[w] = (weights[w] || 0) + base * (_tbIdf[w] || 6); };
   qTok.forEach(w => add(w, 1));
   aTok.forEach(w => add(w, 3)); // answer terms matter most
+  // the question's most distinctive concept word (e.g. "hemostasis") — used to reward passages
+  // that address the actual concept, not just any passage containing the answer word
+  const TB_TOPIC_SKIP = new Set("least most following type common kind example correct except best structure function part called known located found number result involved associated".split(" "));
+  let topic = null, topicIdf = 0;
+  qTok.forEach(w => { if (w.length > 4 && !aTok.includes(w) && !TB_TOPIC_SKIP.has(w)) { const v = _tbIdf[w] || 0; if (v > topicIdf) { topicIdf = v; topic = w; } } });
   let best = null, bestScore = 0;
   for (let i = 0; i < TEXTBOOK.length; i++) {
     const low = _tbLow[i];
     let score = 0;
     for (const w in weights) if (low.includes(w)) score += weights[w];
     if (ansPhrase && ansPhrase.length > 3 && low.includes(ansPhrase)) score += 25; // exact answer phrase
-    // down-weight figure-caption "label salad" so coherent prose wins
-    score *= (0.25 + 0.75 * Math.min(1, _tbProse[i] / 0.22));
+    if (topic && ansPhrase && low.includes(topic) && low.includes(ansPhrase)) score += 20; // answer + question concept together
+    // down-weight figure-caption label-salad, tables, and end-of-section review/answer blocks
+    score *= (0.2 + 0.8 * _tbQual[i]);
     if (score > bestScore) { bestScore = score; best = { page: TEXTBOOK[i][0], text: TEXTBOOK[i][1] }; }
   }
   if (!best || bestScore < 12) return null;
@@ -2746,7 +2764,7 @@ function renderExamPicker(main) {
       btn.onclick = () => {
         state.examSource = "tb";
         examExamIndex = i;
-        examDeck = ex.questions;
+        examDeck = ex.questions.filter(isExamEligible);
         examIndex = 0; examScore = 0;
         examAnswered = false; examSelected = -1; examTimedOut = false;
         examAnswerLog = [];
@@ -3237,7 +3255,7 @@ function renderSimPicker(main) {
       btn.innerHTML = `<div class="icon">${GROUP_ICONS[groupName] || "🎓"}</div><div><div class="label">${ex.title}</div><div class="desc">${ex.questions.length} questions · 70 min</div>${badge}</div>`;
       btn.onclick = () => {
         examExamIndex = i;
-        simDeck = [...ex.questions];
+        simDeck = ex.questions.filter(isExamEligible);
         simIndex = 0;
         simAnswers = new Array(simDeck.length).fill(-1);
         simTimeLeft = SIM_TOTAL_SECONDS;
@@ -3776,7 +3794,8 @@ function renderExamMenu(main) {
           }
         });
       }
-      deck.push(...shuffle([...pool]).slice(0, perSection));
+      // exclude fill-in-the-blank + out-of-scope items from the timed simulation
+      deck.push(...shuffle(pool.filter(isExamEligible)).slice(0, perSection));
     });
     return deck;
   };
