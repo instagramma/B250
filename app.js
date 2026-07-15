@@ -38,15 +38,21 @@ function escapeHtml(s) {
 }
 /* Inverse-document-frequency, computed once, so distinctive anatomy terms
    (e.g. "seminalplasmin") outweigh common words (e.g. "gland", "blood"). */
-let _tbIdf = null, _tbLow = null;
+let _tbIdf = null, _tbLow = null, _tbProse = null;
+// function words that flow in real prose but are sparse in figure-caption "label salad"
+const TB_FUNC = new Set("the of and a to in is that it for as with are this by be on or an which from at not but they these can when into than has have its also such may each within between through during because while where how other some more most less their his her them we you".split(" "));
 function tbBuildIndex() {
   if (_tbIdf) return;
   _tbIdf = Object.create(null);
   _tbLow = new Array(TEXTBOOK.length);
+  _tbProse = new Array(TEXTBOOK.length);
   const N = TEXTBOOK.length;
   for (let i = 0; i < N; i++) {
     const low = TEXTBOOK[i][1].toLowerCase();
     _tbLow[i] = low;
+    const words = low.match(/[a-z][a-z\-]+/g) || [];
+    let fc = 0; for (const w of words) if (TB_FUNC.has(w)) fc++;
+    _tbProse[i] = words.length ? fc / words.length : 0; // high = coherent prose; low = figure-label salad
     const seen = new Set(low.match(/[a-z][a-z\-]{2,}/g) || []);
     seen.forEach(w => { _tbIdf[w] = (_tbIdf[w] || 0) + 1; });
   }
@@ -68,6 +74,8 @@ function searchTextbook(question, answerText) {
     let score = 0;
     for (const w in weights) if (low.includes(w)) score += weights[w];
     if (ansPhrase && ansPhrase.length > 3 && low.includes(ansPhrase)) score += 25; // exact answer phrase
+    // down-weight figure-caption "label salad" so coherent prose wins
+    score *= (0.25 + 0.75 * Math.min(1, _tbProse[i] / 0.22));
     if (score > bestScore) { bestScore = score; best = { page: TEXTBOOK[i][0], text: TEXTBOOK[i][1] }; }
   }
   if (!best || bestScore < 12) return null;
@@ -1277,6 +1285,8 @@ function renderFlashcardResults(main) {
 
 /* ---------------- QUIZ ---------------- */
 let quizDeck = [], quizIndex = 0, quizScore = 0, quizSkipped = 0, quizAnswered = false, quizSelected = -1;
+let quizModeSet = false; // closed/open-book prompt answered for the current Claude Bank / Stuvia quiz
+const QUIZ_MODE_SOURCES = ["claude", "stuvia", "claudebank"]; // banks that feed stats → ask study mode first
 // Shuffle caches — stable per question so options don't jump mid-answer
 let _qShCache  = { key: -1, opts: [] }; // quiz
 let _eShCache  = { key: -1, opts: [] }; // timed exam
@@ -1284,10 +1294,29 @@ let _sdShCache = { key: "",  opts: [] }; // sudden death
 let _examSCorrect = -1; // shuffled display index of correct answer (for DOM highlight)
 let fullExamShuffledOrders = []; // pre-computed per fullExam launch
 
+function renderQuizModeGate(main) {
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
+  wrap.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+    <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this set? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score — and both count toward your stats.</div>`;
+  const mk = (label, sub, mode, bg) => {
+    const b = document.createElement("button");
+    b.style.cssText = `display:block;width:100%;margin:10px 0;background:${bg};color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:pointer;`;
+    b.innerHTML = `${label}<div style="font-weight:400;font-size:.78rem;opacity:.9;margin-top:2px;">${sub}</div>`;
+    b.onclick = () => { setStudyMode(mode); quizModeSet = true; render(); };
+    return b;
+  };
+  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
+  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+  main.appendChild(wrap);
+}
+
 function renderQuiz(main) {
   // ClaudeBank mode — pull from the CLAUDEBANK global instead of section data
   let sourceQuiz, deckKey;
-  if (state.quizSource === "custom" || state.quizSource === "stuvia") {
+  if (state.quizSource === "custom" || state.quizSource === "stuvia" || state.quizSource === "claude") {
     sourceQuiz = quizDeck.length ? quizDeck : [];
     deckKey = state.quizDeckKey || state.quizSource;
   } else if (state.quizSource === "claudebank" && typeof CLAUDEBANK !== "undefined") {
@@ -1308,6 +1337,12 @@ function renderQuiz(main) {
     quizDeck = shuffle(sourceQuiz);
     quizDeck._deckKey = deckKey;
     quizIndex = 0; quizScore = 0; quizSkipped = 0; quizAnswered = false; quizSelected = -1;
+    quizModeSet = false; // new deck → re-ask closed/open-book for stats-tracked banks
+  }
+
+  // Closed-book vs with-notes gate for Claude Bank / Stuvia (their results feed your stats)
+  if (QUIZ_MODE_SOURCES.includes(state.quizSource) && quizIndex === 0 && !quizAnswered && !quizModeSet) {
+    renderQuizModeGate(main); return;
   }
 
   if (quizIndex >= quizDeck.length) {
@@ -2588,6 +2623,27 @@ function showExamNextBtn() {
   const hint = document.createElement("div");
   hint.style.cssText = "font-size:0.75rem;color:#aaa;margin-top:6px;";
   hint.textContent = "Press Space or tap Next → to continue · auto-advances in 3s · 🚩 report above if it's wrong";
+  // Martini reference + lookup for this GR question
+  const q = examDeck[examIndex];
+  if (q) {
+    try {
+      const res = searchTextbook(q.q, q.options[q.correct]);
+      if (res && res.page) {
+        const ch = pageToChapter(res.page); const cm = ch ? CHAP_META[ch] : null;
+        const cite = document.createElement("div");
+        cite.style.cssText = "font-size:.8rem;color:#777;margin:2px 0 8px;line-height:1.4;";
+        cite.innerHTML = cm
+          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)} &nbsp;·&nbsp; <b>p. ${res.page}</b>`
+          : `📖 <b>Martini</b> &nbsp;·&nbsp; p. ${res.page}`;
+        wrap.appendChild(cite);
+      }
+    } catch (e) {}
+    const look = document.createElement("button");
+    look.textContent = "📖 Look it up in Martini";
+    look.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:#1F3864;border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
+    look.onclick = () => { clearExamAutoAdv(); showTextbookPanel(q.q, q.options[q.correct]); };
+    wrap.appendChild(look);
+  }
   wrap.appendChild(btn); wrap.appendChild(hint);
   host.appendChild(wrap);
   examAutoAdvHandle = setTimeout(() => { examAutoAdvHandle = null; examAdvance(); }, 3000);
