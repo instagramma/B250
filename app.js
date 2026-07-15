@@ -720,6 +720,7 @@ function render() {
   else if (state.route === "sdEnd")        renderSdEnd(main);
   else if (state.route === "customBuilder") renderCustomBuilder(main);
   else if (state.route === "stuviaMenu")    renderStuviaMenu(main);
+  else if (state.route === "claudeMenu")    renderClaudeMenu(main);
   else if (state.route === "fullExam")       renderFullExam(main);
   else if (state.route === "fullExamEnd")    renderFullExamEnd(main);
 
@@ -744,6 +745,7 @@ function buildTopbar() {
       else if (state.route === "grMenu")        { state.route = "sectionMenu"; state.grSection = -1; }
       else if (state.route === "examMenu")      state.route = "sectionMenu";
       else if (state.route === "stuviaMenu")    state.route = "sectionMenu";
+      else if (state.route === "claudeMenu")    state.route = "sectionMenu";
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
       else if (state.route === "diagramGallery") state.route = "sectionMenu";
       else if (state.route === "preparedness") state.route = "sectionMenu";
@@ -797,6 +799,7 @@ function buildTopbar() {
   else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
   else if (state.route === "reports") titleText = "Question Reports";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
+  else if (state.route === "claudeMenu")     titleText = "Claude Bank";
   else if (state.route === "fullExam")        titleText = "Simulation";
   else if (state.route === "fullExamEnd")     titleText = "Simulation Results";
   else if (state.route === "customBuilder") titleText = "Custom Practice";
@@ -3481,6 +3484,13 @@ function renderSectionMenu(main) {
       condition: true,
     },
     {
+      id: "claudeMenu",
+      icon: "🤖",
+      title: "Claude Bank",
+      sub: "Extra Claude-written questions, by system",
+      condition: isTorso && typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length > 0,
+    },
+    {
       id: "examMenu",
       icon: "📝",
       title: "Practice Tests",
@@ -3490,7 +3500,7 @@ function renderSectionMenu(main) {
     {
       id: "stuviaMenu",
       icon: "📚",
-      title: "Stuvia Bank",
+      title: "Stuvia Bank (Extra Practice)",
       sub: "Community question bank — extra practice",
       condition: true,
     },
@@ -4307,6 +4317,75 @@ function renderStuviaMenu(main) {
   main.appendChild(list);
 }
 /* ══ End Stuvia ══ */
+
+/* ══ Claude Bank menu — extra Claude-written questions, by system ══ */
+function renderClaudeMenu(main) {
+  const bank = (typeof CLAUDEBANK !== "undefined" && Array.isArray(CLAUDEBANK)) ? CLAUDEBANK : null;
+  if (!bank || bank.length === 0) {
+    const msg = document.createElement("p");
+    msg.className = "comingSoonMsg";
+    msg.style.cssText = "margin-top:32px;text-align:center;font-size:1rem;";
+    msg.textContent = "Claude Bank not available for this section.";
+    main.appendChild(msg);
+    return;
+  }
+  // strip "A. " letter prefixes so options display cleanly
+  const clean = (qs) => qs.map(q => ({ ...q, options: (q.options || []).map(o => o.replace(/^[A-E]\.\s*/, "")) }));
+  const nameOf = (t) => (t || "").replace(/^ClaudeBank:\s*/, "");
+
+  const list = document.createElement("div");
+  list.className = "modeList";
+
+  // Full bank
+  const hdrAll = document.createElement("div");
+  hdrAll.className = "modeGroupHdr";
+  hdrAll.textContent = "Full Bank";
+  list.appendChild(hdrAll);
+
+  const totalQ = bank.reduce((a, t) => a + (t.questions || []).length, 0);
+  const allBest = progressState.quizzes && progressState.quizzes["cb:" + state.sectionKey + ":all"];
+  const allBtn = document.createElement("button");
+  allBtn.className = "modeBtn";
+  allBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">All Questions</span><span class="modeMeta">${totalQ} questions${allBest ? ` · Best ${allBest.score}/${allBest.total}` : ""}</span>`;
+  allBtn.onclick = () => {
+    let pool = [];
+    bank.forEach(t => pool.push(...clean(t.questions || [])));
+    quizDeck = shuffle([...pool]);
+    state.quizSource = "claude";
+    state.quizDeckKey = "cb:" + state.sectionKey + ":all";
+    state.prevRoute = "claudeMenu";
+    state.route = "quiz";
+    render();
+  };
+  list.appendChild(allBtn);
+
+  // By system
+  const hdrT = document.createElement("div");
+  hdrT.className = "modeGroupHdr";
+  hdrT.textContent = "By System";
+  list.appendChild(hdrT);
+
+  bank.forEach((topic, ti) => {
+    const qc = (topic.questions || []).length;
+    const key = "cb:" + state.sectionKey + ":" + ti;
+    const best = progressState.quizzes && progressState.quizzes[key];
+    const btn = document.createElement("button");
+    btn.className = "modeBtn";
+    btn.innerHTML = `<span class="modeIcon">🧠</span><span class="modeLabel">${nameOf(topic.title)}</span><span class="modeMeta">${qc} Qs${best ? ` · Best ${best.score}/${best.total}` : ""}</span>`;
+    btn.onclick = () => {
+      quizDeck = shuffle([...clean(topic.questions || [])]);
+      state.quizSource = "claude";
+      state.quizDeckKey = key;
+      state.prevRoute = "claudeMenu";
+      state.route = "quiz";
+      render();
+    };
+    list.appendChild(btn);
+  });
+
+  main.appendChild(list);
+}
+/* ══ End Claude Bank ══ */
 
 /* ═══════════════════════════════════════════════════════════
    FULL 100-MINUTE EXAM — added 2026-07
