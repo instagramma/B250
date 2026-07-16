@@ -517,6 +517,10 @@ async function saveProgress(immediate) {
 /* Study mode: "closed" = closed-book (true recall) vs "open" = with notes.
    Stored per device; each quiz result is tagged with the active mode. */
 function getStudyMode() { try { return localStorage.getItem(ns("biol250_studyMode")) === "open" ? "open" : "closed"; } catch (e) { return "closed"; } }
+/* Per-question answer-speed clock (all self-paced modes). Stamped once when a fresh question is shown. */
+var _qShownAt = 0, _qShownKey = "";
+function markQuestionShown(key) { if (_qShownKey !== key) { _qShownKey = key; _qShownAt = Date.now(); } }
+function qElapsed() { return _qShownAt ? Date.now() - _qShownAt : 0; }
 function setStudyMode(m) { try { localStorage.setItem(ns("biol250_studyMode"), m); } catch (e) {} }
 
 /* Per-question stats by unique ID: how often each question is seen vs missed.
@@ -786,6 +790,7 @@ function render() {
   else if (state.route === "gallery") renderGallery(main);
   else if (state.route === "diagramGallery") renderDiagramGallery(main);
   else if (state.route === "preparedness") renderPreparedness(main);
+  else if (state.route === "coach") renderCoach(main);
   else if (state.route === "missedStats") renderMissedStats(main);
   else if (state.route === "reports") renderReports(main);
   else if (state.route === "subtopics") renderSubtopics(main);
@@ -835,6 +840,7 @@ function buildTopbar() {
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
       else if (state.route === "diagramGallery") state.route = "sectionMenu";
       else if (state.route === "preparedness") state.route = "sectionMenu";
+      else if (state.route === "coach") state.route = "preparedness";
       else if (state.route === "missedStats") state.route = "preparedness";
       else if (state.route === "reports") state.route = "home";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
@@ -882,6 +888,7 @@ function buildTopbar() {
   else if (state.route === "diagramMenu")   titleText = "Diagrams";
   else if (state.route === "diagramGallery") titleText = "Diagram Gallery";
   else if (state.route === "preparedness") titleText = "Preparedness Score";
+  else if (state.route === "coach") titleText = "How am I doing?";
   else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
   else if (state.route === "reports") titleText = "Question Reports";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
@@ -1442,6 +1449,7 @@ function renderQuiz(main) {
   main.appendChild(progWrap);
 
   const q = quizDeck[quizIndex];
+  markQuestionShown("quiz" + quizIndex + (q.id || ""));   // start the answer-speed clock for this question
   const stem = document.createElement("div");
   stem.className = "qStem";
   stem.textContent = `${quizIndex + 1}. ${q.q}`;
@@ -1499,14 +1507,14 @@ function renderQuiz(main) {
       gotIt.className = "nextBtn";
       gotIt.style.cssText = "flex:1;background:#27ae60;";
       gotIt.textContent = "✓ Got it";
-      gotIt.onclick = () => { quizScore++; quizAnswered = true; quizSelected = -3; recordQuestionStat(q, true); render(); };
+      gotIt.onclick = () => { quizScore++; quizAnswered = true; quizSelected = -3; recordQuestionStat(q, true, qElapsed()); render(); };
       selfBar.appendChild(gotIt);
 
       const missedIt = document.createElement("button");
       missedIt.className = "secondaryBtn";
       missedIt.style.cssText = "flex:1;";
       missedIt.textContent = "✗ Missed it";
-      missedIt.onclick = () => { quizAnswered = true; quizSelected = -3; recordQuestionStat(q, false); render(); };
+      missedIt.onclick = () => { quizAnswered = true; quizSelected = -3; recordQuestionStat(q, false, qElapsed()); render(); };
       selfBar.appendChild(missedIt);
 
       main.appendChild(selfBar);
@@ -1547,7 +1555,7 @@ function renderQuiz(main) {
       quizAnswered = true;
       quizSelected = i; // shuffled display index (for highlight)
       if (i === _qSCorr) quizScore++; // compare shuffled positions
-      recordQuestionStat(q, i === _qSCorr);
+      recordQuestionStat(q, i === _qSCorr, qElapsed());
       render();
     };
     optsWrap.appendChild(b);
@@ -2551,23 +2559,62 @@ function buildDaySchedule(d, md) {
 /* Recognition-vs-mastery: are you learning concepts, or memorizing specific items?
    Signals: burst-drilled items that never stabilize, very fast repeat-corrects, and sections
    where you ace the few questions you tried but have barely covered them. */
+// "Fuzzy" = you flip between right and wrong on the SAME item and it's not solid now (not just one old slip).
+function isFuzzy(id, mode) {
+  const m = (activeProgress().qstats || {})[id]; const mm = m && m.m && m.m[mode];
+  if (!mm || mm.s < 2 || !(mm.c > 0 && mm.c < mm.s)) return false;
+  return ((mm.s - mm.c) / mm.s) >= 0.25 && qRecall(id, mode) < 0.85;
+}
+function avgTimeMs(mm) { return mm && mm.tn ? mm.tt / mm.tn : null; }
 function masteryQuality(mode) {
   const qs = (activeProgress().qstats) || {};
-  let attempted = 0, durable = 0, fragile = 0, fast = 0;
+  let attempted = 0, durable = 0, fragile = 0, fast = 0, fuzzy = 0, fuzzyFast = 0;
+  const fuzzyIds = [];
   Object.keys(qs).forEach(id => {
     const m = qs[id].m && qs[id].m[mode]; if (!m || !m.s) return; attempted++;
-    const S = m.S || 0, reps = m.reps || 0, r = qRecall(id, mode);
+    const S = m.S || 0, reps = m.reps || 0, r = qRecall(id, mode), at = avgTimeMs(m);
     if (r >= 0.6 && S > 6) durable++;                                  // spaced + retained = real
     if (m.last === 1 && reps >= 3 && S <= 3.5) fragile++;             // drilled in bursts, never spaced
-    if (m.last === 1 && m.tn && (m.tt / m.tn) < 3500 && reps >= 2) fast++; // fast repeat-correct (from timed exams)
+    if (m.last === 1 && at != null && at < 3500 && reps >= 2) fast++; // fast repeat-correct
+    if (isFuzzy(id, mode)) { fuzzy++; fuzzyIds.push(id); if (at != null && at < 4000) fuzzyFast++; } // flip-flop = shaky
   });
-  const byS = sectionQIDs(); let shallow = 0; const shallowNames = [];
+  // Concept-level consistency: within a section you've touched, are you inconsistent across its items?
+  const byS = sectionQIDs(); let shallow = 0, inconsistent = 0; const shallowNames = [], inconsistentNames = [];
   coreSections().forEach(s => {
     const ids = byS[s.id] || []; if (ids.length < 4) return;
     let tried = 0, ok = 0; ids.forEach(id => { const m = qs[id] && qs[id].m && qs[id].m[mode]; if (m && m.s) { tried++; if (qRecall(id, mode) >= 0.6) ok++; } });
-    if (tried >= 2 && ok / Math.max(1, tried) >= 0.8 && tried / ids.length < 0.4) { shallow++; if (shallowNames.length < 3 && !shallowNames.includes(s.chName)) shallowNames.push(s.chName); }
+    if (tried < 2) return;
+    const acc = ok / tried;
+    if (acc >= 0.8 && tried / ids.length < 0.4) { shallow++; if (shallowNames.length < 4 && !shallowNames.includes(s.chName)) shallowNames.push(s.chName); }
+    if (tried >= 3 && acc >= 0.35 && acc <= 0.75) { inconsistent++; if (inconsistentNames.length < 4 && !inconsistentNames.includes(s.chName)) inconsistentNames.push(s.chName); } // right on some items, wrong on others of the same concept
   });
-  return { attempted, durable, fragile, fast, shallow, shallowNames };
+  return { attempted, durable, fragile, fast, fuzzy, fuzzyFast, fuzzyIds, shallow, shallowNames, inconsistent, inconsistentNames };
+}
+/* Per-section diagnosis → prescription: what to DO (read vs practice vs re-test vs light review). */
+function sectionPrescriptions(mode, limit) {
+  const qs = (activeProgress().qstats) || {}, byS = sectionQIDs();
+  const out = [];
+  coreSections().forEach(s => {
+    const ids = byS[s.id] || []; if (!ids.length) return;
+    let tried = 0, recall = 0, fuzzy = 0, fastN = 0, tSum = 0, tN = 0;
+    ids.forEach(id => {
+      const m = qs[id] && qs[id].m && qs[id].m[mode]; recall += qRecall(id, mode);
+      if (m && m.s) { tried++; if (isFuzzy(id, mode)) fuzzy++; const at = avgTimeMs(m); if (at != null) { tSum += at; tN++; if (at < 3500) fastN++; } }
+    });
+    const cov = tried / ids.length, mastery = recall / ids.length, avgT = tN ? tSum / tN : null;
+    let action, why, priority;
+    if (tried === 0) { action = "practice"; why = "untried — pure blind spot"; priority = 3 + (1 - mastery); }
+    else if (cov < 0.4 && mastery >= 0.5 * cov) { action = "practice"; why = `only ${Math.round(cov*100)}% covered`; priority = 3 + (1 - cov); }
+    else if ((fuzzy / Math.max(1, tried) >= 0.3) || (fastN / Math.max(1, tried) >= 0.5 && mastery < 0.75)) {
+      action = "read"; why = "you flip-flop / answer by reflex — you know the wording, not the fact"; priority = 4 + (1 - mastery);
+    } else if (mastery < 0.6) { action = "read"; why = "low recall even on what you've tried"; priority = 4 + (1 - mastery); }
+    else if (mastery >= 0.85 && cov >= 0.4) { action = "light"; why = "solid — keep it warm"; priority = 0.2; }
+    else { action = "practice"; why = "close it out"; priority = 2 + (1 - mastery); }
+    out.push({ id: s.id, ch: s.ch, chName: s.chName, page: s.page, endPage: s.endPage, outcome: s.outcome,
+      tried, total: ids.length, cov, mastery, fuzzy, action, why, priority });
+  });
+  out.sort((a, b) => b.priority - a.priority);
+  return limit ? out.slice(0, limit) : out;
 }
 
 function renderStudyPlan(main, md) {
@@ -2614,6 +2661,80 @@ function renderStudyPlan(main, md) {
     ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:#1F3864;">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
   card.innerHTML = html;
   main.appendChild(card);
+  const more = document.createElement("button");
+  more.style.cssText = "display:block;width:100%;margin:10px 0 0;background:#fff;color:#B5560F;border:1.5px solid #E67E22;border-radius:12px;padding:12px;font-size:.95rem;font-weight:800;cursor:pointer;";
+  more.textContent = "🔎 Tell me more — how am I really doing?";
+  more.onclick = () => { state.route = "coach"; render(); };
+  main.appendChild(more);
+}
+
+/* ===== "Tell me more" coach — a rich, specific readout: read vs. practice, per topic ===== */
+function renderCoach(main) {
+  const md = getStudyMode();
+  prepModeToggle(main, md);
+  const pred = predictExam(md), info = examInfo(md), mq = masteryQuality(md);
+  const rx = sectionPrescriptions(md);
+  const read = rx.filter(x => x.action === "read");
+  const practice = rx.filter(x => x.action === "practice");
+  const light = rx.filter(x => x.action === "light");
+  const shortO = o => _shortOutcome(o);
+
+  // Headline
+  const head = document.createElement("div");
+  head.style.cssText = "margin:2px 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1F3864,#2E74B5);color:#fff;";
+  head.innerHTML = `<div style="font-weight:800;font-size:1.05rem;">${md==="closed"?"Closed-book":"With-notes"} · predicted ${pred?pred.meanPct:0}%</div>
+    <div style="font-size:.86rem;opacity:.95;margin-top:4px;">${info.readyMon?`On track for <b>Monday</b>.`:`Not ready for Monday yet — aiming for your <b>Tuesday</b> fallback. ${pred?`P(≥75%) is ${pred.p75}%.`:""}`}</div>
+    <div style="font-size:.8rem;opacity:.85;margin-top:6px;">The honest read: you're strong on <b>${mq.durable}</b> questions, but <b>${mq.fuzzy}</b> are shaky (you flip between right and wrong) and <b>${mq.fast}</b> you answer by reflex. Those aren't learned yet — see below.</div>`;
+  main.appendChild(head);
+
+  function sectionBlock(title, subtitle, items, color, icon, verb) {
+    if (!items.length) return;
+    const wrap = document.createElement("div");
+    wrap.style.cssText = `margin:10px 0;padding:12px 14px;border-radius:12px;background:#fff;border-left:4px solid ${color};box-shadow:0 1px 3px rgba(0,0,0,.06);`;
+    let h = `<div style="font-weight:800;color:${color};font-size:.95rem;">${icon} ${title}</div><div style="color:#777;font-size:.78rem;margin:2px 0 8px;">${subtitle}</div>`;
+    items.slice(0, 8).forEach(x => {
+      const detail = x.action === "read"
+        ? `Read Martini §${x.id} ${shortO(x.outcome)} (p.${x.page}${x.endPage>x.page?"–"+x.endPage:""})`
+        : x.action === "practice"
+        ? `Do the ${x.total - x.tried} untried ${x.chName} questions`
+        : `Quick review only`;
+      h += `<div style="margin:6px 0;font-size:.85rem;color:#333;line-height:1.4;">
+        <b>${x.chName}</b> <span style="color:#999;">· ${Math.round(x.mastery*100)}% mastered, ${Math.round(x.cov*100)}% seen</span><br>
+        <span style="color:${color};">→ ${detail}.</span> <span style="color:#888;">${x.why}.</span></div>`;
+    });
+    wrap.innerHTML = h;
+    main.appendChild(wrap);
+  }
+  sectionBlock("Read, don't drill", "You've practiced these but you're guessing/flip-flopping — more questions won't fix it. Read the page, then re-test cold.", read, "#C0392B", "📖", "read");
+  sectionBlock("Practice — blind spots", "You've barely seen these. Doing the untried questions is the fastest point-gain.", practice, "#E67E22", "🧩", "practice");
+  sectionBlock("Keep warm", "Solid. Light review only — don't over-invest here.", light, "#2E7D32", "✅", "light");
+
+  // Fuzzy questions list
+  if (mq.fuzzyIds.length) {
+    const fz = document.createElement("div");
+    fz.style.cssText = "margin:10px 0;padding:12px 14px;border-radius:12px;background:#FFF7E6;border:1px solid #f0d9b5;";
+    const rows = mq.fuzzyIds.slice(0, 10).map(id => {
+      const loc = (typeof Q_BOOKLOC !== "undefined" && Q_BOOKLOC[id]) ? Q_BOOKLOC[id] : null;
+      const m = (activeProgress().qstats || {})[id]; const mm = m && m.m && m.m[md]; const at = avgTimeMs(mm);
+      return `<div style="font-size:.8rem;color:#555;margin:3px 0;">• <b>${id}</b>${loc?` · §${loc.s} p.${loc.p}`:""} — ${mm?mm.c:0}✓/${mm?mm.s:0} tries${at?`, ~${(at/1000).toFixed(1)}s`:""}</div>`;
+    }).join("");
+    fz.innerHTML = `<div style="font-weight:800;color:#B5560F;font-size:.9rem;">⚠️ Fuzzy — you flip between right & wrong (${mq.fuzzyIds.length})</div>
+      <div style="color:#777;font-size:.78rem;margin:2px 0 6px;">These are the clearest "memorizing, not knowing" signal${mq.fuzzyFast?` — ${mq.fuzzyFast} of them you answer fast, i.e. guessing on reflex`:""}. Read the underlying section, then re-test cold.</div>${rows}`;
+    main.appendChild(fz);
+  }
+
+  // Bottom-line coaching
+  const bl = document.createElement("div");
+  bl.style.cssText = "margin:12px 0;padding:12px 14px;border-radius:12px;background:#EEF4FB;border:1px solid #cfe0f2;font-size:.85rem;color:#333;line-height:1.5;";
+  const topRead = read.slice(0, 2).map(x => x.chName).join(" & ");
+  const topPrac = practice.slice(0, 2).map(x => x.chName).join(" & ");
+  bl.innerHTML = `<b>Bottom line:</b> Stop doing practice questions on ${topRead || "your shaky topics"} — you're pattern-matching, not learning. <b>Read those Martini pages first</b>, then re-test them cold. Spend fresh reps on ${topPrac || "your blind spots"} where you simply haven't seen the material. ${mq.inconsistent?`You're inconsistent within ${mq.inconsistentNames.join(", ")} — same concept, different questions, mixed results; that's a comprehension gap, not a coverage gap.`:""}`;
+  main.appendChild(bl);
+
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:8px;color:#aaa;font-size:.72rem;text-align:center;line-height:1.5;";
+  note.textContent = "Built from every stat tracked — response time, right/wrong history, spacing, and same-concept consistency. Updates after each test.";
+  main.appendChild(note);
 }
 
 function renderBookKnowledge(main, md) {
@@ -4414,6 +4535,7 @@ function renderSuddenDeath(main) {
   if (!sdDeck.length) { state.route = "examMenu"; render(); return; }
 
   const q = sdDeck[sdIndex];
+  if (!sdAnswered) markQuestionShown("sd" + sdIndex + (q.id || ""));
 
   // Streak header
   const streakWrap = document.createElement("div");
@@ -4451,7 +4573,7 @@ function renderSuddenDeath(main) {
         sdAnswered = true;
         sdSelected = i; // shuffled display index
         const correct = i === sdSCorrect;
-        recordQuestionStat(sdDeck[sdIndex], correct);
+        recordQuestionStat(sdDeck[sdIndex], correct, qElapsed());
         if (correct) {
           sdStreak++;
           // advance after short delay
