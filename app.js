@@ -477,6 +477,7 @@ function cloudMerge(into, from) {
         if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
         am.s = Math.max(am.s || 0, bm.s || 0); am.c = Math.max(am.c || 0, bm.c || 0);
         am.reps = Math.max(am.reps || 0, bm.reps || 0);
+        am.tt = Math.max(am.tt || 0, bm.tt || 0); am.tn = Math.max(am.tn || 0, bm.tn || 0); am.fc = Math.max(am.fc || 0, bm.fc || 0);
         // Retention state: the most recent review (larger t) is authoritative for S/last/t.
         if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
         else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
@@ -520,7 +521,7 @@ function setStudyMode(m) { try { localStorage.setItem(ns("biol250_studyMode"), m
 
 /* Per-question stats by unique ID: how often each question is seen vs missed.
    Powers the "Questions You Keep Missing" view. */
-function recordQuestionStat(q, wasCorrect) {
+function recordQuestionStat(q, wasCorrect, elapsedMs) {
   if (!q || !q.id) return;
   if (!progressState.qstats) progressState.qstats = {};
   const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
@@ -546,6 +547,11 @@ function recordQuestionStat(q, wasCorrect) {
   mm.last = wasCorrect ? 1 : 0;
   mm.t = now;
   mm.reps = (mm.reps || 0) + 1;
+  // response-time tracking (for recognition-vs-mastery analysis): rolling total + fast-correct count
+  if (elapsedMs && elapsedMs > 0 && elapsedMs < 120000) {
+    mm.tt = (mm.tt || 0) + elapsedMs; mm.tn = (mm.tn || 0) + 1;
+    if (wasCorrect && elapsedMs < 4000) mm.fc = (mm.fc || 0) + 1;
+  }
   s.m[md] = mm;
   progressState.qstats[q.id] = s;
   saveLocalProgress();
@@ -603,6 +609,7 @@ function mergeProgress(into, from) {
         if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
         am.s = (am.s || 0) + (bm.s || 0); am.c = (am.c || 0) + (bm.c || 0);
         am.reps = Math.max(am.reps || 0, bm.reps || 0);
+        am.tt = (am.tt || 0) + (bm.tt || 0); am.tn = (am.tn || 0) + (bm.tn || 0); am.fc = (am.fc || 0) + (bm.fc || 0);
         if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
         else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
       });
@@ -2285,6 +2292,38 @@ function examReadiness(mode) {
   BLUEPRINT.forEach(([r, wt]) => { const v = blueprintReadiness(r, mode); if (v == null) return; wSum += v * wt; w += wt; if (weakest == null || v < weakest.v) weakest = { r, v }; });
   return { overall: w ? Math.round(wSum / w) : null, weakest };
 }
+function _regionIds(region) { return (blueprintSources()[region] || []).map(o => o.id); }
+// Bars broken out by exam region (Thorax / Abdomen / Pelvis / Systemic — 50 questions each).
+function appendRegionBars(main, md, metric) {
+  const wrap = document.createElement("div"); wrap.style.cssText = "margin:12px 0 4px;";
+  const hdr = document.createElement("div");
+  hdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:6px;";
+  hdr.innerHTML = "🧭 By exam region <span style='font-weight:600;color:#999;'>(50 questions each)</span>";
+  wrap.appendChild(hdr);
+  ["Thorax", "Abdomen", "Pelvis", "Systemic"].forEach(r => {
+    const c = covStats(_regionIds(r), md);
+    let pct, detail;
+    if (metric === "performance") { pct = c.attempted ? Math.round(c.known / c.attempted * 100) : null; detail = `${Math.round(c.known)}/${c.attempted}`; }
+    else { pct = c.total ? Math.round(c.known / c.total * 100) : 0; detail = `${Math.round(c.known)}/${c.total}`; }
+    const col = pct == null ? "#bbb" : prepBand(pct).color;
+    const row = document.createElement("div"); row.style.cssText = "margin:8px 0;";
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
+        <span style="font-weight:700;">${r}</span>
+        <span style="color:${col};font-weight:700;">${pct == null ? "Not tried" : pct + "% · " + detail}</span></div>
+      <div style="height:9px;background:#ececec;border-radius:5px;overflow:hidden;"><div style="height:100%;width:${pct || 0}%;background:${col};border-radius:5px;"></div></div>`;
+    wrap.appendChild(row);
+  });
+  if (metric === "readiness") {
+    const er = examReadiness(md);
+    if (er.overall != null) {
+      const ready = er.overall >= 85 && er.weakest && er.weakest.v >= 70;
+      const g = document.createElement("div"); g.style.cssText = `margin-top:6px;font-size:.8rem;font-weight:600;color:${ready?"#2E7D32":"#C62828"};`;
+      g.innerHTML = ready ? "✅ Balanced — every region ≥70% and overall ≥85%." : `⚠️ Weakest region: <b>${er.weakest?er.weakest.r:"—"} (${er.weakest?er.weakest.v:0}%)</b>. Ready = overall ≥85% AND every region ≥70%.`;
+      wrap.appendChild(g);
+    }
+  }
+  main.appendChild(wrap);
+}
 
 /* ===== PREDICTED EXAM SCORE (Monte-Carlo over the blueprint) =====
    Samples a 200-question exam per the region composition; each question is answered correctly
@@ -2489,6 +2528,28 @@ function buildDaySchedule(d, md) {
   rows.push([wd(d.exam.date), `💪 Exam${d.exam.readyMon ? "" : " (fallback day — push to be ready Monday)"}.`]);
   return rows;
 }
+/* Recognition-vs-mastery: are you learning concepts, or memorizing specific items?
+   Signals: burst-drilled items that never stabilize, very fast repeat-corrects, and sections
+   where you ace the few questions you tried but have barely covered them. */
+function masteryQuality(mode) {
+  const qs = (activeProgress().qstats) || {};
+  let attempted = 0, durable = 0, fragile = 0, fast = 0;
+  Object.keys(qs).forEach(id => {
+    const m = qs[id].m && qs[id].m[mode]; if (!m || !m.s) return; attempted++;
+    const S = m.S || 0, reps = m.reps || 0, r = qRecall(id, mode);
+    if (r >= 0.6 && S > 6) durable++;                                  // spaced + retained = real
+    if (m.last === 1 && reps >= 3 && S <= 3.5) fragile++;             // drilled in bursts, never spaced
+    if (m.last === 1 && m.tn && (m.tt / m.tn) < 3500 && reps >= 2) fast++; // fast repeat-correct (from timed exams)
+  });
+  const byS = sectionQIDs(); let shallow = 0; const shallowNames = [];
+  coreSections().forEach(s => {
+    const ids = byS[s.id] || []; if (ids.length < 4) return;
+    let tried = 0, ok = 0; ids.forEach(id => { const m = qs[id] && qs[id].m && qs[id].m[mode]; if (m && m.s) { tried++; if (qRecall(id, mode) >= 0.6) ok++; } });
+    if (tried >= 2 && ok / Math.max(1, tried) >= 0.8 && tried / ids.length < 0.4) { shallow++; if (shallowNames.length < 3 && !shallowNames.includes(s.chName)) shallowNames.push(s.chName); }
+  });
+  return { attempted, durable, fragile, fast, shallow, shallowNames };
+}
+
 function renderStudyPlan(main, md) {
   const d = studyPlanData(md);
   const card = document.createElement("div");
@@ -2515,6 +2576,14 @@ function renderStudyPlan(main, md) {
   });
   // 3. Re-lock fading items
   if (d.decaying > 0) steps.push(`<b>Re-lock what's fading.</b> ${d.decaying} questions you once got right are decaying — open <i>"Questions you keep missing"</i> and clear them.`);
+  // 3.5 Recognition vs. mastery — are you memorizing items or knowing concepts?
+  const mq = masteryQuality(md);
+  if (mq.fragile + mq.fast + mq.shallow > 0) {
+    const bits = [];
+    if (mq.fragile + mq.fast > 0) bits.push(`<b>${mq.fragile + mq.fast}</b> you answer fast or by rote that haven't stabilized`);
+    if (mq.shallow > 0) bits.push(`<b>${mq.shallow}</b> topics you ace but have barely covered${mq.shallowNames.length ? ` (${mq.shallowNames.join(", ")})` : ""}`);
+    steps.push(`<b>Recognition ≠ mastery.</b> ${bits.join("; ")}. Space these over days and re-test <i>cold</i> — and try the <i>other</i> wordings of the same concept (Stuvia vs ClaudeBank). That's how you tell "I know the material" from "I remember this question."`);
+  }
   // 4. Prove it
   steps.push(`<b>Prove it.</b> Take a full 200-question closed-book mock this weekend and watch this predicted score move.`);
   html += `<ol style="margin:0 0 4px;padding-left:20px;font-size:.86rem;line-height:1.5;color:#333;">${steps.map(s=>`<li style="margin-bottom:7px;">${s}</li>`).join("")}</ol>`;
@@ -2544,8 +2613,14 @@ function renderBookKnowledge(main, md) {
   cov.style.cssText = "margin:10px 0 4px;padding:9px 12px;border-radius:10px;background:#E8F5E9;border:1px solid #cde9d0;color:#2E7D32;font-size:.82rem;text-align:center;";
   cov.innerHTML = `📚 <b>Bank coverage: 76/76 sections (100%).</b> Every official Martini section in the exam chapters (19–28) is tested by ≥1 question — verified paragraph-by-paragraph.`;
   main.appendChild(cov);
+  // By exam region (Thorax / Abdomen / Pelvis / Systemic)
+  appendRegionBars(main, md, "book");
   // per-chapter bars
   const list = document.createElement("div"); list.style.cssText = "margin-top:14px;";
+  const chHdr = document.createElement("div");
+  chHdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:2px;";
+  chHdr.textContent = "📖 By Martini chapter";
+  list.appendChild(chHdr);
   const chOrder = [19,20,21,22,23,24,25,26,27,28];
   chOrder.forEach(ch => {
     const c = bk.perCh[ch]; if (!c) return;
@@ -2631,20 +2706,8 @@ function renderPreparedness(main) {
     <div style="color:#aaa;font-size:.75rem;margin-top:2px;">${metric==="performance"?"Accuracy on questions you've tried. Switch to Readiness to factor coverage." : "Goal: 90% on every system. Questions you haven't tried count as 0."}</div>`;
   main.appendChild(head);
 
-  // Blueprint (exam-composition) readiness — 4 regions + weakest-section guardrail
-  if (metric === "readiness") {
-    const er = examReadiness(md);
-    if (er.overall != null) {
-      const bp = document.createElement("div");
-      bp.style.cssText = "margin:10px 0 4px;padding:11px 13px;border-radius:12px;background:#F7F9FC;border:1px solid #e2e8f2;";
-      const cells = BLUEPRINT.map(([r]) => { const v = blueprintReadiness(r, md); const col = v == null ? "#bbb" : prepBand(v).color; return `<div style="flex:1;text-align:center;"><div style="font-size:.72rem;color:#888;">${r}</div><div style="font-weight:800;color:${col};font-size:1.05rem;">${v == null ? "—" : v + "%"}</div></div>`; }).join("");
-      const ready = er.overall >= 85 && er.weakest && er.weakest.v >= 70;
-      bp.innerHTML = `<div style="font-size:.8rem;color:#555;font-weight:700;margin-bottom:6px;">🧭 Exam-blueprint readiness <span style="font-weight:600;color:#888;">(weighted 50/50/50/50)</span></div>
-        <div style="display:flex;gap:4px;">${cells}</div>
-        <div style="margin-top:8px;font-size:.8rem;color:${ready?"#2E7D32":"#C62828"};font-weight:600;">${ready?"✅ Balanced — every region ≥70% and overall ≥85%." : `⚠️ Weakest: <b>${er.weakest?er.weakest.r:"—"} (${er.weakest?er.weakest.v:0}%)</b>. Ready-rule: overall ≥85% AND every region ≥70%.`}</div>`;
-      main.appendChild(bp);
-    }
-  }
+  // By exam region (Thorax / Abdomen / Pelvis / Systemic) — shown for Performance & Readiness
+  appendRegionBars(main, md, metric);
 
   // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
   const mock = prepMockBest(md);
@@ -2662,6 +2725,10 @@ function renderPreparedness(main) {
   // per-system bars
   const list = document.createElement("div");
   list.style.cssText = "margin-top:14px;";
+  const sysHdr = document.createElement("div");
+  sysHdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:2px;";
+  sysHdr.textContent = "🫀 By body system";
+  list.appendChild(sysHdr);
   PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i], c: covStats(coverageSources()[s] || [], md) }))
     .sort((a, b) => (a.r === null ? -1 : a.r) - (b.r === null ? -1 : b.r)) // weakest first
     .forEach(({ s, r, c }) => {
@@ -2988,13 +3055,14 @@ function examAdvance() {
 
 function examSelectAnswer(origIdx, displayIdx) {
   if (examAnswered) return;
-  examTimes.push(Math.min((Date.now() - examQStart) / 1000, EXAM_SECONDS));
+  const elapsedMs = Date.now() - examQStart;
+  examTimes.push(Math.min(elapsedMs / 1000, EXAM_SECONDS));
   examStopTimer();
   examAnswered = true;
   examSelected = origIdx; // always store original index
   const q = examDeck[examIndex];
   if (origIdx === q.correct) examScore++;
-  recordQuestionStat(q, origIdx === q.correct);
+  recordQuestionStat(q, origIdx === q.correct, elapsedMs);
   examAnswerLog.push({ q, selected: origIdx, correct: q.correct, timedOut: false });
   // Highlight using shuffled display positions
   const sDisplaySelected = (displayIdx !== undefined) ? displayIdx : _eShCache.opts.indexOf(q.options[origIdx]);
