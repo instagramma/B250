@@ -2429,6 +2429,75 @@ function renderExamOutlook(main, md) {
   main.appendChild(card);
 }
 
+/* ===== ACTION PLAN — rule-based coaching: what to do next, ranked by point-gain ===== */
+var EXAM_DATE = new Date(2026, 6, 20, 9, 0, 0); // Torso exam ~Mon Jul 20, 9am
+function daysToExam() { return Math.max(0, Math.ceil((EXAM_DATE - Date.now()) / 86400000)); }
+function _shortOutcome(o) {
+  return String(o || "").replace(/^(Describe|List|Compare and contrast|Outline|Discuss|Explain|Identify|Define|Summarize|Trace)( the| and)?\s*/i, "")
+    .replace(/\.$/, "").replace(/^(anatomy (and physiology )?of the )/i, "").trim().slice(0, 42);
+}
+// Weakest official sections within a system's chapter, with pages to read.
+function weakSectionsForSystem(sys, mode, n) {
+  const ch = Object.keys(CH2SYS).find(c => CH2SYS[c] === sys);
+  const byS = sectionQIDs();
+  return coreSections().filter(s => String(s.ch) === String(ch))
+    .map(s => { const ids = byS[s.id] || []; let r = 0; ids.forEach(id => r += qRecall(id, mode)); return { s, recall: ids.length ? r / ids.length : 0, cnt: ids.length }; })
+    .filter(x => x.cnt >= 2).sort((a, b) => a.recall - b.recall).slice(0, n).map(x => x.s);
+}
+function studyPlanData(mode) {
+  const src = coverageSources();
+  const sys = PREP_SYSTEMS.map(s => { const c = covStats(src[s] || [], mode); return { s, r: c.total ? Math.round(c.known / c.total * 100) : 0, untried: c.total - c.attempted, total: c.total, attempted: c.attempted }; });
+  const allIds = new Set(); Object.values(src).forEach(a => a.forEach(id => allIds.add(id)));
+  let untried = 0, decaying = 0;
+  allIds.forEach(id => { const m = _qm(id, mode); if (!m || !m.s) untried++; else if (qRecall(id, mode) < 0.5) decaying++; });
+  const weak = sys.slice().sort((a, b) => a.r - b.r).slice(0, 3);
+  // regions ordered weakest-first for the day plan
+  const regions = ["Thorax", "Abdomen", "Pelvis", "Systemic"].map(r => ({ r, v: blueprintReadiness(r, mode) })).sort((a, b) => (a.v == null ? -1 : a.v) - (b.v == null ? -1 : b.v));
+  return { pred: predictExam(mode), days: daysToExam(), sys, weak, untried, decaying, regions };
+}
+function renderStudyPlan(main, md) {
+  const d = studyPlanData(md);
+  const card = document.createElement("div");
+  card.style.cssText = "margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#fff;border:2px solid #E67E22;";
+  const predPct = d.pred ? d.pred.meanPct : 0;
+  const gap = Math.max(0, 75 - predPct);
+  let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.days} day${d.days===1?"":"s"} to the exam</div>
+    <div style="font-size:.82rem;color:#666;margin-bottom:10px;">Predicted <b>${predPct}%</b> today${gap>0?` · <b>+${gap} pts</b> to hit 75%`:` · already at target 🎉`}. Fastest path up, biggest lever first:</div>`;
+  const steps = [];
+  // 1. Biggest lever: close untried blind spots
+  if (d.untried > 0) {
+    const wnames = d.weak.filter(w => w.untried > 0).map(w => `${w.s} (${w.untried} left)`).slice(0, 3).join(", ");
+    steps.push(`<b>Close blind spots — the biggest win.</b> You've left <b>${d.untried.toLocaleString()}</b> questions untried; untried counts as zero, so these are free points. Start with ${wnames || "your weakest systems"}.`);
+  }
+  // 2. Read + drill the weakest systems (specific Martini pages)
+  d.weak.slice(0, 3).forEach(w => {
+    const secs = weakSectionsForSystem(w.s, md, 2);
+    if (!secs.length) return;
+    const reads = secs.map(s => `§${s.ch}.${s.sec} ${_shortOutcome(s.outcome)} (p.${s.page}${s.endPage>s.page?"–"+s.endPage:""})`).join(" · ");
+    steps.push(`<b>${w.s} — ${w.r}%.</b> Read Martini ${reads}, then do ~20 closed-book ${w.s} questions.`);
+  });
+  // 3. Re-lock fading items
+  if (d.decaying > 0) steps.push(`<b>Re-lock what's fading.</b> ${d.decaying} questions you once got right are decaying — open <i>"Questions you keep missing"</i> and clear them.`);
+  // 4. Prove it
+  steps.push(`<b>Prove it.</b> Take a full 200-question closed-book mock this weekend and watch this predicted score move.`);
+  html += `<ol style="margin:0 0 4px;padding-left:20px;font-size:.86rem;line-height:1.5;color:#333;">${steps.map(s=>`<li style="margin-bottom:7px;">${s}</li>`).join("")}</ol>`;
+  // day-by-day
+  const order = d.regions.map(x => x.r);
+  const plan = [
+    ["Tonight (Wed)", `Diagnostic: one timed Guided-Reading on ${order[0]} to set a baseline.`],
+    ["Thu", `${order[0]} + ${order[1]} — read the flagged pages, then timed questions closed-book.`],
+    ["Fri", `${order[2]} + ${order[3]} — same: read, then drill. Review every miss.`],
+    ["Sat", `Hit your 3 weakest systems again + the Diagram Gallery (diagrams are printed on the exam).`],
+    ["Sun", `Full 200-question closed-book mock. Re-read only what you miss.`],
+    ["Mon AM", `Light review of fading cards + diagrams. Don't cram new material.`],
+  ];
+  html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0e0cc;">
+    <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day</div>
+    ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:#1F3864;">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
+  card.innerHTML = html;
+  main.appendChild(card);
+}
+
 function renderBookKnowledge(main, md) {
   prepModeToggle(main, md);
   prepPeriodToggle(main);
@@ -2477,6 +2546,8 @@ function renderPreparedness(main) {
   const metric = state.prepMetric || "readiness";
   // Predicted exam score — the headline forecast — shows on every tab.
   renderExamOutlook(main, md);
+  // Action plan — what to do next, ranked by point-gain — only when there's enough signal.
+  if (_bpAttempted(md) >= 5) renderStudyPlan(main, md);
   prepMetricToggle(main, metric);
   // Book-Knowledge view has its own layout
   if (metric === "book") { renderBookKnowledge(main, md); return; }
