@@ -2602,14 +2602,15 @@ function sectionPrescriptions(mode, limit) {
       if (m && m.s) { tried++; if (isFuzzy(id, mode)) fuzzy++; const at = avgTimeMs(m); if (at != null) { tSum += at; tN++; if (at < 3500) fastN++; } }
     });
     const cov = tried / ids.length, mastery = recall / ids.length, avgT = tN ? tSum / tN : null;
+    const fuzzyRate = fuzzy / Math.max(1, tried), fastRate = fastN / Math.max(1, tried);
     let action, why, priority;
     if (tried === 0) { action = "practice"; why = "untried — pure blind spot"; priority = 3 + (1 - mastery); }
-    else if (cov < 0.4 && mastery >= 0.5 * cov) { action = "practice"; why = `only ${Math.round(cov*100)}% covered`; priority = 3 + (1 - cov); }
-    else if ((fuzzy / Math.max(1, tried) >= 0.3) || (fastN / Math.max(1, tried) >= 0.5 && mastery < 0.75)) {
-      action = "read"; why = "you flip-flop / answer by reflex — you know the wording, not the fact"; priority = 4 + (1 - mastery);
-    } else if (mastery < 0.6) { action = "read"; why = "low recall even on what you've tried"; priority = 4 + (1 - mastery); }
-    else if (mastery >= 0.85 && cov >= 0.4) { action = "light"; why = "solid — keep it warm"; priority = 0.2; }
-    else { action = "practice"; why = "close it out"; priority = 2 + (1 - mastery); }
+    else if (cov < 0.4) { action = "practice"; why = `only ${Math.round(cov*100)}% covered — see more of it first`; priority = 3 + (1 - cov); }
+    // covered enough to diagnose: if you flip-flop / reflex-answer, reading beats drilling
+    else if (fuzzyRate >= 0.3 || (fastRate >= 0.5 && mastery < 0.75)) { action = "read"; why = "you flip-flop / answer by reflex — you know the wording, not the fact"; priority = 5 + (1 - mastery); }
+    else if (mastery < 0.6) { action = "read"; why = "covered it but recall is low — the material isn't sticking"; priority = 4 + (1 - mastery); }
+    else if (mastery >= 0.85) { action = "light"; why = "solid — keep it warm"; priority = 0.2; }
+    else { action = "practice"; why = "close it out with more reps"; priority = 2 + (1 - mastery); }
     out.push({ id: s.id, ch: s.ch, chName: s.chName, page: s.page, endPage: s.endPage, outcome: s.outcome,
       tried, total: ids.length, cov, mastery, fuzzy, action, why, priority });
   });
