@@ -2209,20 +2209,32 @@ function _cbIds(i) {
   const c = (typeof CLAUDEBANK !== "undefined") ? CLAUDEBANK[i] : null;
   return c ? (c.questions || []).map(q => q.id).filter(Boolean) : [];
 }
+// Per-system question pools spanning ALL THREE banks (GR + Stuvia + ClaudeBank), assigned by the
+// official book map: each question's Martini section → chapter → body system. This pulls in Stuvia
+// (which is organized by region, not system) so Performance/Readiness reflect every bank, not just GR+CB.
+const CH2SYS = {19:"Endocrine",20:"Blood",21:"Heart",22:"Vessels & Circulation",23:"Lymphatic",24:"Respiratory",25:"Digestive",26:"Urinary",27:"Reproductive",28:"Embryology"};
 function coverageSources() {
   if (_covSrc) return _covSrc;
-  const S = {
-    "Respiratory":            [..._cbIds(0)],
-    "Heart":                  [..._grSubIds("Heart"), ..._cbIds(0)],
-    "Vessels & Circulation":  [..._grSubIds("Vessels and Circulation"), ..._cbIds(5)],
-    "Blood":                  [..._grSubIds("Blood"), ..._cbIds(4)],
-    "Lymphatic":              [..._grSubIds("Lymphatic"), ..._cbIds(6)],
-    "Endocrine":              [..._grSubIds("Endocrine"), ..._cbIds(3)],
-    "Digestive":              [..._grSubIds("Digestive"), ..._cbIds(1)],
-    "Urinary":                [..._grSubIds("Urinary"), ..._cbIds(2)],
-    "Reproductive":           [..._grSubIds("Reproductive"), ..._cbIds(2)],
-    "Embryology":             [..._grSubIds("Embryology and Development"), ..._cbIds(7)],
-  };
+  const S = {}; PREP_SYSTEMS.forEach(s => S[s] = []);
+  if (typeof Q_BOOKLOC !== "undefined") {
+    Object.keys(Q_BOOKLOC).forEach(id => {
+      const sec = Q_BOOKLOC[id].s; if (!sec) return;
+      const ch = parseInt(String(sec).split(".")[0], 10);
+      const sys = CH2SYS[ch];
+      if (sys && S[sys]) S[sys].push(id);
+    });
+  } else { // fallback: GR subtopics + ClaudeBank only (pre-coverage-map)
+    S["Respiratory"] = [..._cbIds(0)];
+    S["Heart"] = [..._grSubIds("Heart"), ..._cbIds(0)];
+    S["Vessels & Circulation"] = [..._grSubIds("Vessels and Circulation"), ..._cbIds(5)];
+    S["Blood"] = [..._grSubIds("Blood"), ..._cbIds(4)];
+    S["Lymphatic"] = [..._grSubIds("Lymphatic"), ..._cbIds(6)];
+    S["Endocrine"] = [..._grSubIds("Endocrine"), ..._cbIds(3)];
+    S["Digestive"] = [..._grSubIds("Digestive"), ..._cbIds(1)];
+    S["Urinary"] = [..._grSubIds("Urinary"), ..._cbIds(2)];
+    S["Reproductive"] = [..._grSubIds("Reproductive"), ..._cbIds(2)];
+    S["Embryology"] = [..._grSubIds("Embryology and Development"), ..._cbIds(7)];
+  }
   Object.keys(S).forEach(k => S[k] = [...new Set(S[k])]);
   _covSrc = S; return S;
 }
@@ -2601,8 +2613,8 @@ function renderPreparedness(main) {
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
   note.innerHTML = metric === "performance"
-    ? "Performance = questions you now get right ÷ questions you've attempted, per system. Diagrams excluded."
-    : "Readiness = questions you now get right ÷ <b>all</b> questions in the system (GR + ClaudeBank), per system. A lucky short run no longer reads 100%. Diagrams excluded.";
+    ? "Performance = current recall ÷ questions you've attempted, per system. Spans GR + Stuvia + ClaudeBank. Diagrams excluded."
+    : "Readiness = current recall ÷ <b>all</b> questions in the system (GR + Stuvia + ClaudeBank), per system. A lucky short run no longer reads 100%. Diagrams excluded.";
   main.appendChild(note);
 }
 
