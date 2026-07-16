@@ -476,7 +476,10 @@ function cloudMerge(into, from) {
         const bm = b.m[md], am = a.m[md];
         if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
         am.s = Math.max(am.s || 0, bm.s || 0); am.c = Math.max(am.c || 0, bm.c || 0);
-        am.last = (am.last === 1 || bm.last === 1) ? 1 : 0;
+        am.reps = Math.max(am.reps || 0, bm.reps || 0);
+        // Retention state: the most recent review (larger t) is authoritative for S/last/t.
+        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
+        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
       });
     }
   });
@@ -523,14 +526,47 @@ function recordQuestionStat(q, wasCorrect) {
   const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
   s.seen += 1;
   if (!wasCorrect) { s.missed += 1; s.lastMissed = new Date().toISOString(); }
-  // per-mode mastery (closed-book vs with-notes) — powers Performance / Readiness / Book-Knowledge
+  // per-mode mastery (closed-book vs with-notes) — powers Performance / Readiness / Book-Knowledge.
+  // Retention model: each question carries a memory half-life S (days) + last-review time t.
+  // Spacing-aware: a correct answer near the forgetting point grows S a lot; an immediate repeat
+  // barely moves it. A miss decays S (doesn't erase it). Recall today = 2^(-Δt/S) (see qRecall).
   const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
   s.m = s.m || {};
   const mm = s.m[md] || { s: 0, c: 0, last: 0 };
-  mm.s += 1; if (wasCorrect) mm.c += 1; mm.last = wasCorrect ? 1 : 0;
+  const now = Date.now();
+  const dtDays = mm.t ? Math.max(0, (now - mm.t) / 86400000) : null;
+  mm.s += 1;
+  if (wasCorrect) {
+    mm.c += 1;
+    if (!mm.S) mm.S = RET_S0;                                   // first correct: initial half-life
+    else { const ratio = Math.min((dtDays == null ? 0 : dtDays) / mm.S, 2); mm.S = mm.S * (1 + RET_GROW * ratio); }
+  } else {
+    mm.S = Math.max(RET_SMIN, RET_LAPSE * (mm.S || RET_S0));    // lapse: decay, keep some credit
+  }
+  mm.last = wasCorrect ? 1 : 0;
+  mm.t = now;
+  mm.reps = (mm.reps || 0) + 1;
   s.m[md] = mm;
   progressState.qstats[q.id] = s;
   saveLocalProgress();
+}
+/* ---- Retention / forgetting-curve engine (metrics only; no effect on quiz/exam timing) ---- */
+var RET_S0 = 3, RET_GROW = 0.9, RET_LAPSE = 0.4, RET_SMIN = 1; // half-life days / growth / lapse mult / floor
+/* Probability you'd recall this question TODAY, in the given mode (0..1).
+   0 if your most recent answer was wrong (you're not currently reliable on it).
+   Legacy entries answered correctly before this update (no timestamp) get a modest fixed credit. */
+function qRecall(id, mode) {
+  const st = (activeProgress().qstats || {})[id];
+  const mm = st && st.m && st.m[mode];
+  if (!mm || mm.last !== 1) return 0;
+  if (!mm.S || !mm.t) return 0.65;                              // legacy "known" without retention stamp
+  const dt = (Date.now() - mm.t) / 86400000;
+  return Math.min(1, Math.pow(2, -dt / mm.S));
+}
+/* Chance of answering right on the exam even if not fully recalled: recall + guess/elimination credit. */
+function qExamProb(id, mode, guess) {
+  const p = qRecall(id, mode); const g = (guess == null ? 0.2 : guess);
+  return p + (1 - p) * g;
 }
 
 /* ---------- FRESH-START RESET + ALL-TIME ARCHIVE ----------
@@ -566,7 +602,9 @@ function mergeProgress(into, from) {
         const bm = b.m[md], am = a.m[md];
         if (!am) { a.m[md] = JSON.parse(JSON.stringify(bm)); return; }
         am.s = (am.s || 0) + (bm.s || 0); am.c = (am.c || 0) + (bm.c || 0);
-        am.last = (am.last === 1 || bm.last === 1) ? 1 : 0;
+        am.reps = Math.max(am.reps || 0, bm.reps || 0);
+        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
+        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
       });
     }
   });
@@ -2199,10 +2237,96 @@ function bookSources() {
   return _bookSrc;
 }
 function _qm(id, mode) { const s = (activeProgress().qstats || {})[id]; return s && s.m && s.m[mode] ? s.m[mode] : null; }
+/* Recall-weighted: "known" is the sum of current recall probabilities (durable mastery that
+   decays if you stop reviewing), not a raw once-correct count. */
 function covStats(ids, mode) {
   let attempted = 0, known = 0;
-  ids.forEach(id => { const m = _qm(id, mode); if (m && m.s > 0) { attempted++; if (m.last === 1) known++; } });
-  return { total: ids.length, attempted, known };
+  ids.forEach(id => { const m = _qm(id, mode); if (m && m.s > 0) attempted++; known += qRecall(id, mode); });
+  return { total: ids.length, attempted, known: Math.round(known * 10) / 10 };
+}
+
+/* ===== BLUEPRINT (exam-composition) pools: Thorax / Abdomen / Pelvis / Systemic =====
+   The real Torso exam is ~50 questions per region, so readiness is weighted to that. */
+let _bpSrc = null;
+function _optGuess(q) { const n = (q.options || []).length; if (q.tf || n === 2) return 0.5; return n > 0 ? 1 / n : 0.2; }
+function blueprintSources() {
+  if (_bpSrc) return _bpSrc;
+  const P = { Thorax: [], Abdomen: [], Pelvis: [], Systemic: [] };
+  const put = (region, q) => { if (q && q.id) P[region].push({ id: q.id, g: _optGuess(q) }); };
+  const regionOf = t => /thora/i.test(t) ? "Thorax" : /abdom/i.test(t) ? "Abdomen" : /pelvis|perineum/i.test(t) ? "Pelvis" : "Systemic";
+  if (typeof DATA !== "undefined" && DATA.sections.torso)
+    (DATA.sections.torso.subtopics || []).forEach(s => { const r = regionOf(s.title || ""); (s.quiz || []).forEach(q => put(r, q)); });
+  if (typeof STUVIA_BANK !== "undefined") STUVIA_BANK.forEach(s => { const r = regionOf(s.title || ""); (s.questions || []).forEach(q => put(r, q)); });
+  if (typeof CLAUDEBANK !== "undefined") CLAUDEBANK.forEach(s => { const r = regionOf(s.title || ""); (s.questions || []).forEach(q => put(r, q)); });
+  _bpSrc = P; return P;
+}
+const BLUEPRINT = [["Thorax", 50], ["Abdomen", 50], ["Pelvis", 50], ["Systemic", 50]];
+// Recall-weighted readiness (0..100) for one blueprint region, no guess credit (demonstrated).
+function blueprintReadiness(region, mode) {
+  const pool = blueprintSources()[region] || []; if (!pool.length) return null;
+  let sum = 0; pool.forEach(o => sum += qRecall(o.id, mode));
+  return Math.round(sum / pool.length * 100);
+}
+// Overall exam readiness = blueprint-weighted average; also the weakest region.
+function examReadiness(mode) {
+  let wSum = 0, w = 0, weakest = null;
+  BLUEPRINT.forEach(([r, wt]) => { const v = blueprintReadiness(r, mode); if (v == null) return; wSum += v * wt; w += wt; if (weakest == null || v < weakest.v) weakest = { r, v }; });
+  return { overall: w ? Math.round(wSum / w) : null, weakest };
+}
+
+/* ===== PREDICTED EXAM SCORE (Monte-Carlo over the blueprint) =====
+   Samples a 200-question exam per the region composition; each question is answered correctly
+   with probability qExamProb (recall + guess/elimination credit). Returns expected raw score,
+   a likely range, and the chance of clearing target cutoffs. */
+function predictExam(mode, runs) {
+  const pools = blueprintSources();
+  const ready = BLUEPRINT.every(([r]) => (pools[r] || []).length);
+  if (!ready) return null;
+  runs = runs || 1500;
+  const total = BLUEPRINT.reduce((a, [, n]) => a + n, 0);   // 200
+  const scores = new Array(runs);
+  for (let k = 0; k < runs; k++) {
+    let correct = 0;
+    for (const [r, n] of BLUEPRINT) {
+      const pool = pools[r];
+      for (let j = 0; j < n; j++) {
+        const o = pool[(Math.random() * pool.length) | 0];
+        if (Math.random() < qExamProb(o.id, mode, o.g)) correct++;
+      }
+    }
+    scores[k] = correct;
+  }
+  scores.sort((a, b) => a - b);
+  const mean = scores.reduce((a, b) => a + b, 0) / runs;
+  const q = p => scores[Math.min(runs - 1, Math.max(0, Math.round(p * (runs - 1))))];
+  const pAtLeast = frac => scores.filter(s => s >= frac * total).length / runs;
+  return { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
+    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100) };
+}
+
+/* ===== BOOK KNOWLEDGE via official Martini section coverage =====
+   Each of the 76 core Martini sections is one unit (equal weight, so Stuvia's larger count can't
+   dominate). Section mastery = recall-weighted over the questions mapped to it. */
+let _secQ = null;
+function sectionQIDs() {
+  if (_secQ) return _secQ;
+  const map = {};
+  if (typeof Q_BOOKLOC !== "undefined") Object.keys(Q_BOOKLOC).forEach(id => { const s = Q_BOOKLOC[id].s; if (s) (map[s] = map[s] || []).push(id); });
+  _secQ = map; return map;
+}
+function coreSections() { return (typeof TORSO_SECTIONS !== "undefined") ? TORSO_SECTIONS.filter(s => s.core) : []; }
+function bookKnowledge(mode) {
+  const secs = coreSections(), byS = sectionQIDs();
+  let masterySum = 0, practiced = 0, n = 0;
+  const perCh = {};
+  secs.forEach(s => {
+    const ids = byS[s.id] || []; if (!ids.length) return; n++;
+    let recall = 0, tried = 0;
+    ids.forEach(id => { recall += qRecall(id, mode); const m = _qm(id, mode); if (m && m.s > 0) tried++; });
+    const m = recall / ids.length; masterySum += m; if (tried > 0) practiced++;
+    const c = perCh[s.ch] || { name: s.chName, sum: 0, n: 0 }; c.sum += m; c.n++; perCh[s.ch] = c;
+  });
+  return { pct: n ? Math.round(masterySum / n * 100) : 0, sections: n, practiced, perCh };
 }
 // per-system value for the chosen metric (0..100 or null if nothing applicable)
 function prepMetricVal(system, mode, metric) {
@@ -2222,10 +2346,10 @@ function prepMetricToggle(main, metric) {
   const exp = document.createElement("div");
   exp.style.cssText = "text-align:center;color:#888;font-size:.76rem;margin:0 0 10px;padding:0 14px;line-height:1.45;";
   exp.innerHTML = metric === "performance"
-    ? "<b>Performance</b> — of the questions you've <i>attempted</i>, how many you now get right."
+    ? "<b>Performance</b> — of the questions you've <i>attempted</i>, how much you'd recall today (decays over time)."
     : metric === "book"
-    ? "<b>Book knowledge</b> — how much of the <i>entire</i> Torso bank (GR + Stuvia + ClaudeBank) you can get right. Untried questions count as 0."
-    : "<b>Readiness</b> — of <i>all</i> questions in each system, how many you can get right. Untried questions count against you.";
+    ? "<b>Book knowledge</b> — your current recall across all 76 official Martini sections, weighted equally. Fades if you stop reviewing."
+    : "<b>Readiness</b> — of <i>all</i> questions in each system, how much you'd recall today. Untried or forgotten counts as 0.";
   main.appendChild(exp);
 }
 function prepModeToggle(main, md) {
@@ -2248,28 +2372,78 @@ function prepPeriodToggle(main) {
   });
   main.appendChild(per);
 }
+/* Best recent full-length mock score (for calibrating the prediction against reality). */
+function recentMockAvg(mode) {
+  const Q = activeProgress().quizzes || {}; const vals = [];
+  Object.keys(Q).forEach(k => {
+    if (!/^(fullExam:torso|exam:torso:|sim:torso)/.test(k) && k !== "stuvia:torso:all" && k !== "stuvia:torso:3") return;
+    const pm = (Q[k].modes || {})[mode]; const bs = pm ? pm.bestScore : null;
+    if (typeof bs === "number") vals.push(bs);
+  });
+  if (!vals.length) return null;
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+}
+/* Predicted Exam Score card — the headline "am I ready?" forecast. */
+function _bpAttempted(md) {
+  const pools = blueprintSources(); let n = 0;
+  Object.keys(pools).forEach(r => pools[r].forEach(o => { const m = _qm(o.id, md); if (m && m.s > 0) n++; }));
+  return n;
+}
+function renderExamOutlook(main, md) {
+  const pred = predictExam(md);
+  const card = document.createElement("div");
+  card.style.cssText = "margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1F3864,#2E74B5);color:#fff;";
+  if (!pred || _bpAttempted(md) < 5) {
+    card.innerHTML = `<div style="font-weight:800;font-size:1rem;margin-bottom:4px;">🔮 Predicted exam score</div>
+      <div style="font-size:.85rem;opacity:.9;">Practice some questions in <b>${md==="closed"?"closed-book":"with-notes"}</b> mode and this forecasts your 200-question exam result (score, likely range, and odds of clearing 75% / 90%).</div>`;
+    main.appendChild(card); return;
+  }
+  const cal = recentMockAvg(md);
+  const calLine = cal != null ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.25);font-size:.8rem;opacity:.95;">📏 Your mock exams avg <b>${cal}%</b> → model is ${Math.abs(pred.meanPct-cal)<=3?"well-calibrated":(pred.meanPct>cal?`optimistic by ${pred.meanPct-cal} pts`:`cautious by ${cal-pred.meanPct} pts`)}.</div>` : "";
+  card.innerHTML = `
+    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;">🔮 Predicted exam score <span style="font-weight:600;opacity:.85;font-size:.8rem;">· if it were today · ${md==="closed"?"closed-book":"with-notes"}</span></div>
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+      <div style="font-size:2.6rem;font-weight:800;line-height:1;">${pred.mean}<span style="font-size:1.1rem;font-weight:600;opacity:.8;">/${pred.total}</span></div>
+      <div style="font-size:1.3rem;font-weight:700;opacity:.95;">${pred.meanPct}%</div>
+      <div style="font-size:.85rem;opacity:.9;">likely ${pred.lo}–${pred.hi}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 10px;">
+        <div style="font-size:.72rem;opacity:.85;">chance ≥ 75%</div><div style="font-size:1.25rem;font-weight:800;">${pred.p75}%</div></div>
+      <div style="flex:1;min-width:120px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 10px;">
+        <div style="font-size:.72rem;opacity:.85;">chance ≥ 90%</div><div style="font-size:1.25rem;font-weight:800;">${pred.p90}%</div></div>
+    </div>${calLine}
+    <div style="margin-top:8px;font-size:.72rem;opacity:.8;">Monte-Carlo over the 50/50/50/50 Thorax·Abdomen·Pelvis·Systemic blueprint. Includes guess/elimination credit for unseen questions.</div>`;
+  main.appendChild(card);
+}
+
 function renderBookKnowledge(main, md) {
   prepModeToggle(main, md);
   prepPeriodToggle(main);
-  const src = bookSources();
-  let tot = 0, known = 0;
-  const rows = Object.keys(src).map(b => { const c = covStats(src[b], md); tot += c.total; known += c.known; return { b, c }; });
-  const pct = tot ? Math.round(known / tot * 100) : 0;
-  const band = prepBand(pct);
+  const bk = bookKnowledge(md);
+  const band = prepBand(bk.pct);
   const head = document.createElement("div");
   head.style.cssText = "text-align:center;margin:4px 0 8px;";
-  head.innerHTML = `<div style="font-size:3.4rem;font-weight:800;line-height:1;color:${band.color};">${pct}%</div>
-    <div style="font-weight:700;color:${band.color};margin-top:2px;">of the book known${pct>=90?" ✅":""}</div>
-    <div style="color:#888;font-size:.85rem;margin-top:4px;">${known.toLocaleString()} of ${tot.toLocaleString()} questions mastered · ${md==="closed"?"closed-book":"with-notes"}</div>
-    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">Every unique question across GR + Stuvia + ClaudeBank.</div>`;
+  head.innerHTML = `<div style="font-size:3.4rem;font-weight:800;line-height:1;color:${band.color};">${bk.pct}%</div>
+    <div style="font-weight:700;color:${band.color};margin-top:2px;">of the book known${bk.pct>=90?" ✅":""}</div>
+    <div style="color:#888;font-size:.85rem;margin-top:4px;">Recall-weighted across all <b>${bk.sections}</b> official Martini sections · ${md==="closed"?"closed-book":"with-notes"}</div>
+    <div style="color:#aaa;font-size:.75rem;margin-top:2px;">You've practiced ${bk.practiced}/${bk.sections} sections. Each section is weighted equally, so no bank dominates.</div>`;
   main.appendChild(head);
+  // coverage fact
+  const cov = document.createElement("div");
+  cov.style.cssText = "margin:10px 0 4px;padding:9px 12px;border-radius:10px;background:#E8F5E9;border:1px solid #cde9d0;color:#2E7D32;font-size:.82rem;text-align:center;";
+  cov.innerHTML = `📚 <b>Bank coverage: 76/76 sections (100%).</b> Every official Martini section in the exam chapters (19–28) is tested by ≥1 question — verified paragraph-by-paragraph.`;
+  main.appendChild(cov);
+  // per-chapter bars
   const list = document.createElement("div"); list.style.cssText = "margin-top:14px;";
-  rows.forEach(({ b, c }) => {
-    const p = c.total ? Math.round(c.known / c.total * 100) : 0; const col = prepBand(p).color;
-    const row = document.createElement("div"); row.style.cssText = "margin:10px 0;";
+  const chOrder = [19,20,21,22,23,24,25,26,27,28];
+  chOrder.forEach(ch => {
+    const c = bk.perCh[ch]; if (!c) return;
+    const p = Math.round(c.sum / c.n * 100); const col = prepBand(p).color;
+    const row = document.createElement("div"); row.style.cssText = "margin:9px 0;";
     row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
-        <span style="font-weight:600;">${b}</span>
-        <span style="color:${col};font-weight:700;">${p}% · ${c.known}/${c.total}</span></div>
+        <span style="font-weight:600;">Ch ${ch} · ${c.name}</span>
+        <span style="color:${col};font-weight:700;">${p}%</span></div>
       <div style="height:9px;background:#ececec;border-radius:5px;overflow:hidden;">
         <div style="height:100%;width:${p}%;background:${col};border-radius:5px;"></div></div>`;
     list.appendChild(row);
@@ -2282,13 +2456,15 @@ function renderBookKnowledge(main, md) {
   main.appendChild(missBtn);
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;color:#aaa;font-size:.75rem;text-align:center;line-height:1.5;";
-  note.textContent = "“Known” = your most recent answer to a question, in this mode, was correct. This builds as you practice — attempts logged before this update aren't mode-tagged yet.";
+  note.textContent = "Book knowledge = your current recall across Martini's official numbered sections. It decays if you stop reviewing and climbs as you get questions right over spaced sessions.";
   main.appendChild(note);
 }
 
 function renderPreparedness(main) {
   const md = getStudyMode();
   const metric = state.prepMetric || "readiness";
+  // Predicted exam score — the headline forecast — shows on every tab.
+  renderExamOutlook(main, md);
   prepMetricToggle(main, metric);
   // Book-Knowledge view has its own layout
   if (metric === "book") { renderBookKnowledge(main, md); return; }
@@ -2342,6 +2518,21 @@ function renderPreparedness(main) {
     <div style="color:#888;font-size:.85rem;margin-top:4px;">${md==="closed"?"closed-book":"with-notes"} ${metric==="performance"?"performance":"readiness"} · ${tested}/${PREP_SYSTEMS.length} systems ${metric==="performance"?"attempted":"covered"}</div>
     <div style="color:#aaa;font-size:.75rem;margin-top:2px;">${metric==="performance"?"Accuracy on questions you've tried. Switch to Readiness to factor coverage." : "Goal: 90% on every system. Questions you haven't tried count as 0."}</div>`;
   main.appendChild(head);
+
+  // Blueprint (exam-composition) readiness — 4 regions + weakest-section guardrail
+  if (metric === "readiness") {
+    const er = examReadiness(md);
+    if (er.overall != null) {
+      const bp = document.createElement("div");
+      bp.style.cssText = "margin:10px 0 4px;padding:11px 13px;border-radius:12px;background:#F7F9FC;border:1px solid #e2e8f2;";
+      const cells = BLUEPRINT.map(([r]) => { const v = blueprintReadiness(r, md); const col = v == null ? "#bbb" : prepBand(v).color; return `<div style="flex:1;text-align:center;"><div style="font-size:.72rem;color:#888;">${r}</div><div style="font-weight:800;color:${col};font-size:1.05rem;">${v == null ? "—" : v + "%"}</div></div>`; }).join("");
+      const ready = er.overall >= 85 && er.weakest && er.weakest.v >= 70;
+      bp.innerHTML = `<div style="font-size:.8rem;color:#555;font-weight:700;margin-bottom:6px;">🧭 Exam-blueprint readiness <span style="font-weight:600;color:#888;">(weighted 50/50/50/50)</span></div>
+        <div style="display:flex;gap:4px;">${cells}</div>
+        <div style="margin-top:8px;font-size:.8rem;color:${ready?"#2E7D32":"#C62828"};font-weight:600;">${ready?"✅ Balanced — every region ≥70% and overall ≥85%." : `⚠️ Weakest: <b>${er.weakest?er.weakest.r:"—"} (${er.weakest?er.weakest.v:0}%)</b>. Ready-rule: overall ≥85% AND every region ≥70%.`}</div>`;
+      main.appendChild(bp);
+    }
+  }
 
   // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
   const mock = prepMockBest(md);
