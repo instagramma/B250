@@ -559,7 +559,7 @@ function qRecall(id, mode) {
   const st = (activeProgress().qstats || {})[id];
   const mm = st && st.m && st.m[mode];
   if (!mm || mm.last !== 1) return 0;
-  if (!mm.S || !mm.t) return 0.65;                              // legacy "known" without retention stamp
+  if (!mm.S || !mm.t) return 1;                                 // legacy correct (pre-timestamp) = full credit; converts to the forgetting curve the next time you practice it
   const dt = (Date.now() - mm.t) / 86400000;
   return Math.min(1, Math.pow(2, -dt / mm.S));
 }
