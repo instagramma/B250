@@ -157,7 +157,7 @@ const STUVIA_BANK = [
         "id": "ST-0012"
       },
       {
-        "q": "The heart has the unique ability to change its workload. On average the heart can pump between and liters of blood per minute.",
+        "q": "The heart has the unique ability to change its workload. On average the heart can pump between ______ and ______ liters of blood per minute.",
         "options": [
           "2; 20",
           "1; 3",
@@ -196,7 +196,7 @@ const STUVIA_BANK = [
         "id": "ST-0015"
       },
       {
-        "q": "The reinforcing layer of the pericardium is the layer.",
+        "q": "The reinforcing layer of the pericardium is the ______ layer.",
         "options": [
           "visceral",
           "parietal",
@@ -222,7 +222,7 @@ const STUVIA_BANK = [
         "id": "ST-0017"
       },
       {
-        "q": "The heart wall is composed of layers of tissues.",
+        "q": "The heart wall is composed of ______ layers of tissues.",
         "options": [
           "1",
           "2",
@@ -287,7 +287,7 @@ const STUVIA_BANK = [
         "id": "ST-0022"
       },
       {
-        "q": "Cardiac muscle cells do not need to contract.",
+        "q": "Cardiac muscle cells do not need ______ to contract.",
         "options": [
           "ATP",
           "sodium",
@@ -1447,7 +1447,7 @@ const STUVIA_BANK = [
         "id": "ST-0114"
       },
       {
-        "q": "The the tertiary bronchi ultimately branch into 6500",
+        "q": "The tertiary bronchi ultimately branch into ______",
         "options": [
           "secondary bronchi.",
           "quaternary bronchi.",
@@ -8190,7 +8190,7 @@ const STUVIA_BANK = [
         "id": "ST-0701"
       },
       {
-        "q": "All endocrine structures develop from tissue.",
+        "q": "All endocrine structures develop from ______ tissue.",
         "options": [
           "connective",
           "neural",
@@ -9940,7 +9940,7 @@ const STUVIA_BANK = [
         "id": "ST-0843"
       },
       {
-        "q": "The heart has the unique ability to change its workload. On average the heart can pump between and liters of blood per minute.",
+        "q": "The heart has the unique ability to change its workload. On average the heart can pump between ______ and ______ liters of blood per minute.",
         "options": [
           "2; 20",
           "1; 3",
@@ -9979,7 +9979,7 @@ const STUVIA_BANK = [
         "id": "ST-0846"
       },
       {
-        "q": "The reinforcing layer of the pericardium is the layer.",
+        "q": "The reinforcing layer of the pericardium is the ______ layer.",
         "options": [
           "visceral",
           "parietal",
@@ -10005,7 +10005,7 @@ const STUVIA_BANK = [
         "id": "ST-0848"
       },
       {
-        "q": "The heart wall is composed of layers of tissues.",
+        "q": "The heart wall is composed of ______ layers of tissues.",
         "options": [
           "1",
           "2",
@@ -10070,7 +10070,7 @@ const STUVIA_BANK = [
         "id": "ST-0853"
       },
       {
-        "q": "Cardiac muscle cells do not need to contract.",
+        "q": "Cardiac muscle cells do not need ______ to contract.",
         "options": [
           "ATP",
           "sodium",
