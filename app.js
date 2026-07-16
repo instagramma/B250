@@ -893,8 +893,8 @@ function buildTopbar() {
   else if (state.route === "reports") titleText = "Question Reports";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "claudeMenu")     titleText = "Claude Bank";
-  else if (state.route === "fullExam")        titleText = "Simulation";
-  else if (state.route === "fullExamEnd")     titleText = "Simulation Results";
+  else if (state.route === "fullExam")        titleText = state.examTitle || "Simulation";
+  else if (state.route === "fullExamEnd")     titleText = (state.examTitle || "Simulation") + " Results";
   else if (state.route === "customBuilder") titleText = "Custom Practice";
   else if (state.route === "cbPicker")      titleText = "Claude Bank";
   else if (state.route === "suddenDeath" || state.route === "sdEnd") titleText = "Sudden Death 🔥";
@@ -4101,6 +4101,19 @@ function renderSectionMenu(main) {
       condition: true,
     },
     {
+      id: "missedRoot",
+      icon: "🔁",
+      title: "Missed Questions",
+      sub: "Re-do everything you've gotten wrong — all sections",
+      condition: isTorso,
+      onclick: () => {
+        const missed = JSON.parse(localStorage.getItem(ns("missed:" + state.sectionKey)) || "[]");
+        if (!missed.length) { alert("No missed questions recorded yet. Take a quiz or exam first!"); return; }
+        missedDeck = shuffle([...missed]);
+        state.route = "missedReview"; render();
+      },
+    },
+    {
       id: "stuviaMenu",
       icon: "📚",
       title: "Stuvia Bank (Extra Practice)",
@@ -4137,7 +4150,7 @@ function renderSectionMenu(main) {
         <span class="smc-sub">${item.sub}</span>
       </span>
       <span class="smc-chevron">›</span>`;
-    card.onclick = () => { state.route = item.id; render(); };
+    card.onclick = item.onclick || (() => { state.route = item.id; render(); });
     list.appendChild(card);
   });
 
@@ -4267,92 +4280,96 @@ function renderExamMenu(main) {
   const list = document.createElement("div");
   list.className = "modeList";
 
-  // ── Full Practice Exam ──
+  // ── Full Exam — realistic mocks (all use the 100-min skip & flag format) ──
   const hdrFull = document.createElement("div");
   hdrFull.className = "modeGroupHdr";
-  hdrFull.textContent = "Full Exam";
+  hdrFull.textContent = "Full Exam — Realistic Mocks";
   list.appendChild(hdrFull);
 
-  // Build a 200Q simulation deck: 50 random Qs per section, drawn from GR + Stuvia + Practice Exams
-  const buildSimDeck = (perSection = 50) => {
+  // Build a 200Q deck: 50 random Qs per section. opts selects which banks to draw from.
+  const buildSimDeck = (perSection = 50, opts) => {
+    opts = opts || { gr: true, stuvia: true, pe: true, cb: true };
     const ORDER = ["Thorax","Abdomen","Pelvis & Perineum","Systemic"];
     let deck = [];
     ORDER.forEach((sectionLabel, si) => {
       let pool = [];
-      // 1. GR questions from that section's subtopics
-      const grSec = TORSO_GR_SECTIONS[si];
-      if (grSec && sec && sec.subtopics) {
-        grSec.indices.forEach(idx => {
-          const sub = sec.subtopics[idx];
-          if (sub && sub.quiz) sub.quiz.filter(q => !isDiagramQ(q)).forEach(q => pool.push(q));
-        });
+      if (opts.gr) {
+        const grSec = TORSO_GR_SECTIONS[si];
+        if (grSec && sec && sec.subtopics) grSec.indices.forEach(idx => { const sub = sec.subtopics[idx]; if (sub && sub.quiz) sub.quiz.filter(q => !isDiagramQ(q)).forEach(q => pool.push(q)); });
       }
-      // 2. Stuvia Bank
-      if (typeof STUVIA_BANK !== "undefined") {
+      if (opts.stuvia && typeof STUVIA_BANK !== "undefined") {
         const sb = STUVIA_BANK.find(b => b.title === sectionLabel);
         if (sb) pool.push(...(sb.questions || []));
       }
-      // 3. Practice Exams
-      if (sec && sec.exams) {
+      if (opts.pe && sec && sec.exams) {
         sec.exams.filter(e => e.group === sectionLabel).forEach(e => pool.push(...(e.questions || [])));
       }
-      // 4. Claude Bank (strip letter prefixes from options)
-      if (typeof CLAUDEBANK !== "undefined") {
+      if (opts.cb && typeof CLAUDEBANK !== "undefined") {
         const CB_MAP = { "Thorax":[0], "Abdomen":[1], "Pelvis & Perineum":[2], "Systemic":[3,4,5,6,7] };
-        (CB_MAP[sectionLabel] || []).forEach(idx => {
-          if (CLAUDEBANK[idx]) {
-            CLAUDEBANK[idx].questions.forEach(q => pool.push({
-              ...q, options: q.options.map(o => o.replace(/^[A-E]\.\s*/, ""))
-            }));
-          }
-        });
+        (CB_MAP[sectionLabel] || []).forEach(idx => { if (CLAUDEBANK[idx]) CLAUDEBANK[idx].questions.forEach(q => pool.push({ ...q, options: q.options.map(o => o.replace(/^[A-E]\.\s*/, "")) })); });
       }
-      // exclude fill-in-the-blank + out-of-scope items from the timed simulation
       deck.push(...shuffle(pool.filter(isExamEligible)).slice(0, perSection));
     });
     return deck;
   };
+  const buildFullDeck = () => buildSimDeck(50);   // all banks (Sprint reuses this)
 
-  const buildFullDeck = buildSimDeck; // alias — sprint uses same pool
-
-  // 30s sprint version
-  const sprintBtn = document.createElement("button");
-  sprintBtn.className = "modeBtn";
-  sprintBtn.innerHTML = `<span class="modeIcon">⚡</span><span class="modeLabel">Full Exam — Sprint</span><span class="modeMeta">200 Qs · 50/section · 30 s/question · no skipping · GR + Stuvia + Practice Exams</span>`;
-  sprintBtn.onclick = () => {
-    const pool = buildFullDeck();
-    if (!pool.length) { alert("No practice exams available yet."); return; }
-    examDeck = pool; examIndex = 0; examScore = 0;
-    examAnswered = false; examSelected = -1; examTimedOut = false; examAnswerLog = [];
-    state.examSource = "custom"; state.examTitle = "Simulation";
-    state.route = "exam"; render();
-  };
-  list.appendChild(sprintBtn);
-
-  // 100-min full exam version
-  const fullBtn = document.createElement("button");
-  fullBtn.className = "modeBtn";
-  fullBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation</span><span class="modeMeta">100 min · 200 Qs · 50/section · GR + Stuvia + Practice Exams · skip & flag freely</span>`;
-  fullBtn.onclick = () => {
-    const pool = buildFullDeck();
-    if (!pool.length) { alert("No practice exams available yet."); return; }
-    fullExamDeck = pool;
-    fullExamIndex = 0;
+  // Launch the 100-minute skip-&-flag full-exam experience with a given deck + title.
+  const launchFullExam = (pool, title) => {
+    if (!pool.length) { alert("No questions available yet."); return; }
+    fullExamDeck = pool; fullExamIndex = 0;
     fullExamAnswers = new Array(pool.length).fill(-1);
     fullExamFlags = new Set();
     fullExamSecondsLeft = 6000;
     fullExamShowOverview = false;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval);
+    state.examTitle = title || "Simulation";
     state.route = "fullExam"; render();
   };
+
+  // ⭐ THE REAL DEAL — all banks, 100 min, skip & flag (emphasized)
+  const fullBtn = document.createElement("button");
+  fullBtn.className = "modeBtn";
+  fullBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  fullBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your actual exam · 100 min · 200 Qs · 50/section · ALL banks (GR + Stuvia + ClaudeBank + Practice Exams) · skip &amp; flag freely</span>`;
+  fullBtn.onclick = () => launchFullExam(buildSimDeck(50, { gr: true, stuvia: true, pe: true, cb: true }), "Simulation");
   list.appendChild(fullBtn);
 
-  // ── Simulation ──
+  // Stuvia-only simulation
+  const stuSimBtn = document.createElement("button");
+  stuSimBtn.className = "modeBtn";
+  stuSimBtn.innerHTML = `<span class="modeIcon">📚</span><span class="modeLabel">Stuvia Simulation</span><span class="modeMeta">100 min · 50/section · Stuvia questions only · skip &amp; flag</span>`;
+  stuSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { stuvia: true }), "Stuvia Simulation");
+  list.appendChild(stuSimBtn);
+
+  // ClaudeBank-only simulation
+  const cbSimBtn = document.createElement("button");
+  cbSimBtn.className = "modeBtn";
+  cbSimBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">ClaudeBank Simulation</span><span class="modeMeta">100 min · 50/section (as available) · ClaudeBank questions only · skip &amp; flag</span>`;
+  cbSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { cb: true }), "ClaudeBank Simulation");
+  list.appendChild(cbSimBtn);
+
+  // ── Timed Challenge ──
   const hdrSim = document.createElement("div");
   hdrSim.className = "modeGroupHdr";
   hdrSim.textContent = "Timed Challenge";
   list.appendChild(hdrSim);
+
+  // Sprint (moved here) — 30s per question, no skipping, all banks
+  const sprintBtn = document.createElement("button");
+  sprintBtn.className = "modeBtn";
+  sprintBtn.innerHTML = `<span class="modeIcon">⚡</span><span class="modeLabel">Full Exam — Sprint</span><span class="modeMeta">200 Qs · 50/section · 30 s/question · no skipping · all banks</span>`;
+  sprintBtn.onclick = () => {
+    const pool = buildFullDeck();
+    if (!pool.length) { alert("No practice exams available yet."); return; }
+    EXAM_SECONDS = 30;
+    examDeck = pool; examIndex = 0; examScore = 0;
+    examAnswered = false; examSelected = -1; examTimedOut = false; examAnswerLog = [];
+    state.examSource = "custom"; state.examTitle = "Simulation";
+    state.route = "exam"; render();
+  };
+  list.appendChild(sprintBtn);
 
   const SIM_SECS = 25;
   const SIM_PER_SECTION = 50;
