@@ -554,6 +554,7 @@ function recordQuestionStat(q, wasCorrect, elapsedMs) {
   }
   s.m[md] = mm;
   progressState.qstats[q.id] = s;
+  if (typeof _predVer !== "undefined") _predVer++;   // invalidate predicted-score memo
   saveLocalProgress();
 }
 /* ---- Retention / forgetting-curve engine (metrics only; no effect on quiz/exam timing) ---- */
@@ -561,13 +562,18 @@ var RET_S0 = 3, RET_GROW = 0.9, RET_LAPSE = 0.4, RET_SMIN = 1; // half-life days
 /* Probability you'd recall this question TODAY, in the given mode (0..1).
    0 if your most recent answer was wrong (you're not currently reliable on it).
    Legacy entries answered correctly before this update (no timestamp) get a modest fixed credit. */
+var _recallCache = {}, _recallVer = -1;   // per-render memo (metrics call qRecall tens of thousands of times)
 function qRecall(id, mode) {
+  if (_recallVer !== _predVer) { _recallCache = {}; _recallVer = _predVer; }
+  const k = mode + "" + id + "" + (state && state.allTime ? 1 : 0);
+  const cached = _recallCache[k]; if (cached !== undefined) return cached;
   const st = (activeProgress().qstats || {})[id];
   const mm = st && st.m && st.m[mode];
-  if (!mm || mm.last !== 1) return 0;
-  if (!mm.S || !mm.t) return 1;                                 // legacy correct (pre-timestamp) = full credit; converts to the forgetting curve the next time you practice it
-  const dt = (Date.now() - mm.t) / 86400000;
-  return Math.min(1, Math.pow(2, -dt / mm.S));
+  let r;
+  if (!mm || mm.last !== 1) r = 0;
+  else if (!mm.S || !mm.t) r = 1;                              // legacy correct (pre-timestamp) = full credit; converts to the forgetting curve on next practice
+  else r = Math.min(1, Math.pow(2, -((Date.now() - mm.t) / 86400000) / mm.S));
+  _recallCache[k] = r; return r;
 }
 /* Chance of answering right on the exam even if not fully recalled: recall + guess/elimination credit. */
 function qExamProb(id, mode, guess) {
@@ -2329,21 +2335,24 @@ function appendRegionBars(main, md, metric) {
    Samples a 200-question exam per the region composition; each question is answered correctly
    with probability qExamProb (recall + guess/elimination credit). Returns expected raw score,
    a likely range, and the chance of clearing target cutoffs. */
+var _predVer = 0;        // bumped whenever a question stat changes → invalidates the memo
+var _predMemo = {};
 function predictExam(mode, runs) {
+  const key = mode + "|" + (state.allTime ? 1 : 0) + "|" + _predVer + "|" + (runs || 600);
+  if (_predMemo[key]) return _predMemo[key];
   const pools = blueprintSources();
   const ready = BLUEPRINT.every(([r]) => (pools[r] || []).length);
   if (!ready) return null;
-  runs = runs || 1500;
+  runs = runs || 600;
+  // Precompute each question's exam-probability ONCE (was recomputed 300k× → froze the browser).
+  const P = {}; BLUEPRINT.forEach(([r]) => { P[r] = pools[r].map(o => qExamProb(o.id, mode, o.g)); });
   const total = BLUEPRINT.reduce((a, [, n]) => a + n, 0);   // 200
   const scores = new Array(runs);
   for (let k = 0; k < runs; k++) {
     let correct = 0;
     for (const [r, n] of BLUEPRINT) {
-      const pool = pools[r];
-      for (let j = 0; j < n; j++) {
-        const o = pool[(Math.random() * pool.length) | 0];
-        if (Math.random() < qExamProb(o.id, mode, o.g)) correct++;
-      }
+      const arr = P[r], L = arr.length;
+      for (let j = 0; j < n; j++) { if (Math.random() < arr[(Math.random() * L) | 0]) correct++; }
     }
     scores[k] = correct;
   }
@@ -2351,8 +2360,10 @@ function predictExam(mode, runs) {
   const mean = scores.reduce((a, b) => a + b, 0) / runs;
   const q = p => scores[Math.min(runs - 1, Math.max(0, Math.round(p * (runs - 1))))];
   const pAtLeast = frac => scores.filter(s => s >= frac * total).length / runs;
-  return { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
+  const res = { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
     lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100) };
+  _predMemo = {}; _predMemo[key] = res;   // keep only the latest
+  return res;
 }
 
 /* ===== BOOK KNOWLEDGE via official Martini section coverage =====
