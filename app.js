@@ -2430,8 +2430,18 @@ function renderExamOutlook(main, md) {
 }
 
 /* ===== ACTION PLAN — rule-based coaching: what to do next, ranked by point-gain ===== */
-var EXAM_DATE = new Date(2026, 6, 20, 9, 0, 0); // Torso exam ~Mon Jul 20, 9am
-function daysToExam() { return Math.max(0, Math.ceil((EXAM_DATE - Date.now()) / 86400000)); }
+var EXAM_MON = new Date(2026, 6, 20, 9, 0, 0); // target: Mon Jul 20
+var EXAM_TUE = new Date(2026, 6, 21, 9, 0, 0); // fallback if not ready: Tue Jul 21
+var READY_BAR = 75;                            // predicted % considered "ready for Monday"
+// Effective exam day: Monday if you're on track, else Tuesday (your stated fallback).
+function examInfo(mode) {
+  const pred = predictExam(mode);
+  const readyMon = !!pred && pred.meanPct >= READY_BAR;
+  const date = readyMon ? EXAM_MON : EXAM_TUE;
+  const days = Math.max(0, Math.ceil((date - Date.now()) / 86400000));
+  return { readyMon, date, days, predPct: pred ? pred.meanPct : 0 };
+}
+function daysToExam() { return examInfo("closed").days; }
 function _shortOutcome(o) {
   return String(o || "").replace(/^(Describe|List|Compare and contrast|Outline|Discuss|Explain|Identify|Define|Summarize|Trace)( the| and)?\s*/i, "")
     .replace(/\.$/, "").replace(/^(anatomy (and physiology )?of the )/i, "").trim().slice(0, 42);
@@ -2453,16 +2463,43 @@ function studyPlanData(mode) {
   const weak = sys.slice().sort((a, b) => a.r - b.r).slice(0, 3);
   // regions ordered weakest-first for the day plan
   const regions = ["Thorax", "Abdomen", "Pelvis", "Systemic"].map(r => ({ r, v: blueprintReadiness(r, mode) })).sort((a, b) => (a.v == null ? -1 : a.v) - (b.v == null ? -1 : b.v));
-  return { pred: predictExam(mode), days: daysToExam(), sys, weak, untried, decaying, regions };
+  return { pred: predictExam(mode), exam: examInfo(mode), sys, weak, untried, decaying, regions };
+}
+// Build a date-aware day plan from tomorrow through the effective exam day.
+function buildDaySchedule(d, md) {
+  const order = d.regions.map(x => x.r);
+  const now = new Date();
+  const examMid = new Date(d.exam.date.getFullYear(), d.exam.date.getMonth(), d.exam.date.getDate()); // exam day at midnight
+  const days = []; // study days (excl. exam day)
+  let cur = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  while (cur < examMid) { days.push(new Date(cur)); cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() + 1); }
+  const wd = dt => dt.toLocaleDateString("en-US", { weekday: "short" });
+  const rows = [["Tonight", `Quick diagnostic: one timed Guided-Reading on ${order[0]} to set a baseline.`]];
+  const n = days.length;
+  days.forEach((dt, i) => {
+    let task;
+    if (i === n - 1) task = `Light review of fading cards + Diagram Gallery. No new material — rest up.`;
+    else if (i === n - 2) task = `Full 200-question closed-book mock, then re-read only what you miss.`;
+    else {
+      const regs = [order[i * 2 % order.length], order[(i * 2 + 1) % order.length]];
+      task = `${regs[0]} + ${regs[1]} — read the flagged Martini pages, then timed questions closed-book. Review every miss.`;
+    }
+    rows.push([wd(dt), task]);
+  });
+  rows.push([wd(d.exam.date), `💪 Exam${d.exam.readyMon ? "" : " (fallback day — push to be ready Monday)"}.`]);
+  return rows;
 }
 function renderStudyPlan(main, md) {
   const d = studyPlanData(md);
   const card = document.createElement("div");
   card.style.cssText = "margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#fff;border:2px solid #E67E22;";
   const predPct = d.pred ? d.pred.meanPct : 0;
-  const gap = Math.max(0, 75 - predPct);
-  let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.days} day${d.days===1?"":"s"} to the exam</div>
-    <div style="font-size:.82rem;color:#666;margin-bottom:10px;">Predicted <b>${predPct}%</b> today${gap>0?` · <b>+${gap} pts</b> to hit 75%`:` · already at target 🎉`}. Fastest path up, biggest lever first:</div>`;
+  const gap = Math.max(0, READY_BAR - predPct);
+  const targetTxt = d.exam.readyMon
+    ? `On track for <b>Monday</b> (predicted ${predPct}%).`
+    : `At <b>${predPct}%</b> you're not ready for Monday yet — this plan runs through <b>Tuesday</b> (your fallback). Beat it and take it Monday.`;
+  let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.exam.days} day${d.exam.days===1?"":"s"} to go</div>
+    <div style="font-size:.82rem;color:#666;margin-bottom:10px;">${targetTxt}${gap>0?` Need <b>+${gap} pts</b> to clear 75%.`:` 🎉`} Fastest path up, biggest lever first:</div>`;
   const steps = [];
   // 1. Biggest lever: close untried blind spots
   if (d.untried > 0) {
@@ -2481,18 +2518,10 @@ function renderStudyPlan(main, md) {
   // 4. Prove it
   steps.push(`<b>Prove it.</b> Take a full 200-question closed-book mock this weekend and watch this predicted score move.`);
   html += `<ol style="margin:0 0 4px;padding-left:20px;font-size:.86rem;line-height:1.5;color:#333;">${steps.map(s=>`<li style="margin-bottom:7px;">${s}</li>`).join("")}</ol>`;
-  // day-by-day
-  const order = d.regions.map(x => x.r);
-  const plan = [
-    ["Tonight (Wed)", `Diagnostic: one timed Guided-Reading on ${order[0]} to set a baseline.`],
-    ["Thu", `${order[0]} + ${order[1]} — read the flagged pages, then timed questions closed-book.`],
-    ["Fri", `${order[2]} + ${order[3]} — same: read, then drill. Review every miss.`],
-    ["Sat", `Hit your 3 weakest systems again + the Diagram Gallery (diagrams are printed on the exam).`],
-    ["Sun", `Full 200-question closed-book mock. Re-read only what you miss.`],
-    ["Mon AM", `Light review of fading cards + diagrams. Don't cram new material.`],
-  ];
+  // day-by-day (date-aware; runs to Monday, or Tuesday if not yet ready)
+  const plan = buildDaySchedule(d, md);
   html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0e0cc;">
-    <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day</div>
+    <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day${d.exam.readyMon?"":" (through your Tuesday fallback)"}</div>
     ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:#1F3864;">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
   card.innerHTML = html;
   main.appendChild(card);
