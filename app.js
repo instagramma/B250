@@ -623,7 +623,16 @@ function mergeProgress(into, from) {
   });
   return into;
 }
-function getAllTimeProgress() { const m = JSON.parse(JSON.stringify(loadArchive())); return mergeProgress(m, progressState); }
+/* All-time view = archive merged with current. This is expensive (parse + deep-clone + merge),
+   and the metrics engine calls activeProgress() thousands of times per render, so memoize it:
+   cached per data-version (_predVer) within a short time window. */
+var _atMemo = null, _atKey = "";
+function getAllTimeProgress() {
+  const key = (typeof _predVer === "number" ? _predVer : 0) + "|" + Math.floor(Date.now() / 1500);
+  if (_atMemo && _atKey === key) return _atMemo;
+  const m = JSON.parse(JSON.stringify(loadArchive())); mergeProgress(m, progressState);
+  _atMemo = m; _atKey = key; return m;
+}
 function activeProgress() { return state.allTime ? getAllTimeProgress() : progressState; }
 function resetCurrentData() {
   const arch = loadArchive();
