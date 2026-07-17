@@ -930,6 +930,7 @@ function render() {
   else if (state.route === "history") renderHistory(main);
   else if (state.route === "missedStats") renderMissedStats(main);
   else if (state.route === "reports") renderReports(main);
+  else if (state.route === "ownerStats") renderOwnerStats(main);
   else if (state.route === "subtopics") renderSubtopics(main);
   else if (state.route === "worksheet") renderWorksheet(main);
   else if (state.route === "labeling") renderLabeling(main);
@@ -985,6 +986,7 @@ function buildTopbar() {
       else if (state.route === "history") state.route = "examMenu";
       else if (state.route === "missedStats") state.route = "preparedness";
       else if (state.route === "reports") state.route = "home";
+      else if (state.route === "ownerStats") state.route = "home";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
       else if (state.route === "customBuilder") state.route = "home";
       else if (state.route === "subtopics")     { state.route = state.prevRoute || "grMenu"; state.mode = null; }
@@ -1038,6 +1040,7 @@ function buildTopbar() {
   else if (state.route === "history") titleText = "History";
   else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
   else if (state.route === "reports") titleText = "Flagged Questions";
+  else if (state.route === "ownerStats") titleText = "Class Stats 👑";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "claudeMenu")     titleText = "Claude Bank";
   else if (state.route === "catSim")         titleText = "CAT Simulation 🧪";
@@ -1181,6 +1184,78 @@ const HOME_ACCENT = {
   lab1:         { c1: "#7C4DD6", c2: "#5B21B6" },   // violet
   lab2:         { c1: "#14A090", c2: "#0F766E" },   // teal
 };
+/* ---------------- OWNER DASHBOARD (class-wide stats, pulled from cloud sync) ---------------- */
+const OWNER_PROFILES = ["gabe"];  // only these profiles see the class-stats view
+function isOwner() { return CLOUD_ENABLED && currentProfile && OWNER_PROFILES.includes(String(currentProfile).trim().toLowerCase()); }
+let ownerStats = { data: null, err: null, loading: false };
+async function fetchOwnerStats() {
+  if (!sb) { ownerStats.err = "Cloud sync isn't enabled."; return; }
+  ownerStats.loading = true; ownerStats.err = null;
+  try {
+    const { data, error } = await sb.from("progress").select("profile,data,updated_at");
+    if (error) throw error;
+    ownerStats.data = data || [];
+  } catch (e) { ownerStats.err = (e && e.message) || String(e); }
+  ownerStats.loading = false;
+  if (state.route === "ownerStats") render();
+}
+function _relTime(iso) {
+  if (!iso) return "—";
+  const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (m < 1) return "just now"; if (m < 60) return m + "m ago";
+  const h = Math.round(m / 60); if (h < 24) return h + "h ago";
+  return Math.round(h / 24) + "d ago";
+}
+function profileSummary(row) {
+  const d = row.data || {}, qs = d.qstats || {};
+  let ids = 0, seen = 0, missed = 0;
+  Object.keys(qs).forEach(id => { ids++; seen += qs[id].seen || 0; missed += qs[id].missed || 0; });
+  const acc = seen ? Math.round((seen - missed) / seen * 100) : null;
+  let att = [];
+  Object.keys(d.examAttempts || {}).forEach(k => (d.examAttempts[k] || []).forEach(a => att.push(Object.assign({ _key: k }, a))));
+  att.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const mocks = att.filter(a => (a.total || 0) >= 100 && typeof a.pct === "number");
+  const bestMock = mocks.length ? Math.max(...mocks.map(a => a.pct)) : null;
+  return { profile: row.profile, updated: row.updated_at, practiced: ids, seen, acc, attempts: att.length, mocks: mocks.length, bestMock, recent: att.slice(0, 4) };
+}
+function renderOwnerStats(main) {
+  if (!isOwner()) { const p = document.createElement("p"); p.className = "comingSoonMsg"; p.style.cssText = "text-align:center;margin-top:32px;"; p.textContent = "Owner view only."; main.appendChild(p); return; }
+  if (!ownerStats.data && !ownerStats.loading && !ownerStats.err) fetchOwnerStats();
+  const wrap = document.createElement("div"); wrap.style.cssText = "max-width:820px;margin:0 auto;";
+  const head = document.createElement("div"); head.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;";
+  head.innerHTML = `<div style="font-size:.85rem;color:#888;">Everyone's progress · pulled live from cloud sync</div>`;
+  const refresh = document.createElement("button"); refresh.textContent = "↻ Refresh"; refresh.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:12px;padding:4px 12px;font-size:.78rem;cursor:pointer;";
+  refresh.onclick = () => { ownerStats.data = null; ownerStats.err = null; fetchOwnerStats(); render(); };
+  head.appendChild(refresh); wrap.appendChild(head);
+  if (ownerStats.loading && !ownerStats.data) { const l = document.createElement("div"); l.style.cssText = "text-align:center;color:#888;padding:30px;"; l.textContent = "Loading everyone's stats…"; wrap.appendChild(l); main.appendChild(wrap); return; }
+  if (ownerStats.err) { const e = document.createElement("div"); e.style.cssText = "background:#FDECEA;border:1px solid #f5c6cb;border-radius:10px;padding:14px;color:#922B21;"; e.textContent = "Couldn't load: " + ownerStats.err; wrap.appendChild(e); main.appendChild(wrap); return; }
+  const rows = (ownerStats.data || []).map(profileSummary).sort((a, b) => new Date(b.updated || 0) - new Date(a.updated || 0));
+  if (!rows.length) { const e = document.createElement("div"); e.style.cssText = "text-align:center;color:#888;padding:30px;"; e.textContent = "No profiles have synced yet."; wrap.appendChild(e); main.appendChild(wrap); return; }
+  rows.forEach(s => {
+    const card = document.createElement("div"); card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);";
+    const acc = s.acc == null ? "—" : s.acc + "%", bm = s.bestMock == null ? "—" : s.bestMock + "%";
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <div style="font-size:1.15rem;font-weight:800;color:#1F3864;">${s.profile}</div>
+        <div style="font-size:.75rem;color:#999;">active ${_relTime(s.updated)}</div>
+      </div>
+      <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:10px;">
+        <div><div style="font-size:1.4rem;font-weight:800;">${s.practiced}</div><div style="font-size:.72rem;color:#888;">questions practiced</div></div>
+        <div><div style="font-size:1.4rem;font-weight:800;">${acc}</div><div style="font-size:.72rem;color:#888;">accuracy (${s.seen} answers)</div></div>
+        <div><div style="font-size:1.4rem;font-weight:800;">${s.attempts}</div><div style="font-size:.72rem;color:#888;">exams/quizzes</div></div>
+        <div><div style="font-size:1.4rem;font-weight:800;">${bm}</div><div style="font-size:.72rem;color:#888;">best full mock (${s.mocks})</div></div>
+      </div>`;
+    if (s.recent && s.recent.length) {
+      const rl = document.createElement("div"); rl.style.cssText = "margin-top:10px;border-top:1px solid #f0f0f0;padding-top:8px;";
+      rl.innerHTML = `<div style="font-size:.72rem;color:#aaa;margin-bottom:4px;">Recent</div>`;
+      s.recent.forEach(a => { const r = document.createElement("div"); r.style.cssText = "display:flex;justify-content:space-between;font-size:.82rem;color:#555;padding:2px 0;"; const pct = (typeof a.pct === "number") ? a.pct + "%" : (a.kind === "cat" ? ("CAT " + (a.readiness != null ? a.readiness + "%" : "")) : "—"); r.innerHTML = `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;">${a.title || a._key || "Attempt"}</span><span style="color:#888;">${pct} · ${a.date || ""}</span>`; rl.appendChild(r); });
+      card.appendChild(rl);
+    }
+    wrap.appendChild(card);
+  });
+  main.appendChild(wrap);
+}
+
 function renderHome(main) {
   ensureHoverStyle();
   const wrap = document.createElement("div");
@@ -1189,7 +1264,17 @@ function renderHome(main) {
   // Reports pill (clearly a quality-flag tool, not part of studying)
   const nRep = loadReports().filter(r => !r.resolved).length;
   const repRow = document.createElement("div");
-  repRow.style.cssText = "display:flex;justify-content:flex-end;margin:2px 0 4px;";
+  repRow.style.cssText = "display:flex;justify-content:flex-end;gap:8px;margin:2px 0 4px;";
+  // Owner-only: class stats dashboard
+  if (isOwner()) {
+    const own = document.createElement("button");
+    own.className = "pillBtn";
+    own.innerHTML = "👑 Class stats";
+    own.title = "Owner view — everyone's progress (pulled from cloud sync).";
+    own.style.cssText = "border:1px solid #c9d4e3;background:#fff;color:#1F3864;border-radius:14px;padding:4px 13px;font-size:.76rem;font-weight:700;cursor:pointer;";
+    own.onclick = () => { state.route = "ownerStats"; render(); };
+    repRow.appendChild(own);
+  }
   const rep = document.createElement("button");
   rep.className = "pillBtn";
   rep.innerHTML = `🚩 Flagged questions${nRep ? ` <b>${nRep}</b>` : ""}`;
