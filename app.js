@@ -4875,7 +4875,6 @@ function _mkHdr(list, text) { const h = document.createElement("div"); h.classNa
 function buildGenericExamMenu(list, key) {
   const sec = getSection(key), name = (sec.title || key).split(" (")[0];
   const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
-  addCatCard(list, key);
   _mkHdr(list, "Realistic Mock");
   const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
@@ -4894,6 +4893,7 @@ function buildGenericExamMenu(list, key) {
       list.appendChild(b);
     });
   }
+  addCatCard(list, key);
   if (sec.exams && sec.exams.length) {
     _mkHdr(list, "Timed Challenge");
     const epBtn = document.createElement("button"); epBtn.className = "modeBtn";
@@ -4914,7 +4914,6 @@ function buildGenericExamMenu(list, key) {
 }
 function buildCumulativeExamMenu(list) {
   const SECS = 6000, N = 150, PER_N = 100;
-  addCatCard(list, "cumulative");
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative"), sectionStuviaPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
@@ -4930,6 +4929,7 @@ function buildCumulativeExamMenu(list) {
     b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER_N), label + " (Cumulative)", SECS);
     list.appendChild(b);
   });
+  addCatCard(list, "cumulative");
   _mkHdr(list, "Review");
   const missBtn = document.createElement("button"); missBtn.className = "modeBtn";
   missBtn.style.cssText = "border:2px solid #C0392B;background:#FDECEA;";
@@ -4963,9 +4963,6 @@ function renderExamMenu(main) {
   // Non-Torso sections use the generalized builder (Torso keeps its Stuvia/ClaudeBank-rich menu below).
   if (state.sectionKey === "cumulative") { buildCumulativeExamMenu(list); main.appendChild(list); return; }
   if (state.sectionKey !== "torso") { buildGenericExamMenu(list, state.sectionKey); main.appendChild(list); return; }
-
-  // ── Adaptive CAT (experimental) ──
-  addCatCard(list, "torso");
 
   // ── Full Exam — realistic mocks (all use the 100-min skip & flag format) ──
   const hdrFull = document.createElement("div");
@@ -5073,6 +5070,9 @@ function renderExamMenu(main) {
     b.onclick = () => launchFullExam(shuffle(sectionPool(label, mi, { gr: true, stuvia: true, cb: true })).slice(0, MINI_N), label + " Mini Mock", MINI_SECS);
     list.appendChild(b);
   });
+
+  // ── Adaptive CAT (experimental) — sits between mini mocks and the timed challenge ──
+  addCatCard(list, "torso");
 
   // ── Timed Challenge ──
   const hdrSim = document.createElement("div");
