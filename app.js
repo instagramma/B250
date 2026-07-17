@@ -897,7 +897,7 @@ function buildTopbar() {
       if (state.route === "sectionMenu" || state.route === "modes") { state.route = "home"; state.sectionKey = null; }
 
       else if (state.route === "grMenu")        { state.route = "sectionMenu"; state.grSection = -1; }
-      else if (state.route === "examMenu")      state.route = "sectionMenu";
+      else if (state.route === "examMenu")      state.route = (state.sectionKey === "lab2" ? "modes" : "sectionMenu");
       else if (state.route === "stuviaMenu")    state.route = "sectionMenu";
       else if (state.route === "claudeMenu")    state.route = "sectionMenu";
       else if (state.route === "diagramMenu")   state.route = "sectionMenu";
@@ -1218,6 +1218,14 @@ function renderModes(main) {
   grModes.push({ id: "quiz", filter: "content", icon: "📝", label: "Full Quiz",
     desc: `${split.content} questions, shuffled & scored` });
   groups.push({ label: "Guided Readings", icon: "📖", modes: grModes });
+
+  // ── Practice Tests — timed sims + mini-mocks (Lab 2 gets the full treatment) ──
+  if (state.sectionKey === "lab2") {
+    groups.push({ label: "Practice Tests", icon: "📝", modes: [
+      { id: "examMenu", icon: "🎓", label: "Simulations & Mini-Mocks",
+        desc: "Timed full mock + mini-mocks by system + missed-Q review + history" },
+    ]});
+  }
 
   // ── Practice Exams ─────────────────────────────────────────────────────────
   if (sec.exams && sec.exams.length) {
@@ -4787,6 +4795,7 @@ function sectionGRPool(key, indices) {
 const SECTION_GROUPS = {
   axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
   appendicular: [["Upper Extremity", "💪", [0,1,2,3,4,5,6,7]], ["Lower Extremity", "🦵", [8,9,10,11,12]], ["Foundations", "🔬", [13,14,15,16,17,18,19]]],
+  lab2: [["Nervous & Senses", "🧠", [0,1]], ["Endocrine & Blood", "🩸", [2,3]], ["Heart & Vessels", "🫀", [4,5]], ["Lymphatic & Respiratory", "🫁", [6,7]], ["Digestive & Urinary", "🍽️", [8,9]], ["Reproductive", "🔬", [10,11]]],
 };
 function _mkHdr(list, text) { const h = document.createElement("div"); h.className = "modeGroupHdr"; h.textContent = text; list.appendChild(h); }
 function buildGenericExamMenu(list, key) {
