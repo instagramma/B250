@@ -9,8 +9,10 @@ function isDiagramQ(q) {
 /* Fill-in-the-blank items (single answer / no distractors) — fine for flashcard review,
    but excluded from timed Simulations & Practice Exams (they render as a lone option). */
 function isFITBQ(q) { return !!(q && (q.fitb || (q.options || []).length <= 1)); }
-/* Out-of-scope items (imaging physics/technology, not anatomy) — never served. Reversible. */
-const OUT_OF_SCOPE_IDS = new Set(["PE-2159", "PE-2161"]);
+/* Out-of-scope items — never served in Torso exams/mocks. Reversible (just remove the id).
+   PE-2159/2161 = imaging physics. ST-0499/ST-0948 = "femoral artery becomes popliteal" — a
+   lower-limb (Appendicular) vessel that Stuvia mis-filed under Pelvis; not Torso material. */
+const OUT_OF_SCOPE_IDS = new Set(["PE-2159", "PE-2161", "ST-0499", "ST-0948"]);
 function isExamEligible(q) { return !!q && !isFITBQ(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
 /* Normalize a question stem so near-identical duplicates (same stem across GR/Stuvia/CB, or the
    Systemic master set that duplicates section questions) collapse to one key. */
