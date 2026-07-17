@@ -2664,6 +2664,19 @@ function buildDaySchedule(d, md) {
 /* Recognition-vs-mastery: are you learning concepts, or memorizing specific items?
    Signals: burst-drilled items that never stabilize, very fast repeat-corrects, and sections
    where you ace the few questions you tried but have barely covered them. */
+// Look up a question's actual text by its id (across GR/exams/flashcards, Stuvia, ClaudeBank) — so the
+// coach can show the real question instead of a meaningless internal id like "GR-5830".
+var _qTextIndex = null;
+function qTextById(id) {
+  if (!_qTextIndex) {
+    _qTextIndex = {};
+    const add = q => { if (q && q.id && _qTextIndex[q.id] == null) _qTextIndex[q.id] = String(q.q || q.question || ""); };
+    try { if (typeof DATA !== "undefined") Object.values(DATA.sections).forEach(s => { (s.subtopics || []).forEach(t => (t.quiz || []).forEach(add)); (s.exams || []).forEach(e => (e.questions || []).forEach(add)); (s.flashcards || []).forEach(add); }); } catch (e) {}
+    try { if (typeof STUVIA_BANK !== "undefined") STUVIA_BANK.forEach(s => (s.questions || []).forEach(add)); } catch (e) {}
+    try { if (typeof CLAUDEBANK !== "undefined") CLAUDEBANK.forEach(s => (s.questions || []).forEach(add)); } catch (e) {}
+  }
+  return _qTextIndex[id] || "";
+}
 // "Fuzzy" = you flip between right and wrong on the SAME item and it's not solid now (not just one old slip).
 function isFuzzy(id, mode) {
   const m = (activeProgress().qstats || {})[id]; const mm = m && m.m && m.m[mode];
@@ -2862,7 +2875,10 @@ function renderCoach(main) {
     const rows = mq.fuzzyIds.slice(0, 10).map(id => {
       const loc = (typeof Q_BOOKLOC !== "undefined" && Q_BOOKLOC[id]) ? Q_BOOKLOC[id] : null;
       const m = (activeProgress().qstats || {})[id]; const mm = m && m.m && m.m[md]; const at = avgTimeMs(mm);
-      return `<div style="font-size:.8rem;color:#555;margin:3px 0;">• <b>${id}</b>${loc?` · §${loc.s} p.${loc.p}`:""} — ${mm?mm.c:0}✓/${mm?mm.s:0} tries${at?`, ~${(at/1000).toFixed(1)}s`:""}</div>`;
+      let stem = qTextById(id).replace(/\[GR\]/g, "").trim();
+      if (stem.length > 90) stem = stem.slice(0, 90) + "…";
+      const meta = `${loc ? `§${loc.s} p.${loc.p} · ` : ""}${mm ? mm.c : 0}✓/${mm ? mm.s : 0} tries${at ? `, ~${(at / 1000).toFixed(1)}s` : ""}`;
+      return `<div style="font-size:.82rem;color:#444;margin:6px 0;line-height:1.4;">• ${stem ? escapeHtml(stem) : "<i>(question " + id + ")</i>"}<br><span style="color:#999;font-size:.72rem;">${meta}</span></div>`;
     }).join("");
     fz.innerHTML = `<div style="font-weight:800;color:#B5560F;font-size:.9rem;">⚠️ Fuzzy — you flip between right & wrong (${mq.fuzzyIds.length})</div>
       <div style="color:#777;font-size:.78rem;margin:2px 0 6px;">These are the clearest "memorizing, not knowing" signal${mq.fuzzyFast?` — ${mq.fuzzyFast} of them you answer fast, i.e. guessing on reflex`:""}. Read the underlying section, then re-test cold.</div>${rows}`;
