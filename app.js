@@ -808,8 +808,10 @@ function recordFlashcardResult(key, known, total) {
 
 function getSection(key) {
   if (key === "cumulative") {
+    // Cumulative FINAL = lecture units only (Appendicular + Axial + Torso). Labs are a SEPARATE
+    // practical and are intentionally excluded from the cumulative final review.
     const merged = { title: "Cumulative (Final Review)", flashcards: [], quiz: [], images: [] };
-    for (const k of ["lab1", "lab2", "appendicular", "axial", "torso"]) {
+    for (const k of ["appendicular", "axial", "torso"]) {
       const s = DATA.sections[k];
       merged.flashcards.push(...s.flashcards);
       merged.quiz.push(...s.quiz.map(q => ({ ...q })));
@@ -4755,6 +4757,108 @@ function renderHistory(main) {
   main.appendChild(list);
 }
 
+/* ── Generalized practice-tests for non-Torso sections (Axial / Appendicular / Cumulative) ──
+   Reuses the section-agnostic full-exam (skip & flag) flow. Torso keeps its own richer builder. */
+function launchFullExamPool(pool, title, seconds) {
+  if (!pool || !pool.length) { alert("No questions available yet."); return; }
+  fullExamDeck = pool; fullExamIndex = 0;
+  fullExamAnswers = new Array(pool.length).fill(-1);
+  fullExamFlags = new Set();
+  fullExamSecondsLeft = seconds || 6000;
+  fullExamShowOverview = false;
+  fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
+  fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
+  fullExamShuffledOrders = pool.map(q => shuffle([...(q.options || [])]));
+  clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
+  state.examTitle = title || "Simulation";
+  state.route = "fullExam"; render();
+}
+// Exam-eligible, non-diagram GR pool for a section (optionally limited to subtopic indices). Diagram
+// questions are excluded because the full-exam view is text-only (Torso does the same).
+function sectionGRPool(key, indices) {
+  const s = DATA.sections[key]; if (!s) return [];
+  let pool = [];
+  (s.subtopics || []).forEach((t, i) => {
+    if (indices && indices.indexOf(i) < 0) return;
+    (t.quiz || []).forEach(q => { if (isExamEligible(q) && !isDiagramQ(q)) pool.push(q); });
+  });
+  return dedupeQs(pool);
+}
+const SECTION_GROUPS = {
+  axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
+  appendicular: [["Upper Extremity", "💪", [0,1,2,3,4,5,6,7]], ["Lower Extremity", "🦵", [8,9,10,11,12]], ["Foundations", "🔬", [13,14,15,16,17,18,19]]],
+};
+function _mkHdr(list, text) { const h = document.createElement("div"); h.className = "modeGroupHdr"; h.textContent = text; list.appendChild(h); }
+function buildGenericExamMenu(list, key) {
+  const sec = getSection(key), name = (sec.title || key).split(" (")[0];
+  const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
+  _mkHdr(list, "Realistic Mock");
+  const allPool = sectionGRPool(key);
+  const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
+  simBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your exam · ${Math.min(SIM_N, allPool.length)} Qs · ~${Math.round(SIM_SECS/60)} min · skip &amp; flag freely</span>`;
+  simBtn.onclick = () => launchFullExamPool(shuffle(allPool).slice(0, SIM_N), name + " Simulation", SIM_SECS);
+  list.appendChild(simBtn);
+  const groups = SECTION_GROUPS[key];
+  if (groups) {
+    _mkHdr(list, "By Section — Mini Mocks");
+    groups.forEach(([label, icon, idxs]) => {
+      const pool = sectionGRPool(key, idxs);
+      const b = document.createElement("button"); b.className = "modeBtn";
+      b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${label} — Mini Mock</span><span class="modeMeta">${Math.min(MINI_N, pool.length)} Qs · ~${Math.round(MINI_SECS/60)} min · skip &amp; flag</span>`;
+      b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, MINI_N), label + " Mini Mock", MINI_SECS);
+      list.appendChild(b);
+    });
+  }
+  if (sec.exams && sec.exams.length) {
+    _mkHdr(list, "Timed Challenge");
+    const epBtn = document.createElement("button"); epBtn.className = "modeBtn";
+    epBtn.innerHTML = `<span class="modeIcon">📋</span><span class="modeLabel">Practice Exams</span><span class="modeMeta">${sec.exams.length} timed exam${sec.exams.length!==1?"s":""} available</span>`;
+    epBtn.onclick = () => { state.route = "simPicker"; render(); };
+    list.appendChild(epBtn);
+  }
+  _mkHdr(list, "Review");
+  const missBtn = document.createElement("button"); missBtn.className = "modeBtn";
+  missBtn.style.cssText = "border:2px solid #C0392B;background:#FDECEA;";
+  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Re-do everything you've gotten wrong in ${name}</span>`;
+  missBtn.onclick = () => {
+    const missed = JSON.parse(localStorage.getItem(ns("missed:" + key)) || "[]");
+    if (!missed.length) { alert("No missed questions recorded yet. Take a mock or quiz first!"); return; }
+    missedDeck = shuffle([...missed]); state.route = "missedReview"; render();
+  };
+  list.appendChild(missBtn);
+}
+function buildCumulativeExamMenu(list) {
+  const SECS = 6000, N = 150, PER_N = 100;
+  _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
+  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso")));
+  const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
+  simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · ${Math.min(N, allPool.length)} Qs · skip &amp; flag</span>`;
+  simBtn.onclick = () => launchFullExamPool(shuffle(allPool).slice(0, N), "Cumulative Simulation", SECS);
+  list.appendChild(simBtn);
+  _mkHdr(list, "By Unit");
+  [["appendicular","🦴","Appendicular"], ["axial","🦷","Axial"], ["torso","🫁","Torso"]].forEach(([k, icon, label]) => {
+    const pool = sectionGRPool(k);
+    const b = document.createElement("button"); b.className = "modeBtn";
+    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${label} — Practice Test</span><span class="modeMeta">${Math.min(PER_N, pool.length)} Qs · ~50 min · skip &amp; flag</span>`;
+    b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER_N), label + " (Cumulative)", SECS);
+    list.appendChild(b);
+  });
+  _mkHdr(list, "Review");
+  const missBtn = document.createElement("button"); missBtn.className = "modeBtn";
+  missBtn.style.cssText = "border:2px solid #C0392B;background:#FDECEA;";
+  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Everything you've gotten wrong across all three units</span>`;
+  missBtn.onclick = () => {
+    let missed = [];
+    ["appendicular","axial","torso"].forEach(k => { try { missed = missed.concat(JSON.parse(localStorage.getItem(ns("missed:" + k)) || "[]")); } catch (e) {} });
+    missed = dedupeQs(missed);
+    if (!missed.length) { alert("No missed questions recorded yet."); return; }
+    missedDeck = shuffle(missed); state.route = "missedReview"; render();
+  };
+  list.appendChild(missBtn);
+}
+
 /* ─── EXAM MENU ─── */
 function renderExamMenu(main) {
   const sec = getSection(state.sectionKey);
@@ -4770,6 +4874,10 @@ function renderExamMenu(main) {
   histBtn.innerHTML = `<span class="modeIcon">🗓️</span><span class="modeLabel">History — past attempts</span><span class="modeMeta">${nAttempts ? nAttempts + " logged · " : ""}every mock, timed exam &amp; quiz on one timeline · tap any to see missed questions</span>`;
   histBtn.onclick = () => { state.route = "history"; state.histFilter = "all"; render(); };
   list.appendChild(histBtn);
+
+  // Non-Torso sections use the generalized builder (Torso keeps its Stuvia/ClaudeBank-rich menu below).
+  if (state.sectionKey === "cumulative") { buildCumulativeExamMenu(list); main.appendChild(list); return; }
+  if (state.sectionKey !== "torso") { buildGenericExamMenu(list, state.sectionKey); main.appendChild(list); return; }
 
   // ── Full Exam — realistic mocks (all use the 100-min skip & flag format) ──
   const hdrFull = document.createElement("div");
