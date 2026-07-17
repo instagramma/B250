@@ -4443,7 +4443,7 @@ function renderSectionMenu(main) {
       icon: "📚",
       title: "Stuvia Bank (Extra Practice)",
       sub: "Community question bank — extra practice",
-      condition: true,
+      condition: isTorso,   // Stuvia bank is Torso-only content
     },
     {
       id: "diagramMenu",
