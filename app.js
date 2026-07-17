@@ -4565,8 +4565,8 @@ function renderSectionMenu(main) {
       id: "missedRoot",
       icon: "🔁",
       title: "Missed Questions",
-      sub: "Re-do everything you've gotten wrong — all sections",
-      condition: isTorso,
+      sub: "Re-do everything you've gotten wrong in this section",
+      condition: ["torso","appendicular","axial"].includes(state.sectionKey),
       bg: "linear-gradient(135deg,#C0392B 0%,#922B21 100%)",  // coral/red — the "wrong ones"
       shadow: "rgba(192,57,43,.32)",
       onclick: () => {
@@ -4976,6 +4976,18 @@ function buildGenericExamMenu(list, key) {
     });
   }
   addCatCard(list, key);
+  // ── Competitive — Sudden Death (parity with Torso) ──
+  _mkHdr(list, "Competitive");
+  const sdPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
+  const sdBest = (progressState.quizzes && progressState.quizzes["suddenDeath:" + key]) || {};
+  const sdB = document.createElement("button"); sdB.className = "modeBtn";
+  sdB.innerHTML = `<span class="modeIcon">💀</span><span class="modeLabel">Sudden Death</span><span class="modeMeta">Keep going until you miss${sdBest.score ? " · Best streak: " + sdBest.score : ""}</span>`;
+  sdB.onclick = () => {
+    if (!sdPool.length) { alert("No questions available yet."); return; }
+    sdDeck = shuffle([...sdPool]); sdIndex = 0; sdStreak = 0; sdAnswered = false; sdSelected = -1;
+    state.route = "suddenDeath"; render();
+  };
+  list.appendChild(sdB);
   if (sec.exams && sec.exams.length) {
     _mkHdr(list, "Timed Challenge");
     const epBtn = document.createElement("button"); epBtn.className = "modeBtn";
