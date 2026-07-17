@@ -855,6 +855,18 @@ function activeStuvia(key) {
 
 const state = { route: "home", sectionKey: null, mode: null, subtopicIndex: null, cameFromSubtopics: false, quizFilter: null, quizSource: null, cbIndex: -1, examSource: null, prevRoute: null, grSection: -1 };
 
+// CAT (adaptive test) config + state — declared EARLY (before initApp) so a restored
+// catSim/examMenu route on page load can't hit a temporal-dead-zone error. Functions live
+// in the CAT module lower down (hoisted; they only read these once they actually run).
+const CAT_CONFIG = {
+  torso:        { enabled: true,  total: 100, label: "Torso" },
+  cumulative:   { enabled: true,  total: 100, label: "Cumulative" },
+  appendicular: { enabled: false, total: 100, label: "Appendicular" },
+  axial:        { enabled: false, total: 100, label: "Axial" },
+};
+const CAT_MIN_ITEMS = 50, CAT_SE_STOP = 0.32;
+let catState = null;
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -4418,7 +4430,9 @@ function renderMissedReview(main) {
   });
 }
 
-initApp();
+// initApp() is invoked at the VERY END of this file (see bottom) so that every
+// module-level const/let (SECTION_GROUPS, CAT_CONFIG, etc.) is initialized before
+// the first render — a restored route on load can safely reference any of them.
 
 /* ═══════════════════════════════════════════════════════════
    NEW HIERARCHICAL NAVIGATION — added 2026-07
@@ -5753,16 +5767,9 @@ function renderClaudeMenu(main) {
    NOT a graded practice exam — it's a fast, adaptive read on where you
    stand. Difficulty is a heuristic proxy (item type + source + spread),
    so treat results as directional. Isolated from the normal exam flow.
+   NOTE: CAT_CONFIG / CAT_MIN_ITEMS / catState are declared near the top of the file
+   (before initApp) so a restored catSim/examMenu route on load can't hit a TDZ error.
    ═══════════════════════════════════════════════════════════ */
-const CAT_CONFIG = {
-  torso:        { enabled: true,  total: 100, label: "Torso" },
-  cumulative:   { enabled: true,  total: 100, label: "Cumulative" },
-  appendicular: { enabled: false, total: 100, label: "Appendicular" },
-  axial:        { enabled: false, total: 100, label: "Axial" },
-};
-const CAT_MIN_ITEMS = 50, CAT_SE_STOP = 0.32;
-let catState = null;
-
 function _catHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; } return h; }
 function _logistic(x) { return 1 / (1 + Math.exp(-x)); }
 // Deterministic pseudo-difficulty in logits (~ -1.8..+1.8) from item type/source + a hash spread.
@@ -6428,3 +6435,6 @@ function renderFullExamEnd(main) {
   main.appendChild(btnRow);
 }
 /* ══ End Full Exam ══ */
+
+/* Kick off the app after ALL module-level declarations are initialized. */
+initApp();
