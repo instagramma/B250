@@ -835,7 +835,22 @@ function activeClaudeBank(key) {
     if (typeof CLAUDEBANK !== "undefined")              out = out.concat(CLAUDEBANK);
     return out.length ? out : null;
   }
-  return (typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length) ? CLAUDEBANK : null; // torso default
+  if (k === "torso") return (typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length) ? CLAUDEBANK : null;
+  return null; // lab1 / lab2 have no ClaudeBank
+}
+// Section-aware Stuvia bank. Torso → STUVIA_BANK, Axial → STUVIA_AXIAL, Cumulative → both.
+// (Appendicular has no Stuvia source — the Stuvia PDF has essentially no appendicular content.)
+function activeStuvia(key) {
+  const k = key || state.sectionKey;
+  if (k === "torso") return (typeof STUVIA_BANK !== "undefined" && STUVIA_BANK.length) ? STUVIA_BANK : null;
+  if (k === "axial") return (typeof STUVIA_AXIAL !== "undefined" && STUVIA_AXIAL.length) ? STUVIA_AXIAL : null;
+  if (k === "cumulative") {
+    let out = [];
+    if (typeof STUVIA_AXIAL !== "undefined") out = out.concat(STUVIA_AXIAL);
+    if (typeof STUVIA_BANK !== "undefined") out = out.concat(STUVIA_BANK);
+    return out.length ? out : null;
+  }
+  return null; // appendicular / lab1 / lab2 have no Stuvia bank
 }
 
 const state = { route: "home", sectionKey: null, mode: null, subtopicIndex: null, cameFromSubtopics: false, quizFilter: null, quizSource: null, cbIndex: -1, examSource: null, prevRoute: null, grSection: -1 };
@@ -3302,6 +3317,7 @@ function buildQuestionIndex() {
   if (typeof CLAUDEBANK_APPENDICULAR !== "undefined") CLAUDEBANK_APPENDICULAR.forEach(sec => (sec.questions || []).forEach(q => add(q, null)));
   if (typeof CLAUDEBANK_AXIAL !== "undefined") CLAUDEBANK_AXIAL.forEach(sec => (sec.questions || []).forEach(q => add(q, null)));
   if (typeof STUVIA_BANK !== "undefined") { STUVIA_BANK.forEach(sec => (sec.questions || []).forEach(q => add(q, null))); }
+  if (typeof STUVIA_AXIAL !== "undefined") { STUVIA_AXIAL.forEach(sec => (sec.questions || []).forEach(q => add(q, q.ch || null))); }
   _qIndex = idx; return idx;
 }
 function bankOfId(id) { return id && id.indexOf("ST-") === 0 ? "Stuvia" : id.indexOf("CB-") === 0 ? "ClaudeBank" : id.indexOf("GR-") === 0 ? "Guided Reading" : id.indexOf("PE-") === 0 ? "Practice Exam" : "Question"; }
@@ -4479,7 +4495,7 @@ function renderSectionMenu(main) {
       icon: "📚",
       title: "Stuvia Bank (Extra Practice)",
       sub: "Community question bank — extra practice",
-      condition: isTorso,   // Stuvia bank is Torso-only content
+      condition: !!(activeStuvia() && activeStuvia().length),   // Torso + Axial have Stuvia banks
     },
     {
       id: "diagramMenu",
@@ -4838,6 +4854,14 @@ function sectionCBPool(key) {
   }));
   return out;
 }
+// Stuvia questions for a section (Torso / Axial). Options are already plain text.
+function sectionStuviaPool(key) {
+  const bank = activeStuvia(key);
+  if (!bank) return [];
+  const out = [];
+  bank.forEach(t => (t.questions || []).forEach(q => { if (isExamEligible(q)) out.push(q); }));
+  return out;
+}
 const SECTION_GROUPS = {
   axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
   appendicular: [["Upper Extremity", "💪", [0,1,2,3,4,5,6,7]], ["Lower Extremity", "🦵", [8,9,10,11,12]], ["Foundations", "🔬", [13,14,15,16,17,18,19]]],
@@ -4849,7 +4873,7 @@ function buildGenericExamMenu(list, key) {
   const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
   addCatCard(list, key);
   _mkHdr(list, "Realistic Mock");
-  const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key)));
+  const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your exam · ${Math.min(SIM_N, allPool.length)} Qs · ~${Math.round(SIM_SECS/60)} min · skip &amp; flag freely</span>`;
@@ -4888,7 +4912,7 @@ function buildCumulativeExamMenu(list) {
   const SECS = 6000, N = 150, PER_N = 100;
   addCatCard(list, "cumulative");
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
-  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative")));
+  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative"), sectionStuviaPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · ${Math.min(N, allPool.length)} Qs · skip &amp; flag</span>`;
@@ -5578,9 +5602,8 @@ function renderCustomBuilder(main) {
 
 /* ─── STUVIA BANK MENU ─── */
 function renderStuviaMenu(main) {
-  // STUVIA_BANK is expected to be a global array defined in stuvia.js (to be added)
-  // Shape: [ { title: "Topic Name", questions: [ {question, options:[], correct, explanation?} ] } ]
-  const bank = (typeof STUVIA_BANK !== "undefined" && Array.isArray(STUVIA_BANK)) ? STUVIA_BANK : null;
+  // Section-aware: Torso → STUVIA_BANK, Axial → STUVIA_AXIAL.
+  const bank = activeStuvia();
 
   if (!bank || bank.length === 0) {
     const msg = document.createElement("p");
@@ -5763,7 +5786,7 @@ function catRegions(key) {
     ];
   }
   if (key === "cumulative") {
-    const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k))).map(q => q.id);
+    const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
     return [
       { name: "Appendicular", quota: 34, pool: clean(unit("appendicular")) },
       { name: "Axial", quota: 33, pool: clean(unit("axial")) },
@@ -5964,6 +5987,8 @@ function genericRegions(key) {
   const out = groups.map(([label, icon, idxs]) => ({ name: label, ids: sectionGRPool(key, idxs).map(q => q.id) }));
   const cb = sectionCBPool(key);
   if (cb.length) out.push({ name: "Claude Bank", ids: cb.map(q => q.id) });
+  const stu = sectionStuviaPool(key);
+  if (stu.length) out.push({ name: "Stuvia Bank", ids: stu.map(q => q.id) });
   return out;
 }
 function renderPreparednessGeneric(main) {
