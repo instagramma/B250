@@ -507,8 +507,8 @@ function cloudMerge(into, from) {
         am.reps = Math.max(am.reps || 0, bm.reps || 0);
         am.tt = Math.max(am.tt || 0, bm.tt || 0); am.tn = Math.max(am.tn || 0, bm.tn || 0); am.fc = Math.max(am.fc || 0, bm.fc || 0);
         // Retention state: the most recent review (larger t) is authoritative for S/last/t.
-        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
-        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
+        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; am.flLast = bm.flLast; }
+        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; am.flLast = bm.flLast; }
       });
     }
   });
@@ -557,7 +557,7 @@ function setStudyMode(m) { try { localStorage.setItem(ns("biol250_studyMode"), m
 
 /* Per-question stats by unique ID: how often each question is seen vs missed.
    Powers the "Questions You Keep Missing" view. */
-function recordQuestionStat(q, wasCorrect, elapsedMs) {
+function recordQuestionStat(q, wasCorrect, elapsedMs, flagged) {
   if (!q || !q.id) return;
   if (!progressState.qstats) progressState.qstats = {};
   const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
@@ -581,6 +581,7 @@ function recordQuestionStat(q, wasCorrect, elapsedMs) {
     mm.S = Math.max(RET_SMIN, RET_LAPSE * (mm.S || RET_S0));    // lapse: decay, keep some credit
   }
   mm.last = wasCorrect ? 1 : 0;
+  mm.flLast = !!flagged;   // you flagged it to revisit = you weren't 100% sure, even if the final answer was right
   mm.t = now;
   mm.reps = (mm.reps || 0) + 1;
   // response-time tracking (for recognition-vs-mastery analysis): rolling total + fast-correct count
@@ -609,6 +610,7 @@ function qRecall(id, mode) {
   if (!mm || mm.last !== 1) r = 0;
   else if (!mm.S || !mm.t) r = 1;                              // legacy correct (pre-timestamp) = full credit; converts to the forgetting curve on next practice
   else r = Math.min(1, Math.pow(2, -((Date.now() - mm.t) / 86400000) / mm.S));
+  if (mm && mm.flLast && r > 0.7) r = 0.7;                     // flagged on last try = "not solid yet" even if correct; clears when re-answered unflagged
   _recallCache[k] = r; return r;
 }
 /* Chance of answering right on the exam even if not fully recalled: recall + guess/elimination credit. */
@@ -652,8 +654,8 @@ function mergeProgress(into, from) {
         am.s = (am.s || 0) + (bm.s || 0); am.c = (am.c || 0) + (bm.c || 0);
         am.reps = Math.max(am.reps || 0, bm.reps || 0);
         am.tt = (am.tt || 0) + (bm.tt || 0); am.tn = (am.tn || 0) + (bm.tn || 0); am.fc = (am.fc || 0) + (bm.fc || 0);
-        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
-        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; }
+        if ((bm.t || 0) > (am.t || 0)) { am.t = bm.t; am.S = bm.S; am.last = bm.last; am.flLast = bm.flLast; }
+        else if (am.t == null && bm.t != null) { am.t = bm.t; am.S = bm.S; am.last = bm.last; am.flLast = bm.flLast; }
       });
     }
   });
@@ -1126,16 +1128,16 @@ function renderHome(main) {
     const ac = HOME_ACCENT[key] || { c1: "#64748b", c2: "#475569" };
     const card = document.createElement("button");
     card.className = "homeCard";
-    card.style.cssText = "position:relative;overflow:hidden;text-align:left;background:#fff;border:1px solid #ece7dd;border-radius:18px;padding:0;cursor:pointer;box-shadow:0 2px 10px rgba(31,56,100,.06);display:block;width:100%;";
+    // flex column + height:100% so every card in a row is the same height; icon stacked ABOVE the
+    // title so long names (Appendicular) get the full width and never clip.
+    card.style.cssText = "position:relative;overflow:hidden;text-align:left;background:#fff;border:1px solid #ece7dd;border-radius:18px;padding:0;cursor:pointer;box-shadow:0 2px 10px rgba(31,56,100,.06);display:flex;flex-direction:column;width:100%;height:100%;min-width:0;";
     card.innerHTML = `
-      <div style="height:6px;background:linear-gradient(90deg,${ac.c1},${ac.c2});"></div>
-      <div style="padding:16px 18px 18px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-          <span style="flex:0 0 auto;width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,${ac.c1}22,${ac.c2}22);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${ICONS[key] || "📘"}</span>
-          <span style="font-family:Georgia,serif;font-size:1.28rem;font-weight:800;color:#1F2937;">${s.title.split(" (")[0]}</span>
-        </div>
-        <div style="color:#6b7280;font-size:.86rem;line-height:1.4;min-height:2.4em;">${META[key] || ""}</div>
-        <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:${ac.c2};background:${ac.c1}14;border-radius:999px;padding:4px 11px;">
+      <div style="height:6px;flex:0 0 auto;background:linear-gradient(90deg,${ac.c1},${ac.c2});"></div>
+      <div style="padding:15px 16px 16px;display:flex;flex-direction:column;flex:1;min-width:0;">
+        <span style="flex:0 0 auto;width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,${ac.c1}22,${ac.c2}22);display:flex;align-items:center;justify-content:center;font-size:1.45rem;">${ICONS[key] || "📘"}</span>
+        <div style="font-family:Georgia,serif;font-size:1.2rem;font-weight:800;color:#1F2937;margin:10px 0 4px;overflow-wrap:break-word;">${s.title.split(" (")[0]}</div>
+        <div style="color:#6b7280;font-size:.85rem;line-height:1.4;flex:1;">${META[key] || ""}</div>
+        <div style="margin-top:12px;align-self:flex-start;font-size:.78rem;font-weight:700;color:${ac.c2};background:${ac.c1}14;border-radius:999px;padding:4px 11px;white-space:nowrap;">
           ${s.flashcards.length} cards&nbsp;·&nbsp;${qCount(s)} questions</div>
       </div>`;
     card.onclick = () => { state.sectionKey = key; state.route = key === "lab2" ? "modes" : "sectionMenu"; render(); };
@@ -2796,7 +2798,7 @@ function renderStudyPlan(main, md) {
   // 1. Biggest lever: close untried blind spots
   if (d.untried > 0) {
     const wnames = d.weak.filter(w => w.untried > 0).map(w => `${w.s} (${w.untried} left)`).slice(0, 3).join(", ");
-    steps.push(`<b>Close blind spots — the biggest win.</b> You've left <b>${d.untried.toLocaleString()}</b> questions untried; untried counts as zero, so these are free points. Start with ${wnames || "your weakest systems"}.`);
+    steps.push(`<b>Sample your blind spots.</b> You don't need all <b>${d.untried.toLocaleString()}</b> untried questions — a representative <b>~40 per weak system</b> is enough to prove you know it (that's how Preparedness scores it). Start with ${wnames || "your weakest systems"}.`);
   }
   // 2. Read + drill the weakest systems (specific Martini pages)
   d.weak.slice(0, 3).forEach(w => {
@@ -2880,7 +2882,7 @@ function renderCoach(main) {
     }
     if (beh.flagTotal > 0) {
       const facc = Math.round(beh.flagRight / beh.flagTotal * 100);
-      bh += `<div style="font-size:.84rem;color:#333;margin-top:8px;line-height:1.5;">🚩 Of <b>${beh.flagTotal}</b> flagged question${beh.flagTotal===1?"":"s"}, you got <b>${facc}%</b> right. ${facc < 60 ? "Flagging is catching your genuinely-shaky ones — always leave time to revisit them." : "You flag conservatively and usually nail them."}</div>`;
+      bh += `<div style="font-size:.84rem;color:#333;margin-top:8px;line-height:1.5;">🚩 Of <b>${beh.flagTotal}</b> flagged question${beh.flagTotal===1?"":"s"}, you got <b>${facc}%</b> right. ${facc < 60 ? "Flagging is catching your genuinely-shaky ones — always leave time to revisit them." : "You flag conservatively and usually nail them."} <span style="color:#777;">Flagged items count as "not solid yet" in your readiness (even if right) until you re-answer them unflagged.</span></div>`;
     }
     bw.innerHTML = bh;
     main.appendChild(bw);
@@ -5798,7 +5800,7 @@ function renderFullExamEnd(main) {
   fullExamDeck.forEach((q, i) => {
     const ans = fullExamAnswers[i];
     if (ans === q.correct) correct++;
-    if (ans !== -1) recordQuestionStat(q, ans === q.correct); // per-question stats for answered items
+    if (ans !== -1) recordQuestionStat(q, ans === q.correct, undefined, fullExamFlags.has(i)); // flagged = you weren't 100% on it
   });
   const pct = Math.round(correct / total * 100);
 
