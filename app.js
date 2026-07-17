@@ -512,6 +512,10 @@ function cloudMerge(into, from) {
       });
     }
   });
+  // Question reports — union by id|date|reason so nothing is lost across devices.
+  into.reports = into.reports || [];
+  { const rs = new Set(into.reports.map(r => (r.id||"")+"|"+(r.date||"")+"|"+(r.reason||"")));
+    (from.reports || []).forEach(r => { const k=(r.id||"")+"|"+(r.date||"")+"|"+(r.reason||""); if(!rs.has(k)){rs.add(k); into.reports.push(r);} }); }
   Object.keys(from.examAttempts || {}).forEach(k => {
     const bar = from.examAttempts[k] || [], aar = into.examAttempts[k];
     if (!aar) { into.examAttempts[k] = JSON.parse(JSON.stringify(bar)); return; }
@@ -653,6 +657,9 @@ function mergeProgress(into, from) {
       });
     }
   });
+  into.reports = into.reports || [];
+  { const rs = new Set(into.reports.map(r => (r.id||"")+"|"+(r.date||"")+"|"+(r.reason||"")));
+    (from.reports || []).forEach(r => { const k=(r.id||"")+"|"+(r.date||"")+"|"+(r.reason||""); if(!rs.has(k)){rs.add(k); into.reports.push(r);} }); }
   return into;
 }
 /* All-time view = archive merged with current. This is expensive (parse + deep-clone + merge),
@@ -677,9 +684,15 @@ function resetCurrentData() {
 
 /* ---------- QUESTION REPORTS (wrong answer / formatting) ----------
    Device-wide (bank QA, not per-person stats) with reporter attribution. */
-const REPORTS_KEY = "biol250_reports_v1";
-function loadReports() { try { return JSON.parse(localStorage.getItem(REPORTS_KEY)) || []; } catch (e) { return []; } }
-function saveReports(a) { try { localStorage.setItem(REPORTS_KEY, JSON.stringify(a)); } catch (e) {} }
+const REPORTS_KEY = "biol250_reports_v1"; // legacy device-local key (migrated into progressState.reports so reports SYNC)
+function loadReports() {
+  if (!progressState.reports) {
+    let legacy = []; try { legacy = JSON.parse(localStorage.getItem(REPORTS_KEY)) || []; } catch (e) {}
+    progressState.reports = legacy;   // one-time migration; from here reports live in synced progress
+  }
+  return progressState.reports;
+}
+function saveReports(a) { progressState.reports = a; saveLocalProgress(); }
 function addReport(q, reason, note) {
   if (!q) return;
   const reports = loadReports();
@@ -2968,6 +2981,16 @@ function renderPrepVerdict(main, md) {
     </div>
     <div style="font-size:.9rem;font-weight:700;color:${col};margin:6px 0 2px;">${verdict}</div>
     <div style="font-size:.76rem;color:#888;line-height:1.4;margin-bottom:8px;">Skill on what you've practiced × how broadly you've sampled (a solid ~40-question sample per region counts as representative — you don't have to finish the whole bank) × a memorizing-vs-mastering check.</div>`;
+  // The 4 main regions at a glance (Thorax / Abdomen / Pelvis / Systemic)
+  html += `<div style="display:flex;gap:6px;margin:6px 0 2px;">` + p.regions.map(rg => {
+    const rc = rg.attempted === 0 ? "#bbb" : _prepBandColor(rg.score);
+    const lbl = rg.r === "Systemic" ? "Systemic" : rg.r;
+    return `<div style="flex:1;text-align:center;background:#f6f8fb;border-radius:9px;padding:7px 4px;">
+      <div style="font-size:.68rem;color:#5a6b85;font-weight:700;">${lbl}</div>
+      <div style="font-size:1.15rem;font-weight:800;color:${rc};">${rg.attempted===0?"—":rg.score+"%"}</div>
+      <div style="font-size:.6rem;color:#aab;">${rg.attempted} seen</div></div>`;
+  }).join("") + `</div>
+    <div style="font-size:.68rem;color:#aaa;text-align:center;margin-bottom:2px;">↓ scroll for per-system (heart, blood, digestive…) &amp; per-chapter breakdowns</div>`;
   // Strengths
   if (p.strengths.length) {
     html += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;">
@@ -4063,6 +4086,11 @@ function renderSimExam(main) {
   });
   main.appendChild(optsWrap);
 
+  const simRepRow = document.createElement("div");
+  simRepRow.style.cssText = "text-align:right;padding:2px 16px 0;";
+  simRepRow.appendChild(reportBtn(q));
+  main.appendChild(simRepRow);
+
   // ── Nav row ───────────────────────────────────────────────
   const navRow = document.createElement("div");
   navRow.style.cssText = "display:flex;gap:8px;padding:12px 16px 8px;align-items:center;";
@@ -5000,6 +5028,10 @@ function renderSuddenDeath(main) {
     qCard.appendChild(btn);
   });
   main.appendChild(qCard);
+  const sdRepRow = document.createElement("div");
+  sdRepRow.style.cssText = "text-align:right;padding:2px 16px 0;";
+  sdRepRow.appendChild(reportBtn(q));
+  main.appendChild(sdRepRow);
 }
 
 /* ─── SUDDEN DEATH END SCREEN ─── */
@@ -5592,6 +5624,12 @@ function renderFullExam(main) {
   });
   main.appendChild(qCard);
 
+  // Report-a-question link (saved + synced for review)
+  const repRow = document.createElement("div");
+  repRow.style.cssText = "text-align:right;padding:2px 16px 0;";
+  repRow.appendChild(reportBtn(q));
+  main.appendChild(repRow);
+
   // ── Navigation ──
   const isLast = fullExamIndex === total - 1;
   const answeredCur = fullExamAnswers[fullExamIndex] !== -1;
@@ -5688,14 +5726,35 @@ function renderFullExamEnd(main) {
     <div class="feEndLabel">${pct >= 70 ? "Passing" : "Keep studying"}</div>`;
   main.appendChild(scoreCard);
 
-  // ── Section breakdown ──
-  const ORDER = ["Thorax","Abdomen","Pelvis & Perineum","Systemic"];
-  if (fullExamDeck.some(q => q._section)) {
-    const bkHdr = document.createElement("div");
-    bkHdr.className = "modeGroupHdr";
-    bkHdr.textContent = "By Section";
-    main.appendChild(bkHdr);
-  }
+  // ── Strong/weak breakdown of THIS mock (by exam region + by system) ──
+  const _regById = {}, _sysById = {};
+  try { const bs = blueprintSources(); Object.keys(bs).forEach(r => bs[r].forEach(o => { _regById[o.id] = r; })); } catch (e) {}
+  try { const cs = coverageSources(); Object.keys(cs).forEach(s => cs[s].forEach(id => { _sysById[id] = s; })); } catch (e) {}
+  const tallyBy = (mapObj) => {
+    const t = {};
+    fullExamDeck.forEach((q, i) => { const k = mapObj[q.id]; if (!k) return; (t[k] = t[k] || { c: 0, n: 0 }); t[k].n++; if (fullExamAnswers[i] === q.correct) t[k].c++; });
+    return t;
+  };
+  const renderBreak = (title, tallyObj, minN) => {
+    const keys = Object.keys(tallyObj).filter(k => tallyObj[k].n >= minN);
+    if (keys.length < 1) return;
+    keys.sort((a, b) => (tallyObj[a].c / tallyObj[a].n) - (tallyObj[b].c / tallyObj[b].n)); // weakest first
+    const hdr = document.createElement("div"); hdr.className = "modeGroupHdr"; hdr.style.marginTop = "18px"; hdr.textContent = title;
+    main.appendChild(hdr);
+    const wrap = document.createElement("div"); wrap.style.cssText = "padding:0 4px;";
+    keys.forEach(k => {
+      const o = tallyObj[k], p = Math.round(o.c / o.n * 100), col = _prepBandColor(p);
+      const row = document.createElement("div"); row.style.cssText = "margin:8px 0;";
+      row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;">
+          <span style="font-weight:700;">${k}</span><span style="color:${col};font-weight:700;">${p}% · ${o.c}/${o.n}</span></div>
+        <div style="height:9px;background:#ececec;border-radius:5px;overflow:hidden;"><div style="height:100%;width:${p}%;background:${col};border-radius:5px;"></div></div>`;
+      wrap.appendChild(row);
+    });
+    main.appendChild(wrap);
+  };
+  const regT = tallyBy(_regById), sysT = tallyBy(_sysById);
+  if (Object.keys(regT).length > 1) renderBreak("By exam region", regT, 1);
+  renderBreak("By system — your strong & weak spots", sysT, 3);
 
   // ── Missed questions review ──
   const wrong = fullExamDeck
