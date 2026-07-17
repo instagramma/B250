@@ -1094,7 +1094,7 @@ const HOME_ACCENT = {
 function renderHome(main) {
   ensureHoverStyle();
   const wrap = document.createElement("div");
-  wrap.style.cssText = "max-width:860px;margin:0 auto;padding:0 6px;";
+  wrap.style.cssText = "max-width:1000px;margin:0 auto;padding:0 6px;";
 
   // Reports pill (clearly a quality-flag tool, not part of studying)
   const nRep = loadReports().filter(r => !r.resolved).length;
@@ -1117,6 +1117,11 @@ function renderHome(main) {
     <div style="color:#7c8598;font-size:.95rem;margin-top:4px;">Human Anatomy — timed practice, real-exam sims &amp; a coach that tells you what to study next.</div>`;
   wrap.appendChild(hero);
 
+  // Live question count (subtopics are the source of truth; s.quiz can lag after edits like the T/F add).
+  const qCount = (s) => {
+    const sub = (s.subtopics || []).reduce((a, t) => a + ((t.quiz || []).length), 0);
+    return sub || (s.quiz || []).length;
+  };
   const makeCard = (key, s) => {
     const ac = HOME_ACCENT[key] || { c1: "#64748b", c2: "#475569" };
     const card = document.createElement("button");
@@ -1131,7 +1136,7 @@ function renderHome(main) {
         </div>
         <div style="color:#6b7280;font-size:.86rem;line-height:1.4;min-height:2.4em;">${META[key] || ""}</div>
         <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:${ac.c2};background:${ac.c1}14;border-radius:999px;padding:4px 11px;">
-          ${s.flashcards.length} cards&nbsp;·&nbsp;${s.quiz.length} questions</div>
+          ${s.flashcards.length} cards&nbsp;·&nbsp;${qCount(s)} questions</div>
       </div>`;
     card.onclick = () => { state.sectionKey = key; state.route = key === "lab2" ? "modes" : "sectionMenu"; render(); };
     return card;
@@ -1143,7 +1148,8 @@ function renderHome(main) {
     hdr.innerHTML = `<span style="font-family:Georgia,serif;font-size:1.15rem;font-weight:800;color:#0F766E;">${label}</span><span style="color:#9aa2b1;font-size:.82rem;">${hint}</span>`;
     wrap.appendChild(hdr);
     const grid = document.createElement("div");
-    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:14px;";
+    // auto-fit so all cards in a group sit in ONE row on desktop (3 lecture / 2 lab), wrapping only on narrow screens
+    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;";
     keys.forEach(k => { const s = DATA.sections[k]; if (s) grid.appendChild(makeCard(k, s)); });
     wrap.appendChild(grid);
   };
