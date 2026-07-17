@@ -893,6 +893,9 @@ function render() {
   else if (state.route === "claudeMenu")    renderClaudeMenu(main);
   else if (state.route === "fullExam")       renderFullExam(main);
   else if (state.route === "fullExamEnd")    renderFullExamEnd(main);
+  else if (state.route === "catSim")         renderCatSim(main);
+  else if (state.route === "catEnd")         renderCatEnd(main);
+  else if (state.route === "preparednessGeneric") renderPreparednessGeneric(main);
 
   saveResumeState();
 }
@@ -945,6 +948,9 @@ function buildTopbar() {
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
       else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
+      else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; } return; }
+      else if (state.route === "catEnd") { state.route = "examMenu"; }
+      else if (state.route === "preparednessGeneric") state.route = "sectionMenu";
       else if (state.route === "labeling")      state.route = "diagramMenu";
       else if (state.route === "gallery")       state.route = "diagramMenu";
       else if (state.route === "exam" || state.route === "examResults") {
@@ -974,6 +980,9 @@ function buildTopbar() {
   else if (state.route === "reports") titleText = "Flagged Questions";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "claudeMenu")     titleText = "Claude Bank";
+  else if (state.route === "catSim")         titleText = "CAT Simulation 🧪";
+  else if (state.route === "catEnd")         titleText = "CAT Results 🧪";
+  else if (state.route === "preparednessGeneric") titleText = "Preparedness";
   else if (state.route === "fullExam")        titleText = state.examTitle || "Simulation";
   else if (state.route === "fullExamEnd")     titleText = (state.examTitle || "Simulation") + " Results";
   else if (state.route === "customBuilder") titleText = "Custom Practice";
@@ -3290,6 +3299,8 @@ function buildQuestionIndex() {
     });
   }
   if (typeof CLAUDEBANK !== "undefined") { const cbHint = {0:24,1:25,2:27,3:19,4:20,5:22,6:23,7:28}; CLAUDEBANK.forEach((sec, i) => (sec.questions || []).forEach(q => add(q, cbHint[i]))); }
+  if (typeof CLAUDEBANK_APPENDICULAR !== "undefined") CLAUDEBANK_APPENDICULAR.forEach(sec => (sec.questions || []).forEach(q => add(q, null)));
+  if (typeof CLAUDEBANK_AXIAL !== "undefined") CLAUDEBANK_AXIAL.forEach(sec => (sec.questions || []).forEach(q => add(q, null)));
   if (typeof STUVIA_BANK !== "undefined") { STUVIA_BANK.forEach(sec => (sec.questions || []).forEach(q => add(q, null))); }
   _qIndex = idx; return idx;
 }
@@ -4413,6 +4424,15 @@ function renderSectionMenu(main) {
       bg: "linear-gradient(135deg,#5B21B6 0%,#4338CA 100%)",  // violet (swapped in from Practice Tests)
       shadow: "rgba(67,56,202,.35)",
     },
+    {
+      id: "preparednessGeneric",
+      icon: "🎯",
+      title: "Preparedness Score",
+      sub: "Section readiness + adaptive CAT (experimental)",
+      condition: ["appendicular","axial","cumulative"].includes(state.sectionKey),
+      bg: "linear-gradient(135deg,#5B21B6 0%,#4338CA 100%)",  // violet
+      shadow: "rgba(67,56,202,.35)",
+    },
     // Practice Tests — pulled ABOVE Guided Readings, with space above (its own teal)
     {
       id: "examMenu",
@@ -4827,6 +4847,7 @@ function _mkHdr(list, text) { const h = document.createElement("div"); h.classNa
 function buildGenericExamMenu(list, key) {
   const sec = getSection(key), name = (sec.title || key).split(" (")[0];
   const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
+  addCatCard(list, key);
   _mkHdr(list, "Realistic Mock");
   const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
@@ -4865,6 +4886,7 @@ function buildGenericExamMenu(list, key) {
 }
 function buildCumulativeExamMenu(list) {
   const SECS = 6000, N = 150, PER_N = 100;
+  addCatCard(list, "cumulative");
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
@@ -4913,6 +4935,9 @@ function renderExamMenu(main) {
   // Non-Torso sections use the generalized builder (Torso keeps its Stuvia/ClaudeBank-rich menu below).
   if (state.sectionKey === "cumulative") { buildCumulativeExamMenu(list); main.appendChild(list); return; }
   if (state.sectionKey !== "torso") { buildGenericExamMenu(list, state.sectionKey); main.appendChild(list); return; }
+
+  // ── Adaptive CAT (experimental) ──
+  addCatCard(list, "torso");
 
   // ── Full Exam — realistic mocks (all use the 100-min skip & flag format) ──
   const hdrFull = document.createElement("div");
@@ -5692,6 +5717,314 @@ function renderClaudeMenu(main) {
   main.appendChild(list);
 }
 /* ══ End Claude Bank ══ */
+
+/* ═══════════════════════════════════════════════════════════
+   CAT — Computer Adaptive Testing  (EXPERIMENTAL)
+   CISSP-style adaptive engine: a 1-parameter-logistic (Rasch) ability
+   estimate θ, each next item chosen near your current ability (max
+   information), stopping early once the estimate is confident. This is
+   NOT a graded practice exam — it's a fast, adaptive read on where you
+   stand. Difficulty is a heuristic proxy (item type + source + spread),
+   so treat results as directional. Isolated from the normal exam flow.
+   ═══════════════════════════════════════════════════════════ */
+const CAT_CONFIG = {
+  torso:        { enabled: true,  total: 100, label: "Torso" },
+  cumulative:   { enabled: true,  total: 100, label: "Cumulative" },
+  appendicular: { enabled: false, total: 100, label: "Appendicular" },
+  axial:        { enabled: false, total: 100, label: "Axial" },
+};
+const CAT_MIN_ITEMS = 50, CAT_SE_STOP = 0.32;
+let catState = null;
+
+function _catHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; } return h; }
+function _logistic(x) { return 1 / (1 + Math.exp(-x)); }
+// Deterministic pseudo-difficulty in logits (~ -1.8..+1.8) from item type/source + a hash spread.
+function catDifficulty(id, q) {
+  let b = 0;
+  if (q) { const n = (q.options || []).length; if (q.tf || n === 2) b -= 0.8; else if (n >= 5) b += 0.3; }
+  const bank = bankOfId(id);
+  if (bank === "Stuvia") b += 0.15; else if (bank === "Guided Reading") b -= 0.1;
+  const j = ((Math.abs(_catHash(id)) % 1000) / 1000) * 1.6 - 0.8;   // spread so adaptivity has range
+  b += j;
+  return Math.max(-1.8, Math.min(1.8, b));
+}
+// Region pools of {id, q, g, b}. Torso = 4 exam regions (25 each); Cumulative = 3 units.
+function catRegions(key) {
+  const idx = buildQuestionIndex();
+  const mk = (id) => { const q = idx[id]; if (!q || !q.q || !q.options || q.options.length < 2 || typeof q.correct !== "number") return null; return { id, q, g: _optGuess(q), b: catDifficulty(id, q) }; };
+  const clean = arr => arr.map(mk).filter(Boolean);
+  if (key === "torso") {
+    const src = blueprintSources();
+    return [
+      { name: "Thorax", quota: 25, pool: clean(src.Thorax.map(o => o.id)) },
+      { name: "Abdomen", quota: 25, pool: clean(src.Abdomen.map(o => o.id)) },
+      { name: "Pelvis", quota: 25, pool: clean(src.Pelvis.map(o => o.id)) },
+      { name: "Systemic", quota: 25, pool: clean(src.Systemic.map(o => o.id)) },
+    ];
+  }
+  if (key === "cumulative") {
+    const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k))).map(q => q.id);
+    return [
+      { name: "Appendicular", quota: 34, pool: clean(unit("appendicular")) },
+      { name: "Axial", quota: 33, pool: clean(unit("axial")) },
+      { name: "Torso", quota: 33, pool: clean(unit("torso")) },
+    ];
+  }
+  return [];
+}
+function launchCat(key) {
+  const cfg = CAT_CONFIG[key];
+  if (!cfg || !cfg.enabled) { alert("CAT for this section is coming soon (experimental)."); return; }
+  const regions = catRegions(key).filter(r => r.pool.length);
+  if (!regions.length) { alert("Not enough questions to run an adaptive test here yet."); return; }
+  regions.forEach(r => { r.pool = shuffle(r.pool); r.served = 0; });
+  catState = {
+    key, cfg, regions, theta: 0, se: 99,
+    answered: [], used: new Set(), idx: 0, current: null, selected: -1,
+    total: Math.min(cfg.total, regions.reduce((a, r) => a + Math.min(r.quota, r.pool.length), 0)),
+    done: false, startedAt: Date.now(),
+  };
+  catPickNext();
+  state.route = "catSim"; render();
+}
+function _catInfo(th) { let I = 0; catState.answered.forEach(a => { const p = _logistic(th - a.b); I += p * (1 - p); }); return I; }
+function catUpdateTheta() {
+  let th = catState.theta;
+  for (let it = 0; it < 10; it++) {
+    let num = (0 - th) / 4, den = 1 / 4;   // N(0,2) prior keeps θ stable at all-right / all-wrong
+    catState.answered.forEach(a => { const p = _logistic(th - a.b); num += (a.u - p); den += p * (1 - p); });
+    if (den < 1e-6) break;
+    th = Math.max(-3.5, Math.min(3.5, th + num / den));
+  }
+  catState.theta = th;
+  const I = _catInfo(th) + 1 / 4;
+  catState.se = I > 0 ? 1 / Math.sqrt(I) : 99;
+}
+function _catRegionOpen(r) { return r.served < Math.min(r.quota, r.pool.length); }
+function catPickNext() {
+  const cs = catState;
+  const open = cs.regions.filter(_catRegionOpen);
+  if (!open.length) { cs.current = null; return; }
+  open.sort((a, b) => (a.served / a.quota) - (b.served / b.quota));   // keep regional balance
+  const region = open[0];
+  let best = null, bestD = 1e9;
+  for (const it of region.pool) {
+    if (cs.used.has(it.id)) continue;
+    const d = Math.abs(it.b - cs.theta);
+    if (d < bestD) { bestD = d; best = it; }
+  }
+  if (!best) { region.served = Math.min(region.quota, region.pool.length); return catPickNext(); }
+  cs.current = { region, item: best };
+  cs.selected = -1;
+}
+function catAnswer(sel) {
+  const cs = catState; if (!cs || !cs.current || cs.selected >= 0) return;
+  cs.selected = sel;
+  const it = cs.current.item;
+  const correct = (sel === it.q.correct);
+  cs.used.add(it.id);
+  cs.current.region.served++;
+  cs.answered.push({ id: it.id, b: it.b, u: correct ? 1 : 0, region: cs.current.region.name });
+  try { recordQuestionStat({ id: it.id }, correct, null, false); _predVer++; } catch (e) {}
+  catUpdateTheta();
+  cs.idx++;
+  const n = cs.answered.length;
+  const allDone = cs.regions.every(r => !_catRegionOpen(r));
+  if (n >= cs.total || allDone || (n >= CAT_MIN_ITEMS && cs.se < CAT_SE_STOP)) {
+    cs.done = true; catFinish(); state.route = "catEnd"; render(); return;
+  }
+  catPickNext();
+  render();
+}
+function catFinish() {
+  const cs = catState;
+  const correct = cs.answered.filter(a => a.u === 1).length, n = cs.answered.length;
+  cs.pct = n ? Math.round(correct / n * 100) : 0;
+  cs.readiness = Math.round(_logistic(cs.theta) * 100);
+  const reg = {}; cs.answered.forEach(a => { reg[a.region] = reg[a.region] || { c: 0, n: 0 }; reg[a.region].n++; if (a.u) reg[a.region].c++; });
+  cs.regionStats = reg;
+  try {
+    recordAttempt("cat:" + cs.key, {
+      title: "CAT Simulation (Experimental)", kind: "cat",
+      mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
+      score: correct, total: n, pct: cs.pct,
+      theta: Math.round(cs.theta * 100) / 100, se: Math.round(cs.se * 100) / 100, readiness: cs.readiness,
+    });
+  } catch (e) {}
+}
+function catVerdict(theta, se) {
+  const lo = theta - 1.96 * se, hi = theta + 1.96 * se;
+  if (lo > 0.3) return { txt: "Likely ready", color: "#0F766E", emoji: "✅" };
+  if (hi < -0.3) return { txt: "Not ready yet", color: "#C0392B", emoji: "📚" };
+  return { txt: "Borderline — keep drilling", color: "#B7791F", emoji: "⚖️" };
+}
+function renderCatSim(main) {
+  const cs = catState;
+  if (!cs || !cs.current) { state.route = "examMenu"; render(); return; }
+  const it = cs.current.item, q = it.q;
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:720px;margin:0 auto;";
+  const conf = Math.max(0, Math.min(100, Math.round((1 - Math.min(1, cs.se / 1.2)) * 100)));
+  wrap.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;">
+      <span style="font-size:.8rem;font-weight:700;color:#7C3AED;background:#F3E8FF;padding:4px 10px;border-radius:999px;">🧪 EXPERIMENTAL · ADAPTIVE</span>
+      <span style="font-size:.85rem;color:#666;">Item ${cs.answered.length + 1} · up to ${cs.total}</span>
+    </div>
+    <div style="height:8px;background:#eee;border-radius:99px;overflow:hidden;margin-bottom:4px;">
+      <div style="height:100%;width:${conf}%;background:linear-gradient(90deg,#7C3AED,#4338CA);"></div>
+    </div>
+    <div style="font-size:.72rem;color:#999;margin-bottom:16px;">Confidence in the estimate: ${conf}% · it adapts to your level and stops early when sure</div>`;
+  const stem = document.createElement("div");
+  stem.style.cssText = "font-size:1.1rem;line-height:1.5;font-weight:600;margin-bottom:18px;";
+  stem.textContent = (q.q || "").replace(/\[GR\]/g, "").trim();
+  wrap.appendChild(stem);
+  (q.options || []).forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "catOpt";
+    b.style.cssText = "display:block;width:100%;text-align:left;margin:8px 0;padding:14px 16px;border:2px solid #e2e2e2;border-radius:12px;background:#fff;font-size:1rem;cursor:pointer;transition:all .12s;";
+    b.textContent = opt.replace(/^[A-E]\.\s*/, "");
+    b.onmouseenter = () => { b.style.borderColor = "#7C3AED"; b.style.background = "#FAF5FF"; };
+    b.onmouseleave = () => { b.style.borderColor = "#e2e2e2"; b.style.background = "#fff"; };
+    b.onclick = () => catAnswer(i);
+    wrap.appendChild(b);
+  });
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:14px;font-size:.75rem;color:#aaa;text-align:center;";
+  note.textContent = "No answer is revealed — the test only uses right/wrong to find your level (like the CISSP CAT).";
+  wrap.appendChild(note);
+  main.appendChild(wrap);
+}
+function renderCatEnd(main) {
+  const cs = catState;
+  if (!cs) { state.route = "examMenu"; render(); return; }
+  const v = catVerdict(cs.theta, cs.se);
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:640px;margin:0 auto;";
+  wrap.innerHTML = `
+    <div style="text-align:center;background:linear-gradient(135deg,#7C3AED 0%,#4338CA 100%);color:#fff;border-radius:18px;padding:26px 20px;margin-bottom:18px;">
+      <div style="font-size:.8rem;font-weight:700;letter-spacing:.5px;opacity:.85;">🧪 CAT SIMULATION · EXPERIMENTAL</div>
+      <div style="font-size:2.6rem;margin:6px 0;">${v.emoji}</div>
+      <div style="font-size:1.5rem;font-weight:800;">${v.txt}</div>
+      <div style="font-size:1rem;opacity:.9;margin-top:6px;">Estimated readiness ${cs.readiness}% · ${cs.answered.length} items · ${cs.pct}% correct</div>
+      <div style="font-size:.78rem;opacity:.8;margin-top:8px;">ability θ = ${cs.theta.toFixed(2)} ± ${(1.96 * cs.se).toFixed(2)} (95% CI)</div>
+    </div>`;
+  // per-region
+  const rc = document.createElement("div");
+  rc.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
+  rc.innerHTML = `<div style="font-weight:700;margin-bottom:10px;">By region</div>`;
+  Object.keys(cs.regionStats || {}).forEach(name => {
+    const r = cs.regionStats[name], pct = r.n ? Math.round(r.c / r.n * 100) : 0;
+    const row = document.createElement("div");
+    row.style.cssText = "margin:8px 0;";
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;"><span>${name}</span><span style="color:#666;">${r.c}/${r.n} · ${pct}%</span></div>
+      <div style="height:7px;background:#eee;border-radius:99px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${pct >= 70 ? "#0F766E" : pct >= 50 ? "#B7791F" : "#C0392B"};"></div></div>`;
+    rc.appendChild(row);
+  });
+  wrap.appendChild(rc);
+  const info = document.createElement("div");
+  info.style.cssText = "background:#F3E8FF;border:1px solid #E9D5FF;border-radius:12px;padding:14px 16px;font-size:.85rem;color:#5B21B6;margin-bottom:16px;line-height:1.5;";
+  info.innerHTML = `<b>What is this?</b> An adaptive test (like the CISSP CAT). It picks each question near your current level and stops once it's confident — so a short run can still place you. Difficulty is a heuristic, so this is a directional read, not a graded exam. Recorded to your History and it feeds practice retention.`;
+  wrap.appendChild(info);
+  const done = document.createElement("button");
+  done.className = "modeBtn";
+  done.style.cssText = "border:2px solid #7C3AED;background:#faf5ff;font-weight:700;";
+  done.innerHTML = `<span class="modeLabel">Done</span>`;
+  done.onclick = () => { state.route = "examMenu"; render(); };
+  wrap.appendChild(done);
+  main.appendChild(wrap);
+}
+// Colored CAT card for the Practice Tests menus (enabled → launch; else "coming soon").
+function addCatCard(list, key) {
+  const cfg = CAT_CONFIG[key]; if (!cfg) return;
+  _mkHdr(list, "Adaptive (Experimental)");
+  const b = document.createElement("button"); b.className = "modeBtn";
+  if (cfg.enabled) {
+    b.style.cssText = "border:2px solid #7C3AED;background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);";
+    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">CISSP-style: adapts to your level & stops early · ${cfg.total} Qs max</span>`;
+    b.onclick = () => launchCat(key);
+  } else {
+    b.style.cssText = "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
+    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">Adaptive engine coming soon for ${cfg.label}</span>`;
+    b.onclick = () => alert("The adaptive CAT for " + cfg.label + " is coming soon — it's live for Torso and the Cumulative final. (Experimental)");
+  }
+  list.appendChild(b);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Section-scoped Preparedness (non-Torso) — a lightweight read for
+   Appendicular / Axial / Cumulative that reuses the generic retention
+   primitives (qRecall / covStats) WITHOUT touching the Torso engine.
+   ═══════════════════════════════════════════════════════════ */
+function genericRegions(key) {
+  if (key === "cumulative") {
+    return [["Appendicular", "appendicular"], ["Axial", "axial"], ["Torso", "torso"]]
+      .map(([name, u]) => ({ name, ids: dedupeQs([].concat(sectionGRPool(u), sectionCBPool(u))).map(q => q.id) }));
+  }
+  const groups = SECTION_GROUPS[key] || [];
+  const out = groups.map(([label, icon, idxs]) => ({ name: label, ids: sectionGRPool(key, idxs).map(q => q.id) }));
+  const cb = sectionCBPool(key);
+  if (cb.length) out.push({ name: "Claude Bank", ids: cb.map(q => q.id) });
+  return out;
+}
+function renderPreparednessGeneric(main) {
+  const key = state.sectionKey;
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  const regions = genericRegions(key);
+  const allIds = Array.from(new Set([].concat(...regions.map(r => r.ids))));
+  const cov = covStats(allIds, md);
+  const perf = cov.attempted ? Math.round(cov.known / cov.attempted * 100) : 0;
+  const ready = cov.total ? Math.round(cov.known / cov.total * 100) : 0;
+  const idx = buildQuestionIndex();
+  let probSum = 0, probN = 0;
+  allIds.forEach(id => { const q = idx[id]; const g = q ? _optGuess(q) : 0.2; probSum += qExamProb(id, md, g); probN++; });
+  const predicted = probN ? Math.round(probSum / probN * 100) : 0;
+
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:680px;margin:0 auto;";
+  wrap.innerHTML = `
+    <div style="background:linear-gradient(135deg,#5B21B6 0%,#4338CA 100%);color:#fff;border-radius:16px;padding:20px;margin-bottom:16px;">
+      <div style="font-size:.8rem;opacity:.85;font-weight:700;">${md === "closed" ? "CLOSED-BOOK" : "WITH-NOTES"} · SECTION PREPAREDNESS</div>
+      <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
+        <div><div style="font-size:2rem;font-weight:800;">${ready}%</div><div style="font-size:.75rem;opacity:.85;">Readiness (known / all)</div></div>
+        <div><div style="font-size:2rem;font-weight:800;">${perf}%</div><div style="font-size:.75rem;opacity:.85;">Performance (known / tried)</div></div>
+        <div><div style="font-size:2rem;font-weight:800;">~${predicted}%</div><div style="font-size:.75rem;opacity:.85;">Predicted score</div></div>
+      </div>
+      <div style="font-size:.75rem;opacity:.8;margin-top:10px;">${cov.attempted}/${cov.total} questions attempted · recall-weighted, decays over time</div>
+    </div>`;
+  // per-region readiness bars
+  const rc = document.createElement("div");
+  rc.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
+  rc.innerHTML = `<div style="font-weight:700;margin-bottom:10px;">By region</div>`;
+  regions.forEach(r => {
+    const c = covStats(r.ids, md), pct = c.total ? Math.round(c.known / c.total * 100) : 0;
+    const row = document.createElement("div"); row.style.cssText = "margin:8px 0;";
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;"><span>${r.name}</span><span style="color:#666;">${Math.round(c.known)}/${c.total}</span></div>
+      <div style="height:7px;background:#eee;border-radius:99px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${pct >= 70 ? "#0F766E" : pct >= 40 ? "#B7791F" : "#C0392B"};"></div></div>`;
+    rc.appendChild(row);
+  });
+  wrap.appendChild(rc);
+  // latest CAT result, if any
+  const catAtt = (progressState.examAttempts && progressState.examAttempts["cat:" + key]) || [];
+  if (catAtt.length) {
+    const a = catAtt[0];
+    const cc = document.createElement("div");
+    cc.style.cssText = "background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.9rem;color:#5B21B6;";
+    cc.innerHTML = `🧪 <b>Last adaptive test:</b> readiness ${a.readiness}% · ${a.score}/${a.total} · ${a.date}`;
+    wrap.appendChild(cc);
+  }
+  // launch CAT
+  const catBtn = document.createElement("button"); catBtn.className = "modeBtn";
+  const en = CAT_CONFIG[key] && CAT_CONFIG[key].enabled;
+  catBtn.style.cssText = en ? "border:2px solid #7C3AED;background:#F5F3FF;font-weight:700;" : "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
+  catBtn.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive</span><span class="modeMeta">${en ? "CISSP-style adaptive · Experimental" : "Coming soon for this section"}</span>`;
+  catBtn.onclick = () => en ? launchCat(key) : alert("Adaptive CAT is coming soon for this section (experimental).");
+  wrap.appendChild(catBtn);
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:12px;font-size:.75rem;color:#aaa;text-align:center;line-height:1.5;";
+  note.textContent = "Experimental for non-Torso sections: readiness/performance are recall-weighted over this section's Guided Readings + Claude Bank. Practice raises them; they fade over time.";
+  wrap.appendChild(note);
+  main.appendChild(wrap);
+}
 
 /* ═══════════════════════════════════════════════════════════
    FULL 100-MINUTE EXAM — added 2026-07
