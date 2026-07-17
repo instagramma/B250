@@ -4554,11 +4554,18 @@ function _attemptTitle(key, rec) {
   if (/^suddenDeath:/.test(key)) return "Sudden Death";
   return (key.split(":")[0] || "Quiz");
 }
-function allAttempts() {
+/* The section a record belongs to is the token right after the prefix: "fullExam:torso",
+   "grTimed:torso:Heart", "exam:axial:0" → "torso"/"axial"/… */
+function _attemptSection(key) { return String(key || "").split(":")[1] || ""; }
+function allAttempts(sec) {
+  sec = sec || state.sectionKey;   // History is scoped to the CURRENT section only
   const out = [];
-  const push = src => { if (!src) return; Object.keys(src).forEach(key => (src[key] || []).forEach(rec => {
-    out.push({ key, rec, kind: _attemptKind(key, rec), title: _attemptTitle(key, rec), ts: rec.ts || Date.parse(rec.date) || 0 });
-  })); };
+  const push = src => { if (!src) return; Object.keys(src).forEach(key => {
+    if (sec && _attemptSection(key) !== sec) return;   // keep only this section's attempts
+    (src[key] || []).forEach(rec => {
+      out.push({ key, rec, kind: _attemptKind(key, rec), title: _attemptTitle(key, rec), ts: rec.ts || Date.parse(rec.date) || 0 });
+    });
+  }); };
   push(progressState.examAttempts);
   try { push(loadArchive().examAttempts); } catch (e) {}
   const seen = new Set(), uniq = [];
