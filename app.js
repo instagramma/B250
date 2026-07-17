@@ -845,13 +845,15 @@ function activeStuvia(key) {
   const k = key || state.sectionKey;
   if (k === "torso") return (typeof STUVIA_BANK !== "undefined" && STUVIA_BANK.length) ? STUVIA_BANK : null;
   if (k === "axial") return (typeof STUVIA_AXIAL !== "undefined" && STUVIA_AXIAL.length) ? STUVIA_AXIAL : null;
+  if (k === "appendicular") return (typeof STUVIA_APPENDICULAR !== "undefined" && STUVIA_APPENDICULAR.length) ? STUVIA_APPENDICULAR : null;
   if (k === "cumulative") {
     let out = [];
+    if (typeof STUVIA_APPENDICULAR !== "undefined") out = out.concat(STUVIA_APPENDICULAR);
     if (typeof STUVIA_AXIAL !== "undefined") out = out.concat(STUVIA_AXIAL);
     if (typeof STUVIA_BANK !== "undefined") out = out.concat(STUVIA_BANK);
     return out.length ? out : null;
   }
-  return null; // appendicular / lab1 / lab2 have no Stuvia bank
+  return null; // lab1 / lab2 have no Stuvia bank
 }
 
 const state = { route: "home", sectionKey: null, mode: null, subtopicIndex: null, cameFromSubtopics: false, quizFilter: null, quizSource: null, cbIndex: -1, examSource: null, prevRoute: null, grSection: -1 };
@@ -3589,6 +3591,7 @@ function buildQuestionIndex() {
   if (typeof CLAUDEBANK_AXIAL !== "undefined") CLAUDEBANK_AXIAL.forEach(sec => (sec.questions || []).forEach(q => add(q, null)));
   if (typeof STUVIA_BANK !== "undefined") { STUVIA_BANK.forEach(sec => (sec.questions || []).forEach(q => add(q, null))); }
   if (typeof STUVIA_AXIAL !== "undefined") { STUVIA_AXIAL.forEach(sec => (sec.questions || []).forEach(q => add(q, q.ch || null))); }
+  if (typeof STUVIA_APPENDICULAR !== "undefined") { STUVIA_APPENDICULAR.forEach(sec => (sec.questions || []).forEach(q => add(q, q.ch || null))); }
   _qIndex = idx; return idx;
 }
 function bankOfId(id) { return id && id.indexOf("ST-") === 0 ? "Stuvia" : id.indexOf("CB-") === 0 ? "ClaudeBank" : id.indexOf("GR-") === 0 ? "Guided Reading" : id.indexOf("PE-") === 0 ? "Practice Exam" : "Question"; }
