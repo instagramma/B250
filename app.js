@@ -4314,18 +4314,35 @@ function renderExamMenu(main) {
   };
   const buildFullDeck = () => buildSimDeck(50);   // all banks (Sprint reuses this)
 
-  // Launch the 100-minute skip-&-flag full-exam experience with a given deck + title.
-  const launchFullExam = (pool, title) => {
+  // Launch the skip-&-flag full-exam experience with a given deck + title + total seconds.
+  const launchFullExam = (pool, title, seconds) => {
     if (!pool.length) { alert("No questions available yet."); return; }
     fullExamDeck = pool; fullExamIndex = 0;
     fullExamAnswers = new Array(pool.length).fill(-1);
     fullExamFlags = new Set();
-    fullExamSecondsLeft = 6000;
+    fullExamSecondsLeft = seconds || 6000;
     fullExamShowOverview = false;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval);
     state.examTitle = title || "Simulation";
     state.route = "fullExam"; render();
+  };
+
+  // Pool for a SINGLE section drawn from the selected banks (used by mini mocks).
+  const sectionPool = (sectionLabel, si, opts) => {
+    opts = opts || { gr: true, stuvia: true, cb: true };
+    let pool = [];
+    if (opts.gr) {
+      const grSec = TORSO_GR_SECTIONS[si];
+      if (grSec && sec && sec.subtopics) grSec.indices.forEach(idx => { const sub = sec.subtopics[idx]; if (sub && sub.quiz) sub.quiz.filter(q => !isDiagramQ(q)).forEach(q => pool.push(q)); });
+    }
+    if (opts.stuvia && typeof STUVIA_BANK !== "undefined") { const sb = STUVIA_BANK.find(b => b.title === sectionLabel); if (sb) pool.push(...(sb.questions || [])); }
+    if (opts.pe && sec && sec.exams) { sec.exams.filter(e => e.group === sectionLabel).forEach(e => pool.push(...(e.questions || []))); }
+    if (opts.cb && typeof CLAUDEBANK !== "undefined") {
+      const CB_MAP = { "Thorax":[0], "Abdomen":[1], "Pelvis & Perineum":[2], "Systemic":[3,4,5,6,7] };
+      (CB_MAP[sectionLabel] || []).forEach(idx => { if (CLAUDEBANK[idx]) CLAUDEBANK[idx].questions.forEach(q => pool.push({ ...q, options: q.options.map(o => o.replace(/^[A-E]\.\s*/, "")) })); });
+    }
+    return pool.filter(isExamEligible);
   };
 
   // ⭐ THE REAL DEAL — all banks, 100 min, skip & flag (emphasized)
@@ -4349,6 +4366,22 @@ function renderExamMenu(main) {
   cbSimBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">ClaudeBank Simulation</span><span class="modeMeta">100 min · 50/section (as available) · ClaudeBank questions only · skip &amp; flag</span>`;
   cbSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { cb: true }), "ClaudeBank Simulation");
   list.appendChild(cbSimBtn);
+
+  // ── Full Exam by Section — Mini Mocks (100 Qs, one section, all 3 banks, full skip/flag timer) ──
+  const hdrMini = document.createElement("div");
+  hdrMini.className = "modeGroupHdr";
+  hdrMini.textContent = "Full Exam by Section — Mini Mocks";
+  list.appendChild(hdrMini);
+
+  const MINI_ORDER = [["Thorax","🫁"],["Abdomen","🍽️"],["Pelvis & Perineum","🔻"],["Systemic","🩸"]];
+  const MINI_N = 100, MINI_SECS = 3000; // 100 Qs · 50 min total · skip & flag
+  MINI_ORDER.forEach(([label, icon], mi) => {
+    const b = document.createElement("button");
+    b.className = "modeBtn";
+    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${label} — Mini Mock</span><span class="modeMeta">${MINI_N} Qs · ~${Math.round(MINI_SECS/60)} min · GR + Stuvia + ClaudeBank · skip &amp; flag</span>`;
+    b.onclick = () => launchFullExam(shuffle(sectionPool(label, mi, { gr: true, stuvia: true, cb: true })).slice(0, MINI_N), label + " Mini Mock", MINI_SECS);
+    list.appendChild(b);
+  });
 
   // ── Timed Challenge ──
   const hdrSim = document.createElement("div");
