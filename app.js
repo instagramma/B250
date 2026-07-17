@@ -904,7 +904,7 @@ function buildTopbar() {
       else if (state.route === "simReview")     state.route = "simExam";
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
-      else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamDeck = []; state.route = "examMenu"; } return; }
+      else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
       else if (state.route === "labeling")      state.route = "diagramMenu";
       else if (state.route === "gallery")       state.route = "diagramMenu";
@@ -4635,7 +4635,7 @@ function renderExamMenu(main) {
     fullExamShowOverview = false;
     fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
-    clearInterval(fullExamTimerInterval);
+    clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; // null it so the fresh exam's timer actually starts
     state.examTitle = title || "Simulation";
     state.route = "fullExam"; render();
   };
