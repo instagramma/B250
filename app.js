@@ -755,6 +755,23 @@ function recordQuizResult(key, score, total, avgSec) {
   saveProgress();
 }
 
+/* Unified attempt log — every exam / mock / timed / quiz writes one dated record here so the
+   History screen can show them all on one timeline. Records keep the fields the per-exam pickers
+   already read (date/score/total/pct/missed) plus ts/title/kind/mode for the timeline. */
+function recordAttempt(key, meta) {
+  if (!progressState.examAttempts) progressState.examAttempts = {};
+  if (!progressState.examAttempts[key]) progressState.examAttempts[key] = [];
+  const now = new Date();
+  const rec = Object.assign({
+    ts: now.getTime(),
+    date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  }, meta);
+  progressState.examAttempts[key].unshift(rec);
+  if (progressState.examAttempts[key].length > 12) progressState.examAttempts[key].length = 12;
+  saveLocalProgress();
+}
+
 function recordFlashcardResult(key, known, total) {
   const pct = Math.round((known / total) * 100);
   const prev = progressState.flashcards[key];
@@ -813,6 +830,7 @@ function render() {
   else if (state.route === "diagramGallery") renderDiagramGallery(main);
   else if (state.route === "preparedness") renderPreparedness(main);
   else if (state.route === "coach") renderCoach(main);
+  else if (state.route === "history") renderHistory(main);
   else if (state.route === "missedStats") renderMissedStats(main);
   else if (state.route === "reports") renderReports(main);
   else if (state.route === "subtopics") renderSubtopics(main);
@@ -863,6 +881,7 @@ function buildTopbar() {
       else if (state.route === "diagramGallery") state.route = "sectionMenu";
       else if (state.route === "preparedness") state.route = "sectionMenu";
       else if (state.route === "coach") state.route = "preparedness";
+      else if (state.route === "history") state.route = "examMenu";
       else if (state.route === "missedStats") state.route = "preparedness";
       else if (state.route === "reports") state.route = "home";
       else if (state.route === "cbPicker")      state.route = "sectionMenu";
@@ -911,6 +930,7 @@ function buildTopbar() {
   else if (state.route === "diagramGallery") titleText = "Diagram Gallery";
   else if (state.route === "preparedness") titleText = "Preparedness Score";
   else if (state.route === "coach") titleText = "How am I doing?";
+  else if (state.route === "history") titleText = "History";
   else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
   else if (state.route === "reports") titleText = "Question Reports";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
@@ -1457,6 +1477,14 @@ function renderQuiz(main) {
       quizDeck._saved = true;
       const denom = Math.max(quizDeck.length - quizSkipped, 1);
       recordQuizResult(deckKey, quizScore, denom);
+      const qpct = Math.round(quizScore / denom * 100);
+      const qtitle = (state.quizSource === "claude" || state.quizSource === "claudebank") ? "Claude Bank quiz"
+        : state.quizSource === "stuvia" ? "Stuvia quiz"
+        : (state.mode === "flashcards" ? "Flashcards" : "Guided-Reading quiz");
+      recordAttempt(deckKey, {
+        title: qtitle, kind: "quiz",
+        mode: getStudyMode(), score: quizScore, total: denom, pct: qpct, missed: []
+      });
     }
     renderQuizResults(main);
     return;
@@ -3639,9 +3667,7 @@ function renderExamResults(main) {
   const avgSec = examTimes.length ? examTimes.reduce((a, b) => a + b, 0) / examTimes.length : undefined;
   recordQuizResult(key, examScore, total, avgSec);
 
-  // Save full attempt to history (keep last 10)
-  if (!progressState.examAttempts) progressState.examAttempts = {};
-  if (!progressState.examAttempts[key]) progressState.examAttempts[key] = [];
+  // Save full attempt to history (unified log)
   const missedForLog = examAnswerLog
     .filter(e => e.timedOut || e.selected !== e.correct)
     .map(e => ({
@@ -3649,12 +3675,11 @@ function renderExamResults(main) {
       correct: e.q.options[e.q.correct],
       yours: e.timedOut ? "⏰ Timed out" : (e.selected >= 0 ? e.q.options[e.selected] : "—")
     }));
-  progressState.examAttempts[key].unshift({
-    date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
-    score: examScore, total, pct, missed: missedForLog
+  recordAttempt(key, {
+    title: state.examTitle || (state.examSource === "gr" ? "Timed Guided-Reading" : "Timed Practice Exam"),
+    kind: state.examSource === "gr" ? "gr" : "timed",
+    mode: getStudyMode(), score: examScore, total, pct, missed: missedForLog
   });
-  if (progressState.examAttempts[key].length > 10) progressState.examAttempts[key].length = 10;
-  saveLocalProgress();
   recordMissedQs(examAnswerLog);
 
   const wrap = document.createElement("div");
@@ -3857,8 +3882,6 @@ function simSubmit(forced) {
   // Save under "sim:" key so it doesn't mix with timed exam history
   const key = "sim:" + state.sectionKey + ":" + examExamIndex;
   recordQuizResult(key, examScore, simDeck.length);
-  if (!progressState.examAttempts) progressState.examAttempts = {};
-  if (!progressState.examAttempts[key]) progressState.examAttempts[key] = [];
   const total = simDeck.length;
   const pct = Math.round(examScore / total * 100);
   const missedForLog = examAnswerLog
@@ -3868,12 +3891,10 @@ function simSubmit(forced) {
       correct: e.q.options[e.q.correct],
       yours: e.timedOut ? "⏰ Time's up" : (e.selected >= 0 ? e.q.options[e.selected] : "—")
     }));
-  progressState.examAttempts[key].unshift({
-    date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
-    score: examScore, total, pct, missed: missedForLog
+  recordAttempt(key, {
+    title: state.examTitle || "Simulation", kind: "sim",
+    mode: getStudyMode(), score: examScore, total, pct, missed: missedForLog
   });
-  if (progressState.examAttempts[key].length > 10) progressState.examAttempts[key].length = 10;
-  saveLocalProgress();
   recordMissedQs(examAnswerLog);
   state.route = "examResults";
   render();
@@ -4429,12 +4450,144 @@ function renderGrMenu(main) {
   main.appendChild(list);
 }
 
+/* ─── ATTEMPT HISTORY (unified timeline of every exam / mock / timed / quiz) ─── */
+function _attemptKind(key, rec) {
+  if (rec && rec.kind) return rec.kind;
+  if (/^exam:/.test(key)) return "timed";
+  if (/^grTimed:/.test(key)) return "gr";
+  if (/^sim:/.test(key)) return "sim";
+  if (/^fullExam:/.test(key)) return "mock";
+  if (/^suddenDeath:/.test(key)) return "sudden";
+  return "quiz";
+}
+function _attemptTitle(key, rec) {
+  if (rec && rec.title) return rec.title;
+  if (/^exam:/.test(key)) return "Timed Practice Exam";
+  if (/^grTimed:/.test(key)) return "Timed Guided-Reading";
+  if (/^sim:/.test(key)) return "Simulation";
+  if (/^fullExam:/.test(key)) return "Simulation / Mini Mock";
+  if (/^suddenDeath:/.test(key)) return "Sudden Death";
+  return (key.split(":")[0] || "Quiz");
+}
+function allAttempts() {
+  const out = [];
+  const push = src => { if (!src) return; Object.keys(src).forEach(key => (src[key] || []).forEach(rec => {
+    out.push({ key, rec, kind: _attemptKind(key, rec), title: _attemptTitle(key, rec), ts: rec.ts || Date.parse(rec.date) || 0 });
+  })); };
+  push(progressState.examAttempts);
+  try { push(loadArchive().examAttempts); } catch (e) {}
+  const seen = new Set(), uniq = [];
+  out.sort((a, b) => b.ts - a.ts).forEach(o => {
+    const id = o.key + "|" + o.ts + "|" + (o.rec.score) + "|" + (o.rec.total);
+    if (seen.has(id)) return; seen.add(id); uniq.push(o);
+  });
+  return uniq;
+}
+const HIST_FILTERS = { all: () => true, mocks: k => k === "mock" || k === "sim", timed: k => k === "timed" || k === "gr", quizzes: k => k === "quiz" || k === "sudden" };
+function renderHistory(main) {
+  const all = allAttempts();
+  const filter = state.histFilter || "all";
+  state.histOpen = state.histOpen || {};
+
+  const sub = document.createElement("div");
+  sub.className = "subtitle";
+  sub.textContent = "Every attempt you've taken — newest first. Tap one to see the questions you missed.";
+  main.appendChild(sub);
+
+  if (!all.length) {
+    const none = document.createElement("div");
+    none.style.cssText = "text-align:center;color:#888;padding:36px 16px;";
+    none.innerHTML = "No attempts logged yet.<br>Take a mock, timed exam, or quiz and it'll show up here.";
+    main.appendChild(none);
+    return;
+  }
+
+  // Summary strip
+  const scored = all.filter(a => typeof a.rec.pct === "number");
+  const avg = scored.length ? Math.round(scored.reduce((s, a) => s + a.rec.pct, 0) / scored.length) : null;
+  const best = scored.length ? Math.max(...scored.map(a => a.rec.pct)) : null;
+  const strip = document.createElement("div");
+  strip.style.cssText = "display:flex;gap:8px;margin:2px 0 12px;";
+  strip.innerHTML = `
+    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Attempts</div><div style="font-size:1.3rem;font-weight:800;color:#1F3864;">${all.length}</div></div>
+    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Avg score</div><div style="font-size:1.3rem;font-weight:800;color:#1F3864;">${avg != null ? avg + "%" : "—"}</div></div>
+    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Best</div><div style="font-size:1.3rem;font-weight:800;color:#2E7D32;">${best != null ? best + "%" : "—"}</div></div>`;
+  main.appendChild(strip);
+
+  // Filter chips
+  const chips = document.createElement("div");
+  chips.style.cssText = "display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap;";
+  [["all", "All"], ["mocks", "Mocks"], ["timed", "Timed"], ["quizzes", "Quizzes"]].forEach(([k, lbl]) => {
+    const n = all.filter(a => HIST_FILTERS[k](a.kind)).length;
+    const on = filter === k;
+    const c = document.createElement("button");
+    c.textContent = `${lbl} ${n}`;
+    c.style.cssText = `border:1.5px solid ${on ? "#1F3864" : "#cfd8e3"};background:${on ? "#1F3864" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+    c.onclick = () => { state.histFilter = k; render(); };
+    chips.appendChild(c);
+  });
+  main.appendChild(chips);
+
+  const rows = all.filter(a => HIST_FILTERS[filter](a.kind));
+  const KIND_ICON = { mock: "🎓", sim: "🎓", timed: "⏱️", gr: "📖", quiz: "🧩", sudden: "🔥" };
+  const list = document.createElement("div");
+  list.style.cssText = "display:flex;flex-direction:column;gap:8px;";
+  rows.forEach(a => {
+    const rec = a.rec;
+    const id = a.key + "|" + a.ts + "|" + rec.score;
+    const openNow = !!state.histOpen[id];
+    const pctColor = typeof rec.pct === "number" ? _prepBandColor(rec.pct) : "#8a63d2";
+    const scoreTxt = rec.pct == null
+      ? `🔥 ${rec.score} streak`
+      : `${rec.score}/${rec.total} · <span style="color:${pctColor};">${rec.pct}%</span>`;
+    const modeTag = rec.mode === "open" ? "📖 Notes" : rec.mode === "closed" ? "🧠 Closed" : "";
+    const card = document.createElement("div");
+    card.style.cssText = `background:#fff;border:1px solid #e4e8ee;border-left:4px solid ${pctColor};border-radius:10px;overflow:hidden;`;
+    const head = document.createElement("button");
+    head.style.cssText = "width:100%;text-align:left;background:none;border:none;padding:11px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;";
+    const nMissed = (rec.missed && rec.missed.length) || 0;
+    head.innerHTML = `
+      <span style="min-width:0;">
+        <span style="font-weight:700;color:#1F3864;font-size:.93rem;">${KIND_ICON[a.kind] || "📝"} ${escapeHtml(a.title)}</span>
+        <span style="display:block;color:#8a94a6;font-size:.76rem;margin-top:2px;">${rec.date}${rec.time ? " · " + rec.time : ""}${modeTag ? " · " + modeTag : ""}${nMissed ? " · " + nMissed + " missed" : ""}</span>
+      </span>
+      <span style="flex:0 0 auto;font-weight:800;font-size:.95rem;color:#1F3864;">${scoreTxt} <span style="color:#b8c0cc;font-weight:600;">${openNow ? "▲" : "▼"}</span></span>`;
+    head.onclick = () => { state.histOpen[id] = !openNow; render(); };
+    card.appendChild(head);
+    if (openNow) {
+      const body = document.createElement("div");
+      body.style.cssText = "padding:2px 13px 12px;border-top:1px solid #f0f2f6;";
+      if (nMissed) {
+        body.innerHTML = `<div style="font-size:.78rem;font-weight:700;color:#C0392B;margin:8px 0 6px;">Missed (${nMissed})</div>` +
+          rec.missed.map(m => `<div style="margin:7px 0;font-size:.83rem;line-height:1.4;">
+            <div style="color:#333;">${escapeHtml(m.q)}</div>
+            <div style="color:#C0392B;">Your answer: ${escapeHtml(String(m.yours))}</div>
+            <div style="color:#2E7D32;">Correct: ${escapeHtml(String(m.correct))}</div></div>`).join("");
+      } else {
+        body.innerHTML = `<div style="font-size:.82rem;color:#888;padding:8px 0;">${a.kind === "sudden" ? "Sudden Death logs your streak only." : rec.pct === 100 ? "🎉 Perfect — nothing missed." : "No per-question breakdown was captured for this attempt."}</div>`;
+      }
+      card.appendChild(body);
+    }
+    list.appendChild(card);
+  });
+  main.appendChild(list);
+}
+
 /* ─── EXAM MENU ─── */
 function renderExamMenu(main) {
   const sec = getSection(state.sectionKey);
 
   const list = document.createElement("div");
   list.className = "modeList";
+
+  // ── History — every past attempt on one timeline ──
+  const nAttempts = allAttempts().length;
+  const histBtn = document.createElement("button");
+  histBtn.className = "modeBtn";
+  histBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  histBtn.innerHTML = `<span class="modeIcon">🗓️</span><span class="modeLabel">History — past attempts</span><span class="modeMeta">${nAttempts ? nAttempts + " logged · " : ""}every mock, timed exam &amp; quiz on one timeline · tap any to see missed questions</span>`;
+  histBtn.onclick = () => { state.route = "history"; state.histFilter = "all"; render(); };
+  list.appendChild(histBtn);
 
   // ── Full Exam — realistic mocks (all use the 100-min skip & flag format) ──
   const hdrFull = document.createElement("div");
@@ -4814,6 +4967,15 @@ function renderSdEnd(main) {
   const prev = (progressState.quizzes && progressState.quizzes[key]);
   if (!prev || sdStreak > prev.score) {
     recordQuizResult(key, sdStreak, sdDeck.length);
+  }
+  // Log this run once (renderSdEnd can re-render) to the unified History timeline
+  if (sdDeck && !sdDeck._logged) {
+    sdDeck._logged = true;
+    recordAttempt(key, {
+      title: "Sudden Death", kind: "sudden",
+      mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
+      score: sdStreak, total: sdStreak, pct: null, streak: sdStreak, missed: []
+    });
   }
   const best = (progressState.quizzes && progressState.quizzes[key]);
 
@@ -5439,8 +5601,24 @@ function renderFullExamEnd(main) {
   });
   const pct = Math.round(correct / total * 100);
 
-  // Save result
+  // Save result + full attempt to the unified History log
   recordQuizResult("fullExam:" + state.sectionKey, correct, total);
+  {
+    const LET = ["A","B","C","D","E"];
+    const missedForLog = fullExamDeck
+      .map((q, i) => ({ q, i, sel: fullExamAnswers[i] }))
+      .filter(e => e.sel !== e.q.correct)
+      .map(e => ({
+        q: e.q.q || e.q.question,
+        correct: e.q.options[e.q.correct],
+        yours: e.sel === -1 ? "— Skipped" : e.q.options[e.sel]
+      }));
+    recordAttempt("fullExam:" + state.sectionKey, {
+      title: state.examTitle || "Simulation", kind: "mock",
+      mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
+      score: correct, total, pct, missed: missedForLog
+    });
+  }
 
   // ── Score card ──
   const scoreCard = document.createElement("div");
