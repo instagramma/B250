@@ -1229,7 +1229,7 @@ function renderOwnerStats(main) {
   head.appendChild(refresh); wrap.appendChild(head);
   if (ownerStats.loading && !ownerStats.data) { const l = document.createElement("div"); l.style.cssText = "text-align:center;color:#888;padding:30px;"; l.textContent = "Loading everyone's stats…"; wrap.appendChild(l); main.appendChild(wrap); return; }
   if (ownerStats.err) { const e = document.createElement("div"); e.style.cssText = "background:#FDECEA;border:1px solid #f5c6cb;border-radius:10px;padding:14px;color:#922B21;"; e.textContent = "Couldn't load: " + ownerStats.err; wrap.appendChild(e); main.appendChild(wrap); return; }
-  const rows = (ownerStats.data || []).map(profileSummary).sort((a, b) => new Date(b.updated || 0) - new Date(a.updated || 0));
+  const rows = (ownerStats.data || []).filter(r => !/^__/.test(r.profile || "")).map(profileSummary).sort((a, b) => new Date(b.updated || 0) - new Date(a.updated || 0));
   if (!rows.length) { const e = document.createElement("div"); e.style.cssText = "text-align:center;color:#888;padding:30px;"; e.textContent = "No profiles have synced yet."; wrap.appendChild(e); main.appendChild(wrap); return; }
   rows.forEach(s => {
     const card = document.createElement("div"); card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);";
