@@ -2449,11 +2449,23 @@ function predictExam(mode, runs, diagFloor) {
     scores[k] = correct;
   }
   scores.sort((a, b) => a - b);
+  // Realistic full-length mocks ("The Real Deal" / mini mocks) are the best single readiness signal,
+  // so give them modest extra weight: nudge the whole predicted distribution toward your mock average.
+  const modelMean = scores.reduce((a, b) => a + b, 0) / runs;
+  const mockPct = (typeof recentMockAvg === "function") ? recentMockAvg(mode) : null;
+  let mockWeighted = false;
+  if (mockPct != null) {
+    mockWeighted = true;
+    const MOCK_W = 0.25; // 25% pull toward the mock average (kept slight so one run can't dominate)
+    const shift = ((1 - MOCK_W) * modelMean + MOCK_W * (mockPct / 100 * total)) - modelMean;
+    for (let k = 0; k < runs; k++) scores[k] = Math.max(0, Math.min(total, scores[k] + shift));
+    scores.sort((a, b) => a - b);
+  }
   const mean = scores.reduce((a, b) => a + b, 0) / runs;
   const q = p => scores[Math.min(runs - 1, Math.max(0, Math.round(p * (runs - 1))))];
   const pAtLeast = frac => scores.filter(s => s >= frac * total).length / runs;
   const res = { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
-    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100), diagFloor: !!diagFloor };
+    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100), diagFloor: !!diagFloor, mockWeighted };
   _predMemo = {}; _predMemo[key] = res;   // keep only the latest
   return res;
 }
@@ -2526,15 +2538,18 @@ function prepPeriodToggle(main) {
   });
   main.appendChild(per);
 }
-/* Best recent full-length mock score (for calibrating the prediction against reality). */
+/* Recent FULL-LENGTH realistic-mock average (for weighting/calibrating the prediction against reality).
+   ONLY the ~200-question realistic mocks (Simulation "The Real Deal", Stuvia/ClaudeBank sims) count —
+   NOT the 100-question mini mocks, timed GRs, or quizzes. Averages your last few in the given mode. */
 function recentMockAvg(mode) {
-  const Q = activeProgress().quizzes || {}; const vals = [];
-  Object.keys(Q).forEach(k => {
-    if (!/^(fullExam:torso|exam:torso:|sim:torso)/.test(k) && k !== "stuvia:torso:all" && k !== "stuvia:torso:3") return;
-    const pm = (Q[k].modes || {})[mode]; const bs = pm ? pm.bestScore : null;
-    if (typeof bs === "number") vals.push(bs);
-  });
-  if (!vals.length) return null;
+  const recs = (typeof allAttempts === "function" ? allAttempts() : []).filter(a =>
+    a.kind === "mock" &&
+    (a.rec.total || 0) >= 150 &&                         // full-length only (mini mocks are 100)
+    !/mini/i.test(a.rec.title || a.title || "") &&       // extra guard against mini mocks
+    a.rec.mode === mode &&
+    typeof a.rec.pct === "number");
+  if (!recs.length) return null;
+  const vals = recs.slice(0, 3).map(a => a.rec.pct);     // most recent up to 3
   return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
 }
 /* Predicted Exam Score card — the headline "am I ready?" forecast. */
@@ -2554,7 +2569,7 @@ function renderExamOutlook(main, md) {
     main.appendChild(card); return;
   }
   const cal = recentMockAvg(md);
-  const calLine = cal != null ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.25);font-size:.8rem;opacity:.95;">📏 Your mock exams avg <b>${cal}%</b> → model is ${Math.abs(pred.meanPct-cal)<=3?"well-calibrated":(pred.meanPct>cal?`optimistic by ${pred.meanPct-cal} pts`:`cautious by ${cal-pred.meanPct} pts`)}.</div>` : "";
+  const calLine = cal != null ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.25);font-size:.8rem;opacity:.95;">📏 Weighted <b>25%</b> toward your realistic-mock average (<b>${cal}%</b>) — mocks are the strongest readiness signal.</div>` : "";
   card.innerHTML = `
     <div style="font-weight:800;font-size:1rem;margin-bottom:6px;">🔮 Predicted exam score <span style="font-weight:600;opacity:.85;font-size:.8rem;">· if it were today · ${md==="closed"?"closed-book":"with-notes"}</span></div>
     <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
@@ -4306,6 +4321,19 @@ function renderSectionMenu(main) {
       title: "Preparedness Score",
       sub: "How exam-ready you are, by system",
       condition: isTorso,
+      bg: "linear-gradient(135deg,#5B21B6 0%,#4338CA 100%)",  // violet (swapped in from Practice Tests)
+      shadow: "rgba(67,56,202,.35)",
+    },
+    // Practice Tests — pulled ABOVE Guided Readings, with space above (its own teal)
+    {
+      id: "examMenu",
+      icon: "📝",
+      title: "Practice Tests",
+      sub: "Timed exams, simulations, and missed-Q review",
+      condition: true,
+      bg: "linear-gradient(135deg,#0F766E 0%,#115E59 100%)",  // teal
+      shadow: "rgba(15,118,110,.35)",
+      gapBefore: true,
     },
     {
       id: "grMenu",
@@ -4313,6 +4341,7 @@ function renderSectionMenu(main) {
       title: "Guided Readings",
       sub: isTorso ? "Timed GR questions by section" : "Timed GR question sets",
       condition: true,
+      gapBefore: true,
     },
     {
       id: "claudeMenu",
@@ -4322,19 +4351,13 @@ function renderSectionMenu(main) {
       condition: isTorso && typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length > 0,
     },
     {
-      id: "examMenu",
-      icon: "📝",
-      title: "Practice Tests",
-      sub: "Timed exams, simulations, and missed-Q review",
-      condition: true,
-      highlight: true,
-    },
-    {
       id: "missedRoot",
       icon: "🔁",
       title: "Missed Questions",
       sub: "Re-do everything you've gotten wrong — all sections",
       condition: isTorso,
+      bg: "linear-gradient(135deg,#C0392B 0%,#922B21 100%)",  // coral/red — the "wrong ones"
+      shadow: "rgba(192,57,43,.32)",
       onclick: () => {
         const missed = JSON.parse(localStorage.getItem(ns("missed:" + state.sectionKey)) || "[]");
         if (!missed.length) { alert("No missed questions recorded yet. Take a quiz or exam first!"); return; }
@@ -4365,6 +4388,9 @@ function renderSectionMenu(main) {
       condition: isTorso || isAxial,
     },
   ].filter(i => i.condition);
+  // Space between the Stuvia bank and the diagram section (whichever diagram item shows first)
+  const firstDiag = items.findIndex(i => i.id === "diagramMenu" || i.id === "diagramGallery");
+  if (firstDiag > 0) items[firstDiag].gapBefore = true;
 
   const list = document.createElement("div");
   list.className = "sectionMenuList";
@@ -4372,16 +4398,17 @@ function renderSectionMenu(main) {
   items.forEach(item => {
     const card = document.createElement("button");
     card.className = "sectionMenuCard";
-    if (item.highlight) {
-      // Stand-out treatment (like the predicted-score box) so Practice Tests pops.
-      card.style.cssText = "background:linear-gradient(135deg,#5B21B6 0%,#4338CA 100%);border:none;color:#fff;box-shadow:0 4px 14px rgba(67,56,202,.35);";
+    const filled = !!item.bg;
+    if (filled) {
+      card.style.cssText = `background:${item.bg};border:none;color:#fff;box-shadow:0 4px 14px ${item.shadow || "rgba(0,0,0,.25)"};`;
     }
-    const subColor = item.highlight ? "rgba(255,255,255,.85)" : "";
-    const chevColor = item.highlight ? "#fff" : "";
+    if (item.gapBefore) card.style.marginTop = "22px"; // set AFTER cssText so it isn't overwritten
+    const subColor = filled ? "rgba(255,255,255,.85)" : "";
+    const chevColor = filled ? "#fff" : "";
     card.innerHTML = `
       <span class="smc-icon">${item.icon}</span>
       <span class="smc-text">
-        <span class="smc-title"${item.highlight ? ' style="color:#fff;"' : ''}>${item.title}</span>
+        <span class="smc-title"${filled ? ' style="color:#fff;"' : ''}>${item.title}</span>
         <span class="smc-sub"${subColor ? ` style="color:${subColor};"` : ''}>${item.sub}</span>
       </span>
       <span class="smc-chevron"${chevColor ? ` style="color:${chevColor};"` : ''}>›</span>`;
