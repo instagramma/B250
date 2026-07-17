@@ -12,7 +12,11 @@ function isFITBQ(q) { return !!(q && (q.fitb || (q.options || []).length <= 1));
 /* Out-of-scope items — never served in Torso exams/mocks. Reversible (just remove the id).
    PE-2159/2161 = imaging physics. ST-0499/ST-0948 = "femoral artery becomes popliteal" — a
    lower-limb (Appendicular) vessel that Stuvia mis-filed under Pelvis; not Torso material. */
-const OUT_OF_SCOPE_IDS = new Set(["PE-2159", "PE-2161", "ST-0499", "ST-0948"]);
+const OUT_OF_SCOPE_IDS = new Set([
+  "PE-2159", "PE-2161",          // imaging physics
+  "ST-0499", "ST-0948",          // femoral→popliteal (Appendicular / lower-limb)
+  "ST-0001", "ST-0242", "ST-0498" // general ANS "unpaired ganglia" MCQ (Axial nervous-system) — Thorax/Abdomen/Pelvis copies
+]);
 function isExamEligible(q) { return !!q && !isFITBQ(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
 /* Normalize a question stem so near-identical duplicates (same stem across GR/Stuvia/CB, or the
    Systemic master set that duplicates section questions) collapse to one key. */
@@ -2778,6 +2782,29 @@ function renderCoach(main) {
     main.appendChild(sw);
   }
 
+  // Test-taking habits — answer-changes (second-guessing) + flag accuracy, aggregated across mocks.
+  const beh = behaviorStats();
+  if (beh.totalChanges > 0 || beh.flagTotal > 0) {
+    const bw = document.createElement("div");
+    bw.style.cssText = "margin:10px 0;padding:12px 14px;border-radius:12px;background:#fff;border-left:4px solid #6D28D9;box-shadow:0 1px 3px rgba(0,0,0,.06);";
+    let bh = `<div style="font-weight:800;color:#5B21B6;font-size:.95rem;">🧠 Test-taking habits</div>`;
+    if (beh.totalChanges > 0) {
+      const net = beh.r2w - beh.w2r;
+      const verdict = net > 0
+        ? `You flip <b>right→wrong ${beh.r2w}×</b> vs wrong→right ${beh.w2r}× — <b style="color:#C0392B;">second-guessing is costing you</b>. On the real exam, trust your first instinct unless you have a concrete reason.`
+        : beh.w2r > beh.r2w
+        ? `You flip <b>wrong→right ${beh.w2r}×</b> vs right→wrong ${beh.r2w}× — your rechecks help. Keep reviewing flagged ones.`
+        : `Right→wrong (${beh.r2w}) and wrong→right (${beh.w2r}) are even — changing is roughly neutral for you.`;
+      bh += `<div style="font-size:.84rem;color:#333;margin-top:6px;line-height:1.5;">Across your mocks you changed an answer <b>${beh.totalChanges}×</b> — ${beh.r2w} right→wrong, ${beh.w2r} wrong→right, ${beh.w2w} wrong→wrong.<br>${verdict}</div>`;
+    }
+    if (beh.flagTotal > 0) {
+      const facc = Math.round(beh.flagRight / beh.flagTotal * 100);
+      bh += `<div style="font-size:.84rem;color:#333;margin-top:8px;line-height:1.5;">🚩 Of <b>${beh.flagTotal}</b> flagged question${beh.flagTotal===1?"":"s"}, you got <b>${facc}%</b> right. ${facc < 60 ? "Flagging is catching your genuinely-shaky ones — always leave time to revisit them." : "You flag conservatively and usually nail them."}</div>`;
+    }
+    bw.innerHTML = bh;
+    main.appendChild(bw);
+  }
+
   function sectionBlock(title, subtitle, items, color, icon, verb) {
     if (!items.length) return;
     const wrap = document.createElement("div");
@@ -3260,6 +3287,7 @@ let fullExamDeck = [], fullExamIndex = 0, fullExamAnswers = [], fullExamFlags = 
 let fullExamModeSet = false;      // closed/open-book prompt answered for this exam launch
 let fullExamOvFilter = "all";     // Overview grid filter: "all" | "unanswered" | "flagged"
 let fullExamReachedEnd = false;   // once true, the Overview shows the "review & submit" framing
+let fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 }; // answer-change transitions this exam (second-guessing signal)
 let examAnswered = false, examSelected = -1, examTimedOut = false;
 let examTimerHandle = null, examTimeLeft = 30;
 let examAnswerLog = [];  // [{q, options, selected, correct, timedOut}, ...]
@@ -4486,6 +4514,17 @@ function allAttempts() {
   return uniq;
 }
 const HIST_FILTERS = { all: () => true, mocks: k => k === "mock" || k === "sim", timed: k => k === "timed" || k === "gr", quizzes: k => k === "quiz" || k === "sudden" };
+/* Aggregate answer-change (second-guessing) + flag stats across all logged attempts. */
+function behaviorStats() {
+  const b = { r2w: 0, w2r: 0, w2w: 0, flagTotal: 0, flagRight: 0 };
+  allAttempts().forEach(a => {
+    const c = a.rec.changes, f = a.rec.flags;
+    if (c) { b.r2w += c.r2w || 0; b.w2r += c.w2r || 0; b.w2w += c.w2w || 0; }
+    if (f) { b.flagTotal += f.total || 0; b.flagRight += f.right || 0; }
+  });
+  b.totalChanges = b.r2w + b.w2r + b.w2w;
+  return b;
+}
 function renderHistory(main) {
   const all = allAttempts();
   const filter = state.histFilter || "all";
@@ -4636,6 +4675,7 @@ function renderExamMenu(main) {
     fullExamSecondsLeft = seconds || 6000;
     fullExamShowOverview = false;
     fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
+    fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; // null it so the fresh exam's timer actually starts
     state.examTitle = title || "Simulation";
@@ -5535,7 +5575,17 @@ function renderFullExam(main) {
     btn.className = "feOptBtn" + (isSelected ? " selected" : "");
     btn.innerHTML = `<span class="feOptLetter">${LETTERS[i]}</span><span class="feOptText">${opt}</span>`;
     btn.onclick = () => {
-      fullExamAnswers[fullExamIndex] = isSelected ? -1 : origIdx; // store original index
+      const old = fullExamAnswers[fullExamIndex];
+      const newVal = isSelected ? -1 : origIdx;
+      // Track a genuine answer CHANGE (had an answer, switched to a different one) — the
+      // second-guessing signal: right→wrong vs wrong→right vs wrong→wrong.
+      if (old !== -1 && newVal !== -1 && old !== newVal) {
+        const oc = old === q.correct, nc = newVal === q.correct;
+        if (oc && !nc) fullExamChanges.r2w++;
+        else if (!oc && nc) fullExamChanges.w2r++;
+        else if (!oc && !nc) fullExamChanges.w2w++;
+      }
+      fullExamAnswers[fullExamIndex] = newVal; // store original index
       render();
     };
     qCard.appendChild(btn);
@@ -5615,10 +5665,15 @@ function renderFullExamEnd(main) {
         correct: e.q.options[e.q.correct],
         yours: e.sel === -1 ? "— Skipped" : e.q.options[e.sel]
       }));
+    // Flag outcomes: did flagging correlate with getting it wrong?
+    let fRight = 0, fWrong = 0;
+    fullExamFlags.forEach(idx => { const a = fullExamAnswers[idx]; if (a === fullExamDeck[idx].correct) fRight++; else fWrong++; });
     recordAttempt("fullExam:" + state.sectionKey, {
       title: state.examTitle || "Simulation", kind: "mock",
       mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
-      score: correct, total, pct, missed: missedForLog
+      score: correct, total, pct, missed: missedForLog,
+      changes: { r2w: fullExamChanges.r2w, w2r: fullExamChanges.w2r, w2w: fullExamChanges.w2w },
+      flags: { total: fullExamFlags.size, right: fRight, wrong: fWrong }
     });
   }
 
