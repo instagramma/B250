@@ -1156,7 +1156,7 @@ function renderHome(main) {
     wrap.appendChild(grid);
   };
 
-  section("Lecture", "Regional & systemic anatomy", ["torso", "axial", "appendicular"]);
+  section("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"]);   // course order: Appendicular → Axial → Torso
   section("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"]);
 
   // Cumulative — full-width standout
