@@ -822,6 +822,22 @@ function getSection(key) {
   return DATA.sections[key];
 }
 
+// Section-aware ClaudeBank selector. Torso → CLAUDEBANK, Appendicular/Axial → their own
+// banks, Cumulative → all three combined. Returns null if the section has no bank.
+function activeClaudeBank(key) {
+  const k = key || state.sectionKey;
+  if (k === "appendicular") return (typeof CLAUDEBANK_APPENDICULAR !== "undefined" && CLAUDEBANK_APPENDICULAR.length) ? CLAUDEBANK_APPENDICULAR : null;
+  if (k === "axial")        return (typeof CLAUDEBANK_AXIAL !== "undefined" && CLAUDEBANK_AXIAL.length) ? CLAUDEBANK_AXIAL : null;
+  if (k === "cumulative") {
+    let out = [];
+    if (typeof CLAUDEBANK_APPENDICULAR !== "undefined") out = out.concat(CLAUDEBANK_APPENDICULAR);
+    if (typeof CLAUDEBANK_AXIAL !== "undefined")        out = out.concat(CLAUDEBANK_AXIAL);
+    if (typeof CLAUDEBANK !== "undefined")              out = out.concat(CLAUDEBANK);
+    return out.length ? out : null;
+  }
+  return (typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length) ? CLAUDEBANK : null; // torso default
+}
+
 const state = { route: "home", sectionKey: null, mode: null, subtopicIndex: null, cameFromSubtopics: false, quizFilter: null, quizSource: null, cbIndex: -1, examSource: null, prevRoute: null, grSection: -1 };
 
 function shuffle(arr) {
@@ -4421,7 +4437,7 @@ function renderSectionMenu(main) {
       icon: "🤖",
       title: "Claude Bank",
       sub: "Extra Claude-written questions, by system",
-      condition: isTorso && typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length > 0,
+      condition: ["torso","appendicular","axial"].includes(state.sectionKey) && !!(activeClaudeBank() && activeClaudeBank().length),
     },
     {
       id: "missedRoot",
@@ -4792,6 +4808,16 @@ function sectionGRPool(key, indices) {
   });
   return dedupeQs(pool);
 }
+// ClaudeBank questions for a section, formatted like GR quiz items (letter prefixes stripped).
+function sectionCBPool(key) {
+  const bank = activeClaudeBank(key);
+  if (!bank) return [];
+  const out = [];
+  bank.forEach(t => (t.questions || []).forEach(q => {
+    if (isExamEligible(q)) out.push({ ...q, options: (q.options || []).map(o => o.replace(/^[A-E]\.\s*/, "")) });
+  }));
+  return out;
+}
 const SECTION_GROUPS = {
   axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
   appendicular: [["Upper Extremity", "💪", [0,1,2,3,4,5,6,7]], ["Lower Extremity", "🦵", [8,9,10,11,12]], ["Foundations", "🔬", [13,14,15,16,17,18,19]]],
@@ -4802,7 +4828,7 @@ function buildGenericExamMenu(list, key) {
   const sec = getSection(key), name = (sec.title || key).split(" (")[0];
   const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
   _mkHdr(list, "Realistic Mock");
-  const allPool = sectionGRPool(key);
+  const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your exam · ${Math.min(SIM_N, allPool.length)} Qs · ~${Math.round(SIM_SECS/60)} min · skip &amp; flag freely</span>`;
@@ -4840,7 +4866,7 @@ function buildGenericExamMenu(list, key) {
 function buildCumulativeExamMenu(list) {
   const SECS = 6000, N = 150, PER_N = 100;
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
-  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso")));
+  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · ${Math.min(N, allPool.length)} Qs · skip &amp; flag</span>`;
@@ -5600,7 +5626,7 @@ function renderStuviaMenu(main) {
 
 /* ══ Claude Bank menu — extra Claude-written questions, by system ══ */
 function renderClaudeMenu(main) {
-  const bank = (typeof CLAUDEBANK !== "undefined" && Array.isArray(CLAUDEBANK)) ? CLAUDEBANK : null;
+  const bank = activeClaudeBank();
   if (!bank || bank.length === 0) {
     const msg = document.createElement("p");
     msg.className = "comingSoonMsg";
