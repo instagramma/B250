@@ -1313,8 +1313,8 @@ function renderModes(main) {
       desc: `${sec.images.length} labeled diagrams from worksheets` });
   }
   if (labelingCount > 0) {
-    diagModes.push({ id: "labeling", icon: "🏷️", label: "Diagram Labeling",
-      desc: `${labelingCount} fill-in-the-blank exercises` });
+    diagModes.push({ id: "labeling", icon: "🏷️", label: "Diagram Labeling — Drag & Drop",
+      desc: `${labelingCount} diagrams · drag each label onto its number (great practical prep)` });
   }
   if (diagModes.length) groups.push({ label: "Diagrams", icon: "🔬", modes: diagModes });
 
@@ -1989,6 +1989,76 @@ function renderWorksheet(main) {
    Reused by both the mixed Worksheet Walkthrough deck and the standalone Diagram
    Labeling mode — the caller owns its own deck/index/score variables and just tells
    us what to do when the user checks, skips, or advances past this item. */
+// Injected once: styling + smooth transitions for the drag-and-drop labeling UI.
+function ensureLabelDragStyle() {
+  if (document.getElementById("lblDragStyle")) return;
+  const s = document.createElement("style");
+  s.id = "lblDragStyle";
+  s.textContent = `
+    .lblChip{display:inline-flex;align-items:center;gap:6px;margin:5px;padding:9px 14px;border:2px solid #cfd8e3;border-radius:22px;
+      background:#fff;font-size:.95rem;cursor:grab;user-select:none;touch-action:none;transition:transform .12s,box-shadow .12s,opacity .15s,background .15s,border-color .15s;}
+    .lblChip:hover{border-color:#7C3AED;box-shadow:0 3px 10px rgba(124,58,237,.18);transform:translateY(-1px);}
+    .lblChip:active{cursor:grabbing;}
+    .lblChip.selected{border-color:#7C3AED;background:#F5F3FF;box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+    .lblChip.used{opacity:.32;pointer-events:none;text-decoration:line-through;}
+    .lblChip.dragging{opacity:.35;}
+    .lblGhost{position:fixed;z-index:9999;pointer-events:none;padding:9px 14px;border-radius:22px;background:#7C3AED;color:#fff;
+      font-size:.95rem;font-weight:600;box-shadow:0 8px 22px rgba(124,58,237,.4);transform:translate(-50%,-50%) scale(1.06);white-space:nowrap;}
+    .lblBlankRow{display:flex;align-items:center;gap:12px;margin:8px 0;padding:10px 12px;border:2px dashed #d5dbe3;border-radius:12px;
+      background:#fafbfc;transition:border-color .15s,background .15s,transform .1s;}
+    .lblBlankRow .lblNum{font-weight:800;color:#7C3AED;min-width:26px;text-align:center;}
+    .lblBlankRow .lblSlot{flex:1;min-height:24px;color:#111;font-weight:600;}
+    .lblBlankRow .lblSlot.empty{color:#9aa4b2;font-weight:500;font-style:italic;}
+    .lblBlankRow.filled{border-style:solid;border-color:#7C3AED;background:#F7F5FF;cursor:pointer;}
+    .lblBlankRow.dragOver{border-color:#7C3AED;background:#EDE9FE;transform:scale(1.015);box-shadow:0 4px 14px rgba(124,58,237,.2);}
+    .lblBlankRow.correct{border-style:solid;border-color:#0F766E;background:#E9F6F4;}
+    .lblBlankRow.incorrect{border-style:solid;border-color:#C0392B;background:#FDECEA;}
+    .lblBlankRow .lblFix{color:#0F766E;font-weight:800;}
+    .lblClearHint{font-size:.72rem;color:#aaa;margin-left:auto;}
+  `;
+  document.head.appendChild(s);
+}
+// Pointer-based drag for a word chip → blank row. Works with mouse AND touch.
+// A real drag only starts after a small movement, so a plain tap still selects (fallback).
+function startLabelDrag(e, word, chip) {
+  if (e.button != null && e.button > 0) return;           // primary button / touch only
+  const startX = e.clientX, startY = e.clientY;
+  let ghost = null, curRow = null, dragging = false;
+  const ensureGhost = () => {
+    if (ghost) return;
+    ghost = document.createElement("div"); ghost.className = "lblGhost"; ghost.textContent = word;
+    document.body.appendChild(ghost); chip.classList.add("dragging");
+  };
+  const move = (ev) => {
+    if (!dragging) {
+      if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 6) return;
+      dragging = true; ensureGhost();
+    }
+    ev.preventDefault();
+    ghost.style.left = ev.clientX + "px"; ghost.style.top = ev.clientY + "px";
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    const row = el && el.closest ? el.closest(".lblBlankRow") : null;
+    if (row !== curRow) { if (curRow) curRow.classList.remove("dragOver"); curRow = row; if (curRow) curRow.classList.add("dragOver"); }
+  };
+  const up = () => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    document.removeEventListener("pointercancel", up);
+    if (ghost) ghost.remove();
+    chip.classList.remove("dragging");
+    if (dragging && curRow && !lblChecked) {
+      curRow.classList.remove("dragOver");
+      const num = curRow.dataset.blanknum;
+      if (num != null) {
+        for (const k in lblAssignments) if (lblAssignments[k] === word) delete lblAssignments[k]; // move, don't duplicate
+        lblAssignments[num] = word; lblSelectedChip = null; render();
+      }
+    }
+  };
+  document.addEventListener("pointermove", move, { passive: false });
+  document.addEventListener("pointerup", up);
+  document.addEventListener("pointercancel", up);
+}
 function renderLabelingItem(main, ex, ctx) {
   if (lblItemIndex !== ctx.index) {
     lblItemIndex = ctx.index;
@@ -1996,6 +2066,7 @@ function renderLabelingItem(main, ex, ctx) {
     lblSelectedChip = null;
     lblChecked = false;
   }
+  ensureLabelDragStyle();
 
   const stem = document.createElement("div");
   stem.className = "qStem";
@@ -2004,7 +2075,7 @@ function renderLabelingItem(main, ex, ctx) {
 
   const hint = document.createElement("div");
   hint.className = "galleryNote";
-  hint.textContent = "Tap a word below, then tap the blank it labels.";
+  hint.textContent = "Drag a word onto its number — or tap a word, then tap its blank.";
   main.appendChild(hint);
 
   if (ex.image) {
@@ -2021,61 +2092,58 @@ function renderLabelingItem(main, ex, ctx) {
 
   const usedWords = new Set(Object.values(lblAssignments));
 
-  const bankWrap = document.createElement("div");
-  bankWrap.className = "wordBank";
-  ex.wordBank.forEach((word) => {
-    const chip = document.createElement("button");
-    chip.className = "chip";
-    chip.textContent = word;
-    const isUsed = usedWords.has(word);
-    if (isUsed) chip.className += " used";
-    if (lblSelectedChip === word) chip.className += " selected";
-    chip.disabled = lblChecked || isUsed;
-    chip.onclick = () => {
-      if (lblChecked) return;
-      lblSelectedChip = lblSelectedChip === word ? null : word;
-      render();
-    };
-    bankWrap.appendChild(chip);
-  });
-  main.appendChild(bankWrap);
-
+  // ── Blank rows FIRST as drop targets (referenced by the drag handler) ──
   const blankList = document.createElement("div");
   blankList.className = "blankList";
   ex.blanks.forEach((b) => {
     const row = document.createElement("div");
-    row.className = "blankRow";
-    const num = document.createElement("div");
-    num.className = "blankNum";
-    num.textContent = b.num + ".";
-    const ans = document.createElement("div");
+    row.className = "lblBlankRow";
+    row.dataset.blanknum = b.num;
+    const num = document.createElement("div"); num.className = "lblNum"; num.textContent = b.num;
     const filled = lblAssignments[b.num];
-    ans.className = "blankAnswer" + (filled ? "" : " placeholder");
-    ans.textContent = filled || "tap to fill";
-    row.appendChild(num);
-    row.appendChild(ans);
+    const slot = document.createElement("div");
+    slot.className = "lblSlot" + (filled ? "" : " empty");
+    slot.textContent = filled || "drop a word here";
+    row.appendChild(num); row.appendChild(slot);
+    if (filled) row.classList.add("filled");
     if (lblChecked) {
-      row.className += filled === b.correct ? " correct" : " incorrect";
+      row.classList.add(filled === b.correct ? "correct" : "incorrect");
       if (filled !== b.correct) {
-        const correction = document.createElement("div");
-        correction.className = "blankAnswer";
-        correction.style.fontWeight = "700";
-        correction.textContent = "(" + b.correct + ")";
-        row.appendChild(correction);
+        const fix = document.createElement("div"); fix.className = "lblFix"; fix.textContent = "✓ " + b.correct;
+        row.appendChild(fix);
       }
     } else {
+      if (filled) { const ch = document.createElement("span"); ch.className = "lblClearHint"; ch.textContent = "tap to clear"; row.appendChild(ch); }
       row.onclick = () => {
-        if (filled) {
-          delete lblAssignments[b.num];
-        } else if (lblSelectedChip) {
-          lblAssignments[b.num] = lblSelectedChip;
-          lblSelectedChip = null;
-        }
+        if (lblChecked) return;
+        if (lblAssignments[b.num]) { delete lblAssignments[b.num]; }
+        else if (lblSelectedChip) { lblAssignments[b.num] = lblSelectedChip; lblSelectedChip = null; }
         render();
       };
     }
     blankList.appendChild(row);
   });
+
+  // ── Word bank (draggable chips) — placed above the blanks ──
+  const bankWrap = document.createElement("div");
+  bankWrap.className = "wordBank";
+  ex.wordBank.forEach((word) => {
+    const chip = document.createElement("div");
+    chip.className = "lblChip";
+    chip.textContent = word;
+    chip.dataset.word = word;
+    const isUsed = usedWords.has(word);
+    if (isUsed) chip.classList.add("used");
+    if (lblSelectedChip === word) chip.classList.add("selected");
+    if (!lblChecked && !isUsed) {
+      // tap-to-select fallback
+      chip.onclick = () => { lblSelectedChip = lblSelectedChip === word ? null : word; render(); };
+      // pointer drag-and-drop (mouse + touch)
+      chip.addEventListener("pointerdown", (e) => startLabelDrag(e, word, chip));
+    }
+    bankWrap.appendChild(chip);
+  });
+  main.appendChild(bankWrap);
   main.appendChild(blankList);
 
   const fb = document.createElement("div");
