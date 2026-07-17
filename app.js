@@ -965,7 +965,7 @@ function buildTopbar() {
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
       else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; } return; }
       else if (state.route === "catEnd") { state.route = "examMenu"; }
-      else if (state.route === "preparednessGeneric") state.route = "sectionMenu";
+      else if (state.route === "preparednessGeneric") state.route = (state.sectionKey === "lab2" ? "modes" : "sectionMenu");
       else if (state.route === "labeling")      state.route = "diagramMenu";
       else if (state.route === "gallery")       state.route = "diagramMenu";
       else if (state.route === "exam" || state.route === "examResults") {
@@ -1261,6 +1261,10 @@ function renderModes(main) {
 
   // ── Practice Tests — timed sims + mini-mocks (Lab 2 gets the full treatment) ──
   if (state.sectionKey === "lab2") {
+    groups.push({ label: "Preparedness", icon: "🎯", modes: [
+      { id: "preparednessGeneric", icon: "🎯", label: "Preparedness Score",
+        desc: "Readiness by lab-practical system (recall-weighted)" },
+    ]});
     groups.push({ label: "Practice Tests", icon: "📝", modes: [
       { id: "examMenu", icon: "🎓", label: "Simulations & Mini-Mocks",
         desc: "Timed full mock + mini-mocks by system + missed-Q review + history" },
@@ -6037,13 +6041,15 @@ function renderPreparednessGeneric(main) {
     cc.innerHTML = `🧪 <b>Last adaptive test:</b> readiness ${a.readiness}% · ${a.score}/${a.total} · ${a.date}`;
     wrap.appendChild(cc);
   }
-  // launch CAT
-  const catBtn = document.createElement("button"); catBtn.className = "modeBtn";
-  const en = CAT_CONFIG[key] && CAT_CONFIG[key].enabled;
-  catBtn.style.cssText = en ? "border:2px solid #7C3AED;background:#F5F3FF;font-weight:700;" : "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
-  catBtn.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive</span><span class="modeMeta">${en ? "CISSP-style adaptive · Experimental" : "Coming soon for this section"}</span>`;
-  catBtn.onclick = () => en ? launchCat(key) : alert("Adaptive CAT is coming soon for this section (experimental).");
-  wrap.appendChild(catBtn);
+  // launch CAT (only for sections where CAT is defined — e.g. not lab practicals)
+  if (CAT_CONFIG[key]) {
+    const catBtn = document.createElement("button"); catBtn.className = "modeBtn";
+    const en = CAT_CONFIG[key].enabled;
+    catBtn.style.cssText = en ? "border:2px solid #7C3AED;background:#F5F3FF;font-weight:700;" : "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
+    catBtn.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive</span><span class="modeMeta">${en ? "CISSP-style adaptive · Experimental" : "Coming soon for this section"}</span>`;
+    catBtn.onclick = () => en ? launchCat(key) : alert("Adaptive CAT is coming soon for this section (experimental).");
+    wrap.appendChild(catBtn);
+  }
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;font-size:.75rem;color:#aaa;text-align:center;line-height:1.5;";
   note.textContent = "Experimental for non-Torso sections: readiness/performance are recall-weighted over this section's Guided Readings + Claude Bank. Practice raises them; they fade over time.";
