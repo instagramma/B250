@@ -466,6 +466,7 @@ function renderProfilePicker(main) {
 function initApp() {
   if (!currentProfile) { state.route = "profile"; render(); return; }  // first run on this device → pick a profile
   progressState = loadLocalProgress();
+  loadLblCoords();
   if (!restoreResumeState()) state.route = "home";
   render();
   loadProgress();   // background: pull this profile's cloud data, merge, re-render
@@ -867,6 +868,34 @@ const CAT_CONFIG = {
 const CAT_MIN_ITEMS = 50, CAT_SE_STOP = 0.32;
 let catState = null;
 
+// ── Diagram-label spot coordinates (for auto-graded on-image labeling) ──
+// Merged: baked LBL_COORDS (shared) + this device's locally-tagged spots (override).
+const LBLCOORDS_KEY = "biol250_lblcoords_v1";
+let lblCoords = {};          // effective (baked + local) — used for grading/hotspots
+let _localLblCoords = {};    // just this device's tagged spots — what we persist/export
+let labTagIndex = 0, labTagDeck = [];
+function loadLblCoords() {
+  lblCoords = {};
+  try { if (typeof LBL_COORDS !== "undefined") lblCoords = JSON.parse(JSON.stringify(LBL_COORDS)); } catch (e) {}
+  try { _localLblCoords = JSON.parse(localStorage.getItem(ns(LBLCOORDS_KEY)) || "{}"); } catch (e) { _localLblCoords = {}; }
+  Object.keys(_localLblCoords).forEach(img => { lblCoords[img] = Object.assign({}, lblCoords[img] || {}, _localLblCoords[img]); });
+}
+function saveLblCoordsLocal() {
+  try { localStorage.setItem(ns(LBLCOORDS_KEY), JSON.stringify(_localLblCoords)); } catch (e) {}
+}
+function setLblSpot(img, num, xy) {
+  _localLblCoords[img] = _localLblCoords[img] || {}; _localLblCoords[img][String(num)] = xy;
+  lblCoords[img] = lblCoords[img] || {}; lblCoords[img][String(num)] = xy;
+  saveLblCoordsLocal();
+}
+function clearLblSpot(img, num) {
+  if (_localLblCoords[img]) delete _localLblCoords[img][String(num)];
+  // fall back to baked value if present, else remove
+  let baked; try { baked = (typeof LBL_COORDS !== "undefined" && LBL_COORDS[img]) ? LBL_COORDS[img][String(num)] : null; } catch (e) { baked = null; }
+  if (baked) lblCoords[img][String(num)] = baked; else if (lblCoords[img]) delete lblCoords[img][String(num)];
+  saveLblCoordsLocal();
+}
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -902,6 +931,7 @@ function render() {
   else if (state.route === "subtopics") renderSubtopics(main);
   else if (state.route === "worksheet") renderWorksheet(main);
   else if (state.route === "labeling") renderLabeling(main);
+  else if (state.route === "labelTag") renderLabelTag(main);
   else if (state.route === "examPicker") renderExamPicker(main);
   else if (state.route === "exam") renderExam(main);
   else if (state.route === "examResults") renderExamResults(main);
@@ -978,7 +1008,8 @@ function buildTopbar() {
       else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; } return; }
       else if (state.route === "catEnd") { state.route = "examMenu"; }
       else if (state.route === "preparednessGeneric") state.route = (state.sectionKey === "lab2" ? "modes" : "sectionMenu");
-      else if (state.route === "labeling")      state.route = "diagramMenu";
+      else if (state.route === "labeling")      state.route = (state.sectionKey === "lab2" ? "modes" : "diagramMenu");
+      else if (state.route === "labelTag")      state.route = (state.sectionKey === "lab2" ? "modes" : "sectionMenu");
       else if (state.route === "gallery")       state.route = "diagramMenu";
       else if (state.route === "exam" || state.route === "examResults") {
         examStopTimer();
@@ -1010,6 +1041,7 @@ function buildTopbar() {
   else if (state.route === "catSim")         titleText = "CAT Simulation 🧪";
   else if (state.route === "catEnd")         titleText = "CAT Results 🧪";
   else if (state.route === "preparednessGeneric") titleText = "Preparedness";
+  else if (state.route === "labelTag") titleText = "Tag Diagram Spots";
   else if (state.route === "fullExam")        titleText = state.examTitle || "Simulation";
   else if (state.route === "fullExamEnd")     titleText = (state.examTitle || "Simulation") + " Results";
   else if (state.route === "customBuilder") titleText = "Custom Practice";
@@ -1315,6 +1347,8 @@ function renderModes(main) {
   if (labelingCount > 0) {
     diagModes.push({ id: "labeling", icon: "🏷️", label: "Diagram Labeling — Drag & Drop",
       desc: `${labelingCount} diagrams · drag each label onto its number (great practical prep)` });
+    diagModes.push({ id: "labelTag", icon: "🎯", label: "Tag Diagram Spots (setup)",
+      desc: "One-time: mark where each label sits on the image → labeling then auto-grades ON the diagram" });
   }
   if (diagModes.length) groups.push({ label: "Diagrams", icon: "🔬", modes: diagModes });
 
@@ -2015,6 +2049,25 @@ function ensureLabelDragStyle() {
     .lblBlankRow.incorrect{border-style:solid;border-color:#C0392B;background:#FDECEA;}
     .lblBlankRow .lblFix{color:#0F766E;font-weight:800;}
     .lblClearHint{font-size:.72rem;color:#aaa;margin-left:auto;}
+    /* on-image hotspots + stickers */
+    .lblHotspot{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;
+      min-width:26px;min-height:26px;border-radius:14px;cursor:pointer;transition:transform .1s,box-shadow .12s,background .12s;z-index:2;}
+    .lblHotspot .lblDot{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+      background:rgba(124,58,237,.92);color:#fff;font-weight:800;font-size:.8rem;box-shadow:0 2px 6px rgba(0,0,0,.35);border:2px solid #fff;}
+    .lblHotspot.dragOver{transform:translate(-50%,-50%) scale(1.25);}
+    .lblHotspot.dragOver .lblDot{background:#4338CA;box-shadow:0 0 0 6px rgba(124,58,237,.3);}
+    .lblHotspot .lblSticker{background:#fff;border:2px solid #7C3AED;color:#111;font-weight:700;font-size:.82rem;
+      padding:3px 9px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.28);white-space:nowrap;}
+    .lblHotspot.filled{z-index:3;}
+    .lblHotspot.okp .lblSticker{border-color:#0F766E;background:#E9F6F4;}
+    .lblHotspot.badp .lblSticker,.lblHotspot.badp .lblDot{border-color:#C0392B;}
+    .lblHotspot.badp .lblDot{background:#C0392B;}
+    .lblStickerFix{display:block;margin-top:2px;background:#0F766E;color:#fff;font-size:.72rem;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+    /* tagging tool */
+    .tagTargetDot{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#0F766E;color:#fff;
+      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);cursor:pointer;z-index:2;}
+    .tagImgWrap{position:relative;max-width:860px;margin:0 auto;cursor:crosshair;}
+    .tagPrompt{background:#0F766E;color:#fff;border-radius:10px;padding:10px 14px;font-weight:700;text-align:center;margin:10px auto;max-width:600px;}
   `;
   document.head.appendChild(s);
 }
@@ -2037,7 +2090,7 @@ function startLabelDrag(e, word, chip) {
     ev.preventDefault();
     ghost.style.left = ev.clientX + "px"; ghost.style.top = ev.clientY + "px";
     const el = document.elementFromPoint(ev.clientX, ev.clientY);
-    const row = el && el.closest ? el.closest(".lblBlankRow") : null;
+    const row = el && el.closest ? el.closest(".lblBlankRow,.lblHotspot") : null;
     if (row !== curRow) { if (curRow) curRow.classList.remove("dragOver"); curRow = row; if (curRow) curRow.classList.add("dragOver"); }
   };
   const up = () => {
@@ -2059,7 +2112,66 @@ function startLabelDrag(e, word, chip) {
   document.addEventListener("pointerup", up);
   document.addEventListener("pointercancel", up);
 }
+// True when every blank of this exercise has a tagged coordinate → on-image mode is possible.
+function fullyTagged(ex) {
+  const c = lblCoords[ex.image]; if (!c) return false;
+  return (ex.blanks || []).every(b => c[String(b.num)]);
+}
+// Auto-graded ON-IMAGE labeling: drag each word onto its numbered spot on the diagram.
+function renderLabelingOnImage(main, ex, ctx) {
+  if (lblItemIndex !== ctx.index) { lblItemIndex = ctx.index; lblAssignments = {}; lblSelectedChip = null; lblChecked = false; }
+  ensureLabelDragStyle();
+  const coords = lblCoords[ex.image] || {};
+  const stem = document.createElement("div"); stem.className = "qStem"; stem.textContent = `${ctx.label}. ${ex.title}`; main.appendChild(stem);
+  const hint = document.createElement("div"); hint.className = "galleryNote"; hint.textContent = "Drag each label onto its numbered spot on the diagram."; main.appendChild(hint);
+  const wrap = document.createElement("div"); wrap.className = "lblImgWrap"; wrap.style.cssText = "position:relative;max-width:860px;margin:0 auto;";
+  const img = document.createElement("img"); img.src = "images/" + ex.image; img.style.cssText = "width:100%;display:block;border-radius:8px;"; img.loading = "lazy";
+  wrap.appendChild(img);
+  const overlay = document.createElement("div"); overlay.style.cssText = "position:absolute;inset:0;"; wrap.appendChild(overlay);
+  const usedWords = new Set(Object.values(lblAssignments));
+  ex.blanks.forEach(b => {
+    const c = coords[String(b.num)]; if (!c) return;
+    const hs = document.createElement("div"); hs.className = "lblHotspot"; hs.dataset.blanknum = b.num;
+    hs.style.left = (c[0] * 100) + "%"; hs.style.top = (c[1] * 100) + "%";
+    const filled = lblAssignments[b.num];
+    if (filled) {
+      hs.classList.add("filled");
+      const st = document.createElement("span"); st.className = "lblSticker"; st.textContent = filled; hs.appendChild(st);
+      if (lblChecked) {
+        hs.classList.add(filled === b.correct ? "okp" : "badp");
+        if (filled !== b.correct) { const fx = document.createElement("span"); fx.className = "lblStickerFix"; fx.textContent = b.correct; hs.appendChild(fx); }
+      } else { hs.onclick = () => { delete lblAssignments[b.num]; render(); }; }
+    } else {
+      const dot = document.createElement("span"); dot.className = "lblDot"; dot.textContent = b.num; hs.appendChild(dot);
+      if (lblChecked) { hs.classList.add("badp"); const fx = document.createElement("span"); fx.className = "lblStickerFix"; fx.textContent = b.correct; hs.appendChild(fx); }
+      else { hs.onclick = () => { if (lblSelectedChip) { for (const k in lblAssignments) if (lblAssignments[k] === lblSelectedChip) delete lblAssignments[k]; lblAssignments[b.num] = lblSelectedChip; lblSelectedChip = null; render(); } }; }
+    }
+    overlay.appendChild(hs);
+  });
+  main.appendChild(wrap);
+  const bank = document.createElement("div"); bank.className = "wordBank"; bank.style.marginTop = "16px";
+  ex.wordBank.forEach(word => {
+    const chip = document.createElement("div"); chip.className = "lblChip"; chip.textContent = word; chip.dataset.word = word;
+    const isUsed = usedWords.has(word); if (isUsed) chip.classList.add("used"); if (lblSelectedChip === word) chip.classList.add("selected");
+    if (!lblChecked && !isUsed) { chip.onclick = () => { lblSelectedChip = lblSelectedChip === word ? null : word; render(); }; chip.addEventListener("pointerdown", (e) => startLabelDrag(e, word, chip)); }
+    bank.appendChild(chip);
+  });
+  main.appendChild(bank);
+  const fb = document.createElement("div"); fb.className = "feedbackBar";
+  if (!lblChecked) {
+    const allFilled = ex.blanks.every(b => lblAssignments[b.num] || !coords[String(b.num)]);
+    const check = document.createElement("button"); check.className = "nextBtn"; check.textContent = "Check answers"; check.disabled = !allFilled;
+    check.onclick = () => { lblChecked = true; const cc = ex.blanks.filter(b => lblAssignments[b.num] === b.correct).length; ctx.onCheck(cc); render(); };
+    fb.appendChild(check);
+    const skip = document.createElement("button"); skip.className = "secondaryBtn"; skip.textContent = "Skip diagram"; skip.onclick = () => { ctx.onSkip(ex.blanks.length); render(); }; fb.appendChild(skip);
+  } else {
+    const next = document.createElement("button"); next.className = "nextBtn"; next.textContent = ctx.isLast ? "See results" : "Next"; next.onclick = () => { ctx.onNext(); render(); }; fb.appendChild(next);
+  }
+  main.appendChild(fb);
+}
 function renderLabelingItem(main, ex, ctx) {
+  // If this diagram's spots have been tagged, use the auto-graded on-image mode.
+  if (fullyTagged(ex)) return renderLabelingOnImage(main, ex, ctx);
   if (lblItemIndex !== ctx.index) {
     lblItemIndex = ctx.index;
     lblAssignments = {};
@@ -2177,6 +2289,81 @@ function renderLabelingItem(main, ex, ctx) {
     fb.appendChild(next);
   }
   main.appendChild(fb);
+}
+
+/* ---------------- TAG DIAGRAM SPOTS (one-time setup for auto-graded on-image labeling) ---------------- */
+let labTagTarget = null;
+function _tagBtn(label, onclick) { const b = document.createElement("button"); b.className = "secondaryBtn"; b.textContent = label; b.onclick = onclick; b.style.margin = "4px"; return b; }
+function renderLabelTag(main) {
+  const sec = getSection(state.sectionKey);
+  if (!labTagDeck.length || labTagDeck._sec !== state.sectionKey) {
+    labTagDeck = [];
+    (sec.subtopics || []).forEach(st => (st.labeling || []).forEach(ex => labTagDeck.push({ ...ex, _topic: st.title })));
+    labTagDeck._sec = state.sectionKey; labTagIndex = 0; labTagTarget = null;
+  }
+  ensureLabelDragStyle();
+  const total = labTagDeck.length;
+  const taggedImgs = labTagDeck.filter(e => { const p = _localLblCoords[e.image] || {}; return e.blanks.every(b => p[String(b.num)]); }).length;
+
+  const intro = document.createElement("div"); intro.className = "galleryNote";
+  intro.textContent = "One-time setup: tap on each diagram where its numbered labels point. Then Diagram Labeling auto-grades right on the image. Your taps sync to this device; use “Copy coordinates” to share with the class.";
+  main.appendChild(intro);
+
+  if (labTagIndex >= total) {
+    const done = document.createElement("div"); done.className = "tagPrompt"; done.textContent = `All ${total} images reviewed · ${taggedImgs}/${total} fully tagged.`;
+    main.appendChild(done);
+    const restart = _tagBtn("Review from start", () => { labTagIndex = 0; render(); });
+    const copy = _tagBtn("📋 Copy all coordinates (to share)", () => { const json = JSON.stringify(_localLblCoords); try { navigator.clipboard && navigator.clipboard.writeText(json); } catch (e) {} alert("Coordinates copied. Paste them to Claude to bake in for everyone.\n\n" + taggedImgs + "/" + total + " images fully tagged."); });
+    const row = document.createElement("div"); row.className = "feedbackBar"; row.append(restart, copy); main.appendChild(row);
+    return;
+  }
+
+  const ex = labTagDeck[labTagIndex];
+  const placed = _localLblCoords[ex.image] || {};
+  const nums = ex.blanks.map(b => b.num);
+  const doneCount = nums.filter(n => placed[String(n)]).length;
+  const target = (labTagTarget && !placed[String(labTagTarget)]) ? labTagTarget : nums.find(n => !placed[String(n)]);
+
+  const hd = document.createElement("div"); hd.className = "qStem"; hd.textContent = `Image ${labTagIndex + 1}/${total} — ${ex.title}`; main.appendChild(hd);
+  const pr = document.createElement("div"); pr.className = "tagPrompt";
+  pr.textContent = target ? `Tap where label ${target} points on the diagram.` : `All ${nums.length} spots placed ✓ — go to the next image.`;
+  main.appendChild(pr);
+
+  const wrap = document.createElement("div"); wrap.className = "tagImgWrap";
+  const img = document.createElement("img"); img.src = "images/" + ex.image; img.style.cssText = "width:100%;display:block;border-radius:8px;"; wrap.appendChild(img);
+  const overlay = document.createElement("div"); overlay.style.cssText = "position:absolute;inset:0;"; wrap.appendChild(overlay);
+  nums.forEach(n => {
+    const c = placed[String(n)]; if (!c) return;
+    const d = document.createElement("div"); d.className = "tagTargetDot"; d.textContent = n;
+    d.style.left = (c[0] * 100) + "%"; d.style.top = (c[1] * 100) + "%";
+    d.onclick = (e) => { e.stopPropagation(); clearLblSpot(ex.image, n); labTagTarget = n; render(); };
+    overlay.appendChild(d);
+  });
+  overlay.onclick = (e) => {
+    if (!target) return;
+    const r = overlay.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    if (x < 0 || x > 1 || y < 0 || y > 1) return;
+    setLblSpot(ex.image, target, [Math.round(x * 1000) / 1000, Math.round(y * 1000) / 1000]);
+    labTagTarget = null; render();
+  };
+  main.appendChild(wrap);
+
+  const fb = document.createElement("div"); fb.className = "feedbackBar"; fb.style.flexWrap = "wrap";
+  fb.append(
+    _tagBtn("‹ Prev", () => { if (labTagIndex > 0) { labTagIndex--; labTagTarget = null; render(); } }),
+    _tagBtn("Undo last", () => { const dn = nums.filter(n => placed[String(n)]); if (dn.length) { clearLblSpot(ex.image, dn[dn.length - 1]); labTagTarget = null; render(); } }),
+    _tagBtn("Skip", () => { labTagIndex++; labTagTarget = null; render(); }),
+    _tagBtn(doneCount === nums.length ? "Next ✓" : "Next ›", () => { labTagIndex++; labTagTarget = null; render(); })
+  );
+  main.appendChild(fb);
+
+  const stat = document.createElement("div"); stat.style.cssText = "text-align:center;font-size:.8rem;color:#888;margin-top:10px;";
+  stat.textContent = `This diagram ${doneCount}/${nums.length} · fully-tagged images ${taggedImgs}/${total}`;
+  main.appendChild(stat);
+  const copyRow = document.createElement("div"); copyRow.style.cssText = "text-align:center;margin-top:8px;";
+  copyRow.appendChild(_tagBtn("📋 Copy all coordinates (to share)", () => { const json = JSON.stringify(_localLblCoords); try { navigator.clipboard && navigator.clipboard.writeText(json); } catch (e) {} alert("Coordinates copied to clipboard. Paste them to Claude to bake in for Sam & Darren.\n\n" + taggedImgs + "/" + total + " images fully tagged."); }));
+  main.appendChild(copyRow);
 }
 
 /* ---------------- DIAGRAM LABELING (standalone, labeling-only mode) ---------------- */
