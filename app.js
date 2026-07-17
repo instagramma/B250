@@ -951,7 +951,7 @@ function buildTopbar() {
   else if (state.route === "coach") titleText = "How am I doing?";
   else if (state.route === "history") titleText = "History";
   else if (state.route === "missedStats") titleText = "Questions You Keep Missing";
-  else if (state.route === "reports") titleText = "Question Reports";
+  else if (state.route === "reports") titleText = "Flagged Questions";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "claudeMenu")     titleText = "Claude Bank";
   else if (state.route === "fullExam")        titleText = state.examTitle || "Simulation";
@@ -1084,65 +1084,98 @@ function renderLogin(main) {
   main.appendChild(wrap);
 }
 
+const HOME_ACCENT = {
+  torso:        { c1: "#E9605A", c2: "#C0392B" },   // coral/red
+  axial:        { c1: "#3E86C9", c2: "#2E74B5" },   // blue
+  appendicular: { c1: "#D9A441", c2: "#B7791F" },   // amber / bone
+  lab1:         { c1: "#7C4DD6", c2: "#5B21B6" },   // violet
+  lab2:         { c1: "#14A090", c2: "#0F766E" },   // teal
+};
 function renderHome(main) {
-  // Home quick-links (identity now lives permanently in the top bar)
-  const who = document.createElement("div");
-  who.style.cssText = "display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;color:#666;margin:2px 0 10px;";
+  ensureHoverStyle();
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:860px;margin:0 auto;padding:0 6px;";
+
+  // Reports pill (clearly a quality-flag tool, not part of studying)
   const nRep = loadReports().filter(r => !r.resolved).length;
+  const repRow = document.createElement("div");
+  repRow.style.cssText = "display:flex;justify-content:flex-end;margin:2px 0 4px;";
   const rep = document.createElement("button");
-  rep.innerHTML = `🚩 Reports${nRep ? ` <b>${nRep}</b>` : ""}`;
-  rep.style.cssText = "border:1px solid #ccc;background:#fff;color:#C62828;border-radius:14px;padding:3px 12px;font-size:.78rem;font-weight:700;cursor:pointer;";
+  rep.className = "pillBtn";
+  rep.innerHTML = `🚩 Flagged questions${nRep ? ` <b>${nRep}</b>` : ""}`;
+  rep.title = "Report a question with a wrong or confusing answer — for quality review, not for studying.";
+  rep.style.cssText = "border:1px solid #e3c9c9;background:#fff;color:#C62828;border-radius:14px;padding:4px 13px;font-size:.76rem;font-weight:700;cursor:pointer;";
   rep.onclick = () => { state.route = "reports"; render(); };
-  who.appendChild(rep);
-  main.appendChild(who);
+  repRow.appendChild(rep);
+  wrap.appendChild(repRow);
 
-  const sub = document.createElement("div");
-  sub.className = "subtitle";
-  sub.textContent = "Choose a lecture unit or a lab unit — or jump into Cumulative for full-course review.";
-  main.appendChild(sub);
+  // Hero
+  const hero = document.createElement("div");
+  hero.style.cssText = "text-align:center;margin:6px 0 22px;";
+  hero.innerHTML = `
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:2rem;font-weight:800;color:#1F3864;letter-spacing:-.01em;">BIOL 250 <span style="color:#0F766E;">Study</span></div>
+    <div style="color:#7c8598;font-size:.95rem;margin-top:4px;">Human Anatomy — timed practice, real-exam sims &amp; a coach that tells you what to study next.</div>`;
+  wrap.appendChild(hero);
 
-  const groups = [
-    { label: "Lecture", hint: "Regional & systemic anatomy", keys: ["torso", "axial", "appendicular"] },
-    { label: "Lab",     hint: "Lab manual, worksheets & practicals", keys: ["lab1", "lab2"] },
-  ];
+  const makeCard = (key, s) => {
+    const ac = HOME_ACCENT[key] || { c1: "#64748b", c2: "#475569" };
+    const card = document.createElement("button");
+    card.className = "homeCard";
+    card.style.cssText = "position:relative;overflow:hidden;text-align:left;background:#fff;border:1px solid #ece7dd;border-radius:18px;padding:0;cursor:pointer;box-shadow:0 2px 10px rgba(31,56,100,.06);display:block;width:100%;";
+    card.innerHTML = `
+      <div style="height:6px;background:linear-gradient(90deg,${ac.c1},${ac.c2});"></div>
+      <div style="padding:16px 18px 18px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <span style="flex:0 0 auto;width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,${ac.c1}22,${ac.c2}22);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${ICONS[key] || "📘"}</span>
+          <span style="font-family:Georgia,serif;font-size:1.28rem;font-weight:800;color:#1F2937;">${s.title.split(" (")[0]}</span>
+        </div>
+        <div style="color:#6b7280;font-size:.86rem;line-height:1.4;min-height:2.4em;">${META[key] || ""}</div>
+        <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:${ac.c2};background:${ac.c1}14;border-radius:999px;padding:4px 11px;">
+          ${s.flashcards.length} cards&nbsp;·&nbsp;${s.quiz.length} questions</div>
+      </div>`;
+    card.onclick = () => { state.sectionKey = key; state.route = key === "lab2" ? "modes" : "sectionMenu"; render(); };
+    return card;
+  };
 
-  groups.forEach(group => {
+  const section = (label, hint, keys) => {
     const hdr = document.createElement("div");
-    hdr.className = "homeGroupHdr";
-    hdr.innerHTML = `<span class="homeGroupName">${group.label}</span><span class="homeGroupHint">${group.hint}</span>`;
-    main.appendChild(hdr);
-
+    hdr.style.cssText = "display:flex;align-items:baseline;gap:10px;margin:22px 4px 12px;border-bottom:1px solid #e7e2d6;padding-bottom:6px;";
+    hdr.innerHTML = `<span style="font-family:Georgia,serif;font-size:1.15rem;font-weight:800;color:#0F766E;">${label}</span><span style="color:#9aa2b1;font-size:.82rem;">${hint}</span>`;
+    wrap.appendChild(hdr);
     const grid = document.createElement("div");
-    grid.className = "grid";
-    for (const key of group.keys) {
-      const s = DATA.sections[key];
-      if (!s) continue;
-      const card = document.createElement("button");
-      card.className = "sectionCard";
-      card.innerHTML = `<div class="icon">${ICONS[key]}</div>
-        <div class="name">${s.title.split(" (")[0]}</div>
-        <div class="meta">${META[key] || ""}</div>
-        <div class="cardStats">${s.flashcards.length} cards · ${s.quiz.length} questions</div>`;
-      card.onclick = () => { state.sectionKey = key; state.route = key === "lab2" ? "modes" : "sectionMenu"; render(); };
-      grid.appendChild(card);
-    }
-    main.appendChild(grid);
-  });
+    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:14px;";
+    keys.forEach(k => { const s = DATA.sections[k]; if (s) grid.appendChild(makeCard(k, s)); });
+    wrap.appendChild(grid);
+  };
 
+  section("Lecture", "Regional & systemic anatomy", ["torso", "axial", "appendicular"]);
+  section("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"]);
+
+  // Cumulative — full-width standout
   const cum = document.createElement("button");
-  cum.className = "sectionCard cumCard";
-  cum.innerHTML = `<div class="icon">${ICONS.cumulative}</div><div class="name">Cumulative — Final Review</div><div class="meta">${META.cumulative}</div>`;
+  cum.className = "homeCard";
+  cum.style.cssText = "display:block;width:100%;text-align:left;margin-top:22px;border:none;border-radius:18px;overflow:hidden;cursor:pointer;background:linear-gradient(135deg,#0F766E,#134E4A);box-shadow:0 6px 20px rgba(15,118,110,.28);";
+  cum.innerHTML = `<div style="padding:18px 20px;display:flex;align-items:center;gap:14px;">
+      <span style="font-size:1.9rem;">${ICONS.cumulative || "🎓"}</span>
+      <span><span style="display:block;font-family:Georgia,serif;font-size:1.25rem;font-weight:800;color:#fff;">Cumulative — Final Review</span>
+      <span style="display:block;color:rgba(255,255,255,.85);font-size:.85rem;margin-top:2px;">${META.cumulative || "Everything, mixed — full-course review"}</span></span>
+    </div>`;
   cum.onclick = () => { state.sectionKey = "cumulative"; state.route = "sectionMenu"; render(); };
-  cum.style.marginTop = "20px";
-  main.appendChild(cum);
+  wrap.appendChild(cum);
 
-  // Custom Practice Builder — separate from regular study areas
+  // Custom Practice — dashed, understated
   const customCard = document.createElement("button");
-  customCard.className = "sectionCard";
-  customCard.style.cssText = "margin-top:20px;background:var(--card2);border-style:dashed;";
-  customCard.innerHTML = `<div class="icon">🎯</div><div class="name">Custom Practice</div><div class="meta">Mix any topics, set your count & timer, launch your own session</div>`;
+  customCard.className = "homeCard";
+  customCard.style.cssText = "display:block;width:100%;text-align:left;margin-top:14px;background:#faf8f2;border:1.5px dashed #cbb98f;border-radius:18px;cursor:pointer;padding:15px 18px;";
+  customCard.innerHTML = `<div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1.5rem;">🎯</span>
+      <span><span style="display:block;font-family:Georgia,serif;font-size:1.1rem;font-weight:800;color:#374151;">Custom Practice</span>
+      <span style="display:block;color:#8a8574;font-size:.83rem;">Mix any topics, set your count &amp; timer, launch your own session</span></span>
+    </div>`;
   customCard.onclick = () => { state.sectionKey = null; state.route = "customBuilder"; render(); };
-  main.appendChild(customCard);
+  wrap.appendChild(customCard);
+
+  main.appendChild(wrap);
 }
 
 function renderModes(main) {
@@ -2506,7 +2539,7 @@ function prepMetricToggle(main, metric) {
   [["performance","📊 Performance"],["readiness","🎯 Readiness"],["book","📚 Book knowledge"]].forEach(([m, lbl]) => {
     const b = document.createElement("button"); const on = metric === m;
     b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer;`;
-    b.textContent = lbl; b.onclick = () => { state.prepMetric = m; render(); }; mt.appendChild(b);
+    b.className = "pillBtn"; b.textContent = lbl; b.onclick = () => { state.prepMetric = m; render(); }; mt.appendChild(b);
   });
   main.appendChild(mt);
   const exp = document.createElement("div");
@@ -2524,7 +2557,7 @@ function prepModeToggle(main, md) {
   [["closed","🧠 Closed-book (true)"],["open","📖 With notes"]].forEach(([m, lbl]) => {
     const b = document.createElement("button"); const on = md === m;
     b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
-    b.textContent = lbl; b.onclick = () => { setStudyMode(m); render(); }; toggle.appendChild(b);
+    b.className = "pillBtn"; b.textContent = lbl; b.onclick = () => { setStudyMode(m); render(); }; toggle.appendChild(b);
   });
   main.appendChild(toggle);
 }
@@ -2534,7 +2567,7 @@ function prepPeriodToggle(main) {
   [[false,"This period"],[true,"All-time"]].forEach(([v, lbl]) => {
     const b = document.createElement("button"); const on = !!state.allTime === v;
     b.style.cssText = `border:1px solid ${on?"#2E7D32":"#ddd"};background:${on?"#E8F5E9":"#fff"};color:${on?"#2E7D32":"#888"};border-radius:16px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;`;
-    b.textContent = lbl; b.onclick = () => { state.allTime = v; render(); }; per.appendChild(b);
+    b.className = "pillBtn"; b.textContent = lbl; b.onclick = () => { state.allTime = v; render(); }; per.appendChild(b);
   });
   main.appendChild(per);
 }
@@ -2795,6 +2828,7 @@ function renderStudyPlan(main, md) {
 
 /* ===== "Tell me more" coach — a rich, specific readout: read vs. practice, per topic ===== */
 function renderCoach(main) {
+  ensureHoverStyle();
   const md = getStudyMode();
   prepModeToggle(main, md);
   const pred = predictExam(md), info = examInfo(md), mq = masteryQuality(md);
@@ -2880,8 +2914,9 @@ function renderCoach(main) {
       const meta = `${loc ? `§${loc.s} p.${loc.p} · ` : ""}${mm ? mm.c : 0}✓/${mm ? mm.s : 0} tries${at ? `, ~${(at / 1000).toFixed(1)}s` : ""}`;
       return `<div style="font-size:.82rem;color:#444;margin:6px 0;line-height:1.4;">• ${stem ? escapeHtml(stem) : "<i>(question " + id + ")</i>"}<br><span style="color:#999;font-size:.72rem;">${meta}</span></div>`;
     }).join("");
-    fz.innerHTML = `<div style="font-weight:800;color:#B5560F;font-size:.9rem;">⚠️ Fuzzy — you flip between right & wrong (${mq.fuzzyIds.length})</div>
-      <div style="color:#777;font-size:.78rem;margin:2px 0 6px;">These are the clearest "memorizing, not knowing" signal${mq.fuzzyFast?` — ${mq.fuzzyFast} of them you answer fast, i.e. guessing on reflex`:""}. Read the underlying section, then re-test cold.</div>${rows}`;
+    fz.innerHTML = `<div style="font-weight:800;color:#B5560F;font-size:.9rem;">⚠️ Fuzzy — you flip between right &amp; wrong (${mq.fuzzyIds.length})</div>
+      <div style="color:#777;font-size:.78rem;margin:2px 0 6px;">These are the clearest "memorizing, not knowing" signal${mq.fuzzyFast?` — ${mq.fuzzyFast} of them you answer fast, i.e. guessing on reflex`:""}. Read the underlying section, then re-test cold.</div>
+      <div style="max-height:240px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:6px;border-top:1px solid #f0d9b5;margin-top:4px;">${rows}</div>`;
     main.appendChild(fz);
   }
 
@@ -3043,6 +3078,7 @@ function renderPrepVerdict(main, md) {
 }
 
 function renderPreparedness(main) {
+  ensureHoverStyle();
   const md = getStudyMode();
   const metric = state.prepMetric || "readiness";
   // Predicted exam score — the headline forecast — shows on every tab.
@@ -3068,6 +3104,7 @@ function renderPreparedness(main) {
     const b = document.createElement("button");
     const on = md === m;
     b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.className = "pillBtn";
     b.textContent = lbl;
     b.onclick = () => { setStudyMode(m); render(); };
     toggle.appendChild(b);
@@ -3081,6 +3118,7 @@ function renderPreparedness(main) {
     const b = document.createElement("button");
     const on = !!state.allTime === v;
     b.style.cssText = `border:1px solid ${on?"#2E7D32":"#ddd"};background:${on?"#E8F5E9":"#fff"};color:${on?"#2E7D32":"#888"};border-radius:16px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;`;
+    b.className = "pillBtn";
     b.textContent = lbl;
     b.onclick = () => { state.allTime = v; render(); };
     per.appendChild(b);
@@ -3276,15 +3314,16 @@ function renderMissedStats(main) {
 
 function renderReports(main) {
   let reports = loadReports();
-  const disc = document.createElement("div");
-  disc.className = "disclaimer";
-  disc.textContent = "Questions flagged as wrong or misformatted (from anyone on this device). Review, then fix the bank and redeploy. Resolved items can be cleared.";
-  main.appendChild(disc);
+  const banner = document.createElement("div");
+  banner.style.cssText = "background:#FDECEA;border:1px solid #f3c6c1;border-radius:12px;padding:12px 14px;margin:4px 0 12px;";
+  banner.innerHTML = `<div style="font-weight:800;color:#C0392B;font-size:.95rem;">🚩 This is a quality-flag list — not a study tool.</div>
+    <div style="color:#8a5652;font-size:.83rem;margin-top:4px;line-height:1.45;">Only questions you flag with the <b>Report</b> button land here — a wrong answer, a confusing/typo'd question, or a bad option. Use it to check right/wrong-answer accuracy; these get reviewed and fixed in the bank. It does <b>not</b> affect your scores or preparedness.</div>`;
+  main.appendChild(banner);
 
   if (!reports.length) {
     const none = document.createElement("div");
     none.style.cssText = "text-align:center;color:#888;padding:26px 16px;";
-    none.textContent = "No reports yet. Tap 🚩 Report on any question to flag a wrong answer or formatting issue.";
+    none.textContent = "No flagged questions yet. Tap 🚩 Report on any question to flag a wrong answer or formatting issue.";
     main.appendChild(none);
     return;
   }
@@ -4411,6 +4450,8 @@ function renderSectionMenu(main) {
   const list = document.createElement("div");
   list.className = "sectionMenuList";
 
+  ensureHoverStyle();
+
   items.forEach(item => {
     const card = document.createElement("button");
     card.className = "sectionMenuCard";
@@ -4549,6 +4590,20 @@ function renderGrMenu(main) {
   }
 
   main.appendChild(list);
+}
+
+/* Hover/press micro-interactions for the main section cards + toggle pills (injected once). */
+function ensureHoverStyle() {
+  if (document.getElementById("smcHoverStyle")) return;
+  const st = document.createElement("style");
+  st.id = "smcHoverStyle";
+  st.textContent = ".sectionMenuCard,.homeCard{transition:transform .14s ease, box-shadow .14s ease, filter .14s ease;}"
+    + "@media (hover:hover){.sectionMenuCard:hover,.homeCard:hover{transform:translateY(-3px) scale(1.012);box-shadow:0 12px 28px rgba(0,0,0,.16);filter:brightness(1.03);}}"
+    + ".sectionMenuCard:active,.homeCard:active{transform:translateY(0) scale(.996);filter:brightness(.98);}"
+    + ".pillBtn{transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;}"
+    + "@media (hover:hover){.pillBtn:hover{transform:translateY(-1px) scale(1.03);box-shadow:0 3px 10px rgba(0,0,0,.14);filter:brightness(1.03);}}"
+    + ".pillBtn:active{transform:scale(.97);}";
+  document.head.appendChild(st);
 }
 
 /* ─── ATTEMPT HISTORY (unified timeline of every exam / mock / timed / quiz) ─── */
