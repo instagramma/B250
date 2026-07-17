@@ -1,4 +1,4 @@
-/* Stuvia Test Bank — Torso | 1560 questions (1084 MCQ + 476 FITB) — stems restored & numbered lists reintegrated 2026-07-14 */
+/* Stuvia Test Bank — Torso | 1560 questions — line-wrap truncation repaired from source docx + 29 essay items converted to reveal cards 2026-07-16 */
 const STUVIA_BANK = [
   {
     "title": "Thorax",
@@ -683,7 +683,7 @@ const STUVIA_BANK = [
           "the left coronary artery",
           "the left ventricle",
           "the aorta",
-          "Severe damage could occur if a small blood clot became immobilized at any of these"
+          "Severe damage could occur if a small blood clot became immobilized at any of these positions."
         ],
         "correct": 1,
         "tf": false,
@@ -903,8 +903,8 @@ const STUVIA_BANK = [
           "The heart rate would be unaffected.",
           "The heart rate would increase.",
           "The heart would cease to contract.",
-          "The electrical stimuli from the SA node would be normal, but the rate of contraction would",
-          "The heart rate would slow dramatically, and become extremely irregular, contracting only"
+          "The electrical stimuli from the SA node would be normal, but the rate of contraction would slow or be irregular.",
+          "The heart rate would slow dramatically, and become extremely irregular, contracting only when the ventricles became overfilled."
         ],
         "correct": 3,
         "tf": false,
@@ -983,52 +983,52 @@ const STUVIA_BANK = [
       {
         "q": "Describe the differences between carditis, endocarditis, and myocarditis?",
         "options": [
-          "True",
-          "False"
+          "Carditis is a general term for inflammation of the heart. Clinical conditions resulting"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0078"
+        "correct": 0,
+        "id": "ST-0078",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have,",
+        "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have, and how does it affect the heart function?",
         "options": [
-          "True",
-          "False"
+          "Anatomically, a heart murmur occurs when the leaves of the mitral (= bicuspid) valve"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0079"
+        "correct": 0,
+        "id": "ST-0079",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "What method does not remove plaques, but nevertheless opens blood vessels without major",
+        "q": "What method does not remove plaques, but nevertheless opens blood vessels without major surgery?",
         "options": [
-          "True",
-          "False"
+          "Balloon angioplasty is a process whereby a catheter is inserted into an opening in an"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0080"
+        "correct": 0,
+        "id": "ST-0080",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "What factors have been identified that can cause an increased risk of heart attack?",
         "options": [
-          "True",
-          "False"
+          "Among the most important factors are smoking, high blood pressure, high blood"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0081"
+        "correct": 0,
+        "id": "ST-0081",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of",
+        "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of breath. Upon receiving the test results, it is determined that the individual is experiencing a myocardial infarct. Anatomically speaking, what is going on during this condition, and what is the likely prognosis?",
         "options": [
-          "True",
-          "False"
+          "An MI or \"heart attack\" is the result of a loss of coronary circulation and the resulting"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0082"
+        "correct": 0,
+        "id": "ST-0082",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Large veins include the",
@@ -1215,7 +1215,7 @@ const STUVIA_BANK = [
       {
         "q": "The mucous membrane or mucosa of the respiratory system",
         "options": [
-          "consists of respiratory epithelial cells overlying a layer of loose connective tissue, the lamina",
+          "consists of respiratory epithelial cells overlying a layer of loose connective tissue, the lamina propria.",
           "surrounds a thick layer of connective tissue, the submucosa.",
           "is present as the lining of the alveoli.",
           "contains an epithelium that differs from that of the larynx.",
@@ -1373,7 +1373,7 @@ const STUVIA_BANK = [
         "options": [
           "Air would not be able to enter.",
           "The person would be likely to choke.",
-          "The larynx would be unable to move upward or downward during swallowing to ease the",
+          "The larynx would be unable to move upward or downward during swallowing to ease the passing of a bolus.",
           "Sound production would be impaired.",
           "None of the answers are correct."
         ],
@@ -1436,7 +1436,7 @@ const STUVIA_BANK = [
       {
         "q": "The left lung contains some features the right lung does not. Which of the following are only found in the left lung?",
         "options": [
-          "cardiac impression",
+          "cardiac impression and notch",
           "cardiac notch",
           "root",
           "cardiac impression and notch",
@@ -1527,7 +1527,7 @@ const STUVIA_BANK = [
       {
         "q": "What is the function of the converting enzyme secreted by the alveolar capillaries?",
         "options": [
-          "It activates parasympathetic nervous components of the autonomic nervous system to cause",
+          "It activates parasympathetic nervous components of the autonomic nervous system to cause alveolar smooth muscles to contract.",
           "It assists in the hormonal regulation of blood volume and pressure.",
           "It makes the respiratory membrane more soluble to gases.",
           "It causes an increase in the secretion of surfactant.",
@@ -1566,7 +1566,7 @@ const STUVIA_BANK = [
       {
         "q": "The function of surfactant is to",
         "options": [
-          "phagocytize particulate matter that has eluded the respiratory defenses and reached the",
+          "phagocytize particulate matter that has eluded the respiratory defenses and reached the alveoli.",
           "cause capillaries to adhere closely to the alveolar surfaces to promote gas exchange.",
           "reduce the surface tension in the fluid coating alveolar surfaces to prevent alveolar collapse.",
           "cause diffusion.",
@@ -1579,7 +1579,7 @@ const STUVIA_BANK = [
       {
         "q": "Physical factors that facilitate gas exchange in the lungs include which of the following?",
         "options": [
-          "There are areas where the basement membrane of the alveolar epithelium and adjacent",
+          "There are areas where the basement membrane of the alveolar epithelium and adjacent capillaries have fused.",
           "There is a distance separating the respiratory and circulatory systems of as little as 0.1μm.",
           "Gases are lipid soluble.",
           "diffusion",
@@ -1699,7 +1699,7 @@ const STUVIA_BANK = [
           "surfactant covering the alveolar surfaces prevents their collapse.",
           "exhalation is never as forceful as is inhalation.",
           "cartilages and connective tissues keep the conducting passageways closed.",
-          "the incoming air is warmed by the upper portion of the respiratory tract, and this causes the",
+          "the incoming air is warmed by the upper portion of the respiratory tract, and this causes the lung tissues to expand and remain larger in size than previously, even when emptied of air.",
           "None of the answers are correct."
         ],
         "correct": 0,
@@ -1801,17 +1801,17 @@ const STUVIA_BANK = [
         "q": "As individuals age, the efficiency of the respiratory system typically",
         "options": [
           "does not change as much as does that of most other systems.",
-          "changes in proportion to the rate of change of body weight, as occurs in young individuals",
+          "changes in proportion to the rate of change of body weight, as occurs in young individuals also.",
           "increases somewhat.",
           "decreases.",
-          "responds more rapidly to immediate changes but cannot maintain the response over as long a"
+          "responds more rapidly to immediate changes but cannot maintain the response over as long a duration."
         ],
         "correct": 3,
         "tf": false,
         "id": "ST-0142"
       },
       {
-        "q": "A lethal inherited disease in which mucus secretions become too sticky to be transported",
+        "q": "A lethal inherited disease in which mucus secretions become too sticky to be transported easily is emphysema.",
         "options": [
           "True",
           "False"
@@ -1821,7 +1821,7 @@ const STUVIA_BANK = [
         "id": "ST-0143"
       },
       {
-        "q": "Method of applying abdominal pressure to dislodge objects from the respiratory passageways",
+        "q": "Method of applying abdominal pressure to dislodge objects from the respiratory passageways is called the Valsalva maneuver.",
         "options": [
           "True",
           "False"
@@ -1841,7 +1841,7 @@ const STUVIA_BANK = [
         "id": "ST-0145"
       },
       {
-        "q": "A pulmonary embolism is a blood clot in the pulmonary blood vessels that traveled there from",
+        "q": "A pulmonary embolism is a blood clot in the pulmonary blood vessels that traveled there from another origin.",
         "options": [
           "True",
           "False"
@@ -1861,7 +1861,7 @@ const STUVIA_BANK = [
         "id": "ST-0147"
       },
       {
-        "q": "A chronic and progressive condition characterized by shortness of breath, resulting from the",
+        "q": "A chronic and progressive condition characterized by shortness of breath, resulting from the destruction of respiratory exchange surfaces is called cystic fibrosis.",
         "options": [
           "True",
           "False"
@@ -1911,24 +1911,24 @@ const STUVIA_BANK = [
         "id": "ST-0152"
       },
       {
-        "q": "If a child swallows a small marble, and it lodges in the respiratory tract, where is it most likely",
+        "q": "If a child swallows a small marble, and it lodges in the respiratory tract, where is it most likely to be found, and what symptoms are most likely to occur?",
         "options": [
-          "True",
-          "False"
+          "A child who has ingested a foreign object into the respiratory tract will show symptoms"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0153"
+        "correct": 0,
+        "id": "ST-0153",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "A seventy-five-year-old man goes to his doctor to complain of shortness of breath and a",
+        "q": "A seventy-five-year-old man goes to his doctor to complain of shortness of breath and a chronic cough. He is relieved to discover that he does not have cancer, but is diagnosed with emphysema. What anatomical changes occur in the lungs of a person with this disease?",
         "options": [
-          "True",
-          "False"
+          "Emphysema is a disease wherein the alveoli of the lungs are destroyed over time, as the"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0154"
+        "correct": 0,
+        "id": "ST-0154",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "When the diaphragm contracts, air _____ the lungs.",
@@ -3311,7 +3311,7 @@ const STUVIA_BANK = [
         "id": "ST-0281"
       },
       {
-        "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small",
+        "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small intestine and most of the large intestine are the inferior mesenteric arteries.",
         "options": [
           "True",
           "False"
@@ -3321,7 +3321,7 @@ const STUVIA_BANK = [
         "id": "ST-0282"
       },
       {
-        "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior",
+        "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior mesenteric arteries.",
         "options": [
           "True",
           "False"
@@ -3331,7 +3331,7 @@ const STUVIA_BANK = [
         "id": "ST-0283"
       },
       {
-        "q": "Long, thin arteries, present only in males, that originate between the superior and inferior",
+        "q": "Long, thin arteries, present only in males, that originate between the superior and inferior mesenteric arteries are the testicular arteries.",
         "options": [
           "True",
           "False"
@@ -3366,7 +3366,7 @@ const STUVIA_BANK = [
       {
         "q": "The lymphoid system is composed of",
         "options": [
-          "lymph.",
+          "lymph nodes.",
           "the spleen.",
           "lymph nodes.",
           "lymphatic vessels.",
@@ -3613,10 +3613,10 @@ const STUVIA_BANK = [
       {
         "q": "Peristalsis",
         "options": [
-          "is a condition wherein the lining of the digestive tract is irritated by the passage of rough",
+          "is a condition wherein the lining of the digestive tract is irritated by the passage of rough fibrous material.",
           "is waves of muscular contractions that move along the length of the digestive tract.",
           "only occurs in the esophagus.",
-          "is a muscular movement pattern that occurs in regions of the digestive tract where the smooth",
+          "is a muscular movement pattern that occurs in regions of the digestive tract where the smooth muscle fibers are not arranged in layers.",
           "None of the answers are correct."
         ],
         "correct": 1,
@@ -3717,10 +3717,10 @@ const STUVIA_BANK = [
       {
         "q": "Functions of the greater omentum include",
         "options": [
-          "padding of the abdominal viscera.",
+          "padding of the abdominal viscera and storage of fat.",
           "storage of fat.",
           "no known function; it is a vestigial structure.",
-          "radiation of excess heat generated by the process of digestion through the anterior abdominal",
+          "radiation of excess heat generated by the process of digestion through the anterior abdominal wall to cool the body.",
           "padding of the abdominal viscera and storage of fat."
         ],
         "correct": 4,
@@ -3836,7 +3836,7 @@ const STUVIA_BANK = [
         "options": [
           "the shallow depressions called gastric pits.",
           "the carpet of mucus secreted by the columnar epithelium lining all portions of the stomach.",
-          "the rapid rate of mechanical mixing of the stomach contents, which exposes the lining to",
+          "the rapid rate of mechanical mixing of the stomach contents, which exposes the lining to chyme for only a short time.",
           "the esophageal sphincter.",
           "None of the answers are correct."
         ],
@@ -3860,7 +3860,7 @@ const STUVIA_BANK = [
       {
         "q": "Parietal cells secrete",
         "options": [
-          "pepsin.",
+          "pepsinogen.",
           "pepsinogen.",
           "HCl.",
           "gastrin.",
@@ -4112,7 +4112,7 @@ const STUVIA_BANK = [
         "id": "ST-0344"
       },
       {
-        "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the",
+        "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the lower esophageal sphincter is called esophagitis.",
         "options": [
           "True",
           "False"
@@ -4182,7 +4182,7 @@ const STUVIA_BANK = [
         "id": "ST-0351"
       },
       {
-        "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection,",
+        "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection, ischemia, or other factors is called cirrhosis.",
         "options": [
           "True",
           "False"
@@ -4192,24 +4192,24 @@ const STUVIA_BANK = [
         "id": "ST-0352"
       },
       {
-        "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even",
+        "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even though for many years she has had no problem. What are caries, and why might she have become vulnerable to getting them lately?",
         "options": [
-          "True",
-          "False"
+          "Dental caries are also known as cavities, which are an erosion of the enamel and"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0353"
+        "correct": 0,
+        "id": "ST-0353",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was",
+        "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was located in the right side of the abdomen, what would you assume was the problem?",
         "options": [
-          "True",
-          "False"
+          "A pain in this location is indicative of a duodenal ulcer. This location is also common"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0354"
+        "correct": 0,
+        "id": "ST-0354",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Urine is carried to the exterior of the body by the",
@@ -4227,7 +4227,7 @@ const STUVIA_BANK = [
       {
         "q": "Urine is formed in the",
         "options": [
-          "kidney.",
+          "kidney and bladder.",
           "kidney and bladder.",
           "ureter and bladder.",
           "urethra.",
@@ -4268,7 +4268,7 @@ const STUVIA_BANK = [
         "options": [
           "It expands for storage of additional urine once the bladder is full; it acts as a sponge.",
           "It provides cushioning or padding for protection from sudden jolts or other injuries.",
-          "There is no special significance; this fat stores energy as do other fat deposits in the",
+          "There is no special significance; this fat stores energy as do other fat deposits in the abdominal cavity.",
           "This fat cools the kidneys during active filtration.",
           "None of the answers are correct."
         ],
@@ -4682,7 +4682,7 @@ const STUVIA_BANK = [
       {
         "q": "The secondary function of the DCT to reabsorb sodium is controlled by the hormone(s)",
         "options": [
-          "aldosterone.",
+          "aldosterone and ADH.",
           "ADH.",
           "renin.",
           "cortisol.",
@@ -4723,8 +4723,8 @@ const STUVIA_BANK = [
         "options": [
           "water moves by osmosis out of the descending limb.",
           "sodium ions are actively transported out of the ascending limb.",
-          "interstitial fluid around the nephron loop has four times the solute concentration as blood",
-          "the filtrate in the descending limb becomes more and more hypertonic due to the loss of",
+          "interstitial fluid around the nephron loop has four times the solute concentration as blood plasma. .",
+          "the filtrate in the descending limb becomes more and more hypertonic due to the loss of water.",
           "All of the answers are correct."
         ],
         "correct": 4,
@@ -4815,7 +4815,7 @@ const STUVIA_BANK = [
           "gravity.",
           "contractions of the muscular layers of the renal capsule, which squeeze the kidney.",
           "peristalsis of the ureters.",
-          "opening of valves into the entrance of the ureters, which permits urine to flow through them",
+          "opening of valves into the entrance of the ureters, which permits urine to flow through them passively.",
           "All of the answers are correct."
         ],
         "correct": 2,
@@ -4838,10 +4838,10 @@ const STUVIA_BANK = [
       {
         "q": "Age-related changes in the urinary system include",
         "options": [
-          "an increase in the number of cortical nephrons, but a decrease in the number of",
-          "an increase in the overall amount of glomerular filtration, but less efficiency at each",
+          "an increase in the number of cortical nephrons, but a decrease in the number of juxtamedullary nephrons.",
+          "an increase in the overall amount of glomerular filtration, but less efficiency at each glomerulus.",
           "reduced sensitivity to ADH.",
-          "greater reabsorption of water, which is why older people have to urinate more frequently than",
+          "greater reabsorption of water, which is why older people have to urinate more frequently than do younger ones.",
           "None of the answers are correct."
         ],
         "correct": 2,
@@ -4912,7 +4912,7 @@ const STUVIA_BANK = [
         "id": "ST-0409"
       },
       {
-        "q": "A technique in which an artificial membrane regulates the composition of the blood is called",
+        "q": "A technique in which an artificial membrane regulates the composition of the blood is called hemodialysis.",
         "options": [
           "True",
           "False"
@@ -4922,7 +4922,7 @@ const STUVIA_BANK = [
         "id": "ST-0410"
       },
       {
-        "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been",
+        "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been administered is called a urogram.",
         "options": [
           "True",
           "False"
@@ -4932,7 +4932,7 @@ const STUVIA_BANK = [
         "id": "ST-0411"
       },
       {
-        "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the",
+        "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the kidneys are called calculi.",
         "options": [
           "True",
           "False"
@@ -5332,7 +5332,7 @@ const STUVIA_BANK = [
         "id": "ST-0451"
       },
       {
-        "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function",
+        "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function of the digestive tract.",
         "options": [
           "mechanical processes"
         ],
@@ -5422,7 +5422,7 @@ const STUVIA_BANK = [
         "id": "ST-0460"
       },
       {
-        "q": "The submucosa of the duodenum contains _____ that produce copious amounts of",
+        "q": "The submucosa of the duodenum contains _____ that produce copious amounts of mucus.",
         "options": [
           "duodenal (Brunner's) glands"
         ],
@@ -5552,7 +5552,7 @@ const STUVIA_BANK = [
         "id": "ST-0473"
       },
       {
-        "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than",
+        "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than the small intestine.",
         "options": [
           "goblet cells"
         ],
@@ -5582,7 +5582,7 @@ const STUVIA_BANK = [
         "id": "ST-0476"
       },
       {
-        "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary.",
+        "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Hepatocytes"
         ],
@@ -5632,7 +5632,7 @@ const STUVIA_BANK = [
         "id": "ST-0481"
       },
       {
-        "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the",
+        "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the body wall.",
         "options": [
           "pararenal fat"
         ],
@@ -5642,7 +5642,7 @@ const STUVIA_BANK = [
         "id": "ST-0482"
       },
       {
-        "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found",
+        "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found in the deep cortex of the kidney.",
         "options": [
           "juxtamedullary nephrons"
         ],
@@ -5662,7 +5662,7 @@ const STUVIA_BANK = [
         "id": "ST-0484"
       },
       {
-        "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the",
+        "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the adjacent renal columns.",
         "options": [
           "renal lobe"
         ],
@@ -5722,7 +5722,7 @@ const STUVIA_BANK = [
         "id": "ST-0490"
       },
       {
-        "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the",
+        "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the nephron loop.",
         "options": [
           "thin segment"
         ],
@@ -5752,7 +5752,7 @@ const STUVIA_BANK = [
         "id": "ST-0493"
       },
       {
-        "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent",
+        "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent capillaries.",
         "options": [
           "mesangial"
         ],
@@ -5890,7 +5890,7 @@ const STUVIA_BANK = [
       {
         "q": "Urine is formed in the",
         "options": [
-          "kidney.",
+          "kidney and bladder.",
           "kidney and bladder.",
           "ureter and bladder.",
           "urethra.",
@@ -5918,7 +5918,7 @@ const STUVIA_BANK = [
         "options": [
           "It expands for storage of additional urine once the bladder is full; it acts as a sponge.",
           "It provides cushioning or padding for protection from sudden jolts or other injuries.",
-          "There is no special significance; this fat stores energy as do other fat deposits in the",
+          "There is no special significance; this fat stores energy as do other fat deposits in the abdominal cavity.",
           "This fat cools the kidneys during active filtration.",
           "None of the answers are correct."
         ],
@@ -6419,7 +6419,7 @@ const STUVIA_BANK = [
         "options": [
           "to ease the raising and lowering of the testis without pinching of the blood vessels",
           "to support the testis",
-          "to assist in cooling the blood to permit spermatogenesis to occur at a temperature cooler than",
+          "to assist in cooling the blood to permit spermatogenesis to occur at a temperature cooler than in the abdominal cavity",
           "to innervate the testis",
           "None of the answers are correct."
         ],
@@ -6768,7 +6768,7 @@ const STUVIA_BANK = [
       {
         "q": "Milk production in the mammary glands",
         "options": [
-          "is stimulated by a combination of hormones including prolactin, growth hormone, and human",
+          "is stimulated by a combination of hormones including prolactin, growth hormone, and human placental lactogen.",
           "is initiated during the birth process.",
           "occurs by the process of meiosis.",
           "begins to occur at the start of each monthly cycle, but only continues if pregnancy occurs.",
@@ -6946,22 +6946,22 @@ const STUVIA_BANK = [
       {
         "q": "Describe the structure of a spermatozoon.",
         "options": [
-          "True",
-          "False"
+          "A spermatozoon contains three distinct regions: a head, middle piece, and tail. The head"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0589"
+        "correct": 0,
+        "id": "ST-0589",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Describe the mechanism that permits the penis to become erect.",
         "options": [
-          "True",
-          "False"
+          "A dense network of elastic fibers encircles the internal structure of the penis,"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0590"
+        "correct": 0,
+        "id": "ST-0590",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Fertilization is the process whereby",
@@ -7057,7 +7057,7 @@ const STUVIA_BANK = [
       {
         "q": "If a woman gives birth to identical triplets, how many ova were fertilized?",
         "options": [
-          "one",
+          "one or two",
           "two",
           "three",
           "one or two",
@@ -7137,8 +7137,8 @@ const STUVIA_BANK = [
         "options": [
           "These substances are immediately toxic to a fetus.",
           "These substances can cross the placental barrier to cause damage to the fetus.",
-          "These substances dramatically reduce the blood supply that flows through the placenta and",
-          "These substances interfere with the development of the extraembryonic membranes that",
+          "These substances dramatically reduce the blood supply that flows through the placenta and thus injure the fetus.",
+          "These substances interfere with the development of the extraembryonic membranes that support the fetus.",
           "None of the answers are correct."
         ],
         "correct": 1,
@@ -7684,7 +7684,7 @@ const STUVIA_BANK = [
         "id": "ST-0653"
       },
       {
-        "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary",
+        "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary bladder to the sacral spinal cord.",
         "options": [
           "Afferent pelvic nerve fibers"
         ],
@@ -7744,7 +7744,7 @@ const STUVIA_BANK = [
         "id": "ST-0659"
       },
       {
-        "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the",
+        "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the uterus.",
         "options": [
           "internal orifice (os)"
         ],
@@ -7754,7 +7754,7 @@ const STUVIA_BANK = [
         "id": "ST-0660"
       },
       {
-        "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which",
+        "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which may partially or completely block the entrance to the vagina.",
         "options": [
           "hymen"
         ],
@@ -7814,7 +7814,7 @@ const STUVIA_BANK = [
         "id": "ST-0666"
       },
       {
-        "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be",
+        "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be formed.",
         "options": [
           "four"
         ],
@@ -7834,7 +7834,7 @@ const STUVIA_BANK = [
         "id": "ST-0668"
       },
       {
-        "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the",
+        "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the _____.",
         "options": [
           "myometrium; endometrium"
         ],
@@ -7944,7 +7944,7 @@ const STUVIA_BANK = [
         "id": "ST-0679"
       },
       {
-        "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer",
+        "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer of follicular cells and the presence of small amounts of follicular fluid.",
         "options": [
           "secondary follicle"
         ],
@@ -7974,7 +7974,7 @@ const STUVIA_BANK = [
         "id": "ST-0682"
       },
       {
-        "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels",
+        "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels associated with the regulation of the uterine cycle.",
         "options": [
           "hormone"
         ],
@@ -7984,7 +7984,7 @@ const STUVIA_BANK = [
         "id": "ST-0683"
       },
       {
-        "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the",
+        "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the hormones necessary to maintain the pregnancy for the first three months.",
         "options": [
           "corpus luteum"
         ],
@@ -8004,7 +8004,7 @@ const STUVIA_BANK = [
         "id": "ST-0685"
       },
       {
-        "q": "_____ considers developmental events that occur in the first two months after fertilization.",
+        "q": "_____ considers developmental events that occur in the first two months after fertilization. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Embryology"
         ],
@@ -8034,7 +8034,7 @@ const STUVIA_BANK = [
         "id": "ST-0688"
       },
       {
-        "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood",
+        "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood flowing through vessels within the chorionic villi.",
         "options": [
           "lacunae"
         ],
@@ -8044,7 +8044,7 @@ const STUVIA_BANK = [
         "id": "ST-0689"
       },
       {
-        "q": "The _____ cells of the blastocyst are responsible for providing food to the developing",
+        "q": "The _____ cells of the blastocyst are responsible for providing food to the developing embryo.",
         "options": [
           "trophoblastic"
         ],
@@ -8054,7 +8054,7 @@ const STUVIA_BANK = [
         "id": "ST-0690"
       },
       {
-        "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as",
+        "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as the blastocyst invades maternal tissues. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Implantation"
         ],
@@ -8074,7 +8074,7 @@ const STUVIA_BANK = [
         "id": "ST-0692"
       },
       {
-        "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially",
+        "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially empty uterus, and the organ gradually decreases in size.",
         "options": [
           "placental"
         ],
@@ -8335,7 +8335,7 @@ const STUVIA_BANK = [
       {
         "q": "Hormones released into the interstitial fluid by the anterior pituitary enter the circulation easily because",
         "options": [
-          "the adjacent capillaries are fenestrated to permit passage of large molecules into the",
+          "the adjacent capillaries are fenestrated to permit passage of large molecules into the circulation.",
           "a strong countercurrent mechanism maintains a concentration gradient that draws them in.",
           "they pass easily through the infundibulum.",
           "they are brought through the choroid plexus by active transport.",
@@ -8518,7 +8518,7 @@ const STUVIA_BANK = [
         "q": "The targets for PTH can be found in the",
         "options": [
           "heart.",
-          "kidneys.",
+          "kidneys and the bones.",
           "bones.",
           "small intestine.",
           "kidneys and the bones."
@@ -8969,7 +8969,7 @@ const STUVIA_BANK = [
         "id": "ST-0763"
       },
       {
-        "q": "Neural control of endocrine function is determined by the arrival of neurotransmitter at a",
+        "q": "Neural control of endocrine function is determined by the arrival of neurotransmitter at a neuroglandular synapse.",
         "options": [
           "True",
           "False"
@@ -9071,12 +9071,12 @@ const STUVIA_BANK = [
       {
         "q": "What is a portal system and how does it function?",
         "options": [
-          "True",
-          "False"
+          "Blood vessels linking two capillary beds make up a portal system, which provides an"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0774"
+        "correct": 0,
+        "id": "ST-0774",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "What type of tissue is blood?",
@@ -9380,7 +9380,7 @@ const STUVIA_BANK = [
       {
         "q": "When an agglutinin meets its specific agglutinogen, what will occur?",
         "options": [
-          "These cell elements cause the cells to repel one another, thus spacing themselves out in the",
+          "These cell elements cause the cells to repel one another, thus spacing themselves out in the blood.",
           "The blood type will change from that of the agglutinin to that of the agglutinogen.",
           "A cross-matching will occur.",
           "The blood cells will clump together in a process called agglutination.",
@@ -9615,8 +9615,8 @@ const STUVIA_BANK = [
         "q": "Which of the following is(are) true of leukocytes?",
         "options": [
           "They have very long life spans.",
-          "They are mostly located in the bloodstream, which they use as a rapid means of transport to",
-          "They are attracted to the specific chemical stimuli emitted by invading pathogens, damaged",
+          "They are mostly located in the bloodstream, which they use as a rapid means of transport to peripheral tissues.",
+          "They are attracted to the specific chemical stimuli emitted by invading pathogens, damaged tissues, and other white blood cells.",
           "They enter peripheral tissues through the openings in fenestrated capillaries.",
           "All of the answers are correct."
         ],
@@ -9791,7 +9791,7 @@ const STUVIA_BANK = [
         "id": "ST-0829"
       },
       {
-        "q": "Blood cells and blood cell components suspended in the matrix are collectively called the",
+        "q": "Blood cells and blood cell components suspended in the matrix are collectively called the formed elements.",
         "options": [
           "True",
           "False"
@@ -9801,7 +9801,7 @@ const STUVIA_BANK = [
         "id": "ST-0830"
       },
       {
-        "q": "Small packets of cytoplasm that contain enzymes and factors important in blood clotting are",
+        "q": "Small packets of cytoplasm that contain enzymes and factors important in blood clotting are called platelets.",
         "options": [
           "True",
           "False"
@@ -9883,22 +9883,22 @@ const STUVIA_BANK = [
       {
         "q": "What factors contribute to the short (approximately 120-day) life span of an erythrocyte?",
         "options": [
-          "True",
-          "False"
+          "As they differentiate and mature, erythrocytes lose most of their organelles, thereby"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0839"
+        "correct": 0,
+        "id": "ST-0839",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "When a person has a surgical procedure scheduled, his or her blood is often cross-matched and",
+        "q": "When a person has a surgical procedure scheduled, his or her blood is often cross-matched and typed in case a transfusion is needed. What type of blood products could be received by a woman with Type A negative blood if this woman has been pregnanat and delivered a Rh positive baby?",
         "options": [
-          "True",
-          "False"
+          "A woman with this medical history is most probably carrying anti-B antibodies as well Ch 21 — The Cardiovascular System: The Heart Multiple Choice"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0840"
+        "correct": 0,
+        "id": "ST-0840",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "The ability of the blood to supply oxygen and remove carbon dioxide from the tissues depends upon",
@@ -10466,7 +10466,7 @@ const STUVIA_BANK = [
           "the left coronary artery",
           "the left ventricle",
           "the aorta",
-          "Severe damage could occur if a small blood clot became immobilized at any of these"
+          "Severe damage could occur if a small blood clot became immobilized at any of these positions."
         ],
         "correct": 1,
         "tf": false,
@@ -10686,8 +10686,8 @@ const STUVIA_BANK = [
           "The heart rate would be unaffected.",
           "The heart rate would increase.",
           "The heart would cease to contract.",
-          "The electrical stimuli from the SA node would be normal, but the rate of contraction would",
-          "The heart rate would slow dramatically, and become extremely irregular, contracting only"
+          "The electrical stimuli from the SA node would be normal, but the rate of contraction would slow or be irregular.",
+          "The heart rate would slow dramatically, and become extremely irregular, contracting only when the ventricles became overfilled."
         ],
         "correct": 3,
         "tf": false,
@@ -10766,52 +10766,52 @@ const STUVIA_BANK = [
       {
         "q": "Describe the differences between carditis, endocarditis, and myocarditis?",
         "options": [
-          "True",
-          "False"
+          "Carditis is a general term for inflammation of the heart. Clinical conditions resulting"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0909"
+        "correct": 0,
+        "id": "ST-0909",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have,",
+        "q": "If a woman is diagnosed as having a heart murmur, what anatomical condition does she have, and how does it affect the heart function?",
         "options": [
-          "True",
-          "False"
+          "Anatomically, a heart murmur occurs when the leaves of the mitral (= bicuspid) valve"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0910"
+        "correct": 0,
+        "id": "ST-0910",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "What method does not remove plaques, but nevertheless opens blood vessels without major",
+        "q": "What method does not remove plaques, but nevertheless opens blood vessels without major surgery?",
         "options": [
-          "True",
-          "False"
+          "Balloon angioplasty is a process whereby a catheter is inserted into an opening in an"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0911"
+        "correct": 0,
+        "id": "ST-0911",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "What factors have been identified that can cause an increased risk of heart attack?",
         "options": [
-          "True",
-          "False"
+          "Among the most important factors are smoking, high blood pressure, high blood"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0912"
+        "correct": 0,
+        "id": "ST-0912",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of",
+        "q": "A person enters the emergency room of a hospital complaining of chest pain and shortness of breath. Upon receiving the test results, it is determined that the individual is experiencing a myocardial infarct. Anatomically speaking, what is going on during this condition, and what is the likely prognosis?",
         "options": [
-          "True",
-          "False"
+          "An MI or \"heart attack\" is the result of a loss of coronary circulation and the resulting"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0913"
+        "correct": 0,
+        "id": "ST-0913",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "The total length of blood vessels in the body is estimated to be",
@@ -10857,7 +10857,7 @@ const STUVIA_BANK = [
         "options": [
           "These vessels distribute blood to the skeletal muscles and internal organs of the body.",
           "They have a poorly defined adventitia.",
-          "The media of these arteries contains a high density of elastic fibers and relatively few smooth",
+          "The media of these arteries contains a high density of elastic fibers and relatively few smooth muscle cells.",
           "The media consists of scattered smooth muscle fibers that do not form a complete layer.",
           "None of the answers are correct."
         ],
@@ -10869,7 +10869,7 @@ const STUVIA_BANK = [
         "q": "Muscular arteries",
         "options": [
           "are larger than elastic arteries and smaller than arterioles.",
-          "serve as the cushion to prevent sudden rises in blood pressure from causing trouble for the",
+          "serve as the cushion to prevent sudden rises in blood pressure from causing trouble for the circulation.",
           "are exemplified by the aorta.",
           "have a thick media with a large amount of smooth muscle fiber within them.",
           "None of the answers are correct."
@@ -10896,7 +10896,7 @@ const STUVIA_BANK = [
         "options": [
           "The vessel walls are relatively thin.",
           "Blood flow is the slowest of all classes of vessels.",
-          "The histological structure permits a two-way exchange of substances between the blood and",
+          "The histological structure permits a two-way exchange of substances between the blood and body cells.",
           "It has a relatively thick media.",
           "All of the answers are correct."
         ],
@@ -10974,7 +10974,7 @@ const STUVIA_BANK = [
         "options": [
           "because their walls are thinner and contain a lower proportion of smooth muscle fibers.",
           "because of vasoconstriction.",
-          "because their walls are thicker, and veins contain a greater proportion of elastic fibers and",
+          "because their walls are thicker, and veins contain a greater proportion of elastic fibers and collagen.",
           "only in a few specialized cases.",
           "None of the answers are correct."
         ],
@@ -11026,7 +11026,7 @@ const STUVIA_BANK = [
         "options": [
           "this is a classification by location only, and does not have any structural significance.",
           "a continuous capillary has a continuous media and externa; a fenestrated one does not.",
-          "the endothelium is a complete lining, with endothelial cells connected by tight junctions and",
+          "the endothelium is a complete lining, with endothelial cells connected by tight junctions and anchoring junctions, which is untrue for a fenestrated capillary.",
           "a continuous capillary has pores arranged in an ordered pattern; a fenestrated one does not.",
           "All of the answers are correct."
         ],
@@ -11066,7 +11066,7 @@ const STUVIA_BANK = [
           "The blood pressure in arteries is too high to permit valves to function correctly.",
           "No explanation is known.",
           "The statement is untrue; arteries have valves.",
-          "Arterial blood pressure is high enough that no valves are required to prevent the regurgitation",
+          "Arterial blood pressure is high enough that no valves are required to prevent the regurgitation of blood in the wrong direction.",
           "None of the answers are correct."
         ],
         "correct": 3,
@@ -11310,10 +11310,10 @@ const STUVIA_BANK = [
       {
         "q": "What is the significance of the presence of two sets of veins, one superficial and the other deep, in the neck and extremities?",
         "options": [
-          "These vessels have a completely different distribution and so must be located far from one",
+          "These vessels have a completely different distribution and so must be located far from one another.",
           "There is no known significance for this phenomenon.",
           "This distribution is important for regulation of body temperature.",
-          "This placement is important in the regulation of the distribution of hormones in the",
+          "This placement is important in the regulation of the distribution of hormones in the circulation.",
           "All of the answers are correct."
         ],
         "correct": 2,
@@ -11607,7 +11607,7 @@ const STUVIA_BANK = [
         "id": "ST-0974"
       },
       {
-        "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small",
+        "q": "Arteries that arise about an inch inferior to the celiac and deliver blood to the pancreas, small intestine and most of the large intestine are the inferior mesenteric arteries.",
         "options": [
           "True",
           "False"
@@ -11617,7 +11617,7 @@ const STUVIA_BANK = [
         "id": "ST-0975"
       },
       {
-        "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior",
+        "q": "The terminal portions of the large intestine and rectum receive arterial blood from the superior mesenteric arteries.",
         "options": [
           "True",
           "False"
@@ -11627,7 +11627,7 @@ const STUVIA_BANK = [
         "id": "ST-0976"
       },
       {
-        "q": "Small arteries that arise on the posterior surface of the aorta and supply the spinal cord and the",
+        "q": "Small arteries that arise on the posterior surface of the aorta and supply the spinal cord and the abdominal wall are the lumbar arteries.",
         "options": [
           "True",
           "False"
@@ -11637,7 +11637,7 @@ const STUVIA_BANK = [
         "id": "ST-0977"
       },
       {
-        "q": "Long, thin arteries, present only in males, that originate between the superior and inferior",
+        "q": "Long, thin arteries, present only in males, that originate between the superior and inferior mesenteric arteries are the testicular arteries.",
         "options": [
           "True",
           "False"
@@ -11677,7 +11677,7 @@ const STUVIA_BANK = [
         "id": "ST-0981"
       },
       {
-        "q": "The sigmoid sinus, which penetrates the jugular foramen, leaves the skull as the external",
+        "q": "The sigmoid sinus, which penetrates the jugular foramen, leaves the skull as the external jugular vein.",
         "options": [
           "True",
           "False"
@@ -11709,32 +11709,32 @@ const STUVIA_BANK = [
       {
         "q": "How does autoregulation affect the flow of blood through the tissues?",
         "options": [
-          "True",
-          "False"
+          "Blood flows from the arterioles to the venules at a constant rate, but the flow through"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0985"
+        "correct": 0,
+        "id": "ST-0985",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "What mechanisms assist venous return to the heart?",
         "options": [
-          "True",
-          "False"
+          "Blood pressure in venules and medium-sized veins is too low to oppose the force of"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0986"
+        "correct": 0,
+        "id": "ST-0986",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "If a person with a wrist injury suffers damage to the radial artery, which is temporarily tied off,",
+        "q": "If a person with a wrist injury suffers damage to the radial artery, which is temporarily tied off, how will the circulation to the hand be affected?",
         "options": [
-          "True",
-          "False"
+          "Blood is supplied to the hand by both a radial and an ulnar artery. If the radial artery is"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-0987"
+        "correct": 0,
+        "id": "ST-0987",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Most immune responses originate in",
@@ -11781,7 +11781,7 @@ const STUVIA_BANK = [
           "macrophages.",
           "lymphocytes.",
           "sinusoids.",
-          "lymph.",
+          "lymphocytes.",
           "All of the answers are correct."
         ],
         "correct": 4,
@@ -11791,7 +11791,7 @@ const STUVIA_BANK = [
       {
         "q": "The lymphoid system is composed of",
         "options": [
-          "lymph.",
+          "lymph nodes.",
           "the spleen.",
           "lymph nodes.",
           "lymphatic vessels.",
@@ -11844,7 +11844,7 @@ const STUVIA_BANK = [
         "q": "How do lymphatic vessels differ from those of either the arterial or the venous system?",
         "options": [
           "They do not run together with either the arteries or the veins.",
-          "The lymphatic valves are spaced close enough to give the vessel the appearance of a string of",
+          "The lymphatic valves are spaced close enough to give the vessel the appearance of a string of beads.",
           "They have fewer valves than do the veins.",
           "They have thicker walls than veins, but less thick than those of the arteries.",
           "They have very few significant differences."
@@ -11897,8 +11897,8 @@ const STUVIA_BANK = [
         "options": [
           "only the endothelial cells of the lymph vessel show nuclei.",
           "of the large number of smooth muscle fibers in the walls.",
-          "the lymph vessel is usually not associated with arteries or veins, while the latter usually run",
-          "the walls of the lymphatic vessels usually contract more during the sectioning and staining",
+          "the lymph vessel is usually not associated with arteries or veins, while the latter usually run together.",
+          "the walls of the lymphatic vessels usually contract more during the sectioning and staining process, and usually appear to be smaller than other vessels of a similar size.",
           "the lymphatic vessels have the thinnest walls of all the vessel types."
         ],
         "correct": 4,
@@ -12103,7 +12103,7 @@ const STUVIA_BANK = [
       {
         "q": "Lymphocytes are called \"wandering\" cells because",
         "options": [
-          "they can move from one area of the body to another by entering and exiting the bloodstream",
+          "they can move from one area of the body to another by entering and exiting the bloodstream freely.",
           "the blood takes them everywhere.",
           "they roam around within the organ in which they are found.",
           "they attack foreign cells or body cells infected by viruses.",
@@ -12260,7 +12260,7 @@ const STUVIA_BANK = [
         "q": "If a person wearing a head, neck, and upper chest shield is subjected to a high dose of radiation, one of the resultant health problems might be damage to bone marrow in exposed body regions. If the bone marrow damage occurred in an adult, which cell types might initially no longer be produced in sufficient numbers for the proper immune response to be sustained?",
         "options": [
           "all lymphocytes",
-          "B cells",
+          "B cells and NK cells",
           "NK cells",
           "T cells",
           "B cells and NK cells"
@@ -12365,8 +12365,8 @@ const STUVIA_BANK = [
         "options": [
           "It occurs from efferent lymphatic vessels through the nodal tissues to afferent lymphatics.",
           "It passes through a network lymphoid cells.",
-          "It is always from the inner tissues toward the exterior, as the incoming vessels enter the node",
-          "It always triggers the activation of the immune response; if no infectious agents are present",
+          "It is always from the inner tissues toward the exterior, as the incoming vessels enter the node and pass to its center prior to releasing their flow of lymph.",
+          "It always triggers the activation of the immune response; if no infectious agents are present lymph is channeled around the nodes rather than through them.",
           "All of the answers are correct."
         ],
         "correct": 1,
@@ -12496,7 +12496,7 @@ const STUVIA_BANK = [
           "They lack an internal structure of a cortex and a medulla.",
           "They are the site of the production of lymphocytes, but not of the T cells.",
           "They contain lymphoid stem cells and thymic corpuscles.",
-          "They contain special capillaries that selectively acquire circulating antigens to pass through",
+          "They contain special capillaries that selectively acquire circulating antigens to pass through the tissues.",
           "All of the answers are correct."
         ],
         "correct": 2,
@@ -12663,22 +12663,22 @@ const STUVIA_BANK = [
       {
         "q": "Discuss appendicitis and why appendectomies are sometimes necessary.",
         "options": [
-          "True",
-          "False"
+          "Appendicitis generally follows an erosion of the epithelial lining of the vermiform"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1060"
+        "correct": 0,
+        "id": "ST-1060",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "Paula's grandfather is diagnosed as having lung cancer. His physician orders biopsies of",
+        "q": "Paula's grandfather is diagnosed as having lung cancer. His physician orders biopsies of several lymph nodes from neighboring regions of the body, and Paula wonders why, since the cancer is in his lungs. What would you tell her?",
         "options": [
-          "True",
-          "False"
+          "A key characteristic of cancer cells is their ability to break free of a tumor and migrate"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1061"
+        "correct": 0,
+        "id": "ST-1061",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Functions of the digestive system include which of the following?",
@@ -12787,10 +12787,10 @@ const STUVIA_BANK = [
       {
         "q": "Peristalsis",
         "options": [
-          "is a condition wherein the lining of the digestive tract is irritated by the passage of rough",
+          "is a condition wherein the lining of the digestive tract is irritated by the passage of rough fibrous material.",
           "is waves of muscular contractions that move along the length of the digestive tract.",
           "only occurs in the esophagus.",
-          "is a muscular movement pattern that occurs in regions of the digestive tract where the smooth",
+          "is a muscular movement pattern that occurs in regions of the digestive tract where the smooth muscle fibers are not arranged in layers.",
           "None of the answers are correct."
         ],
         "correct": 1,
@@ -12891,10 +12891,10 @@ const STUVIA_BANK = [
       {
         "q": "Functions of the greater omentum include",
         "options": [
-          "padding of the abdominal viscera.",
+          "padding of the abdominal viscera and storage of fat.",
           "storage of fat.",
           "no known function; it is a vestigial structure.",
-          "radiation of excess heat generated by the process of digestion through the anterior abdominal",
+          "radiation of excess heat generated by the process of digestion through the anterior abdominal wall to cool the body.",
           "padding of the abdominal viscera and storage of fat."
         ],
         "correct": 4,
@@ -13010,7 +13010,7 @@ const STUVIA_BANK = [
         "options": [
           "the shallow depressions called gastric pits.",
           "the carpet of mucus secreted by the columnar epithelium lining all portions of the stomach.",
-          "the rapid rate of mechanical mixing of the stomach contents, which exposes the lining to",
+          "the rapid rate of mechanical mixing of the stomach contents, which exposes the lining to chyme for only a short time.",
           "the esophageal sphincter.",
           "None of the answers are correct."
         ],
@@ -13034,7 +13034,7 @@ const STUVIA_BANK = [
       {
         "q": "Parietal cells secrete",
         "options": [
-          "pepsin.",
+          "pepsinogen.",
           "pepsinogen.",
           "HCl.",
           "gastrin.",
@@ -13286,7 +13286,7 @@ const STUVIA_BANK = [
         "id": "ST-1108"
       },
       {
-        "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the",
+        "q": "Blockage of the lower part of the esophagus due to weak peristalsis and malfunction of the lower esophageal sphincter is called esophagitis.",
         "options": [
           "True",
           "False"
@@ -13356,7 +13356,7 @@ const STUVIA_BANK = [
         "id": "ST-1115"
       },
       {
-        "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection,",
+        "q": "A condition caused by the destruction of hepatocytes by drug exposure, viral infection, ischemia, or other factors is called cirrhosis.",
         "options": [
           "True",
           "False"
@@ -13366,24 +13366,24 @@ const STUVIA_BANK = [
         "id": "ST-1116"
       },
       {
-        "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even",
+        "q": "A twelve-year-old girl who is passing through puberty suddenly has several dental caries, even though for many years she has had no problem. What are caries, and why might she have become vulnerable to getting them lately?",
         "options": [
-          "True",
-          "False"
+          "Dental caries are also known as cavities, which are an erosion of the enamel and"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1117"
+        "correct": 0,
+        "id": "ST-1117",
+        "fitb": true,
+        "essay": true
       },
       {
-        "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was",
+        "q": "If a person complained of a sharp pain or an ache within a couple hours of eating, that was located in the right side of the abdomen, what would you assume was the problem?",
         "options": [
-          "True",
-          "False"
+          "A pain in this location is indicative of a duodenal ulcer. This location is also common"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1118"
+        "correct": 0,
+        "id": "ST-1118",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Functions of the urinary system include",
@@ -13414,7 +13414,7 @@ const STUVIA_BANK = [
       {
         "q": "Urine is formed in the",
         "options": [
-          "kidney.",
+          "kidney and bladder.",
           "kidney and bladder.",
           "ureter and bladder.",
           "urethra.",
@@ -13455,7 +13455,7 @@ const STUVIA_BANK = [
         "options": [
           "It expands for storage of additional urine once the bladder is full; it acts as a sponge.",
           "It provides cushioning or padding for protection from sudden jolts or other injuries.",
-          "There is no special significance; this fat stores energy as do other fat deposits in the",
+          "There is no special significance; this fat stores energy as do other fat deposits in the abdominal cavity.",
           "This fat cools the kidneys during active filtration.",
           "None of the answers are correct."
         ],
@@ -13869,7 +13869,7 @@ const STUVIA_BANK = [
       {
         "q": "The secondary function of the DCT to reabsorb sodium is controlled by the hormone(s)",
         "options": [
-          "aldosterone.",
+          "aldosterone and ADH.",
           "ADH.",
           "renin.",
           "cortisol.",
@@ -13910,8 +13910,8 @@ const STUVIA_BANK = [
         "options": [
           "water moves by osmosis out of the descending limb.",
           "sodium ions are actively transported out of the ascending limb.",
-          "interstitial fluid around the nephron loop has four times the solute concentration as blood",
-          "the filtrate in the descending limb becomes more and more hypertonic due to the loss of",
+          "interstitial fluid around the nephron loop has four times the solute concentration as blood plasma. .",
+          "the filtrate in the descending limb becomes more and more hypertonic due to the loss of water.",
           "All of the answers are correct."
         ],
         "correct": 4,
@@ -14015,7 +14015,7 @@ const STUVIA_BANK = [
           "gravity.",
           "contractions of the muscular layers of the renal capsule, which squeeze the kidney.",
           "peristalsis of the ureters.",
-          "opening of valves into the entrance of the ureters, which permits urine to flow through them",
+          "opening of valves into the entrance of the ureters, which permits urine to flow through them passively.",
           "All of the answers are correct."
         ],
         "correct": 2,
@@ -14077,10 +14077,10 @@ const STUVIA_BANK = [
       {
         "q": "Age-related changes in the urinary system include",
         "options": [
-          "an increase in the number of cortical nephrons, but a decrease in the number of",
-          "an increase in the overall amount of glomerular filtration, but less efficiency at each",
+          "an increase in the number of cortical nephrons, but a decrease in the number of juxtamedullary nephrons.",
+          "an increase in the overall amount of glomerular filtration, but less efficiency at each glomerulus.",
           "reduced sensitivity to ADH.",
-          "greater reabsorption of water, which is why older people have to urinate more frequently than",
+          "greater reabsorption of water, which is why older people have to urinate more frequently than do younger ones.",
           "None of the answers are correct."
         ],
         "correct": 2,
@@ -14151,7 +14151,7 @@ const STUVIA_BANK = [
         "id": "ST-1178"
       },
       {
-        "q": "A technique in which an artificial membrane regulates the composition of the blood is called",
+        "q": "A technique in which an artificial membrane regulates the composition of the blood is called hemodialysis.",
         "options": [
           "True",
           "False"
@@ -14161,7 +14161,7 @@ const STUVIA_BANK = [
         "id": "ST-1179"
       },
       {
-        "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been",
+        "q": "An image obtained by taking an X-ray of the kidneys after a radiopaque compound has been administered is called a urogram.",
         "options": [
           "True",
           "False"
@@ -14201,7 +14201,7 @@ const STUVIA_BANK = [
         "id": "ST-1183"
       },
       {
-        "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the",
+        "q": "Solid structures formed from calcium deposits, magnesium, or crystals of uric acid in the kidneys are called calculi.",
         "options": [
           "True",
           "False"
@@ -14231,14 +14231,14 @@ const STUVIA_BANK = [
         "id": "ST-1186"
       },
       {
-        "q": "Bars frequently provide snacks for their drinkers to enjoy, either free or at a nominal charge.",
+        "q": "Bars frequently provide snacks for their drinkers to enjoy, either free or at a nominal charge. These snacks invariably contain large amounts of salt. Why would providing such munchies be advantageous to the bar's profits?",
         "options": [
-          "True",
-          "False"
+          "An increased intake of salt will stimulate the thirst center in the brain, and will Ch 27 — The Reproductive System Multiple Choice"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1187"
+        "correct": 0,
+        "id": "ST-1187",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "The human reproductive system",
@@ -14622,7 +14622,7 @@ const STUVIA_BANK = [
         "options": [
           "to ease the raising and lowering of the testis without pinching of the blood vessels",
           "to support the testis",
-          "to assist in cooling the blood to permit spermatogenesis to occur at a temperature cooler than",
+          "to assist in cooling the blood to permit spermatogenesis to occur at a temperature cooler than in the abdominal cavity",
           "to innervate the testis",
           "None of the answers are correct."
         ],
@@ -14971,7 +14971,7 @@ const STUVIA_BANK = [
       {
         "q": "Milk production in the mammary glands",
         "options": [
-          "is stimulated by a combination of hormones including prolactin, growth hormone, and human",
+          "is stimulated by a combination of hormones including prolactin, growth hormone, and human placental lactogen.",
           "is initiated during the birth process.",
           "occurs by the process of meiosis.",
           "begins to occur at the start of each monthly cycle, but only continues if pregnancy occurs.",
@@ -15149,22 +15149,22 @@ const STUVIA_BANK = [
       {
         "q": "Describe the structure of a spermatozoon.",
         "options": [
-          "True",
-          "False"
+          "A spermatozoon contains three distinct regions: a head, middle piece, and tail. The head"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1260"
+        "correct": 0,
+        "id": "ST-1260",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Describe the mechanism that permits the penis to become erect.",
         "options": [
-          "True",
-          "False"
+          "A dense network of elastic fibers encircles the internal structure of the penis,"
         ],
-        "correct": 1,
-        "tf": true,
-        "id": "ST-1261"
+        "correct": 0,
+        "id": "ST-1261",
+        "fitb": true,
+        "essay": true
       },
       {
         "q": "Fertilization is the process whereby",
@@ -15260,7 +15260,7 @@ const STUVIA_BANK = [
       {
         "q": "If a woman gives birth to identical triplets, how many ova were fertilized?",
         "options": [
-          "one",
+          "one or two",
           "two",
           "three",
           "one or two",
@@ -15366,8 +15366,8 @@ const STUVIA_BANK = [
         "options": [
           "These substances are immediately toxic to a fetus.",
           "These substances can cross the placental barrier to cause damage to the fetus.",
-          "These substances dramatically reduce the blood supply that flows through the placenta and",
-          "These substances interfere with the development of the extraembryonic membranes that",
+          "These substances dramatically reduce the blood supply that flows through the placenta and thus injure the fetus.",
+          "These substances interfere with the development of the extraembryonic membranes that support the fetus.",
           "None of the answers are correct."
         ],
         "correct": 1,
@@ -15866,7 +15866,7 @@ const STUVIA_BANK = [
         "id": "ST-1315"
       },
       {
-        "q": "Anything that disrupts normal development by causing cell or chromosome damage or altering",
+        "q": "Anything that disrupts normal development by causing cell or chromosome damage or altering the chemical environment of the embryo is called a teratogen.",
         "options": [
           "True",
           "False"
@@ -15876,7 +15876,7 @@ const STUVIA_BANK = [
         "id": "ST-1316"
       },
       {
-        "q": "A neonatal condition resulting from maternal alcohol consumption; characterized by",
+        "q": "A neonatal condition resulting from maternal alcohol consumption; characterized by developmental defects is called sudden infant death syndrome.",
         "options": [
           "True",
           "False"
@@ -15886,7 +15886,7 @@ const STUVIA_BANK = [
         "id": "ST-1317"
       },
       {
-        "q": "A delivery wherein the legs or buttocks of the fetus enter the vaginal canal first is called a",
+        "q": "A delivery wherein the legs or buttocks of the fetus enter the vaginal canal first is called a breech birth.",
         "options": [
           "True",
           "False"
@@ -15896,7 +15896,7 @@ const STUVIA_BANK = [
         "id": "ST-1318"
       },
       {
-        "q": "Neural tube formation occurs when the neural folds close and lose their connection with the",
+        "q": "Neural tube formation occurs when the neural folds close and lose their connection with the superficial ectoderm.",
         "options": [
           "True",
           "False"
@@ -15976,7 +15976,7 @@ const STUVIA_BANK = [
         "id": "ST-1326"
       },
       {
-        "q": "The embryonic heart begins pumping and circulating blood during the sixth week of",
+        "q": "The embryonic heart begins pumping and circulating blood during the sixth week of development.",
         "options": [
           "True",
           "False"
@@ -17216,7 +17216,7 @@ const STUVIA_BANK = [
         "id": "ST-1450"
       },
       {
-        "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function",
+        "q": "Squashing with the tongue and tearing/grinding with the teeth are examples of the _____ function of the digestive tract.",
         "options": [
           "mechanical processes"
         ],
@@ -17306,7 +17306,7 @@ const STUVIA_BANK = [
         "id": "ST-1459"
       },
       {
-        "q": "The submucosa of the duodenum contains _____ that produce copious amounts of",
+        "q": "The submucosa of the duodenum contains _____ that produce copious amounts of mucus.",
         "options": [
           "duodenal (Brunner's) glands"
         ],
@@ -17436,7 +17436,7 @@ const STUVIA_BANK = [
         "id": "ST-1472"
       },
       {
-        "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than",
+        "q": "Mucus-secreting cells, called _____, are much more abundant in the large intestine than the small intestine.",
         "options": [
           "goblet cells"
         ],
@@ -17466,7 +17466,7 @@ const STUVIA_BANK = [
         "id": "ST-1475"
       },
       {
-        "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary.",
+        "q": "_____ of the liver monitor circulating levels of metabolites and adjust them as necessary. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Hepatocytes"
         ],
@@ -17526,7 +17526,7 @@ const STUVIA_BANK = [
         "id": "ST-1481"
       },
       {
-        "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the",
+        "q": "A layer of _____ separates the posterior and lateral portions of the renal fascia from the body wall.",
         "options": [
           "pararenal fat"
         ],
@@ -17536,7 +17536,7 @@ const STUVIA_BANK = [
         "id": "ST-1482"
       },
       {
-        "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found",
+        "q": "Approximately 15 percent of the kidney nephrons are called _____ because they are found in the deep cortex of the kidney.",
         "options": [
           "juxtamedullary nephrons"
         ],
@@ -17556,7 +17556,7 @@ const STUVIA_BANK = [
         "id": "ST-1484"
       },
       {
-        "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the",
+        "q": "A(n) _____ contains a renal pyramid, the overlying area of the renal cortex and the adjacent renal columns.",
         "options": [
           "renal lobe"
         ],
@@ -17616,7 +17616,7 @@ const STUVIA_BANK = [
         "id": "ST-1490"
       },
       {
-        "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the",
+        "q": "The only area of the renal tubule to have a squamous epithelium is the _____ of the nephron loop.",
         "options": [
           "thin segment"
         ],
@@ -17646,7 +17646,7 @@ const STUVIA_BANK = [
         "id": "ST-1493"
       },
       {
-        "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent",
+        "q": "In the glomerulus, the _____ cells are situated between the endothelial cells of adjacent capillaries.",
         "options": [
           "mesangial"
         ],
@@ -17746,7 +17746,7 @@ const STUVIA_BANK = [
         "id": "ST-1503"
       },
       {
-        "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary",
+        "q": "_____ carry the impulses generated by the stretch receptors in the walls of the urinary bladder to the sacral spinal cord.",
         "options": [
           "Afferent pelvic nerve fibers"
         ],
@@ -17816,7 +17816,7 @@ const STUVIA_BANK = [
         "id": "ST-1510"
       },
       {
-        "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the",
+        "q": "The _____ of the uterus is the proximal end of the cervix attached to the body of the uterus.",
         "options": [
           "internal orifice (os)"
         ],
@@ -17826,7 +17826,7 @@ const STUVIA_BANK = [
         "id": "ST-1511"
       },
       {
-        "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which",
+        "q": "The vagina and the vestibule are separated by an elastic epithelial fold, the _____, which may partially or completely block the entrance to the vagina.",
         "options": [
           "hymen"
         ],
@@ -17886,7 +17886,7 @@ const STUVIA_BANK = [
         "id": "ST-1517"
       },
       {
-        "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be",
+        "q": "The process of meiosis is unique because it causes a possible number of _____ cells to be formed.",
         "options": [
           "four"
         ],
@@ -17906,7 +17906,7 @@ const STUVIA_BANK = [
         "id": "ST-1519"
       },
       {
-        "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the",
+        "q": "The uterine wall has an outer muscular part, the _____, and an inner glandular part, the _____.",
         "options": [
           "myometrium; endometrium"
         ],
@@ -18016,7 +18016,7 @@ const STUVIA_BANK = [
         "id": "ST-1530"
       },
       {
-        "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer",
+        "q": "A _____ is formed by the combination of a primary oocyte and several surrounding layer of follicular cells and the presence of small amounts of follicular fluid.",
         "options": [
           "secondary follicle"
         ],
@@ -18046,7 +18046,7 @@ const STUVIA_BANK = [
         "id": "ST-1533"
       },
       {
-        "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels",
+        "q": "The phases of the uterine cycle occur in response to cyclic changes in _____ levels associated with the regulation of the uterine cycle.",
         "options": [
           "hormone"
         ],
@@ -18056,7 +18056,7 @@ const STUVIA_BANK = [
         "id": "ST-1534"
       },
       {
-        "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the",
+        "q": "The presence of HCG prevents the destruction of the _____, which secretes many of the hormones necessary to maintain the pregnancy for the first three months.",
         "options": [
           "corpus luteum"
         ],
@@ -18076,7 +18076,7 @@ const STUVIA_BANK = [
         "id": "ST-1536"
       },
       {
-        "q": "_____ considers developmental events that occur in the first two months after fertilization.",
+        "q": "_____ considers developmental events that occur in the first two months after fertilization. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Embryology"
         ],
@@ -18106,7 +18106,7 @@ const STUVIA_BANK = [
         "id": "ST-1539"
       },
       {
-        "q": "_____ development includes the changes from birth to maturity. (Note: Be sure to",
+        "q": "_____ development includes the changes from birth to maturity. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Postnatal"
         ],
@@ -18196,7 +18196,7 @@ const STUVIA_BANK = [
         "id": "ST-1548"
       },
       {
-        "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood",
+        "q": "Diffusion occurs between the maternal blood flowing through the _____ and fetal blood flowing through vessels within the chorionic villi.",
         "options": [
           "lacunae"
         ],
@@ -18206,7 +18206,7 @@ const STUVIA_BANK = [
         "id": "ST-1549"
       },
       {
-        "q": "The _____ cells of the blastocyst are responsible for providing food to the developing",
+        "q": "The _____ cells of the blastocyst are responsible for providing food to the developing embryo.",
         "options": [
           "trophoblastic"
         ],
@@ -18216,7 +18216,7 @@ const STUVIA_BANK = [
         "id": "ST-1550"
       },
       {
-        "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as",
+        "q": "_____ begins with the attachment of the blastocyst to the endometrium and continues as the blastocyst invades maternal tissues. (Note: Be sure to capitalize the first letter of your answer).",
         "options": [
           "Implantation"
         ],
@@ -18246,7 +18246,7 @@ const STUVIA_BANK = [
         "id": "ST-1553"
       },
       {
-        "q": "The _____ begins with the onset of true labor, as the cervix dilates and the fetus begins to",
+        "q": "The _____ begins with the onset of true labor, as the cervix dilates and the fetus begins to move down the cervical canal.",
         "options": [
           "dilation stage"
         ],
@@ -18266,7 +18266,7 @@ const STUVIA_BANK = [
         "id": "ST-1555"
       },
       {
-        "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially",
+        "q": "During the _____ stage of labor, the muscle tension builds in the walls of the partially empty uterus, and the organ gradually decreases in size.",
         "options": [
           "placental"
         ],
@@ -18306,7 +18306,7 @@ const STUVIA_BANK = [
         "id": "ST-1559"
       },
       {
-        "q": "Typical heart rates of _____ beats per minute and respiratory rates of 30 breaths per",
+        "q": "Typical heart rates of _____ beats per minute and respiratory rates of 30 breaths per minute in neonates are normal, and considerably higher than those of adults.",
         "options": [
           "120-140"
         ],

@@ -12,6 +12,28 @@ function isFITBQ(q) { return !!(q && (q.fitb || (q.options || []).length <= 1));
 /* Out-of-scope items (imaging physics/technology, not anatomy) — never served. Reversible. */
 const OUT_OF_SCOPE_IDS = new Set(["PE-2159", "PE-2161"]);
 function isExamEligible(q) { return !!q && !isFITBQ(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
+/* Normalize a question stem so near-identical duplicates (same stem across GR/Stuvia/CB, or the
+   Systemic master set that duplicates section questions) collapse to one key. */
+function _stemKey(q) {
+  const base = String((q && (q.q || q.question)) || "")
+    .toLowerCase().replace(/\[gr\]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  // Diagram/labeling questions share generic stems ("Identify Label A") across different images —
+  // fold the image reference into the key so distinct diagrams are NOT merged.
+  const img = (q && (q.images ? [].concat(q.images).join(",") : q.image)) || "";
+  return img ? base + "|" + img : base;
+}
+/* Remove duplicate questions by normalized stem. Optional shared `seen` Set lets callers dedupe
+   across several pools (e.g. keep a Thorax question from re-appearing inside the Systemic slice). */
+function dedupeQs(list, seen) {
+  seen = seen || new Set();
+  const out = [];
+  for (const q of (list || [])) {
+    const k = _stemKey(q);
+    if (!k || seen.has(k)) continue;
+    seen.add(k); out.push(q);
+  }
+  return out;
+}
 function filterQuiz(list, filter) {
   if (!list) return [];
   if (filter === "diagram") return list.filter(isDiagramQ);
@@ -2354,8 +2376,11 @@ function appendRegionBars(main, md, metric) {
    a likely range, and the chance of clearing target cutoffs. */
 var _predVer = 0;        // bumped whenever a question stat changes → invalidates the memo
 var _predMemo = {};
-function predictExam(mode, runs) {
-  const key = mode + "|" + (state.allTime ? 1 : 0) + "|" + _predVer + "|" + (runs || 600);
+// DIAG_PRINTED = number of exam points (out of 200) that are printed labeling diagrams, taken
+// verbatim from the GR/Stuvia figures — i.e. ~guaranteed if you have the printed key on exam day.
+const DIAG_PRINTED = 40; // ~20% of the 200-question exam
+function predictExam(mode, runs, diagFloor) {
+  const key = mode + "|" + (state.allTime ? 1 : 0) + "|" + _predVer + "|" + (runs || 600) + "|" + (diagFloor ? 1 : 0);
   if (_predMemo[key]) return _predMemo[key];
   const pools = blueprintSources();
   const ready = BLUEPRINT.every(([r]) => (pools[r] || []).length);
@@ -2364,10 +2389,13 @@ function predictExam(mode, runs) {
   // Precompute each question's exam-probability ONCE (was recomputed 300k× → froze the browser).
   const P = {}; BLUEPRINT.forEach(([r]) => { P[r] = pools[r].map(o => qExamProb(o.id, mode, o.g)); });
   const total = BLUEPRINT.reduce((a, [, n]) => a + n, 0);   // 200
+  const guaranteed = diagFloor ? DIAG_PRINTED : 0;           // printed diagram points assumed correct
+  const scale = (total - guaranteed) / total;                // shrink each section's simulated count
+  const plan = BLUEPRINT.map(([r, n]) => [r, Math.round(n * scale)]);
   const scores = new Array(runs);
   for (let k = 0; k < runs; k++) {
-    let correct = 0;
-    for (const [r, n] of BLUEPRINT) {
+    let correct = guaranteed;
+    for (const [r, n] of plan) {
       const arr = P[r], L = arr.length;
       for (let j = 0; j < n; j++) { if (Math.random() < arr[(Math.random() * L) | 0]) correct++; }
     }
@@ -2378,7 +2406,7 @@ function predictExam(mode, runs) {
   const q = p => scores[Math.min(runs - 1, Math.max(0, Math.round(p * (runs - 1))))];
   const pAtLeast = frac => scores.filter(s => s >= frac * total).length / runs;
   const res = { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
-    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100) };
+    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100), diagFloor: !!diagFloor };
   _predMemo = {}; _predMemo[key] = res;   // keep only the latest
   return res;
 }
@@ -2469,7 +2497,8 @@ function _bpAttempted(md) {
   return n;
 }
 function renderExamOutlook(main, md) {
-  const pred = predictExam(md);
+  const diagOn = !!state.predDiagrams;
+  const pred = predictExam(md, undefined, diagOn);
   const card = document.createElement("div");
   card.style.cssText = "margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1F3864,#2E74B5);color:#fff;";
   if (!pred || _bpAttempted(md) < 5) {
@@ -2491,8 +2520,22 @@ function renderExamOutlook(main, md) {
         <div style="font-size:.72rem;opacity:.85;">chance ≥ 75%</div><div style="font-size:1.25rem;font-weight:800;">${pred.p75}%</div></div>
       <div style="flex:1;min-width:120px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 10px;">
         <div style="font-size:.72rem;opacity:.85;">chance ≥ 90%</div><div style="font-size:1.25rem;font-weight:800;">${pred.p90}%</div></div>
-    </div>${calLine}
-    <div style="margin-top:8px;font-size:.72rem;opacity:.8;">Monte-Carlo over the 50/50/50/50 Thorax·Abdomen·Pelvis·Systemic blueprint. Includes guess/elimination credit for unseen questions.</div>`;
+    </div>${calLine}`;
+  // ── Diagram-printed toggle (switch) ──
+  const tog = document.createElement("div");
+  tog.style.cssText = "margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.25);display:flex;align-items:center;gap:10px;cursor:pointer;";
+  tog.onclick = () => { state.predDiagrams = !state.predDiagrams; render(); };
+  const knob = diagOn
+    ? `<span style="width:40px;height:22px;border-radius:22px;background:#34D399;position:relative;display:inline-block;flex:0 0 auto;"><span style="position:absolute;top:2px;left:20px;width:18px;height:18px;border-radius:50%;background:#fff;"></span></span>`
+    : `<span style="width:40px;height:22px;border-radius:22px;background:rgba(255,255,255,.3);position:relative;display:inline-block;flex:0 0 auto;"><span style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;"></span></span>`;
+  tog.innerHTML = `${knob}<span style="font-size:.82rem;line-height:1.35;">🖼️ <b>Count printed diagram labels as correct</b> ${diagOn ? "<span style=\"opacity:.85;\">(on — +40 pts guaranteed)</span>" : "<span style=\"opacity:.7;\">(off)</span>"}<br><span style="opacity:.8;font-size:.74rem;">~20% of the exam is labeling taken verbatim from GR/Stuvia figures you'll have printed.</span></span>`;
+  card.appendChild(tog);
+  const note = document.createElement("div");
+  note.style.cssText = "margin-top:8px;font-size:.72rem;opacity:.8;";
+  note.textContent = diagOn
+    ? "Monte-Carlo: 40 printed-diagram points assumed correct + 160 questions simulated over the 50/50/50/50 blueprint."
+    : "Monte-Carlo over the 50/50/50/50 Thorax·Abdomen·Pelvis·Systemic blueprint. Includes guess/elimination credit for unseen questions.";
+  card.appendChild(note);
   main.appendChild(card);
 }
 
@@ -2629,6 +2672,12 @@ function renderStudyPlan(main, md) {
     : `At <b>${predPct}%</b> you're not ready for Monday yet — this plan runs through <b>Tuesday</b> (your fallback). Beat it and take it Monday.`;
   let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.exam.days} day${d.exam.days===1?"":"s"} to go</div>
     <div style="font-size:.82rem;color:#666;margin-bottom:10px;">${targetTxt}${gap>0?` Need <b>+${gap} pts</b> to clear 75%.`:` 🎉`} Fastest path up, biggest lever first:</div>`;
+  // Strengths — what's already working (keep it warm, don't over-drill it).
+  const _ps = prepScore(md);
+  if (_ps.strengths.length) {
+    html += `<div style="margin:0 0 10px;padding:8px 10px;border-radius:10px;background:#EAF6EC;font-size:.82rem;color:#1E5E32;line-height:1.45;">
+      💪 <b>Your strengths</b> — ${_ps.strengths.map(x=>`${x.s} (${x.pct}%)`).join(", ")}. These are locked in; just keep them warm with light mixed review — spend your hours on the focus list below.</div>`;
+  }
   const steps = [];
   // 1. Biggest lever: close untried blind spots
   if (d.untried > 0) {
@@ -2687,6 +2736,17 @@ function renderCoach(main) {
     <div style="font-size:.86rem;opacity:.95;margin-top:4px;">${info.readyMon?`On track for <b>Monday</b>.`:`Not ready for Monday yet — aiming for your <b>Tuesday</b> fallback. ${pred?`P(≥75%) is ${pred.p75}%.`:""}`}</div>
     <div style="font-size:.8rem;opacity:.85;margin-top:6px;">The honest read: you're strong on <b>${mq.durable}</b> questions, but <b>${mq.fuzzy}</b> are shaky (you flip between right and wrong) and <b>${mq.fast}</b> you answer by reflex. Those aren't learned yet — see below.</div>`;
   main.appendChild(head);
+
+  // Strengths — name what's working so the plan isn't all deficits.
+  const _cps = prepScore(md);
+  if (_cps.strengths.length) {
+    const sw = document.createElement("div");
+    sw.style.cssText = "margin:10px 0;padding:12px 14px;border-radius:12px;background:#EAF6EC;border-left:4px solid #2E7D32;";
+    sw.innerHTML = `<div style="font-weight:800;color:#1E5E32;font-size:.95rem;">💪 Strengths — keep these warm</div>
+      <div style="color:#2E7D32;font-size:.85rem;margin-top:6px;line-height:1.5;">${_cps.strengths.map(x=>`<b>${x.s}</b> — ${x.pct}% on ${x.n} attempted`).join("<br>")}</div>
+      <div style="color:#5a7a63;font-size:.78rem;margin-top:6px;">Don't spend scarce hours re-drilling these. A light mixed pass keeps them locked; put the real time into the lists below.</div>`;
+    main.appendChild(sw);
+  }
 
   function sectionBlock(title, subtitle, items, color, icon, verb) {
     if (!items.length) return;
@@ -2787,11 +2847,97 @@ function renderBookKnowledge(main, md) {
   main.appendChild(note);
 }
 
+/* ===== TRUE PREPAREDNESS composite =====
+   Coverage of the whole bank is unrealistic, so raw known/total under-reads real readiness.
+   This blends three signals per exam region:
+     • acc        — of what you've ATTEMPTED, how much you'd recall right now (decayed 0..1)
+     • covConf    — how broadly you've sampled the region (SATURATING: a solid ~40-question sample
+                    is treated as representative, so you don't have to grind the entire bank)
+     • masteryFac — a memorizing-vs-mastering discount (flip-flop / reflex-fast items pull it down)
+   Region score = 100 · acc · covConf · masteryFac. Overall = the 50/50/50/50 average. */
+const PREP_TARGET_PER_REGION = 40; // a representative sample; beyond this, extra coverage barely moves confidence
+function prepScore(mode) {
+  const mq = masteryQuality(mode);
+  const fuzzyFrac = mq.attempted ? mq.fuzzy / mq.attempted : 0;
+  const masteryFac = Math.max(0.7, 1 - 0.5 * fuzzyFrac);
+  let attemptedTot = 0;
+  const regions = BLUEPRINT.map(([r]) => {
+    const ids = _regionIds(r);
+    const c = covStats(ids, mode);
+    attemptedTot += c.attempted;
+    const acc = c.attempted ? c.known / c.attempted : 0;
+    const target = Math.min(ids.length || PREP_TARGET_PER_REGION, PREP_TARGET_PER_REGION);
+    const covConf = ids.length ? (0.5 + 0.5 * Math.min(1, c.attempted / target)) : 0;
+    const score = Math.round(acc * covConf * masteryFac * 100);
+    return { r, score, acc: Math.round(acc * 100), attempted: c.attempted, total: ids.length, covConf: Math.round(covConf * 100) };
+  });
+  const overall = Math.round(regions.reduce((a, x) => a + x.score, 0) / regions.length);
+  const weakest = regions.slice().sort((a, b) => a.score - b.score)[0];
+  const coverageOverall = Math.min(1, attemptedTot / (regions.length * PREP_TARGET_PER_REGION));
+  const confidence = coverageOverall >= 0.75 ? "high" : coverageOverall >= 0.4 ? "medium" : "low";
+  // System-level strengths & focus (finer than region)
+  const src = coverageSources();
+  const sysStats = PREP_SYSTEMS.map(s => {
+    const c = covStats(src[s] || [], mode);
+    return { s, acc: c.attempted ? c.known / c.attempted : 0, attempted: c.attempted, total: (src[s] || []).length };
+  });
+  const strengths = sysStats.filter(x => x.attempted >= 6 && x.acc >= 0.8)
+    .sort((a, b) => b.acc - a.acc).slice(0, 4).map(x => ({ s: x.s, pct: Math.round(x.acc * 100), n: x.attempted }));
+  const focus = sysStats.filter(x => x.total > 0)
+    .map(x => ({ s: x.s, pct: x.attempted ? Math.round(x.acc * 100) : null, untried: x.total - x.attempted, attempted: x.attempted }))
+    .sort((a, b) => {
+      const av = a.attempted < 4 ? -1 : a.pct, bv = b.attempted < 4 ? -1 : b.pct;
+      return av - bv;
+    }).slice(0, 3);
+  const ready = overall >= READY_BAR && weakest && weakest.score >= 65 && confidence !== "low";
+  return { overall, regions, weakest, confidence, coverageOverall: Math.round(coverageOverall * 100), strengths, focus, ready, masteryFac, mq };
+}
+function _prepBandColor(v) { return v >= 80 ? "#2E7D32" : v >= 65 ? "#1F3864" : v >= 50 ? "#E67E22" : "#C62828"; }
+function renderPrepVerdict(main, md) {
+  const p = prepScore(md);
+  if (p.regions.every(r => r.attempted === 0)) return; // nothing yet — the outlook card already explains
+  const col = _prepBandColor(p.overall);
+  const verdict = p.ready ? "On track — you're basically ready."
+    : p.confidence === "low" ? "Too early to call — sample more to trust this."
+    : p.overall >= 60 ? "Close — a focused push gets you there."
+    : "Not ready yet — but the path is clear below.";
+  const card = document.createElement("div");
+  card.style.cssText = `margin:6px 0 14px;padding:15px 16px;border-radius:14px;background:#fff;border:2px solid ${col};`;
+  const confNote = p.confidence === "high" ? "based on a broad sample" : p.confidence === "medium" ? "based on a moderate sample" : "based on a thin sample so far";
+  let html = `<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+      <div style="font-weight:800;font-size:1rem;color:${col};">🧭 True preparedness</div>
+      <div style="font-size:2rem;font-weight:800;line-height:1;color:${col};">${p.overall}%</div>
+      <div style="font-size:.82rem;color:#666;">${md==="closed"?"closed-book":"with-notes"} · ${confNote}</div>
+    </div>
+    <div style="font-size:.9rem;font-weight:700;color:${col};margin:6px 0 2px;">${verdict}</div>
+    <div style="font-size:.76rem;color:#888;line-height:1.4;margin-bottom:8px;">Skill on what you've practiced × how broadly you've sampled (a solid ~40-question sample per region counts as representative — you don't have to finish the whole bank) × a memorizing-vs-mastering check.</div>`;
+  // Strengths
+  if (p.strengths.length) {
+    html += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;">
+      <div style="font-size:.8rem;font-weight:800;color:#2E7D32;margin-bottom:4px;">💪 Strengths</div>
+      <div style="font-size:.84rem;color:#333;line-height:1.5;">${p.strengths.map(x=>`<b>${x.s}</b> ${x.pct}%`).join(" &nbsp;·&nbsp; ")}</div></div>`;
+  }
+  // Focus / weak spots
+  if (p.focus.length) {
+    html += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;">
+      <div style="font-size:.8rem;font-weight:800;color:#C62828;margin-bottom:4px;">🎯 Focus next</div>
+      <div style="font-size:.84rem;color:#333;line-height:1.5;">${p.focus.map(x=>`<b>${x.s}</b> ${x.pct==null?`untried (${x.untried} left)`:`${x.pct}%${x.untried?` · ${x.untried} untried`:""}`}`).join(" &nbsp;·&nbsp; ")}</div></div>`;
+  }
+  // Memorizing-vs-mastering flag
+  if (p.mq.fuzzy > 0 || p.mq.fast > 0) {
+    html += `<div style="margin-top:8px;font-size:.78rem;color:#B5560F;">🧠 ${p.mq.fuzzy} flip-flop + ${p.mq.fast} reflex-fast item${(p.mq.fuzzy+p.mq.fast)===1?"":"s"} suggest some memorizing — re-test those cold. Tap “Tell me more” for the list.</div>`;
+  }
+  card.innerHTML = html;
+  main.appendChild(card);
+}
+
 function renderPreparedness(main) {
   const md = getStudyMode();
   const metric = state.prepMetric || "readiness";
   // Predicted exam score — the headline forecast — shows on every tab.
   renderExamOutlook(main, md);
+  // True preparedness composite (coverage-saturating) + strengths — the "am I ready?" verdict.
+  renderPrepVerdict(main, md);
   // Action plan — what to do next, ranked by point-gain — only when there's enough signal.
   if (_bpAttempted(md) >= 5) renderStudyPlan(main, md);
   prepMetricToggle(main, metric);
@@ -3081,6 +3227,9 @@ function renderReports(main) {
 let examDeck = [], examIndex = 0, examScore = 0;
 let sdDeck = [], sdIndex = 0, sdStreak = 0, sdAnswered = false, sdSelected = -1;
 let fullExamDeck = [], fullExamIndex = 0, fullExamAnswers = [], fullExamFlags = new Set(), fullExamSecondsLeft = 6000, fullExamTimerInterval = null, fullExamShowOverview = false;
+let fullExamModeSet = false;      // closed/open-book prompt answered for this exam launch
+let fullExamOvFilter = "all";     // Overview grid filter: "all" | "unanswered" | "flagged"
+let fullExamReachedEnd = false;   // once true, the Overview shows the "review & submit" framing
 let examAnswered = false, examSelected = -1, examTimedOut = false;
 let examTimerHandle = null, examTimeLeft = 30;
 let examAnswerLog = [];  // [{q, options, selected, correct, timedOut}, ...]
@@ -3277,7 +3426,7 @@ function renderExamPicker(main) {
       btn.onclick = () => {
         state.examSource = "tb";
         examExamIndex = i;
-        examDeck = ex.questions.filter(isExamEligible);
+        examDeck = dedupeQs(ex.questions.filter(isExamEligible));
         examIndex = 0; examScore = 0;
         examAnswered = false; examSelected = -1; examTimedOut = false;
         examAnswerLog = [];
@@ -3768,7 +3917,7 @@ function renderSimPicker(main) {
       btn.innerHTML = `<div class="icon">${GROUP_ICONS[groupName] || "🎓"}</div><div><div class="label">${ex.title}</div><div class="desc">${ex.questions.length} questions · 70 min</div>${badge}</div>`;
       btn.onclick = () => {
         examExamIndex = i;
-        simDeck = ex.questions.filter(isExamEligible);
+        simDeck = dedupeQs(ex.questions.filter(isExamEligible));
         simIndex = 0;
         simAnswers = new Array(simDeck.length).fill(-1);
         simTimeLeft = SIM_TOTAL_SECONDS;
@@ -4099,6 +4248,7 @@ function renderSectionMenu(main) {
       title: "Practice Tests",
       sub: "Timed exams, simulations, and missed-Q review",
       condition: true,
+      highlight: true,
     },
     {
       id: "missedRoot",
@@ -4143,13 +4293,19 @@ function renderSectionMenu(main) {
   items.forEach(item => {
     const card = document.createElement("button");
     card.className = "sectionMenuCard";
+    if (item.highlight) {
+      // Stand-out treatment (like the predicted-score box) so Practice Tests pops.
+      card.style.cssText = "background:linear-gradient(135deg,#5B21B6 0%,#4338CA 100%);border:none;color:#fff;box-shadow:0 4px 14px rgba(67,56,202,.35);";
+    }
+    const subColor = item.highlight ? "rgba(255,255,255,.85)" : "";
+    const chevColor = item.highlight ? "#fff" : "";
     card.innerHTML = `
       <span class="smc-icon">${item.icon}</span>
       <span class="smc-text">
-        <span class="smc-title">${item.title}</span>
-        <span class="smc-sub">${item.sub}</span>
+        <span class="smc-title"${item.highlight ? ' style="color:#fff;"' : ''}>${item.title}</span>
+        <span class="smc-sub"${subColor ? ` style="color:${subColor};"` : ''}>${item.sub}</span>
       </span>
-      <span class="smc-chevron">›</span>`;
+      <span class="smc-chevron"${chevColor ? ` style="color:${chevColor};"` : ''}>›</span>`;
     card.onclick = item.onclick || (() => { state.route = item.id; render(); });
     list.appendChild(card);
   });
@@ -4291,6 +4447,7 @@ function renderExamMenu(main) {
     opts = opts || { gr: true, stuvia: true, pe: true, cb: true };
     const ORDER = ["Thorax","Abdomen","Pelvis & Perineum","Systemic"];
     let deck = [];
+    const seen = new Set();   // shared across sections so a Systemic question can't repeat a Thorax/Abdomen/Pelvis one
     ORDER.forEach((sectionLabel, si) => {
       let pool = [];
       if (opts.gr) {
@@ -4308,7 +4465,8 @@ function renderExamMenu(main) {
         const CB_MAP = { "Thorax":[0], "Abdomen":[1], "Pelvis & Perineum":[2], "Systemic":[3,4,5,6,7] };
         (CB_MAP[sectionLabel] || []).forEach(idx => { if (CLAUDEBANK[idx]) CLAUDEBANK[idx].questions.forEach(q => pool.push({ ...q, options: q.options.map(o => o.replace(/^[A-E]\.\s*/, "")) })); });
       }
-      deck.push(...shuffle(pool.filter(isExamEligible)).slice(0, perSection));
+      // dedupe within this section AND against everything already added, then take the slice
+      deck.push(...dedupeQs(shuffle(pool.filter(isExamEligible)), seen).slice(0, perSection));
     });
     return deck;
   };
@@ -4322,6 +4480,7 @@ function renderExamMenu(main) {
     fullExamFlags = new Set();
     fullExamSecondsLeft = seconds || 6000;
     fullExamShowOverview = false;
+    fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval);
     state.examTitle = title || "Simulation";
@@ -4342,7 +4501,7 @@ function renderExamMenu(main) {
       const CB_MAP = { "Thorax":[0], "Abdomen":[1], "Pelvis & Perineum":[2], "Systemic":[3,4,5,6,7] };
       (CB_MAP[sectionLabel] || []).forEach(idx => { if (CLAUDEBANK[idx]) CLAUDEBANK[idx].questions.forEach(q => pool.push({ ...q, options: q.options.map(o => o.replace(/^[A-E]\.\s*/, "")) })); });
     }
-    return pool.filter(isExamEligible);
+    return dedupeQs(pool.filter(isExamEligible));
   };
 
   // ⭐ THE REAL DEAL — all banks, 100 min, skip & flag (emphasized)
@@ -5056,6 +5215,27 @@ function renderFullExam(main) {
   const total = fullExamDeck.length;
   const q = fullExamDeck[fullExamIndex];
 
+  // ── Notes mode gate (once per launch, before the clock starts) ──
+  if (!fullExamModeSet) {
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
+    wrap.innerHTML = `
+      <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
+      <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+      <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this exam? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score — both feed your Preparedness stats.</div>`;
+    const mk = (label, sub, mode, bg) => {
+      const b = document.createElement("button");
+      b.style.cssText = `display:block;width:100%;margin:10px 0;background:${bg};color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:pointer;`;
+      b.innerHTML = `${label}<div style="font-weight:400;font-size:.78rem;opacity:.9;margin-top:2px;">${sub}</div>`;
+      b.onclick = () => { setStudyMode(mode); fullExamModeSet = true; render(); };
+      return b;
+    };
+    wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
+    wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+    main.appendChild(wrap);
+    return;
+  }
+
   // ── Start timer if not already running ──
   if (!fullExamTimerInterval) {
     fullExamTimerInterval = setInterval(() => {
@@ -5077,10 +5257,34 @@ function renderFullExam(main) {
     const ov = document.createElement("div");
     ov.className = "feOverlayWrap";
 
+    const answeredN = fullExamAnswers.filter(a => a !== -1).length;
+    const unansweredN = total - answeredN;
+    const flaggedN = fullExamFlags.size;
+
     const ovHdr = document.createElement("div");
     ovHdr.className = "feOverlayHdr";
-    ovHdr.innerHTML = `<span>Question Overview</span><button class="feOverlayClose" onclick="fullExamShowOverview=false;render()">✕</button>`;
+    ovHdr.innerHTML = `<span>${fullExamReachedEnd ? "Review &amp; submit" : "Question Overview"}</span><button class="feOverlayClose" onclick="fullExamShowOverview=false;render()">✕</button>`;
     ov.appendChild(ovHdr);
+
+    if (fullExamReachedEnd) {
+      const note = document.createElement("div");
+      note.style.cssText = "font-size:.85rem;color:#666;margin:0 0 8px;line-height:1.4;";
+      note.innerHTML = `You've reached the end. Jump back to anything <b>unanswered</b> or <b>flagged</b> below, then submit.`;
+      ov.appendChild(note);
+    }
+
+    // Filter chips
+    const chips = document.createElement("div");
+    chips.style.cssText = "display:flex;gap:8px;margin:2px 0 10px;flex-wrap:wrap;";
+    [["all", `All ${total}`], ["unanswered", `Unanswered ${unansweredN}`], ["flagged", `Flagged ${flaggedN}`]].forEach(([key, lbl]) => {
+      const c = document.createElement("button");
+      const on = fullExamOvFilter === key;
+      c.textContent = lbl;
+      c.style.cssText = `border:1.5px solid ${on ? "#1F3864" : "#cfd8e3"};background:${on ? "#1F3864" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+      c.onclick = () => { fullExamOvFilter = key; render(); };
+      chips.appendChild(c);
+    });
+    ov.appendChild(chips);
 
     const legend = document.createElement("div");
     legend.className = "feLegend";
@@ -5089,14 +5293,24 @@ function renderFullExam(main) {
 
     const grid = document.createElement("div");
     grid.className = "feGrid";
+    let shown = 0;
     for (let i = 0; i < total; i++) {
-      const cell = document.createElement("button");
       const isFlagged = fullExamFlags.has(i);
       const isAnswered = fullExamAnswers[i] !== -1;
+      if (fullExamOvFilter === "unanswered" && isAnswered) continue;
+      if (fullExamOvFilter === "flagged" && !isFlagged) continue;
+      shown++;
+      const cell = document.createElement("button");
       cell.className = "feGridCell" + (i === fullExamIndex ? " current" : "") + (isFlagged ? " flagged" : isAnswered ? " answered" : " unanswered");
       cell.textContent = i + 1;
       cell.onclick = () => { fullExamIndex = i; fullExamShowOverview = false; render(); };
       grid.appendChild(cell);
+    }
+    if (shown === 0) {
+      const empty = document.createElement("div");
+      empty.style.cssText = "color:#888;font-size:.9rem;padding:14px;text-align:center;";
+      empty.textContent = fullExamOvFilter === "unanswered" ? "🎉 Nothing unanswered." : "No flagged questions.";
+      ov.appendChild(empty);
     }
     ov.appendChild(grid);
 
@@ -5165,6 +5379,18 @@ function renderFullExam(main) {
   main.appendChild(qCard);
 
   // ── Navigation ──
+  const isLast = fullExamIndex === total - 1;
+  const answeredCur = fullExamAnswers[fullExamIndex] !== -1;
+
+  // Reaching the end (after answering / skipping the last question) opens the Overview so you can
+  // sweep unanswered + flagged before submitting.
+  const goToEnd = () => {
+    fullExamReachedEnd = true;
+    fullExamShowOverview = true;
+    fullExamOvFilter = fullExamAnswers.some(a => a === -1) ? "unanswered" : "all";
+    render();
+  };
+
   const nav = document.createElement("div");
   nav.className = "feNav";
 
@@ -5179,39 +5405,24 @@ function renderFullExam(main) {
   ovBtn.textContent = "☰ Overview";
   ovBtn.onclick = () => { fullExamShowOverview = true; render(); };
 
-  const skipBtn = document.createElement("button");
-  skipBtn.className = "feNavBtn skip";
-  // Find next unanswered
-  skipBtn.textContent = "Skip →";
-  skipBtn.onclick = () => {
-    let next = -1;
-    for (let i = fullExamIndex + 1; i < total; i++) {
-      if (fullExamAnswers[i] === -1) { next = i; break; }
-    }
-    if (next === -1) for (let i = 0; i < fullExamIndex; i++) {
-      if (fullExamAnswers[i] === -1) { next = i; break; }
-    }
-    if (next !== -1) fullExamIndex = next;
-    render();
-  };
-
+  // Next is only available once the current question is answered (otherwise use Skip).
   const nextBtn = document.createElement("button");
   nextBtn.className = "feNavBtn next";
-  if (fullExamIndex === total - 1) {
-    nextBtn.textContent = "Submit";
-    nextBtn.onclick = () => {
-      const remaining = fullExamAnswers.filter(a => a === -1).length;
-      if (remaining > 0 && !confirm(`Submit? ${remaining} question${remaining !== 1 ? 's' : ''} unanswered.`)) return;
-      clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
-      state.route = "fullExamEnd"; render();
-    };
-  } else {
-    nextBtn.textContent = "Next →";
-    nextBtn.onclick = () => { fullExamIndex++; render(); };
-  }
+  nextBtn.textContent = isLast ? "Review →" : "Next →";
+  nextBtn.disabled = !answeredCur;
+  nextBtn.style.opacity = answeredCur ? "1" : "0.45";
+  nextBtn.style.cursor = answeredCur ? "pointer" : "not-allowed";
+  nextBtn.onclick = () => { if (!answeredCur) return; if (isLast) goToEnd(); else { fullExamIndex++; render(); } };
 
-  nav.append(prevBtn, ovBtn, skipBtn, nextBtn);
+  nav.append(prevBtn, ovBtn, nextBtn);
   main.appendChild(nav);
+
+  // Big Skip button underneath — the way to move on WITHOUT answering.
+  const skipBtn = document.createElement("button");
+  skipBtn.textContent = isLast ? "Skip → review" : "Skip →";
+  skipBtn.style.cssText = "display:block;width:calc(100% - 32px);margin:10px 16px 4px;background:#0f5132;color:#fff;border:none;border-radius:12px;padding:16px;font-size:1.05rem;font-weight:800;cursor:pointer;letter-spacing:.02em;";
+  skipBtn.onclick = () => { if (isLast) goToEnd(); else { fullExamIndex++; render(); } };
+  main.appendChild(skipBtn);
 }
 
 /* ─── FULL EXAM END SCREEN ─── */
