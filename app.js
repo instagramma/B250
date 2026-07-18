@@ -3935,6 +3935,7 @@ let fullExamModeSet = false;      // closed/open-book prompt answered for this e
 let fullExamOvFilter = "all";     // Overview grid filter: "all" | "unanswered" | "flagged"
 let fullExamReachedEnd = false;   // once true, the Overview shows the "review & submit" framing
 let fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 }; // answer-change transitions this exam (second-guessing signal)
+let fullExamLogged = false;       // guards renderFullExamEnd so an exam records its stats/History only once
 let examAnswered = false, examSelected = -1, examTimedOut = false;
 let examTimerHandle = null, examTimeLeft = 30;
 let examAnswerLog = [];  // [{q, options, selected, correct, timedOut}, ...]
@@ -5369,6 +5370,7 @@ function launchFullExamPool(pool, title, seconds) {
   fullExamShowOverview = false;
   fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
   fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
+  fullExamLogged = false;
   fullExamShuffledOrders = pool.map(q => shuffle([...(q.options || [])]));
   clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
   state.examTitle = title || "Simulation";
@@ -5559,6 +5561,7 @@ function renderExamMenu(main) {
     fullExamShowOverview = false;
     fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
     fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
+    fullExamLogged = false;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; // null it so the fresh exam's timer actually starts
     state.examTitle = title || "Simulation";
@@ -6891,16 +6894,20 @@ function renderFullExamEnd(main) {
 
   const total = fullExamDeck.length;
   let correct = 0;
-  fullExamDeck.forEach((q, i) => {
-    const ans = fullExamAnswers[i];
-    if (ans === q.correct) correct++;
-    if (ans !== -1) recordQuestionStat(q, ans === q.correct, undefined, fullExamFlags.has(i)); // flagged = you weren't 100% on it
-  });
+  fullExamDeck.forEach((q, i) => { if (fullExamAnswers[i] === q.correct) correct++; });
   const pct = Math.round(correct / total * 100);
 
-  // Save result + full attempt to the unified History log
-  recordQuizResult("fullExam:" + state.sectionKey, correct, total);
-  {
+  // Record stats + History EXACTLY ONCE per completed exam. renderFullExamEnd runs on every
+  // render() while this route is active, so without a guard a re-render / revisit re-inflates
+  // seen/missed counts and appends duplicate attempts (ChatGPT audit #1; Sudden Death already
+  // guards the same way via sdDeck._logged). fullExamLogged resets at each exam launch.
+  if (!fullExamLogged) {
+    fullExamLogged = true;
+    fullExamDeck.forEach((q, i) => {
+      const ans = fullExamAnswers[i];
+      if (ans !== -1) recordQuestionStat(q, ans === q.correct, undefined, fullExamFlags.has(i)); // flagged = you weren't 100% on it
+    });
+    recordQuizResult("fullExam:" + state.sectionKey, correct, total);
     const LET = ["A","B","C","D","E"];
     const missedForLog = fullExamDeck
       .map((q, i) => ({ q, i, sel: fullExamAnswers[i] }))
