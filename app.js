@@ -1091,7 +1091,7 @@ function buildTopbar() {
   else if (state.route === "simPicker")     titleText = "Exam Simulation";
   else if ((state.route === "simExam" || state.route === "simReview") && state.examTitle) titleText = state.examTitle;
   else if (state.route === "missedReview")  titleText = "Missed Questions";
-  else if (state.route === "fuzzyReview")   titleText = "Fuzzy Questions";
+  else if (state.route === "fuzzyReview")   titleText = state._drillTitle || "Fuzzy Questions";
   else if (state.route === "lab2Station")   titleText = "Model Practical";
   else if (state.route === "examPicker")    titleText = "Timed Exams";
   else if (state.route === "exam" && state.examSource === "gr")     titleText = "Timed GR Questions";
@@ -1417,7 +1417,8 @@ function appendStartHere(wrap) {
     title = "Do one short Torso set";
     detail = "Surface fresh gaps, then convert the misses. Don't plan — just start. Five questions.";
   }
-  if (fuzzy > 0) { btnLabel = "▶ Start: drill " + fuzzy + " fuzzy"; run = () => { state.sectionKey = "torso"; startFuzzyDrill(); }; }
+  if (page) { btnLabel = "▶ Test p. " + page.page + " now"; run = () => { state.sectionKey = "torso"; startPageDrill(page.page); }; }
+  else if (fuzzy > 0) { btnLabel = "▶ Start: drill " + fuzzy + " fuzzy"; run = () => { state.sectionKey = "torso"; startFuzzyDrill(); }; }
   else { btnLabel = "▶ Start Torso practice"; run = () => { state.sectionKey = "torso"; state.route = "examMenu"; render(); }; }
   const card = document.createElement("div");
   card.style.cssText = "background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;border-radius:16px;padding:18px 20px;margin:0 0 20px;box-shadow:0 6px 20px rgba(31,56,100,.25);";
@@ -4987,7 +4988,26 @@ function startFuzzyDrill() {
   });
   if (!deck.length) { alert("No fuzzy questions right now — you're steady on everything you've practiced."); return; }
   fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  state._drillTitle = null;   // plain fuzzy drill
   state._fuzzyBack = (state.sectionKey && state.sectionKey !== "torso") ? "preparednessGeneric" : "preparedness";
+  state.route = "fuzzyReview"; render();
+}
+/* Drill the questions that map to ONE Martini page — so "read p.451 → test it" actually tests p.451.
+   Reuses the fuzzy-review flow (records via recordQuestionStat, no missed-pool side effects). */
+function startPageDrill(page) {
+  if (typeof Q_BOOKLOC === "undefined") { startFuzzyDrill(); return; }
+  const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
+  const deck = [];
+  Object.keys(Q_BOOKLOC).forEach(id => {
+    const loc = Q_BOOKLOC[id]; const p = loc && (loc.p || loc.page);
+    if (p !== page) return;
+    const q = idx[id];
+    if (q && (q.q || q.question) && q.options && typeof q.correct === "number" && !isDiagramQ(q) && !hasDupOptions(q)) deck.push(q);
+  });
+  if (!deck.length) { alert("No testable questions are mapped to p." + page + " yet — drilling your fuzzy set instead."); startFuzzyDrill(); return; }
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  state._drillTitle = "Martini p. " + page;
+  state._fuzzyBack = "home";
   state.route = "fuzzyReview"; render();
 }
 function renderFuzzyReview(main) {
@@ -5013,7 +5033,7 @@ function renderFuzzyReview(main) {
 
   const counter = document.createElement("div");
   counter.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:.88rem;color:#888;";
-  counter.innerHTML = `<span>🎲 Fuzzy drill</span><span style="font-weight:700;color:var(--accent);">${remaining} left</span>`;
+  counter.innerHTML = `<span>${state._drillTitle ? "📖 " + escapeHtml(state._drillTitle) : "🎲 Fuzzy drill"}</span><span style="font-weight:700;color:var(--accent);">${remaining} left</span>`;
   main.appendChild(counter);
 
   const pgBar = document.createElement("div");
