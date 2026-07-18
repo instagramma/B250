@@ -531,6 +531,15 @@ function cloudMerge(into, from) {
     a.firstDone = Math.max(a.firstDone || 0, b.firstDone || 0); a.firstOk = Math.max(a.firstOk || 0, b.firstOk || 0);
     if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
   });
+  // 3D Explorer practical stats — own readiness dimension, best-of merge.
+  into.lab3d = into.lab3d || {};
+  Object.keys(from.lab3d || {}).forEach(k => {
+    const b = from.lab3d[k], a = into.lab3d[k];
+    if (!a) { into.lab3d[k] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = Math.max(a.seen || 0, b.seen || 0); a.missed = Math.max(a.missed || 0, b.missed || 0);
+    a.firstDone = Math.max(a.firstDone || 0, b.firstDone || 0); a.firstOk = Math.max(a.firstOk || 0, b.firstOk || 0);
+    if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
+  });
   Object.keys(from.quizzes || {}).forEach(k => {
     const b = from.quizzes[k], a = into.quizzes[k];
     if (!a) { into.quizzes[k] = JSON.parse(JSON.stringify(b)); return; }
@@ -1011,6 +1020,7 @@ function render() {
   else if (state.route === "missedReview") renderMissedReview(main);
   else if (state.route === "fuzzyReview") renderFuzzyReview(main);
   else if (state.route === "lab2Station") renderLab2Station(main);
+  else if (state.route === "lab3d") render3DExplorer(main);
   else if (state.route === "cbPicker") renderCbPicker(main);
   else if (state.route === "grMenu")       renderGrMenu(main);
   else if (state.route === "examMenu")     renderExamMenu(main);
@@ -1077,6 +1087,7 @@ function buildTopbar() {
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
       else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
+      else if (state.route === "lab3d")          { try { if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
       else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
@@ -1134,6 +1145,7 @@ function buildTopbar() {
   else if (state.route === "missedReview")  titleText = "Missed Questions";
   else if (state.route === "fuzzyReview")   titleText = state._drillTitle || "Fuzzy Questions";
   else if (state.route === "lab2Station")   titleText = "Model Practical";
+  else if (state.route === "lab3d")         titleText = "3D Anatomy Explorer";
   else if (state.route === "examPicker")    titleText = "Timed Exams";
   else if (state.route === "exam" && state.examSource === "gr")     titleText = "Timed GR Questions";
   else if (state.route === "examResults" && state.examSource === "gr") titleText = "GR Results";
@@ -1659,11 +1671,15 @@ function renderModes(main) {
         desc: "Timed full mock + mini-mocks by system + missed-Q review + history" },
     ]});
     if (typeof LAB2_MODELS !== "undefined" && LAB2_MODELS.length) {
-      groups.push({ label: "Model Practical — real lab photos", icon: "📸", modes: [
+      groups.push({ label: "Real Class Models — closest to the practical", icon: "📸", modes: [
         { id: "lab2Station", icon: "📸", label: "Model Stations",
           desc: `${LAB2_MODELS.length} real class-model photos · name it, self-grade (just like the practical)` },
       ]});
     }
+    groups.push({ label: "3D Anatomy Explorer — spatial learning", icon: "🧊", modes: [
+      { id: "lab3d", icon: "🧊", label: "3D Anatomy Explorer",
+        desc: "Rotate heart / brain / torso, tap structures to identify · Explore + timed Practical (loads only when opened)" },
+    ]});
     if (typeof LAB2_BANK !== "undefined" && LAB2_BANK.length) {
       const n = LAB2_BANK.reduce((s, g) => s + (g.questions ? g.questions.length : 0), 0);
       groups.push({ label: "Structure & Tissue Q's", icon: "🔬", modes: [
@@ -1777,6 +1793,8 @@ function renderModes(main) {
         btn.onclick = () => startLab2Practical(false);
       } else if (m.id === "lab2Bank") {
         btn.onclick = () => startLab2BankDrill();
+      } else if (m.id === "lab3d") {
+        btn.onclick = () => { if (typeof open3DExplorer === "function") open3DExplorer(); else alert("3D Explorer module not loaded."); };
       } else if (m.id === "cbPicker") {
         btn.onclick = () => { state.route = "cbPicker"; render(); };
       } else if (m.id === "cbAll") {
