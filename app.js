@@ -461,11 +461,11 @@ function renderProfilePicker(main) {
   wrap.style.cssText = "max-width:440px;margin:52px auto 0;text-align:center;padding:0 18px;";
   wrap.innerHTML = `
     <div style="font-size:2.4rem;margin-bottom:6px;">👥</div>
-    <div style="font-weight:800;font-size:1.3rem;color:var(--navy,#1F3864);">Who's studying?</div>
+    <div style="font-weight:800;font-size:1.3rem;color:var(--ink);">Who's studying?</div>
     <div style="color:#666;font-size:.9rem;margin:6px 0 24px;">Your scores, progress, and preparedness are kept separate for each person. We'll remember your pick on this device.</div>`;
   PROFILES.forEach((name, i) => {
     const b = document.createElement("button");
-    const colors = ["#1F3864", "#2E74B5", "#2E7D32"];
+    const colors = ["var(--ink)", "var(--ink-2)", "#2E7D32"];
     b.style.cssText = `display:block;width:100%;margin:11px 0;background:${colors[i % 3]};color:#fff;border:none;border-radius:14px;padding:16px;font-size:1.15rem;font-weight:700;cursor:pointer;`;
     b.textContent = name;
     b.onclick = () => selectProfile(name);
@@ -724,7 +724,7 @@ function addReport(q, reason, note) {
 function toast(msg) {
   const t = document.createElement("div");
   t.textContent = msg;
-  t.style.cssText = "position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1F3864;color:#fff;padding:10px 18px;border-radius:22px;font-size:.9rem;font-weight:700;z-index:2000;box-shadow:0 4px 16px rgba(0,0,0,.3);";
+  t.style.cssText = "position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:22px;font-size:.9rem;font-weight:700;z-index:2000;box-shadow:0 4px 16px rgba(0,0,0,.3);";
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 1800);
 }
@@ -734,14 +734,14 @@ function openReportDialog(q) {
   ov.onclick = (e) => { if (e.target === ov) ov.remove(); };
   const box = document.createElement("div");
   box.style.cssText = "background:#fff;max-width:430px;width:92%;margin-top:56px;border-radius:14px;padding:18px;max-height:82vh;overflow:auto;";
-  box.innerHTML = `<div style="font-weight:800;font-size:1.05rem;color:#1F3864;margin-bottom:4px;">🚩 Report this question</div>
+  box.innerHTML = `<div style="font-weight:800;font-size:1.05rem;color:var(--ink);margin-bottom:4px;">🚩 Report this question</div>
     <div style="font-size:.8rem;color:#888;margin-bottom:12px;">${escapeHtml((q.q || "").slice(0, 110))}${(q.q||"").length>110?"…":""}${q.id?` <span style="color:#bbb;">(${q.id})</span>`:""}</div>`;
   let reason = null;
   const rWrap = document.createElement("div"); rWrap.style.cssText = "display:flex;flex-direction:column;gap:8px;";
   [["❌ Wrong answer", "wrong_answer"], ["✏️ Formatting / typo", "formatting"], ["❓ Confusing / other", "other"]].forEach(([lbl, val]) => {
     const b = document.createElement("button"); b.textContent = lbl;
     b.style.cssText = "text-align:left;border:1.5px solid #ddd;background:#fff;border-radius:10px;padding:11px;font-size:.92rem;cursor:pointer;";
-    b.onclick = () => { reason = val; rWrap.querySelectorAll("button").forEach(x => { x.style.background = "#fff"; x.style.borderColor = "#ddd"; }); b.style.background = "#EAF3FB"; b.style.borderColor = "#2E74B5"; };
+    b.onclick = () => { reason = val; rWrap.querySelectorAll("button").forEach(x => { x.style.background = "#fff"; x.style.borderColor = "#ddd"; }); b.style.background = "#EAF3FB"; b.style.borderColor = "var(--ink-2)"; };
     rWrap.appendChild(b);
   });
   box.appendChild(rWrap);
@@ -806,6 +806,10 @@ function recordAttempt(key, meta) {
   progressState.examAttempts[key].unshift(rec);
   if (progressState.examAttempts[key].length > 12) progressState.examAttempts[key].length = 12;
   saveLocalProgress();
+  // Exam/mock/CAT/quiz completion is infrequent, so push to the cloud IMMEDIATELY (not the 2.5s
+  // debounce) — guarantees a finished attempt syncs to other devices even if the app is closed
+  // right after submitting. Per-question stats still use the debounced push.
+  if (typeof saveProgress === "function") { try { saveProgress(true); } catch (e) {} }
 }
 
 function recordFlashcardResult(key, known, total) {
@@ -1092,7 +1096,7 @@ function buildTopbar() {
     const idchip = document.createElement("button");
     idchip.innerHTML = `<span style="opacity:.8;">👤</span>&nbsp;<b>${escapeHtml(currentProfile)}</b>`;
     idchip.title = "Switch profile";
-    idchip.style.cssText = "display:flex;align-items:center;background:#1F3864;color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:.82rem;cursor:pointer;white-space:nowrap;";
+    idchip.style.cssText = "display:flex;align-items:center;background:var(--ink);color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:.82rem;cursor:pointer;white-space:nowrap;";
     idchip.onclick = () => switchProfile();
     right.appendChild(idchip);
   }
@@ -1193,7 +1197,7 @@ function renderLogin(main) {
 
 const HOME_ACCENT = {
   torso:        { c1: "#E9605A", c2: "#C0392B" },   // coral/red
-  axial:        { c1: "#3E86C9", c2: "#2E74B5" },   // blue
+  axial:        { c1: "#3E86C9", c2: "var(--ink-2)" },   // blue
   appendicular: { c1: "#D9A441", c2: "#B7791F" },   // amber / bone
   lab1:         { c1: "#7C4DD6", c2: "#5B21B6" },   // violet
   lab2:         { c1: "#14A090", c2: "#0F766E" },   // teal
@@ -1279,7 +1283,7 @@ function ensureNotesPanelDom() {
   if (notesPanel.el) return;
   const el = document.createElement("div");
   el.style.cssText = "position:fixed;right:16px;bottom:16px;width:min(420px,92vw);max-height:80vh;background:#fff;border:1px solid #bbb;border-radius:12px;box-shadow:0 12px 44px rgba(0,0,0,.4);z-index:100000;display:flex;flex-direction:column;overflow:hidden;";
-  const bar = document.createElement("div"); bar.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 11px;background:#1F3864;color:#fff;cursor:move;user-select:none;touch-action:none;";
+  const bar = document.createElement("div"); bar.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--ink);color:#fff;cursor:move;user-select:none;touch-action:none;";
   const hdr = document.createElement("div"); hdr.style.cssText = "font-weight:700;font-size:.85rem;flex:1;"; hdr.textContent = "📓 Notes";
   const closeB = document.createElement("button"); closeB.textContent = "✕"; closeB.style.cssText = "background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;line-height:1;"; closeB.title = "Close"; closeB.onclick = closeNotesPanel;
   bar.append(hdr, closeB); el.appendChild(bar);
@@ -1361,7 +1365,7 @@ function renderOwnerStats(main) {
     const acc = s.acc == null ? "—" : s.acc + "%", bm = s.bestMock == null ? "—" : s.bestMock + "%";
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
-        <div style="font-size:1.15rem;font-weight:800;color:#1F3864;">${s.profile}</div>
+        <div style="font-size:1.15rem;font-weight:800;color:var(--ink);">${s.profile}</div>
         <div style="font-size:.75rem;color:#999;">active ${_relTime(s.updated)}</div>
       </div>
       <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:10px;">
@@ -1396,7 +1400,7 @@ function renderHome(main) {
     own.className = "pillBtn";
     own.innerHTML = "👑 Class stats";
     own.title = "Owner view — everyone's progress (pulled from cloud sync).";
-    own.style.cssText = "border:1px solid #c9d4e3;background:#fff;color:#1F3864;border-radius:14px;padding:4px 13px;font-size:.76rem;font-weight:700;cursor:pointer;";
+    own.style.cssText = "border:1px solid #c9d4e3;background:#fff;color:var(--ink);border-radius:14px;padding:4px 13px;font-size:.76rem;font-weight:700;cursor:pointer;";
     own.onclick = () => { state.route = "ownerStats"; render(); };
     repRow.appendChild(own);
   }
@@ -1413,7 +1417,7 @@ function renderHome(main) {
   const hero = document.createElement("div");
   hero.style.cssText = "text-align:center;margin:6px 0 22px;";
   hero.innerHTML = `
-    <div style="font-family:Georgia,'Times New Roman',serif;font-size:2rem;font-weight:800;color:#1F3864;letter-spacing:-.01em;">BIOL 250 <span style="color:#0F766E;">Study</span></div>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:2rem;font-weight:800;color:var(--ink);letter-spacing:-.01em;">BIOL 250 <span style="color:#0F766E;">Study</span></div>
     <div style="color:#7c8598;font-size:.95rem;margin-top:4px;">Human Anatomy — timed practice, real-exam sims &amp; a coach that tells you what to study next.</div>`;
   wrap.appendChild(hero);
 
@@ -1798,7 +1802,7 @@ function renderQuizModeGate(main) {
   wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
   wrap.innerHTML = `
     <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
-    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--ink);margin-bottom:4px;">Before you start…</div>
     <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this set? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score — and both count toward your stats.</div>`;
   const mk = (label, sub, mode, bg) => {
     const b = document.createElement("button");
@@ -1807,8 +1811,8 @@ function renderQuizModeGate(main) {
     b.onclick = () => { setStudyMode(mode); quizModeSet = true; render(); };
     return b;
   };
-  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
-  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "var(--ink)"));
+  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "var(--ink-2)"));
   main.appendChild(wrap);
 }
 
@@ -2863,7 +2867,7 @@ function prepReadiness(d, md) {
 }
 function prepBand(pct) {
   if (pct >= 90) return { label: "Exam-ready", color: "#2E7D32" };
-  if (pct >= 75) return { label: "Almost there", color: "#2E74B5" };
+  if (pct >= 75) return { label: "Almost there", color: "var(--ink-2)" };
   if (pct >= 50) return { label: "Building", color: "#E67E22" };
   return { label: "Keep going", color: "#C62828" };
 }
@@ -2965,7 +2969,7 @@ function _regionIds(region) { return (blueprintSources()[region] || []).map(o =>
 function appendRegionBars(main, md, metric) {
   const wrap = document.createElement("div"); wrap.style.cssText = "margin:12px 0 4px;";
   const hdr = document.createElement("div");
-  hdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:6px;";
+  hdr.style.cssText = "font-size:.82rem;color:var(--ink);font-weight:800;margin-bottom:6px;";
   hdr.innerHTML = "🧭 By exam region <span style='font-weight:600;color:#999;'>(50 questions each)</span>";
   wrap.appendChild(hdr);
   ["Thorax", "Abdomen", "Pelvis", "Systemic"].forEach(r => {
@@ -3081,7 +3085,7 @@ function prepMetricToggle(main, metric) {
   mt.style.cssText = "display:flex;gap:6px;justify-content:center;margin:2px 0 8px;flex-wrap:wrap;";
   [["performance","📊 Performance"],["readiness","🎯 Readiness"],["book","📚 Book knowledge"]].forEach(([m, lbl]) => {
     const b = document.createElement("button"); const on = metric === m;
-    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+    b.style.cssText = `border:1.5px solid ${on?"var(--ink)":"#ccc"};background:${on?"var(--ink)":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer;`;
     b.className = "pillBtn"; b.textContent = lbl; b.onclick = () => { state.prepMetric = m; render(); }; mt.appendChild(b);
   });
   main.appendChild(mt);
@@ -3099,7 +3103,7 @@ function prepModeToggle(main, md) {
   toggle.style.cssText = "display:flex;gap:8px;justify-content:center;margin:6px 0 10px;";
   [["closed","🧠 Closed-book (true)"],["open","📖 With notes"]].forEach(([m, lbl]) => {
     const b = document.createElement("button"); const on = md === m;
-    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.style.cssText = `border:1.5px solid ${on?"var(--ink)":"#ccc"};background:${on?"var(--ink)":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
     b.className = "pillBtn"; b.textContent = lbl; b.onclick = () => { setStudyMode(m); render(); }; toggle.appendChild(b);
   });
   main.appendChild(toggle);
@@ -3138,7 +3142,7 @@ function renderExamOutlook(main, md) {
   const diagOn = !!state.predDiagrams;
   const pred = predictExam(md, undefined, diagOn);
   const card = document.createElement("div");
-  card.style.cssText = "margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1F3864,#2E74B5);color:#fff;";
+  card.style.cssText = "margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;";
   if (!pred || _bpAttempted(md) < 5) {
     card.innerHTML = `<div style="font-weight:800;font-size:1rem;margin-bottom:4px;">🔮 Predicted exam score</div>
       <div style="font-size:.85rem;opacity:.9;">Practice some questions in <b>${md==="closed"?"closed-book":"with-notes"}</b> mode and this forecasts your 200-question exam result (score, likely range, and odds of clearing 75% / 90%).</div>`;
@@ -3359,7 +3363,7 @@ function renderStudyPlan(main, md) {
   const plan = buildDaySchedule(d, md);
   html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0e0cc;">
     <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day${d.exam.readyMon?"":" (through your Tuesday fallback)"}</div>
-    ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:#1F3864;">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
+    ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:var(--ink);">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
   card.innerHTML = html;
   main.appendChild(card);
   const more = document.createElement("button");
@@ -3383,7 +3387,7 @@ function renderCoach(main) {
 
   // Headline
   const head = document.createElement("div");
-  head.style.cssText = "margin:2px 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#1F3864,#2E74B5);color:#fff;";
+  head.style.cssText = "margin:2px 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;";
   head.innerHTML = `<div style="font-weight:800;font-size:1.05rem;">${md==="closed"?"Closed-book":"With-notes"} · predicted ${pred?pred.meanPct:0}%</div>
     <div style="font-size:.86rem;opacity:.95;margin-top:4px;">${info.readyMon?`On track for <b>Monday</b>.`:`Not ready for Monday yet — aiming for your <b>Tuesday</b> fallback. ${pred?`P(≥75%) is ${pred.p75}%.`:""}`}</div>
     <div style="font-size:.8rem;opacity:.85;margin-top:6px;">The honest read: you're strong on <b>${mq.durable}</b> questions, but <b>${mq.fuzzy}</b> are shaky (you flip between right and wrong) and <b>${mq.fast}</b> you answer by reflex. Those aren't learned yet — see below.</div>`;
@@ -3499,7 +3503,7 @@ function renderBookKnowledge(main, md) {
   // per-chapter bars
   const list = document.createElement("div"); list.style.cssText = "margin-top:14px;";
   const chHdr = document.createElement("div");
-  chHdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:2px;";
+  chHdr.style.cssText = "font-size:.82rem;color:var(--ink);font-weight:800;margin-bottom:2px;";
   chHdr.textContent = "📖 By Martini chapter";
   list.appendChild(chHdr);
   const chOrder = [19,20,21,22,23,24,25,26,27,28];
@@ -3516,7 +3520,7 @@ function renderBookKnowledge(main, md) {
   });
   main.appendChild(list);
   const missBtn = document.createElement("button");
-  missBtn.style.cssText = "display:block;width:100%;margin:18px 0 0;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
+  missBtn.style.cssText = "display:block;width:100%;margin:18px 0 0;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
   missBtn.textContent = "🔁 Questions you keep missing";
   missBtn.onclick = () => { state.route = "missedStats"; render(); };
   main.appendChild(missBtn);
@@ -3571,7 +3575,7 @@ function prepScore(mode) {
   const ready = overall >= READY_BAR && weakest && weakest.score >= 65 && confidence !== "low";
   return { overall, regions, weakest, confidence, coverageOverall: Math.round(coverageOverall * 100), strengths, focus, ready, masteryFac, mq };
 }
-function _prepBandColor(v) { return v >= 80 ? "#2E7D32" : v >= 65 ? "#1F3864" : v >= 50 ? "#E67E22" : "#C62828"; }
+function _prepBandColor(v) { return v >= 80 ? "#2E7D32" : v >= 65 ? "var(--ink)" : v >= 50 ? "#E67E22" : "#C62828"; }
 function renderPrepVerdict(main, md) {
   const p = prepScore(md);
   if (p.regions.every(r => r.attempted === 0)) return; // nothing yet — the outlook card already explains
@@ -3646,7 +3650,7 @@ function renderPreparedness(main) {
   [["closed","🧠 Closed-book (true)"],["open","📖 With notes"]].forEach(([m,lbl]) => {
     const b = document.createElement("button");
     const on = md === m;
-    b.style.cssText = `border:1.5px solid ${on?"#1F3864":"#ccc"};background:${on?"#1F3864":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.style.cssText = `border:1.5px solid ${on?"var(--ink)":"#ccc"};background:${on?"var(--ink)":"#fff"};color:${on?"#fff":"#555"};border-radius:20px;padding:7px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
     b.className = "pillBtn";
     b.textContent = lbl;
     b.onclick = () => { setStudyMode(m); render(); };
@@ -3709,7 +3713,7 @@ function renderPreparedness(main) {
   const list = document.createElement("div");
   list.style.cssText = "margin-top:14px;";
   const sysHdr = document.createElement("div");
-  sysHdr.style.cssText = "font-size:.82rem;color:#1F3864;font-weight:800;margin-bottom:2px;";
+  sysHdr.style.cssText = "font-size:.82rem;color:var(--ink);font-weight:800;margin-bottom:2px;";
   sysHdr.textContent = "🫀 By body system";
   list.appendChild(sysHdr);
   PREP_SYSTEMS.map((s, i) => ({ s, r: readies[i], c: covStats(coverageSources()[s] || [], md) }))
@@ -3743,7 +3747,7 @@ function renderPreparedness(main) {
 
   // actions
   const missBtn = document.createElement("button");
-  missBtn.style.cssText = "display:block;width:100%;margin:16px 0 0;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
+  missBtn.style.cssText = "display:block;width:100%;margin:16px 0 0;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;";
   missBtn.textContent = "🔁 Questions you keep missing";
   missBtn.onclick = () => { state.route = "missedStats"; render(); };
   main.appendChild(missBtn);
@@ -3882,7 +3886,7 @@ function renderReports(main) {
   bar.style.cssText = "display:flex;gap:8px;margin:4px 0 10px;";
   const copy = document.createElement("button");
   copy.textContent = "📋 Copy all";
-  copy.style.cssText = "flex:1;background:#1F3864;color:#fff;border:none;border-radius:10px;padding:9px;font-weight:700;font-size:.85rem;cursor:pointer;";
+  copy.style.cssText = "flex:1;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:9px;font-weight:700;font-size:.85rem;cursor:pointer;";
   copy.onclick = () => {
     const txt = loadReports().map(r => `[${r.reason}] ${r.id || ""} — ${r.q}\n  correct: ${r.correct || ""}\n  note: ${r.note || ""}  (by ${r.by})`).join("\n\n");
     try { navigator.clipboard.writeText(txt); toast("Copied all reports 📋"); } catch (e) { alert(txt); }
@@ -3998,7 +4002,7 @@ function showExamNextBtn() {
   const btn = document.createElement("button");
   btn.id = "examNextBtn";
   btn.textContent = (examIndex >= examDeck.length - 1) ? "See results →" : "Next question →";
-  btn.style.cssText = "display:block;width:100%;background:#1F3864;color:#fff;border:none;border-radius:12px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;";
+  btn.style.cssText = "display:block;width:100%;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;";
   btn.onclick = () => { clearExamAutoAdv(); examAdvance(); };
   const hint = document.createElement("div");
   hint.style.cssText = "font-size:0.75rem;color:#aaa;margin-top:6px;";
@@ -4020,10 +4024,10 @@ function showExamNextBtn() {
     } catch (e) {}
     const look = document.createElement("button");
     look.textContent = "📖 Look it up in Martini";
-    look.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:#1F3864;border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
+    look.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:var(--ink);border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
     look.onclick = () => { clearExamAutoAdv(); showTextbookPanel(q.q, q.options[q.correct]); };
     wrap.appendChild(look);
-    { const nb = notesBtn(q); if (nb) { nb.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:#1F3864;border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;"; nb.onclick = () => { clearExamAutoAdv(); openNotesPanel(qRegionSection(q.id)); }; wrap.appendChild(nb); } }
+    { const nb = notesBtn(q); if (nb) { nb.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:var(--ink);border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;"; nb.onclick = () => { clearExamAutoAdv(); openNotesPanel(qRegionSection(q.id)); }; wrap.appendChild(nb); } }
   }
   wrap.appendChild(btn); wrap.appendChild(hint);
   host.appendChild(wrap);
@@ -4183,7 +4187,7 @@ function renderModeGate(main) {
   wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
   wrap.innerHTML = `
     <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
-    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--ink);margin-bottom:4px;">Before you start…</div>
     <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this session? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score.</div>`;
   const mk = (label, sub, mode, bg) => {
     const b = document.createElement("button");
@@ -4193,8 +4197,8 @@ function renderModeGate(main) {
     b.onclick = () => { setStudyMode(mode); sessionModeSet = true; render(); };
     return b;
   };
-  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
-  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+  wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "var(--ink)"));
+  wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "var(--ink-2)"));
   main.appendChild(wrap);
 }
 
@@ -4204,7 +4208,7 @@ function renderDiagramGate(main) {
   wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
   wrap.innerHTML = `
     <div style="font-size:2rem;margin-bottom:6px;">🖼️</div>
-    <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Include diagram questions?</div>
+    <div style="font-weight:800;font-size:1.15rem;color:var(--ink);margin-bottom:4px;">Include diagram questions?</div>
     <div style="color:#666;font-size:.92rem;margin-bottom:22px;">This deck has <b>${nDiag}</b> image/labeling question${nDiag === 1 ? "" : "s"}. You'll have the diagrams <b>printed</b> during the real exam, so you may not need to flash-test them here.</div>`;
   const mk = (label, sub, keep, bg) => {
     const b = document.createElement("button");
@@ -4222,8 +4226,8 @@ function renderDiagramGate(main) {
     };
     return b;
   };
-  wrap.appendChild(mk("🚫 Skip diagrams", "Text/recall questions only", false, "#1F3864"));
-  wrap.appendChild(mk("🖼️ Include diagrams", "Flash-test the images too", true, "#2E74B5"));
+  wrap.appendChild(mk("🚫 Skip diagrams", "Text/recall questions only", false, "var(--ink)"));
+  wrap.appendChild(mk("🖼️ Include diagrams", "Flash-test the images too", true, "var(--ink-2)"));
   main.appendChild(wrap);
 }
 
@@ -5248,7 +5252,7 @@ function appendTrendsCard(wrap, sec) {
   if (!beh.totalChanges && !pages.length && !fz) return;
   const card = document.createElement("div");
   card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
-  let html = `<div style="font-weight:800;color:#1F3864;margin-bottom:8px;">📊 Trends &amp; Habits</div>`;
+  let html = `<div style="font-weight:800;color:var(--ink);margin-bottom:8px;">📊 Trends &amp; Habits</div>`;
   if (beh.totalChanges) {
     const trend = tr ? (tr.recent < tr.early ? ` <span style="color:#0F766E;">↓ improving</span>` : tr.recent > tr.early ? ` <span style="color:#C0392B;">↑ getting worse</span>` : "") : "";
     const verdict = beh.r2w > beh.w2r ? "second-guessing is costing you — trust your first instinct" : beh.w2r > beh.r2w ? "your rechecks tend to help" : "changing answers is roughly neutral";
@@ -5290,8 +5294,8 @@ function renderHistory(main) {
   const strip = document.createElement("div");
   strip.style.cssText = "display:flex;gap:8px;margin:2px 0 12px;";
   strip.innerHTML = `
-    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Attempts</div><div style="font-size:1.3rem;font-weight:800;color:#1F3864;">${all.length}</div></div>
-    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Avg score</div><div style="font-size:1.3rem;font-weight:800;color:#1F3864;">${avg != null ? avg + "%" : "—"}</div></div>
+    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Attempts</div><div style="font-size:1.3rem;font-weight:800;color:var(--ink);">${all.length}</div></div>
+    <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Avg score</div><div style="font-size:1.3rem;font-weight:800;color:var(--ink);">${avg != null ? avg + "%" : "—"}</div></div>
     <div style="flex:1;background:#EEF4FB;border-radius:10px;padding:9px 12px;text-align:center;"><div style="font-size:.72rem;color:#5a6b85;">Best</div><div style="font-size:1.3rem;font-weight:800;color:#2E7D32;">${best != null ? best + "%" : "—"}</div></div>`;
   main.appendChild(strip);
 
@@ -5303,7 +5307,7 @@ function renderHistory(main) {
     const on = filter === k;
     const c = document.createElement("button");
     c.textContent = `${lbl} ${n}`;
-    c.style.cssText = `border:1.5px solid ${on ? "#1F3864" : "#cfd8e3"};background:${on ? "#1F3864" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+    c.style.cssText = `border:1.5px solid ${on ? "var(--ink)" : "#cfd8e3"};background:${on ? "var(--ink)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
     c.onclick = () => { state.histFilter = k; render(); };
     chips.appendChild(c);
   });
@@ -5329,10 +5333,10 @@ function renderHistory(main) {
     const nMissed = (rec.missed && rec.missed.length) || 0;
     head.innerHTML = `
       <span style="min-width:0;">
-        <span style="font-weight:700;color:#1F3864;font-size:.93rem;">${KIND_ICON[a.kind] || "📝"} ${escapeHtml(a.title)}</span>
+        <span style="font-weight:700;color:var(--ink);font-size:.93rem;">${KIND_ICON[a.kind] || "📝"} ${escapeHtml(a.title)}</span>
         <span style="display:block;color:#8a94a6;font-size:.76rem;margin-top:2px;">${rec.date}${rec.time ? " · " + rec.time : ""}${modeTag ? " · " + modeTag : ""}${nMissed ? " · " + nMissed + " missed" : ""}</span>
       </span>
-      <span style="flex:0 0 auto;font-weight:800;font-size:.95rem;color:#1F3864;">${scoreTxt} <span style="color:#b8c0cc;font-weight:600;">${openNow ? "▲" : "▼"}</span></span>`;
+      <span style="flex:0 0 auto;font-weight:800;font-size:.95rem;color:var(--ink);">${scoreTxt} <span style="color:#b8c0cc;font-weight:600;">${openNow ? "▲" : "▼"}</span></span>`;
     head.onclick = () => { state.histOpen[id] = !openNow; render(); };
     card.appendChild(head);
     if (openNow) {
@@ -5411,7 +5415,7 @@ function buildGenericExamMenu(list, key) {
   _mkHdr(list, "Realistic Mock");
   const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
-  simBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  simBtn.style.cssText = "border:2px solid var(--ink);background:#EEF4FB;";
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your exam · ${Math.min(SIM_N, allPool.length)} Qs · ~${Math.round(SIM_SECS/60)} min · skip &amp; flag freely</span>`;
   simBtn.onclick = () => launchFullExamPool(shuffle(allPool).slice(0, SIM_N), name + " Simulation", SIM_SECS);
   list.appendChild(simBtn);
@@ -5500,7 +5504,7 @@ function renderExamMenu(main) {
   const nAttempts = allAttempts().length;
   const histBtn = document.createElement("button");
   histBtn.className = "modeBtn";
-  histBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  histBtn.style.cssText = "border:2px solid var(--ink);background:#EEF4FB;";
   histBtn.innerHTML = `<span class="modeIcon">🗓️</span><span class="modeLabel">History — past attempts</span><span class="modeMeta">${nAttempts ? nAttempts + " logged · " : ""}every mock, timed exam &amp; quiz on one timeline · tap any to see missed questions</span>`;
   histBtn.onclick = () => { state.route = "history"; state.histFilter = "all"; render(); };
   list.appendChild(histBtn);
@@ -5581,7 +5585,7 @@ function renderExamMenu(main) {
   // ⭐ THE REAL DEAL — all banks, 100 min, skip & flag (emphasized)
   const fullBtn = document.createElement("button");
   fullBtn.className = "modeBtn";
-  fullBtn.style.cssText = "border:2px solid #1F3864;background:#EEF4FB;";
+  fullBtn.style.cssText = "border:2px solid var(--ink);background:#EEF4FB;";
   fullBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your actual exam · 100 min · 200 Qs · 50/section · ALL banks (GR + Stuvia + ClaudeBank + Practice Exams) · skip &amp; flag freely</span>`;
   fullBtn.onclick = () => launchFullExam(buildSimDeck(50, { gr: true, stuvia: true, pe: true, cb: true }), "Simulation");
   list.appendChild(fullBtn);
@@ -6657,7 +6661,7 @@ function renderFullExam(main) {
     wrap.style.cssText = "max-width:460px;margin:40px auto 0;text-align:center;padding:0 16px;";
     wrap.innerHTML = `
       <div style="font-size:2rem;margin-bottom:6px;">🎯</div>
-      <div style="font-weight:800;font-size:1.15rem;color:var(--navy,#1F3864);margin-bottom:4px;">Before you start…</div>
+      <div style="font-weight:800;font-size:1.15rem;color:var(--ink);margin-bottom:4px;">Before you start…</div>
       <div style="color:#666;font-size:.92rem;margin-bottom:22px;">Are you using your notes for this exam? This keeps your <b>true (closed-book)</b> score separate from your <b>with-notes</b> score — both feed your Preparedness stats.</div>`;
     const mk = (label, sub, mode, bg) => {
       const b = document.createElement("button");
@@ -6666,8 +6670,8 @@ function renderFullExam(main) {
       b.onclick = () => { setStudyMode(mode); fullExamModeSet = true; render(); };
       return b;
     };
-    wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "#1F3864"));
-    wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "#2E74B5"));
+    wrap.appendChild(mk("🧠 Closed-book", "No notes — my true recall", "closed", "var(--ink)"));
+    wrap.appendChild(mk("📖 Open-book", "Using my notes", "open", "var(--ink-2)"));
     main.appendChild(wrap);
     return;
   }
@@ -6716,7 +6720,7 @@ function renderFullExam(main) {
       const c = document.createElement("button");
       const on = fullExamOvFilter === key;
       c.textContent = lbl;
-      c.style.cssText = `border:1.5px solid ${on ? "#1F3864" : "#cfd8e3"};background:${on ? "#1F3864" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+      c.style.cssText = `border:1.5px solid ${on ? "var(--ink)" : "#cfd8e3"};background:${on ? "var(--ink)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;`;
       c.onclick = () => { fullExamOvFilter = key; render(); };
       chips.appendChild(c);
     });
