@@ -863,7 +863,8 @@ function activeClaudeBank(key) {
     return out.length ? out : null;
   }
   if (k === "torso") return (typeof CLAUDEBANK !== "undefined" && CLAUDEBANK.length) ? CLAUDEBANK : null;
-  return null; // lab1 / lab2 have no ClaudeBank
+  if (k === "lab2")  return (typeof LAB2_BANK !== "undefined" && LAB2_BANK.length) ? LAB2_BANK : null;
+  return null; // lab1 has no ClaudeBank
 }
 // Section-aware Stuvia bank. Torso → STUVIA_BANK, Axial → STUVIA_AXIAL, Cumulative → both.
 // (Appendicular has no Stuvia source — the Stuvia PDF has essentially no appendicular content.)
@@ -1585,6 +1586,13 @@ function renderModes(main) {
           desc: `${LAB2_MODELS.length} real class-model photos · name it, self-grade (just like the practical)` },
       ]});
     }
+    if (typeof LAB2_BANK !== "undefined" && LAB2_BANK.length) {
+      const n = LAB2_BANK.reduce((s, g) => s + (g.questions ? g.questions.length : 0), 0);
+      groups.push({ label: "Structure & Tissue Q's", icon: "🔬", modes: [
+        { id: "lab2Bank", icon: "🔬", label: "Structure & Tissue Drill",
+          desc: `${n} MCQs from your worksheets — identify the structure, name the tissue, know the function` },
+      ]});
+    }
   }
 
   // ── Practice Exams ─────────────────────────────────────────────────────────
@@ -1689,6 +1697,8 @@ function renderModes(main) {
         };
       } else if (m.id === "lab2Station") {
         btn.onclick = () => startLab2Practical(false);
+      } else if (m.id === "lab2Bank") {
+        btn.onclick = () => startLab2BankDrill();
       } else if (m.id === "cbPicker") {
         btn.onclick = () => { state.route = "cbPicker"; render(); };
       } else if (m.id === "cbAll") {
@@ -4980,12 +4990,14 @@ function startFuzzyDrill() {
   const md = getStudyMode();
   const qs = activeProgress().qstats || {};
   const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
-  const deck = [];
+  let deck = [];
   Object.keys(qs).forEach(id => {
     if (typeof isFuzzy !== "function" || !isFuzzy(id, md)) return;
     const q = idx[id];
-    if (q && (q.q || q.question) && q.options && typeof q.correct === "number") deck.push(q);
+    if (q && (q.q || q.question) && q.options && q.options.length >= 2 && typeof q.correct === "number"
+        && !isDiagramQ(q) && !isFITBQ(q) && !hasDupOptions(q)) deck.push(q);
   });
+  deck = dedupeQs(deck);
   if (!deck.length) { alert("No fuzzy questions right now — you're steady on everything you've practiced."); return; }
   fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
   state._drillTitle = null;   // plain fuzzy drill
@@ -4997,17 +5009,35 @@ function startFuzzyDrill() {
 function startPageDrill(page) {
   if (typeof Q_BOOKLOC === "undefined") { startFuzzyDrill(); return; }
   const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
-  const deck = [];
+  let deck = [];
   Object.keys(Q_BOOKLOC).forEach(id => {
     const loc = Q_BOOKLOC[id]; const p = loc && (loc.p || loc.page);
     if (p !== page) return;
     const q = idx[id];
-    if (q && (q.q || q.question) && q.options && typeof q.correct === "number" && !isDiagramQ(q) && !hasDupOptions(q)) deck.push(q);
+    // Real MCQs only: no fill-in-blanks (lone option), no diagram-answer-in-stem, no dup-option items.
+    if (q && (q.q || q.question) && q.options && q.options.length >= 2 && typeof q.correct === "number"
+        && !isDiagramQ(q) && !isFITBQ(q) && !hasDupOptions(q)) deck.push(q);
   });
+  deck = dedupeQs(deck);   // collapse identical copies (e.g. page 451's 3 "unpaired ganglia" duplicates)
   if (!deck.length) { alert("No testable questions are mapped to p." + page + " yet — drilling your fuzzy set instead."); startFuzzyDrill(); return; }
   fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
   state._drillTitle = "Martini p. " + page;
   state._fuzzyBack = "home";
+  state.route = "fuzzyReview"; render();
+}
+/* Lab 2 structure/tissue/function drill (from the worksheet-based LAB2_BANK). Reuses the review flow. */
+function startLab2BankDrill() {
+  if (typeof LAB2_BANK === "undefined" || !LAB2_BANK.length) { alert("Lab 2 question bank isn't loaded."); return; }
+  let deck = [];
+  LAB2_BANK.forEach(grp => (grp.questions || []).forEach(q => {
+    if (q && q.q && q.options && q.options.length >= 2 && typeof q.correct === "number")
+      deck.push(Object.assign({}, q, { options: q.options.map(o => o.replace(/^[A-E]\.\s*/, "")) }));
+  }));
+  deck = dedupeQs(deck);
+  if (!deck.length) { alert("No Lab 2 questions available."); return; }
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  state._drillTitle = "Lab 2 — Structures & Tissues";
+  state._fuzzyBack = "modes";
   state.route = "fuzzyReview"; render();
 }
 function renderFuzzyReview(main) {
