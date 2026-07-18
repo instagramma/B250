@@ -386,11 +386,31 @@ let fuzzyRecallRevealed = false;   // for written free-recall items inside a dri
 /* 10-minute Sprint state (rotating weak-area micro-session on the home screen) */
 let sprintTimer = null, sprintRot = 0;
 /* Lab 2 Model Practical (real class-model photos) — recognition + self-grade stations */
-let l2Deck = [], l2Index = 0, l2Revealed = false, l2Timed = false, l2SecLeft = 0, l2Timer = null, l2StartCount = 0, l2Right = 0;
-const LAB2_STATS_KEY = "biol250_lab2stations_v1";
-function loadL2Stats() { try { return JSON.parse(localStorage.getItem(ns(LAB2_STATS_KEY)) || "{}"); } catch (e) { return {}; } }
-function saveL2Stats(o) { try { localStorage.setItem(ns(LAB2_STATS_KEY), JSON.stringify(o)); } catch (e) {} }
-function recordL2(id, ok) { const s = loadL2Stats(); const e = s[id] || { seen: 0, missed: 0 }; e.seen++; if (!ok) e.missed++; e.last = Date.now(); s[id] = e; saveL2Stats(s); }
+let l2Deck = [], l2Index = 0, l2Revealed = false, l2Timed = false, l2SecLeft = 0, l2Timer = null, l2StartCount = 0;
+let l2FirstScored = new Set();   // station ids already scored for FIRST-PASS this round (requeues don't recount)
+let l2FirstCorrect = 0;          // first-attempt correct this round (the honest round score)
+let l2Recovered = 0;             // got right later on a requeue (recovery — shown separately, doesn't inflate score)
+let l2TimedOut = false;          // current station hit the 60s limit → auto-scored as a miss
+// Per-station tally now lives in progressState.lab2stations so it SYNCS (own Lab model-readiness metric,
+// kept separate from MCQ/diagram readiness). firstDone/firstOk track first-pass accuracy over time.
+function loadL2Stats() { return (progressState && progressState.lab2stations) || {}; }
+function recordL2(id, ok, first) {
+  if (!progressState.lab2stations) progressState.lab2stations = {};
+  const e = progressState.lab2stations[id] || { seen: 0, missed: 0, firstDone: 0, firstOk: 0 };
+  e.seen++; if (!ok) e.missed++;
+  if (first) { e.firstDone++; if (ok) e.firstOk++; }
+  e.last = Date.now();
+  progressState.lab2stations[id] = e;
+  saveLocalProgress();   // debounced cloud push → syncs the model-readiness metric across devices
+}
+// Overall first-pass model-station accuracy (0..100) across everything you've stationed — the Lab model
+// readiness dimension. Null until you've done at least one station.
+function lab2ModelReadiness() {
+  const s = (progressState && progressState.lab2stations) || {};
+  let done = 0, ok = 0;
+  Object.keys(s).forEach(id => { done += s[id].firstDone || 0; ok += s[id].firstOk || 0; });
+  return done ? { pct: Math.round(ok / done * 100), ok, done } : null;
+}
 
 function loadLocalProgress() {
   try {
@@ -502,6 +522,15 @@ let _cloudPushT = null, _cloudBusy = false;
 // idempotent "best across devices" merge — safe to run repeatedly without inflating counts
 function cloudMerge(into, from) {
   into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
+  // Lab 2 model-station stats (own readiness dimension) — best-of merge across devices.
+  into.lab2stations = into.lab2stations || {};
+  Object.keys(from.lab2stations || {}).forEach(id => {
+    const b = from.lab2stations[id], a = into.lab2stations[id];
+    if (!a) { into.lab2stations[id] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = Math.max(a.seen || 0, b.seen || 0); a.missed = Math.max(a.missed || 0, b.missed || 0);
+    a.firstDone = Math.max(a.firstDone || 0, b.firstDone || 0); a.firstOk = Math.max(a.firstOk || 0, b.firstOk || 0);
+    if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
+  });
   Object.keys(from.quizzes || {}).forEach(k => {
     const b = from.quizzes[k], a = into.quizzes[k];
     if (!a) { into.quizzes[k] = JSON.parse(JSON.stringify(b)); return; }
@@ -5251,7 +5280,8 @@ function startLab2Practical(timed, weakOnly) {
     pool = pool.filter(m => { const e = st[m.id]; return e && e.seen && (e.missed / e.seen) >= 0.34; });
     if (!pool.length) { alert("No weak stations yet — do a full round first, then this drills the ones you miss."); return; }
   }
-  l2Deck = shuffle(pool); l2Index = 0; l2Revealed = false; l2Timed = !!timed; l2StartCount = l2Deck.length; l2Right = 0;
+  l2Deck = shuffle(pool); l2Index = 0; l2Revealed = false; l2Timed = !!timed; l2StartCount = l2Deck.length;
+  l2FirstScored = new Set(); l2FirstCorrect = 0; l2Recovered = 0; l2TimedOut = false;
   state.route = "lab2Station"; render();
 }
 function _l2StartTimer() {
@@ -5262,7 +5292,7 @@ function _l2StartTimer() {
     l2SecLeft--;
     const el = document.getElementById("l2timer");
     if (el) { el.textContent = l2SecLeft + "s"; el.style.color = l2SecLeft <= 10 ? "#C0392B" : "var(--muted)"; }
-    if (l2SecLeft <= 0) { _l2ClearTimer(); if (!l2Revealed) { l2Revealed = true; render(); } }
+    if (l2SecLeft <= 0) { _l2ClearTimer(); if (!l2Revealed) { l2Revealed = true; l2TimedOut = true; render(); } }
   }, 1000);
 }
 function renderLab2Station(main) {
@@ -5270,12 +5300,13 @@ function renderLab2Station(main) {
   // Finished-all state
   if (l2Index >= l2Deck.length) {
     _l2ClearTimer();
-    const pct = l2StartCount ? Math.round(l2Right / l2StartCount * 100) : 0;
+    const pct = l2StartCount ? Math.round(l2FirstCorrect / l2StartCount * 100) : 0;   // FIRST-PASS score (the honest one)
     const wrap = document.createElement("div"); wrap.style.cssText = "text-align:center;padding:40px 20px;";
     wrap.innerHTML = `<div style="font-size:3.2rem;">${pct >= 80 ? "🏆" : pct >= 60 ? "🎯" : "📸"}</div>
       <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin:8px 0;">Round complete</div>
-      <div style="font-size:2rem;font-weight:900;color:var(--accent);">${l2Right}/${l2StartCount} · ${pct}%</div>
-      <div style="color:#888;margin:10px 0 26px;">You self-graded these — be honest, that's what makes it work.</div>`;
+      <div style="font-size:.72rem;font-weight:800;letter-spacing:.08em;color:var(--muted);">FIRST-PASS SCORE</div>
+      <div style="font-size:2rem;font-weight:900;color:var(--accent);">${l2FirstCorrect}/${l2StartCount} · ${pct}%</div>
+      <div style="color:#888;margin:6px 0 26px;">${l2Recovered ? `+${l2Recovered} recovered on retry (not counted in the score above). ` : ""}First attempt only — that's what the practical measures. Be honest self-grading.</div>`;
     const again = document.createElement("button"); again.className = "primaryBtn"; again.style.maxWidth = "320px"; again.textContent = "🔁 Go again"; again.onclick = () => startLab2Practical(l2Timed);
     const weak = document.createElement("button"); weak.className = "secondaryBtn"; weak.style.maxWidth = "320px"; weak.textContent = "🎯 Drill weak stations"; weak.onclick = () => startLab2Practical(l2Timed, true);
     const back = document.createElement("button"); back.className = "secondaryBtn"; back.style.maxWidth = "320px"; back.textContent = "Back to Lab 2"; back.onclick = () => { l2Deck = []; state.route = "modes"; render(); };
@@ -5324,30 +5355,44 @@ function renderLab2Station(main) {
       (m.verify ? `<div style="font-size:.78rem;color:#B7791F;margin-top:8px;">⚠️ Best-guess ID — confirm this one against your lab key.</div>` : "");
     main.appendChild(ans);
 
-    const row = document.createElement("div");
-    row.style.cssText = "display:flex;gap:10px;";
     const grade = (ok) => {
-      recordL2(m.id, ok);
-      if (ok) l2Right++;
-      if (!ok) l2Deck.push(m);   // requeue misses to the end of this round
-      l2Index++; l2Revealed = false; render();
+      const first = !l2FirstScored.has(m.id);        // first attempt at this station THIS round?
+      if (first) { l2FirstScored.add(m.id); if (ok) l2FirstCorrect++; }
+      else if (ok) { l2Recovered++; }                // got it on a requeue = recovery, NOT first-pass score
+      recordL2(m.id, ok, first);                     // syncs; first-pass tracked separately
+      if (!ok) l2Deck.push(m);                        // requeue for more practice (doesn't change the score)
+      l2Index++; l2Revealed = false; l2TimedOut = false; render();
     };
-    const miss = document.createElement("button");
-    miss.className = "secondaryBtn"; miss.style.cssText += "flex:1;margin:0;border-color:var(--danger);color:var(--danger);";
-    miss.textContent = "👎 Missed it";
-    miss.onclick = () => grade(false);
-    const got = document.createElement("button");
-    got.className = "primaryBtn"; got.style.cssText += "flex:1;margin:0;";
-    got.textContent = "👍 Got it";
-    got.onclick = () => grade(true);
-    row.append(miss, got);
-    main.appendChild(row);
 
-    // timed toggle for next launch
-    const t = document.createElement("div");
-    t.style.cssText = "text-align:center;margin-top:14px;";
-    t.innerHTML = `<span style="font-size:.78rem;color:var(--muted);">Tip: turn on ⏱ timed mode (60s/station) from the end screen to mimic exam pressure.</span>`;
-    main.appendChild(t);
+    if (l2TimedOut) {
+      // Timeout = automatic miss. Show the answer (so you learn it), then a single Next.
+      const to = document.createElement("div");
+      to.style.cssText = "background:#f7e7e2;border:1px solid #e6b8ac;border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:.9rem;font-weight:700;color:var(--danger);text-align:center;";
+      to.textContent = "⏱ Time's up — scored as a miss.";
+      main.appendChild(to);
+      const nxt = document.createElement("button");
+      nxt.className = "primaryBtn"; nxt.style.cssText += "width:100%;max-width:none;";
+      nxt.textContent = "Next →";
+      nxt.onclick = () => grade(false);
+      main.appendChild(nxt);
+    } else {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:10px;";
+      const miss = document.createElement("button");
+      miss.className = "secondaryBtn"; miss.style.cssText += "flex:1;margin:0;border-color:var(--danger);color:var(--danger);";
+      miss.textContent = "👎 Missed it";
+      miss.onclick = () => grade(false);
+      const got = document.createElement("button");
+      got.className = "primaryBtn"; got.style.cssText += "flex:1;margin:0;";
+      got.textContent = "👍 Got it";
+      got.onclick = () => grade(true);
+      row.append(miss, got);
+      main.appendChild(row);
+      const t = document.createElement("div");
+      t.style.cssText = "text-align:center;margin-top:14px;";
+      t.innerHTML = `<span style="font-size:.78rem;color:var(--muted);">Tip: ⏱ timed mode (60s/station, timeout = miss) mimics exam pressure — toggle it on the end screen.</span>`;
+      main.appendChild(t);
+    }
   }
 }
 
@@ -7145,6 +7190,20 @@ function renderPreparednessGeneric(main) {
       </div>
       <div style="font-size:.75rem;opacity:.8;margin-top:10px;">${cov.attempted}/${cov.total} questions attempted · recall-weighted, decays over time</div>
     </div>`;
+  // Lab 2 only: model-station readiness — a SEPARATE dimension (first-pass recognition of the real
+  // class-model photos), kept apart from the MCQ readiness above so they're not blended into one score.
+  if (key === "lab2" && typeof lab2ModelReadiness === "function") {
+    const mr = lab2ModelReadiness();
+    const mc = document.createElement("div");
+    mc.style.cssText = "background:#fff;border:1.5px solid var(--teal);border-radius:14px;padding:14px 18px;margin-bottom:16px;";
+    mc.innerHTML = mr
+      ? `<div style="font-weight:800;color:var(--teal-2);">📸 Model stations — first-pass readiness</div>
+         <div style="font-size:1.8rem;font-weight:900;color:${_prepBandColor(mr.pct)};margin:4px 0;">${mr.pct}%</div>
+         <div style="font-size:.8rem;color:var(--muted);">${mr.ok}/${mr.done} real-model photos identified right on the FIRST try. Separate from the MCQ readiness above — this is the practical dimension.</div>`
+      : `<div style="font-weight:800;color:var(--teal-2);">📸 Model stations — first-pass readiness</div>
+         <div style="font-size:.85rem;color:var(--muted);margin-top:4px;">No model stations done yet. Run <b>Model Stations</b> (timed) to build this — it tracks first-attempt recognition of your real class photos, separate from the quiz score.</div>`;
+    wrap.appendChild(mc);
+  }
   // per-region readiness bars
   const rc = document.createElement("div");
   rc.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
