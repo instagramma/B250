@@ -1196,7 +1196,16 @@ const NOTES_PDF = { thorax: "notes_thorax.pdf", abdomen: "notes_abdomen.pdf", pe
 const NOTES_LABEL = { thorax: "Thorax", abdomen: "Abdomen", pelvis: "Pelvis & Perineum", systemic: "Systemic" };
 let _qRegionMap = null;
 function qRegionSection(id) {
-  if (!_qRegionMap) { _qRegionMap = {}; try { const bp = blueprintSources(); Object.keys(bp).forEach(r => bp[r].forEach(o => { _qRegionMap[o.id] = r.toLowerCase(); })); } catch (e) {} }
+  if (!_qRegionMap) {
+    _qRegionMap = {};
+    try {
+      const bp = blueprintSources();
+      Object.keys(bp).forEach(r => { const rl = r.toLowerCase(); bp[r].forEach(o => {
+        // a specific region (thorax/abdomen/pelvis) always beats "systemic" for a shared question
+        if (!_qRegionMap[o.id] || (_qRegionMap[o.id] === "systemic" && rl !== "systemic")) _qRegionMap[o.id] = rl;
+      }); });
+    } catch (e) {}
+  }
   const r = _qRegionMap[id]; return (r && NOTES_PDF[r]) ? r : null;
 }
 let notesPanel = { el: null, section: null, page: 1, pages: 0, pdf: null, cache: {}, rendering: false };
