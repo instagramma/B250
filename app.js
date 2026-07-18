@@ -380,6 +380,8 @@ function recordMissedQs(answerLog, sectionKey) {
 
 /* Missed Review state */
 let missedDeck = [], missedIndex = 0, missedAnswered = false, missedSelected = -1;
+/* Fuzzy drill state (flip-flop questions — separate from the missed pool, no side effects on it) */
+let fuzzyDeck = [], fuzzyIndex = 0, fuzzyAnswered = false, fuzzyStartCount = 0;
 
 function loadLocalProgress() {
   try {
@@ -960,6 +962,7 @@ function render() {
   else if (state.route === "simExam") renderSimExam(main);
   else if (state.route === "simReview") renderSimReview(main);
   else if (state.route === "missedReview") renderMissedReview(main);
+  else if (state.route === "fuzzyReview") renderFuzzyReview(main);
   else if (state.route === "cbPicker") renderCbPicker(main);
   else if (state.route === "grMenu")       renderGrMenu(main);
   else if (state.route === "examMenu")     renderExamMenu(main);
@@ -1024,6 +1027,7 @@ function buildTopbar() {
       else if (state.route === "simExam")       { simStopTimer(); state.route = "simPicker"; }
       else if (state.route === "simReview")     state.route = "simExam";
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
+      else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
       else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
@@ -1079,6 +1083,7 @@ function buildTopbar() {
   else if (state.route === "simPicker")     titleText = "Exam Simulation";
   else if ((state.route === "simExam" || state.route === "simReview") && state.examTitle) titleText = state.examTitle;
   else if (state.route === "missedReview")  titleText = "Missed Questions";
+  else if (state.route === "fuzzyReview")   titleText = "Fuzzy Questions";
   else if (state.route === "examPicker")    titleText = "Timed Exams";
   else if (state.route === "exam" && state.examSource === "gr")     titleText = "Timed GR Questions";
   else if (state.route === "examResults" && state.examSource === "gr") titleText = "GR Results";
@@ -3694,6 +3699,7 @@ function renderPreparedness(main) {
   appendRegionBars(main, md, metric);
 
   // Trends & habits (second-guessing over time, weakest Martini pages, fuzzy count)
+  try { appendProgressGraph(main, "torso"); } catch (e) {}
   try { appendTrendsCard(main, "torso"); } catch (e) {}
 
   // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
@@ -3936,6 +3942,10 @@ let fullExamOvFilter = "all";     // Overview grid filter: "all" | "unanswered" 
 let fullExamReachedEnd = false;   // once true, the Overview shows the "review & submit" framing
 let fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 }; // answer-change transitions this exam (second-guessing signal)
 let fullExamLogged = false;       // guards renderFullExamEnd so an exam records its stats/History only once
+// Pacing + review-behavior signals (captured per exam, stored in the attempt record):
+let fullExamStartedAt = 0;        // wall-clock start (ms)
+let fullExamTotalSeconds = 6000;  // time budget for this exam
+let fullExamRevisits = 0;         // times you navigated back to an already-answered question (review behavior)
 let examAnswered = false, examSelected = -1, examTimedOut = false;
 let examTimerHandle = null, examTimeLeft = 30;
 let examAnswerLog = [];  // [{q, options, selected, correct, timedOut}, ...]
@@ -4909,6 +4919,91 @@ function renderMissedReview(main) {
   });
 }
 
+/* ─── Fuzzy drill: practice exactly the flip-flop questions ───
+   Snapshots the current fuzzy set into its own deck, records answers through the normal
+   recordQuestionStat path (so mastery/retention update), and — unlike Missed Review — does NOT
+   mutate the persistent missed pool. Wrong answers requeue to the end; correct ones drop out. */
+function startFuzzyDrill() {
+  const md = getStudyMode();
+  const qs = activeProgress().qstats || {};
+  const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
+  const deck = [];
+  Object.keys(qs).forEach(id => {
+    if (typeof isFuzzy !== "function" || !isFuzzy(id, md)) return;
+    const q = idx[id];
+    if (q && (q.q || q.question) && q.options && typeof q.correct === "number") deck.push(q);
+  });
+  if (!deck.length) { alert("No fuzzy questions right now — you're steady on everything you've practiced."); return; }
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  state._fuzzyBack = (state.sectionKey && state.sectionKey !== "torso") ? "preparednessGeneric" : "preparedness";
+  state.route = "fuzzyReview"; render();
+}
+function renderFuzzyReview(main) {
+  if (fuzzyDeck.length === 0) {
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "text-align:center;padding:48px 20px;";
+    wrap.innerHTML = `<div style="font-size:3.5rem;margin-bottom:12px;">🎯</div>
+      <div style="font-size:1.4rem;font-weight:700;margin-bottom:8px;color:var(--text);">Fuzzy set cleared!</div>
+      <div style="color:#888;margin-bottom:28px;">You got each of these right this round. Re-test cold later to make it stick.</div>`;
+    const backBtn = document.createElement("button");
+    backBtn.className = "secondaryBtn";
+    backBtn.textContent = "Back to Preparedness";
+    backBtn.onclick = () => { fuzzyDeck = []; state.route = state._fuzzyBack || "home"; render(); };
+    wrap.appendChild(backBtn);
+    main.appendChild(wrap);
+    return;
+  }
+  const qi = fuzzyIndex % fuzzyDeck.length;
+  const q = fuzzyDeck[qi];
+  const remaining = fuzzyDeck.length;
+  const cleared = fuzzyStartCount - remaining;
+  const pct = fuzzyStartCount ? Math.round(cleared / fuzzyStartCount * 100) : 0;
+
+  const counter = document.createElement("div");
+  counter.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:.88rem;color:#888;";
+  counter.innerHTML = `<span>🎲 Fuzzy drill</span><span style="font-weight:700;color:var(--accent);">${remaining} left</span>`;
+  main.appendChild(counter);
+
+  const pgBar = document.createElement("div");
+  pgBar.style.cssText = "height:6px;background:#eee;border-radius:3px;margin-bottom:18px;overflow:hidden;";
+  pgBar.innerHTML = `<div style="height:100%;width:${pct}%;background:var(--accent);border-radius:3px;transition:width .3s;"></div>`;
+  main.appendChild(pgBar);
+
+  const stem = document.createElement("div");
+  stem.style.cssText = "font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.55;";
+  stem.textContent = q.q || q.question;
+  main.appendChild(stem);
+
+  const fb = document.createElement("div");
+  fb.style.cssText = "min-height:24px;font-size:.95rem;font-weight:600;margin-bottom:10px;text-align:center;";
+  main.appendChild(fb);
+
+  const opts = q.tf ? ["True", "False"] : (q.options || []);
+  opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "examOption";
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (fuzzyAnswered) return;
+      fuzzyAnswered = true;
+      const isCorrect = (i === q.correct);
+      btn.classList.add(isCorrect ? "correct" : "wrong");
+      document.querySelectorAll(".examOption").forEach((b, j) => { b.disabled = true; if (j === q.correct) b.classList.add("correct"); });
+      fb.textContent = isCorrect ? "✅ Correct — cleared for this round." : "❌ Not quite — it goes back in the pile.";
+      fb.style.color = isCorrect ? "#27ae60" : "#c0392b";
+      try { recordQuestionStat(q, isCorrect, null, false); } catch (e) {}
+      setTimeout(() => {
+        fuzzyDeck.splice(qi, 1);
+        if (!isCorrect) fuzzyDeck.push(q);   // requeue misses to the end
+        if (fuzzyIndex >= fuzzyDeck.length) fuzzyIndex = 0;
+        fuzzyAnswered = false;
+        render();
+      }, 900);
+    };
+    main.appendChild(btn);
+  });
+}
+
 // initApp() is invoked at the VERY END of this file (see bottom) so that every
 // module-level const/let (SECTION_GROUPS, CAT_CONFIG, etc.) is initialized before
 // the first render — a restored route on load can safely reference any of them.
@@ -5217,12 +5312,23 @@ const HIST_FILTERS = { all: () => true, mocks: k => k === "mock" || k === "sim",
 /* Aggregate answer-change (second-guessing) + flag stats across all logged attempts. */
 function behaviorStats() {
   const b = { r2w: 0, w2r: 0, w2w: 0, flagTotal: 0, flagRight: 0 };
+  let paceN = 0, usedSec = 0, leftSec = 0, totalSec = 0, revisits = 0;
   allAttempts().forEach(a => {
-    const c = a.rec.changes, f = a.rec.flags;
+    const c = a.rec.changes, f = a.rec.flags, p = a.rec.pacing;
     if (c) { b.r2w += c.r2w || 0; b.w2r += c.w2r || 0; b.w2w += c.w2w || 0; }
     if (f) { b.flagTotal += f.total || 0; b.flagRight += f.right || 0; }
+    if (p && p.totalSec) { paceN++; usedSec += p.usedSec || 0; leftSec += p.leftSec || 0; totalSec += p.totalSec || 0; revisits += p.revisits || 0; }
   });
   b.totalChanges = b.r2w + b.w2r + b.w2w;
+  // Averaged pacing across your full-length exams (null if none logged yet).
+  b.pace = paceN ? {
+    n: paceN,
+    avgUsedSec: Math.round(usedSec / paceN),
+    avgLeftSec: Math.round(leftSec / paceN),
+    avgTotalSec: Math.round(totalSec / paceN),
+    usedPct: totalSec ? Math.round(usedSec / totalSec * 100) : 0,
+    avgRevisits: Math.round(revisits / paceN * 10) / 10
+  } : null;
   return b;
 }
 // Second-guessing trend: net right→wrong flips, earlier half vs recent half of your mocks.
@@ -5247,6 +5353,31 @@ function weakestPages(sec, limit) {
     .filter(r => r.seen >= 3).sort((a, b) => a.pct - b.pct).slice(0, limit || 6);
 }
 function _fuzzyCount() { const md = getStudyMode(); const qs = activeProgress().qstats || {}; let n = 0; Object.keys(qs).forEach(id => { if (isFuzzy(id, md)) n++; }); return n; }
+// Inline-SVG line graph of your scored attempts over time (mocks / timed / quizzes for this section).
+function appendProgressGraph(wrap, sec) {
+  const atts = (typeof allAttempts === "function" ? allAttempts(sec) : [])
+    .filter(a => a.rec && typeof a.rec.pct === "number")
+    .map(a => ({ ts: a.rec.ts || 0, pct: a.rec.pct }))
+    .sort((x, y) => x.ts - y.ts);
+  if (atts.length < 2) return;   // need at least two points to draw a trend line
+  const W = 320, H = 140, padL = 26, padR = 10, padT = 12, padB = 18, n = atts.length;
+  const X = i => padL + (i / (n - 1)) * (W - padL - padR);
+  const Y = p => padT + (1 - p / 100) * (H - padT - padB);
+  let grid = "";
+  [0, 25, 50, 75, 100].forEach(v => { const yy = Y(v); grid += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="#eee" stroke-width="1"/><text x="1" y="${yy + 3}" font-size="8" fill="#bbb">${v}</text>`; });
+  grid += `<line x1="${padL}" y1="${Y(75)}" x2="${W - padR}" y2="${Y(75)}" stroke="#0F766E" stroke-width="1" stroke-dasharray="3 3"/>`;
+  const pts = atts.map((a, i) => `${X(i).toFixed(1)},${Y(a.pct).toFixed(1)}`).join(" ");
+  const line = `<polyline fill="none" stroke="var(--ink)" stroke-width="2" points="${pts}"/>`;
+  const dots = atts.map((a, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(a.pct).toFixed(1)}" r="3" fill="${_prepBandColor(a.pct)}"/>`).join("");
+  const last = atts[n - 1].pct, delta = last - atts[0].pct;
+  const trend = delta > 0 ? `▲ up ${delta} pts since your first` : delta < 0 ? `▼ down ${-delta} pts since your first` : "flat since your first";
+  const card = document.createElement("div");
+  card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
+  card.innerHTML = `<div style="font-weight:800;color:var(--ink);margin-bottom:8px;">📈 Scores over time</div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;">${grid}${line}${dots}</svg>
+    <div style="font-size:.78rem;color:#666;margin-top:6px;">${n} scored attempts · latest <b style="color:${_prepBandColor(last)};">${last}%</b> · ${trend}. <span style="color:#0F766E;">– – 75% target</span></div>`;
+  wrap.appendChild(card);
+}
 // A "Trends & Habits" card appended to a container — surfaces granular behaviour + weak pages/fuzzy.
 function appendTrendsCard(wrap, sec) {
   const beh = behaviorStats(), tr = _secondGuessTrend(sec), pages = weakestPages(sec, 6), fz = _fuzzyCount();
@@ -5260,8 +5391,27 @@ function appendTrendsCard(wrap, sec) {
     html += `<div style="font-size:.85rem;color:#333;line-height:1.5;margin-bottom:8px;">Answer changes: <b>${beh.r2w}</b> right→wrong · <b>${beh.w2r}</b> wrong→right${trend}<br><span style="color:#666;">${verdict}.</span></div>`;
     if (beh.flagTotal) html += `<div style="font-size:.82rem;color:#666;margin-bottom:8px;">Flagged-question accuracy: ${Math.round(beh.flagRight / beh.flagTotal * 100)}% (${beh.flagRight}/${beh.flagTotal}) — your instinct on "not sure" ones.</div>`;
   }
+  // ── Pacing + review behavior (from full-length exams) ──
+  if (beh.pace) {
+    const p = beh.pace;
+    const fmtM = s => { const m = Math.floor(s / 60), ss = s % 60; return m + "m" + (ss ? " " + ss + "s" : ""); };
+    let verdict;
+    if (p.avgLeftSec >= 300 && p.avgRevisits < 1) verdict = "you finish early but don't use the leftover time — go back and re-check flagged / uncertain answers before you submit";
+    else if (p.avgRevisits >= 3) verdict = "you use your spare time to review — that's the right habit";
+    else if (p.usedPct >= 95 && p.avgLeftSec < 120) verdict = "you use almost all your time — watch the clock so you're not rushed at the end";
+    else verdict = "your pacing looks balanced";
+    html += `<div style="font-size:.82rem;color:#333;margin-bottom:8px;">⏱️ Pacing: you use <b>${p.usedPct}%</b> of the clock (~${fmtM(p.avgLeftSec)} left over) · revisit <b>${p.avgRevisits}</b> question${p.avgRevisits === 1 ? "" : "s"} on average.<br><span style="color:#666;">${verdict}.</span></div>`;
+  }
   if (fz) html += `<div style="font-size:.82rem;color:#B7791F;margin-bottom:8px;">🎲 <b>${fz}</b> fuzzy questions — you flip between right & wrong on these (memorizing, not mastering). CAT now treats them as harder.</div>`;
   card.innerHTML = html;
+  // "Drill my fuzzy questions" button — practices exactly the flip-flop items (no missed-pool side effects).
+  if (fz) {
+    const fbtn = document.createElement("button");
+    fbtn.textContent = `🎲 Drill my ${fz} fuzzy question${fz === 1 ? "" : "s"} →`;
+    fbtn.style.cssText = "display:block;width:100%;margin:4px 0 8px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;";
+    fbtn.onclick = () => startFuzzyDrill();
+    card.appendChild(fbtn);
+  }
   if (pages.length) {
     const pt = document.createElement("div"); pt.style.cssText = "margin-top:6px;border-top:1px solid #f0f0f0;padding-top:8px;";
     pt.innerHTML = `<div style="font-size:.75rem;color:#aaa;margin-bottom:4px;">Weakest Martini pages — reread these</div>`;
@@ -5371,6 +5521,7 @@ function launchFullExamPool(pool, title, seconds) {
   fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
   fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
   fullExamLogged = false;
+  fullExamStartedAt = Date.now(); fullExamTotalSeconds = seconds || 6000; fullExamRevisits = 0;
   fullExamShuffledOrders = pool.map(q => shuffle([...(q.options || [])]));
   clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
   state.examTitle = title || "Simulation";
@@ -5562,6 +5713,7 @@ function renderExamMenu(main) {
     fullExamModeSet = false; fullExamOvFilter = "all"; fullExamReachedEnd = false;
     fullExamChanges = { r2w: 0, w2r: 0, w2w: 0 };
     fullExamLogged = false;
+    fullExamStartedAt = Date.now(); fullExamTotalSeconds = seconds || 6000; fullExamRevisits = 0;
     fullExamShuffledOrders = pool.map(q => shuffle([...q.options]));
     clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; // null it so the fresh exam's timer actually starts
     state.examTitle = title || "Simulation";
@@ -6640,6 +6792,7 @@ function renderPreparednessGeneric(main) {
   note.style.cssText = "margin-top:12px;font-size:.75rem;color:#aaa;text-align:center;line-height:1.5;";
   note.textContent = "Experimental for non-Torso sections: readiness/performance are recall-weighted over this section's Guided Readings + Claude Bank. Practice raises them; they fade over time.";
   wrap.appendChild(note);
+  try { appendProgressGraph(wrap, key); } catch (e) {}
   try { appendTrendsCard(wrap, key); } catch (e) {}
   main.appendChild(wrap);
 }
@@ -6746,7 +6899,7 @@ function renderFullExam(main) {
       const cell = document.createElement("button");
       cell.className = "feGridCell" + (i === fullExamIndex ? " current" : "") + (isFlagged ? " flagged" : isAnswered ? " answered" : " unanswered");
       cell.textContent = i + 1;
-      cell.onclick = () => { fullExamIndex = i; fullExamShowOverview = false; render(); };
+      cell.onclick = () => { if (isAnswered) fullExamRevisits++; fullExamIndex = i; fullExamShowOverview = false; render(); };
       grid.appendChild(cell);
     }
     if (shown === 0) {
@@ -6860,7 +7013,7 @@ function renderFullExam(main) {
   prevBtn.className = "feNavBtn";
   prevBtn.disabled = fullExamIndex === 0;
   prevBtn.innerHTML = "← Prev";
-  prevBtn.onclick = () => { fullExamIndex--; render(); };
+  prevBtn.onclick = () => { if (fullExamAnswers[fullExamIndex - 1] !== -1) fullExamRevisits++; fullExamIndex--; render(); };
 
   const ovBtn = document.createElement("button");
   ovBtn.className = "feNavBtn overview";
@@ -6925,7 +7078,15 @@ function renderFullExamEnd(main) {
       mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
       score: correct, total, pct, missed: missedForLog,
       changes: { r2w: fullExamChanges.r2w, w2r: fullExamChanges.w2r, w2w: fullExamChanges.w2w },
-      flags: { total: fullExamFlags.size, right: fRight, wrong: fWrong }
+      flags: { total: fullExamFlags.size, right: fRight, wrong: fWrong },
+      // Pacing + review behavior: how much of the time budget you used, how much you left on the
+      // table, and how many times you went back to re-check an already-answered question.
+      pacing: {
+        totalSec: fullExamTotalSeconds,
+        usedSec: Math.max(0, fullExamTotalSeconds - fullExamSecondsLeft),
+        leftSec: Math.max(0, fullExamSecondsLeft),
+        revisits: fullExamRevisits
+      }
     });
   }
 
