@@ -5388,29 +5388,58 @@ function weakestPages(sec, limit) {
     .filter(r => r.seen >= 3).sort((a, b) => a.pct - b.pct).slice(0, limit || 6);
 }
 function _fuzzyCount() { const md = getStudyMode(); const qs = activeProgress().qstats || {}; let n = 0; Object.keys(qs).forEach(id => { if (isFuzzy(id, md)) n++; }); return n; }
-// Inline-SVG line graph of your scored attempts over time (mocks / timed / quizzes for this section).
-function appendProgressGraph(wrap, sec) {
+/* Current memorization discount: what fraction of what you've practiced (this mode) is "fuzzy"
+   (flip-flop = memorized, not mastered). Scales a readiness/score down so shallow knowledge
+   doesn't read as being ready. Returns a factor in ~[0.65, 1]. */
+function _masteryFactor(mode) {
+  try {
+    const qs = activeProgress().qstats || {}; let att = 0, fz = 0;
+    Object.keys(qs).forEach(id => { const mm = qs[id].m && qs[id].m[mode]; if (mm && mm.s) { att++; if (typeof isFuzzy === "function" && isFuzzy(id, mode)) fz++; } });
+    if (!att) return 1;
+    return 1 - 0.35 * (fz / att);          // up to a 35% haircut when everything is fuzzy
+  } catch (e) { return 1; }
+}
+/* PREPAREDNESS over time (not raw scores). At each past attempt we compute a retention‑weighted
+   running estimate: earlier attempts count less (memory decays with a ~10‑day half‑life), so a good
+   mock three weeks ago no longer "counts" as much as one yesterday. The whole curve is then scaled
+   by the current memorization discount, so recognition-not-mastery pulls preparedness down. This is
+   why it differs from the raw mock line — it answers "how ready are you," not "what did you score." */
+function preparednessSeries(sec) {
   const atts = (typeof allAttempts === "function" ? allAttempts(sec) : [])
-    .filter(a => a.rec && typeof a.rec.pct === "number")
-    .map(a => ({ ts: a.rec.ts || 0, pct: a.rec.pct }))
+    .filter(a => a.rec && typeof a.rec.pct === "number" && a.rec.ts)
+    .map(a => ({ ts: a.rec.ts, pct: a.rec.pct }))
     .sort((x, y) => x.ts - y.ts);
-  if (atts.length < 2) return;   // need at least two points to draw a trend line
-  const W = 320, H = 140, padL = 26, padR = 10, padT = 12, padB = 18, n = atts.length;
+  if (!atts.length) return [];
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  const mf = _masteryFactor(md);
+  const TAU = 10 * 864e5;                  // retention time constant ≈ 10 days (ms)
+  return atts.map((a, i) => {
+    let wsum = 0, vsum = 0;
+    for (let j = 0; j <= i; j++) { const w = Math.exp(-Math.max(0, atts[i].ts - atts[j].ts) / TAU); wsum += w; vsum += w * atts[j].pct; }
+    const prep = wsum ? (vsum / wsum) * mf : a.pct * mf;
+    return { ts: a.ts, prep: Math.max(0, Math.min(100, Math.round(prep))) };
+  });
+}
+// Inline-SVG line graph of your PREPAREDNESS trend over time (retention- + mastery-weighted).
+function appendProgressGraph(wrap, sec) {
+  const series = preparednessSeries(sec);
+  if (series.length < 2) return;   // need at least two points to draw a trend line
+  const W = 320, H = 140, padL = 26, padR = 10, padT = 12, padB = 18, n = series.length;
   const X = i => padL + (i / (n - 1)) * (W - padL - padR);
   const Y = p => padT + (1 - p / 100) * (H - padT - padB);
   let grid = "";
   [0, 25, 50, 75, 100].forEach(v => { const yy = Y(v); grid += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="#eee" stroke-width="1"/><text x="1" y="${yy + 3}" font-size="8" fill="#bbb">${v}</text>`; });
   grid += `<line x1="${padL}" y1="${Y(75)}" x2="${W - padR}" y2="${Y(75)}" stroke="#0F766E" stroke-width="1" stroke-dasharray="3 3"/>`;
-  const pts = atts.map((a, i) => `${X(i).toFixed(1)},${Y(a.pct).toFixed(1)}`).join(" ");
+  const pts = series.map((a, i) => `${X(i).toFixed(1)},${Y(a.prep).toFixed(1)}`).join(" ");
   const line = `<polyline fill="none" stroke="var(--ink)" stroke-width="2" points="${pts}"/>`;
-  const dots = atts.map((a, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(a.pct).toFixed(1)}" r="3" fill="${_prepBandColor(a.pct)}"/>`).join("");
-  const last = atts[n - 1].pct, delta = last - atts[0].pct;
-  const trend = delta > 0 ? `▲ up ${delta} pts since your first` : delta < 0 ? `▼ down ${-delta} pts since your first` : "flat since your first";
+  const dots = series.map((a, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(a.prep).toFixed(1)}" r="3" fill="${_prepBandColor(a.prep)}"/>`).join("");
+  const last = series[n - 1].prep, delta = last - series[0].prep;
+  const trend = delta > 0 ? `▲ up ${delta} pts` : delta < 0 ? `▼ down ${-delta} pts` : "flat";
   const card = document.createElement("div");
   card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
-  card.innerHTML = `<div style="font-weight:800;color:var(--ink);margin-bottom:8px;">📈 Scores over time</div>
+  card.innerHTML = `<div style="font-weight:800;color:var(--ink);margin-bottom:8px;">📈 Preparedness over time</div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;">${grid}${line}${dots}</svg>
-    <div style="font-size:.78rem;color:#666;margin-top:6px;">${n} scored attempts · latest <b style="color:${_prepBandColor(last)};">${last}%</b> · ${trend}. <span style="color:#0F766E;">– – 75% target</span></div>`;
+    <div style="font-size:.78rem;color:#666;margin-top:6px;">Retention‑weighted & discounted for memorized/fuzzy items — not raw scores. Latest <b style="color:${_prepBandColor(last)};">${last}%</b> · ${trend}. <span style="color:#0F766E;">– – 75% target</span></div>`;
   wrap.appendChild(card);
 }
 // A "Trends & Habits" card appended to a container — surfaces granular behaviour + weak pages/fuzzy.
