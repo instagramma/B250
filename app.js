@@ -1390,6 +1390,38 @@ function renderOwnerStats(main) {
   main.appendChild(wrap);
 }
 
+/* "Start here — one thing" card. The antidote to decision-paralysis / procrastination: instead of
+   forcing a "what should I even study" choice, it names ONE highest-yield next action and gives a
+   single button to start it. Priority: weakest 0%-ish Martini page → fuzzy drill → a short set. */
+function appendStartHere(wrap) {
+  let page = null, fuzzy = 0;
+  try { const wp = weakestPages("torso", 1); if (wp && wp.length && wp[0].pct < 50) page = wp[0]; } catch (e) {}
+  try { fuzzy = _fuzzyCount(); } catch (e) {}
+  let title, detail, btnLabel, run;
+  if (page) {
+    title = "Read Martini p. " + page.page + " — then test it";
+    detail = "Your weakest page (" + page.pct + "% over " + page.seen + " tries). Read it, close the book, then tap to drill.";
+  } else if (fuzzy > 0) {
+    title = "Drill your " + fuzzy + " fuzzy question" + (fuzzy === 1 ? "" : "s");
+    detail = "The ones you flip between right and wrong. Read the concept first, then re-test cold.";
+  } else {
+    title = "Do one short Torso set";
+    detail = "Surface fresh gaps, then convert the misses. Don't plan — just start. Five questions.";
+  }
+  if (fuzzy > 0) { btnLabel = "▶ Start: drill " + fuzzy + " fuzzy"; run = () => { state.sectionKey = "torso"; startFuzzyDrill(); }; }
+  else { btnLabel = "▶ Start Torso practice"; run = () => { state.sectionKey = "torso"; state.route = "examMenu"; render(); }; }
+  const card = document.createElement("div");
+  card.style.cssText = "background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;border-radius:16px;padding:18px 20px;margin:0 0 20px;box-shadow:0 6px 20px rgba(31,56,100,.25);";
+  card.innerHTML = `<div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;opacity:.85;">START HERE — ONE THING</div>
+    <div style="font-size:1.2rem;font-weight:800;margin:6px 0 4px;">${title}</div>
+    <div style="font-size:.85rem;opacity:.92;line-height:1.45;margin-bottom:12px;">${detail}</div>`;
+  const btn = document.createElement("button");
+  btn.textContent = btnLabel;
+  btn.style.cssText = "background:#fff;color:var(--ink);border:none;border-radius:10px;padding:12px 18px;font-size:.95rem;font-weight:800;cursor:pointer;";
+  btn.onclick = run;
+  card.appendChild(btn);
+  wrap.appendChild(card);
+}
 function renderHome(main) {
   ensureHoverStyle();
   const wrap = document.createElement("div");
@@ -1425,6 +1457,9 @@ function renderHome(main) {
     <div style="font-family:Georgia,'Times New Roman',serif;font-size:2rem;font-weight:800;color:var(--ink);letter-spacing:-.01em;">BIOL 250 <span style="color:#0F766E;">Study</span></div>
     <div style="color:#7c8598;font-size:.95rem;margin-top:4px;">Human Anatomy — timed practice, real-exam sims &amp; a coach that tells you what to study next.</div>`;
   wrap.appendChild(hero);
+
+  // Start-here card (one unambiguous next action — kills the "what do I even study" paralysis)
+  try { appendStartHere(wrap); } catch (e) {}
 
   // Live question count (subtopics are the source of truth; s.quiz can lag after edits like the T/F add).
   const qCount = (s) => {
