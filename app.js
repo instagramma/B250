@@ -1192,18 +1192,38 @@ const HOME_ACCENT = {
    A floating, draggable, closable/reopenable panel that shows YOUR section notes as pages you
    can flip through (‹ ›). Each question opens the doc for its region (Thorax/Abdomen/…); you do
    the looking. Lives on document.body so app re-renders never wipe it. Complements Martini lookup. */
-const NOTES_PDF = { thorax: "notes_thorax.pdf", abdomen: "notes_abdomen.pdf", pelvis: "notes_pelvis.pdf", systemic: "notes_systemic.pdf" };
-const NOTES_LABEL = { thorax: "Thorax", abdomen: "Abdomen", pelvis: "Pelvis & Perineum", systemic: "Systemic" };
+const NOTES_PDF = {
+  thorax: "notes_thorax.pdf", abdomen: "notes_abdomen.pdf", pelvis: "notes_pelvis.pdf", systemic: "notes_systemic.pdf",
+  ax_hn: "notes_ax_hn.pdf", ax_spinal: "notes_ax_spinal.pdf", ax_systemic: "notes_ax_systemic.pdf",
+  ap_ue: "notes_ap_ue.pdf", ap_le: "notes_ap_le.pdf", ap_systemic: "notes_ap_systemic.pdf",
+};
+const NOTES_LABEL = {
+  thorax: "Thorax", abdomen: "Abdomen", pelvis: "Pelvis & Perineum", systemic: "Systemic",
+  ax_hn: "Head & Neck", ax_spinal: "Spinal", ax_systemic: "Nervous System",
+  ap_ue: "Upper Extremity", ap_le: "Lower Extremity", ap_systemic: "Foundations",
+};
+// group index → notes doc, per non-torso section (mirrors SECTION_GROUPS)
+const _NOTES_GROUP = {
+  axial: { 0: "ax_hn", 1: "ax_hn", 2: "ax_hn", 3: "ax_hn", 4: "ax_hn", 5: "ax_hn", 6: "ax_hn", 7: "ax_hn", 8: "ax_hn", 9: "ax_hn", 10: "ax_spinal", 11: "ax_spinal", 12: "ax_systemic" },
+  appendicular: { 0: "ap_ue", 1: "ap_ue", 2: "ap_ue", 3: "ap_ue", 4: "ap_ue", 5: "ap_ue", 6: "ap_ue", 7: "ap_ue", 8: "ap_le", 9: "ap_le", 10: "ap_le", 11: "ap_le", 12: "ap_le", 13: "ap_systemic", 14: "ap_systemic", 15: "ap_systemic", 16: "ap_systemic", 17: "ap_systemic", 18: "ap_systemic", 19: "ap_systemic" },
+};
 let _qRegionMap = null;
 function qRegionSection(id) {
   if (!_qRegionMap) {
     _qRegionMap = {};
+    // Torso → thorax/abdomen/pelvis/systemic (specific region beats systemic for shared Qs)
     try {
       const bp = blueprintSources();
       Object.keys(bp).forEach(r => { const rl = r.toLowerCase(); bp[r].forEach(o => {
-        // a specific region (thorax/abdomen/pelvis) always beats "systemic" for a shared question
         if (!_qRegionMap[o.id] || (_qRegionMap[o.id] === "systemic" && rl !== "systemic")) _qRegionMap[o.id] = rl;
       }); });
+    } catch (e) {}
+    // Axial + Appendicular GR → notes doc by subtopic group
+    try {
+      ["axial", "appendicular"].forEach(sec => {
+        const s = DATA.sections[sec], gk = _NOTES_GROUP[sec]; if (!s || !gk) return;
+        (s.subtopics || []).forEach((st, i) => { const k = gk[i]; if (!k) return; (st.quiz || []).forEach(q => { if (q.id && !_qRegionMap[q.id]) _qRegionMap[q.id] = k; }); });
+      });
     } catch (e) {}
   }
   const r = _qRegionMap[id]; return (r && NOTES_PDF[r]) ? r : null;
@@ -3990,6 +4010,7 @@ function showExamNextBtn() {
     look.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:#1F3864;border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
     look.onclick = () => { clearExamAutoAdv(); showTextbookPanel(q.q, q.options[q.correct]); };
     wrap.appendChild(look);
+    { const nb = notesBtn(q); if (nb) { nb.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:#1F3864;border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;"; nb.onclick = () => { clearExamAutoAdv(); openNotesPanel(qRegionSection(q.id)); }; wrap.appendChild(nb); } }
   }
   wrap.appendChild(btn); wrap.appendChild(hint);
   host.appendChild(wrap);
@@ -6693,6 +6714,9 @@ function renderFullExam(main) {
       ${fullExamFlags.has(fullExamIndex) ? "⚑ Flagged" : "⚐ Flag"}
     </button>`;
   main.appendChild(statusBar);
+
+  // 📓 Notes launcher during a with-notes mock — opens this question's region doc
+  { const _q = fullExamDeck[fullExamIndex]; const nb = _q && notesBtn(_q); if (nb) { nb.style.cssText = "display:block;margin:6px auto 0;background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE;border-radius:10px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;"; main.appendChild(nb); } }
 
   // ── Progress strip ──
   const prog = document.createElement("div");
