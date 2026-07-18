@@ -17,7 +17,17 @@ const OUT_OF_SCOPE_IDS = new Set([
   "ST-0499", "ST-0948",          // femoral→popliteal (Appendicular / lower-limb)
   "ST-0001", "ST-0242", "ST-0498" // general ANS "unpaired ganglia" MCQ (Axial nervous-system) — Thorax/Abdomen/Pelvis copies
 ]);
-function isExamEligible(q) { return !!q && !isFITBQ(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
+/* A few Stuvia items have a duplicated answer option (line-wrap/parse artifact, e.g. ST-0356
+   "Urine is formed in the" shows "kidney and bladder." twice). A duplicate makes the item
+   ambiguous, so keep them out of scored/adaptive contexts (still fine for flashcard review). */
+function hasDupOptions(q) {
+  const opts = (q && q.options) || [];
+  if (opts.length < 2) return false;
+  const seen = new Set();
+  for (const o of opts) { const k = String(o).trim().toLowerCase(); if (seen.has(k)) return true; seen.add(k); }
+  return false;
+}
+function isExamEligible(q) { return !!q && !isFITBQ(q) && !hasDupOptions(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
 /* Normalize a question stem so near-identical duplicates (same stem across GR/Stuvia/CB, or the
    Systemic master set that duplicates section questions) collapse to one key. */
 function _stemKey(q) {
@@ -6315,11 +6325,20 @@ function catDifficulty(id, q) {
   if (bank === "Guided Reading") b -= 0.05;
   // 2. Bloom bump (Stuvia harder items)
   try { if (typeof QDIFF !== "undefined") { const bl = QDIFF[_stemKey(q)]; if (typeof bl === "number") b += bl; } } catch (e) {}
-  // 3. empirical — your own history: the more you miss it, the harder; and FUZZY questions
-  //    (ones you flip between right/wrong = memorizing, not mastering) are treated as harder.
+  // 3. empirical — MOSTLY STATIC, but nudged by real response data as it accumulates.
+  //    We blend the content heuristic (the prior, `b`) toward an observed-difficulty signal with a
+  //    weight that grows with the number of times the item has been answered (Bayesian shrinkage):
+  //      w = seen/(seen+K)  → ~0 with no data, ~0.5 by K answers, capped so the heuristic still anchors.
+  //    Untouched questions therefore keep a fully static difficulty; the more it's answered (by you, or
+  //    — once aggregate sync is on — everyone), the more its difficulty reflects real miss-rate.
   try {
     const st = (activeProgress().qstats || {})[id];
-    if (st && st.seen >= 2) { const miss = (st.missed || 0) / st.seen; b += miss * 0.7; }
+    if (st && st.seen >= 1) {
+      const n = st.seen, miss = (st.missed || 0) / n;
+      const emp = (miss - 0.45) * 2.4;                 // observed hardness in logits (miss-rate → difficulty)
+      const w = Math.min(0.55, n / (n + 10));          // data weight: rises with responses, capped at 0.55
+      b += emp * w;                                    // heuristic dominates until enough data is captured
+    }
     const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
     if (typeof isFuzzy === "function" && isFuzzy(id, md)) b += 0.5;
   } catch (e) {}
@@ -6330,7 +6349,7 @@ function catDifficulty(id, q) {
 // Region pools of {id, q, g, b}. Torso = 4 exam regions (25 each); Cumulative = 3 units.
 function catRegions(key) {
   const idx = buildQuestionIndex();
-  const mk = (id) => { const q = idx[id]; if (!q || !q.q || !q.options || q.options.length < 2 || typeof q.correct !== "number") return null; return { id, q, g: _optGuess(q), b: catDifficulty(id, q) }; };
+  const mk = (id) => { const q = idx[id]; if (!q || !q.q || !q.options || q.options.length < 2 || typeof q.correct !== "number") return null; if (isDiagramQ(q) || hasDupOptions(q)) return null; return { id, q, g: _optGuess(q), b: catDifficulty(id, q) }; };
   const clean = arr => arr.map(mk).filter(Boolean);
   if (key === "torso") {
     const src = blueprintSources();
