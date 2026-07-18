@@ -1188,6 +1188,88 @@ const HOME_ACCENT = {
   lab1:         { c1: "#7C4DD6", c2: "#5B21B6" },   // violet
   lab2:         { c1: "#14A090", c2: "#0F766E" },   // teal
 };
+/* ---------------- NOTES POP-UP (paged PDF viewer for with-notes practice) ----------------
+   A floating, draggable, closable/reopenable panel that shows YOUR section notes as pages you
+   can flip through (‹ ›). Each question opens the doc for its region (Thorax/Abdomen/…); you do
+   the looking. Lives on document.body so app re-renders never wipe it. Complements Martini lookup. */
+const NOTES_PDF = { thorax: "notes_thorax.pdf", abdomen: "notes_abdomen.pdf", pelvis: "notes_pelvis.pdf", systemic: "notes_systemic.pdf" };
+const NOTES_LABEL = { thorax: "Thorax", abdomen: "Abdomen", pelvis: "Pelvis & Perineum", systemic: "Systemic" };
+let _qRegionMap = null;
+function qRegionSection(id) {
+  if (!_qRegionMap) { _qRegionMap = {}; try { const bp = blueprintSources(); Object.keys(bp).forEach(r => bp[r].forEach(o => { _qRegionMap[o.id] = r.toLowerCase(); })); } catch (e) {} }
+  const r = _qRegionMap[id]; return (r && NOTES_PDF[r]) ? r : null;
+}
+let notesPanel = { el: null, section: null, page: 1, pages: 0, pdf: null, cache: {}, rendering: false };
+function closeNotesPanel() { if (notesPanel.el) { notesPanel.el.remove(); notesPanel.el = null; } }
+function _notesWorker() { try { if (typeof pdfjsLib !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; } catch (e) {} }
+async function openNotesPanel(section) {
+  if (!section || !NOTES_PDF[section]) return;
+  if (typeof pdfjsLib === "undefined") { alert("Notes viewer is still loading — try again in a moment."); return; }
+  _notesWorker();
+  ensureNotesPanelDom();
+  if (notesPanel.section !== section) {
+    notesPanel.section = section; notesPanel.page = 1;
+    notesPanel.hdr.textContent = "📓 " + NOTES_LABEL[section] + " Notes";
+    if (notesPanel.cache[section]) { notesPanel.pdf = notesPanel.cache[section]; notesPanel.pages = notesPanel.pdf.numPages; renderNotesPage(); }
+    else {
+      notesPanel.status.textContent = "Loading notes…";
+      try { const pdf = await pdfjsLib.getDocument(NOTES_PDF[section]).promise; notesPanel.cache[section] = pdf; notesPanel.pdf = pdf; notesPanel.pages = pdf.numPages; renderNotesPage(); }
+      catch (e) { notesPanel.status.textContent = "Couldn't load notes."; }
+    }
+  } else { renderNotesPage(); }
+}
+async function renderNotesPage() {
+  if (!notesPanel.pdf || notesPanel.rendering) return;
+  notesPanel.rendering = true;
+  try {
+    const page = await notesPanel.pdf.getPage(notesPanel.page);
+    const vp0 = page.getViewport({ scale: 1 });
+    const targetW = (notesPanel.canvas.parentElement.clientWidth || 360) * (window.devicePixelRatio || 1);
+    const scale = targetW / vp0.width;
+    const vp = page.getViewport({ scale });
+    const c = notesPanel.canvas, ctx = c.getContext("2d");
+    c.width = vp.width; c.height = vp.height; c.style.width = "100%";
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    notesPanel.counter.textContent = "p. " + notesPanel.page + " / " + notesPanel.pages;
+    notesPanel.status.textContent = "";
+  } catch (e) { notesPanel.status.textContent = "Render error."; }
+  notesPanel.rendering = false;
+}
+function notesGoto(delta) { if (!notesPanel.pdf) return; const p = Math.min(Math.max(1, notesPanel.page + delta), notesPanel.pages); if (p !== notesPanel.page) { notesPanel.page = p; renderNotesPage(); } }
+function ensureNotesPanelDom() {
+  if (notesPanel.el) return;
+  const el = document.createElement("div");
+  el.style.cssText = "position:fixed;right:16px;bottom:16px;width:min(420px,92vw);max-height:80vh;background:#fff;border:1px solid #bbb;border-radius:12px;box-shadow:0 12px 44px rgba(0,0,0,.4);z-index:100000;display:flex;flex-direction:column;overflow:hidden;";
+  const bar = document.createElement("div"); bar.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 11px;background:#1F3864;color:#fff;cursor:move;user-select:none;touch-action:none;";
+  const hdr = document.createElement("div"); hdr.style.cssText = "font-weight:700;font-size:.85rem;flex:1;"; hdr.textContent = "📓 Notes";
+  const closeB = document.createElement("button"); closeB.textContent = "✕"; closeB.style.cssText = "background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;line-height:1;"; closeB.title = "Close"; closeB.onclick = closeNotesPanel;
+  bar.append(hdr, closeB); el.appendChild(bar);
+  const body = document.createElement("div"); body.style.cssText = "overflow:auto;flex:1;background:#eef0f2;padding:6px;-webkit-overflow-scrolling:touch;";
+  const canvas = document.createElement("canvas"); canvas.style.cssText = "width:100%;display:block;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.25);border-radius:2px;"; body.appendChild(canvas); el.appendChild(body);
+  const status = document.createElement("div"); status.style.cssText = "font-size:.72rem;color:#888;text-align:center;padding:3px;"; el.appendChild(status);
+  const nav = document.createElement("div"); nav.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;border-top:1px solid #eee;";
+  const prev = document.createElement("button"); prev.textContent = "‹ Prev"; prev.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-weight:600;"; prev.onclick = () => notesGoto(-1);
+  const counter = document.createElement("div"); counter.style.cssText = "font-size:.82rem;color:#555;font-weight:700;";
+  const next = document.createElement("button"); next.textContent = "Next ›"; next.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-weight:600;"; next.onclick = () => notesGoto(1);
+  nav.append(prev, counter, next); el.appendChild(nav);
+  document.body.appendChild(el);
+  // drag by header (mouse + touch)
+  let dx = 0, dy = 0, drag = false;
+  bar.addEventListener("pointerdown", (e) => { if (e.target === closeB) return; drag = true; const r = el.getBoundingClientRect(); dx = e.clientX - r.left; dy = e.clientY - r.top; el.style.right = "auto"; el.style.bottom = "auto"; el.style.left = r.left + "px"; el.style.top = r.top + "px"; });
+  document.addEventListener("pointermove", (e) => { if (!drag) return; el.style.left = Math.max(0, e.clientX - dx) + "px"; el.style.top = Math.max(0, e.clientY - dy) + "px"; });
+  document.addEventListener("pointerup", () => { drag = false; });
+  notesPanel.el = el; notesPanel.hdr = hdr; notesPanel.canvas = canvas; notesPanel.status = status; notesPanel.counter = counter;
+}
+// Small "📓 Notes" launcher for with-notes practice — only when the question maps to a notes doc.
+function notesBtn(q) {
+  if (getStudyMode() !== "open") return null;
+  const sec = q && qRegionSection(q.id); if (!sec) return null;
+  const b = document.createElement("button"); b.className = "tbLookBtn";
+  b.innerHTML = "📓 Notes"; b.title = "Open your " + NOTES_LABEL[sec] + " notes";
+  b.onclick = () => openNotesPanel(sec);
+  return b;
+}
+
 /* ---------------- OWNER DASHBOARD (class-wide stats, pulled from cloud sync) ---------------- */
 const OWNER_PROFILES = ["gabe"];  // only these profiles see the class-stats view
 function isOwner() { return CLOUD_ENABLED && currentProfile && OWNER_PROFILES.includes(String(currentProfile).trim().toLowerCase()); }
@@ -1887,6 +1969,7 @@ function renderQuiz(main) {
     look.innerHTML = "📖 Look it up in Martini";
     look.onclick = () => showTextbookPanel(q.q, q.options[q.correct]);
     fb.appendChild(look);
+    { const nb = notesBtn(q); if (nb) fb.appendChild(nb); }   // 📓 your notes (with-notes mode)
     fb.appendChild(reportBtn(q));
     const next = document.createElement("button");
     next.className = "nextBtn";
@@ -1901,6 +1984,7 @@ function renderQuiz(main) {
     skipBtn.className = "secondaryBtn";
     skipBtn.textContent = "Skip question";
     skipBtn.onclick = () => { quizSkipped++; quizIndex++; quizAnswered = false; quizSelected = -1; render(); };
+    { const nb = notesBtn(q); if (nb) skipBar.appendChild(nb); }   // 📓 open notes while deciding (with-notes mode)
     skipBar.appendChild(skipBtn);
     main.appendChild(skipBar);
   }
