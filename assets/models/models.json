@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "note": "Lab 2 3D Anatomy Explorer manifest. GLBs are stored LOCALLY at the paths below (never hotlinked). Until a real GLB is installed, the viewer shows a clearly-marked render-test object, NOT anatomy. Each structure binds to the model either by `mesh` (named mesh in the GLB) or `hotspot` ([x,y,z] in model space). Fill `mesh`/`hotspot` when the real GLB lands — no viewer changes needed.",
+  "models": [
+    {
+      "id": "heart",
+      "title": "Heart",
+      "glb": "assets/models/heart.glb",
+      "poster": "assets/models/heart_poster.jpg",
+      "source": "PENDING (Codex to supply — e.g. Z-Anatomy CC BY-SA 4.0 or a verified NIH 3D model)",
+      "version": "",
+      "creator": "",
+      "license": "",
+      "attribution": "",
+      "installed": false,
+      "cameraPresets": {
+        "anterior":  { "pos": [0, 0, 3.2], "target": [0, 0, 0] },
+        "posterior": { "pos": [0, 0, -3.2], "target": [0, 0, 0] },
+        "superior":  { "pos": [0, 3.2, 0.001], "target": [0, 0, 0] },
+        "inferior":  { "pos": [0, -3.2, 0.001], "target": [0, 0, 0] },
+        "left":      { "pos": [3.2, 0, 0], "target": [0, 0, 0] }
+      },
+      "structures": [
+        { "id": "h_ra",  "name": "Right atrium",              "aliases": ["RA"],                     "system": "Heart & vessels", "function": "Receives deoxygenated blood from the venae cavae; pumps it to the right ventricle.", "mesh": null, "hotspot": null },
+        { "id": "h_rv",  "name": "Right ventricle",           "aliases": ["RV"],                     "system": "Heart & vessels", "function": "Pumps deoxygenated blood to the lungs via the pulmonary trunk.", "mesh": null, "hotspot": null },
+        { "id": "h_la",  "name": "Left atrium",               "aliases": ["LA"],                     "system": "Heart & vessels", "function": "Receives oxygenated blood from the pulmonary veins; pumps it to the left ventricle.", "mesh": null, "hotspot": null },
+        { "id": "h_lv",  "name": "Left ventricle",            "aliases": ["LV"],                     "system": "Heart & vessels", "function": "Thickest chamber; pumps oxygenated blood into the aorta to the whole body.", "mesh": null, "hotspot": null },
+        { "id": "h_ivs", "name": "Interventricular septum",   "aliases": ["IV septum"],              "system": "Heart & vessels", "function": "Muscular wall separating the two ventricles.", "mesh": null, "hotspot": null },
+        { "id": "h_tri", "name": "Tricuspid valve",           "aliases": ["right AV valve"],         "system": "Heart & vessels", "function": "Right atrioventricular valve; prevents backflow into the right atrium.", "mesh": null, "hotspot": null },
+        { "id": "h_mit", "name": "Bicuspid (mitral) valve",   "aliases": ["mitral", "left AV valve"],"system": "Heart & vessels", "function": "Left atrioventricular valve; prevents backflow into the left atrium.", "mesh": null, "hotspot": null },
+        { "id": "h_ao",  "name": "Aorta",                     "aliases": ["ascending aorta", "arch"],"system": "Heart & vessels", "function": "Great artery carrying oxygenated blood from the left ventricle to the body.", "mesh": null, "hotspot": null },
+        { "id": "h_pt",  "name": "Pulmonary trunk",           "aliases": ["pulmonary artery"],       "system": "Heart & vessels", "function": "Carries deoxygenated blood from the right ventricle to the lungs.", "mesh": null, "hotspot": null },
+        { "id": "h_svc", "name": "Superior vena cava",        "aliases": ["SVC"],                    "system": "Heart & vessels", "function": "Returns deoxygenated blood from the upper body to the right atrium.", "mesh": null, "hotspot": null },
+        { "id": "h_ivc", "name": "Inferior vena cava",        "aliases": ["IVC"],                    "system": "Heart & vessels", "function": "Returns deoxygenated blood from the lower body to the right atrium.", "mesh": null, "hotspot": null },
+        { "id": "h_pv",  "name": "Pulmonary veins",           "aliases": [],                         "system": "Heart & vessels", "function": "Return oxygenated blood from the lungs to the left atrium.", "mesh": null, "hotspot": null },
+        { "id": "h_lca", "name": "Left coronary artery",      "aliases": ["LAD", "circumflex"],      "system": "Heart & vessels", "function": "Supplies the left heart wall; branches into anterior interventricular (LAD) and circumflex.", "mesh": null, "hotspot": null },
+        { "id": "h_cs",  "name": "Coronary sinus",            "aliases": [],                         "system": "Heart & vessels", "function": "Large vein on the posterior heart draining cardiac veins into the right atrium.", "mesh": null, "hotspot": null }
+      ]
+    },
+    {
+      "id": "brain",
+      "title": "Brain",
+      "glb": "assets/models/brain.glb",
+      "poster": "assets/models/brain_poster.jpg",
+      "source": "PENDING (Codex to supply)",
+      "version": "", "creator": "", "license": "", "attribution": "", "installed": false,
+      "cameraPresets": {
+        "superior":  { "pos": [0, 3.2, 0.001], "target": [0, 0, 0] },
+        "inferior":  { "pos": [0, -3.2, 0.001], "target": [0, 0, 0] },
+        "sagittal":  { "pos": [3.2, 0, 0], "target": [0, 0, 0] },
+        "anterior":  { "pos": [0, 0, 3.2], "target": [0, 0, 0] },
+        "posterior": { "pos": [0, 0, -3.2], "target": [0, 0, 0] }
+      },
+      "structures": [
+        { "id": "b_front", "name": "Frontal lobe",        "aliases": [],                 "system": "Brain", "function": "Voluntary movement, executive function, personality, speech production (Broca's).", "mesh": null, "hotspot": null },
+        { "id": "b_par",   "name": "Parietal lobe",       "aliases": [],                 "system": "Brain", "function": "Somatosensory processing and spatial awareness.", "mesh": null, "hotspot": null },
+        { "id": "b_temp",  "name": "Temporal lobe",       "aliases": [],                 "system": "Brain", "function": "Hearing, memory, and language comprehension (Wernicke's).", "mesh": null, "hotspot": null },
+        { "id": "b_occ",   "name": "Occipital lobe",      "aliases": [],                 "system": "Brain", "function": "Visual processing.", "mesh": null, "hotspot": null },
+        { "id": "b_cbl",   "name": "Cerebellum",          "aliases": [],                 "system": "Brain", "function": "Coordination, balance, and fine motor control.", "mesh": null, "hotspot": null },
+        { "id": "b_cc",    "name": "Corpus callosum",     "aliases": [],                 "system": "Brain", "function": "Large white-matter tract connecting the two cerebral hemispheres.", "mesh": null, "hotspot": null },
+        { "id": "b_thal",  "name": "Thalamus",            "aliases": [],                 "system": "Brain", "function": "Relay station for sensory and motor signals to the cortex.", "mesh": null, "hotspot": null },
+        { "id": "b_hyp",   "name": "Hypothalamus",        "aliases": [],                 "system": "Brain", "function": "Homeostasis — controls the pituitary, temperature, hunger, thirst.", "mesh": null, "hotspot": null },
+        { "id": "b_pit",   "name": "Pituitary gland",     "aliases": ["hypophysis"],     "system": "Brain", "function": "Master endocrine gland, hangs from the hypothalamus.", "mesh": null, "hotspot": null },
+        { "id": "b_mid",   "name": "Midbrain",            "aliases": ["mesencephalon"],  "system": "Brain", "function": "Uppermost brainstem; visual/auditory reflexes.", "mesh": null, "hotspot": null },
+        { "id": "b_pons",  "name": "Pons",                "aliases": [],                 "system": "Brain", "function": "Bridges cerebrum and cerebellum; relays and helps control breathing.", "mesh": null, "hotspot": null },
+        { "id": "b_med",   "name": "Medulla oblongata",   "aliases": ["medulla"],        "system": "Brain", "function": "Controls heart rate, breathing, and blood pressure.", "mesh": null, "hotspot": null },
+        { "id": "b_chi",   "name": "Optic chiasm",        "aliases": [],                 "system": "Brain", "function": "Crossing point of the optic nerves (CN II).", "mesh": null, "hotspot": null },
+        { "id": "b_vent",  "name": "Lateral ventricle",   "aliases": ["ventricles"],     "system": "Brain", "function": "CSF-filled cavity within each cerebral hemisphere.", "mesh": null, "hotspot": null }
+      ]
+    },
+    {
+      "id": "torso",
+      "title": "Torso / Viscera",
+      "glb": "assets/models/torso.glb",
+      "poster": "assets/models/torso_poster.jpg",
+      "source": "PENDING (Codex to supply)",
+      "version": "", "creator": "", "license": "", "attribution": "", "installed": false,
+      "cameraPresets": {
+        "anterior":  { "pos": [0, 0, 3.4], "target": [0, 0, 0] },
+        "posterior": { "pos": [0, 0, -3.4], "target": [0, 0, 0] },
+        "left":      { "pos": [3.4, 0, 0], "target": [0, 0, 0] },
+        "right":     { "pos": [-3.4, 0, 0], "target": [0, 0, 0] }
+      },
+      "structures": [
+        { "id": "t_trach", "name": "Trachea",        "aliases": ["windpipe"],       "system": "Respiratory", "function": "Conducts air to the bronchi; held open by C-shaped hyaline cartilage rings.", "mesh": null, "hotspot": null },
+        { "id": "t_lung",  "name": "Lungs",          "aliases": [],                 "system": "Respiratory", "function": "Site of gas exchange (right lung 3 lobes, left 2).", "mesh": null, "hotspot": null },
+        { "id": "t_diaph", "name": "Diaphragm",      "aliases": [],                 "system": "Respiratory", "function": "Primary muscle of breathing; separates thorax from abdomen.", "mesh": null, "hotspot": null },
+        { "id": "t_liver", "name": "Liver",          "aliases": [],                 "system": "Digestive",   "function": "Largest gland; produces bile, processes nutrients, detoxifies.", "mesh": null, "hotspot": null },
+        { "id": "t_gb",    "name": "Gallbladder",    "aliases": [],                 "system": "Digestive",   "function": "Stores and concentrates bile.", "mesh": null, "hotspot": null },
+        { "id": "t_stom",  "name": "Stomach",        "aliases": [],                 "system": "Digestive",   "function": "Mixes food with gastric juice; begins protein digestion.", "mesh": null, "hotspot": null },
+        { "id": "t_spl",   "name": "Spleen",         "aliases": [],                 "system": "Lymphatic",   "function": "Largest lymphatic organ; filters blood, recycles RBCs.", "mesh": null, "hotspot": null },
+        { "id": "t_panc",  "name": "Pancreas",       "aliases": [],                 "system": "Digestive",   "function": "Endocrine (islets → insulin/glucagon) and exocrine (digestive enzymes).", "mesh": null, "hotspot": null },
+        { "id": "t_duo",   "name": "Duodenum",       "aliases": [],                 "system": "Digestive",   "function": "First part of the small intestine; receives bile and pancreatic juice.", "mesh": null, "hotspot": null },
+        { "id": "t_si",    "name": "Small intestine","aliases": ["jejunum","ileum"],"system": "Digestive",   "function": "Main site of digestion and nutrient absorption (villi).", "mesh": null, "hotspot": null },
+        { "id": "t_li",    "name": "Large intestine","aliases": ["colon"],          "system": "Digestive",   "function": "Absorbs water and electrolytes; forms feces.", "mesh": null, "hotspot": null },
+        { "id": "t_kid",   "name": "Kidneys",        "aliases": [],                 "system": "Urinary",     "function": "Filter blood, form urine (nephrons); regulate fluid/electrolytes.", "mesh": null, "hotspot": null },
+        { "id": "t_adr",   "name": "Adrenal glands", "aliases": ["suprarenal"],     "system": "Endocrine",   "function": "Sit atop kidneys; cortex → steroids, medulla → epinephrine.", "mesh": null, "hotspot": null },
+        { "id": "t_ure",   "name": "Ureters",        "aliases": [],                 "system": "Urinary",     "function": "Carry urine from kidneys to the bladder.", "mesh": null, "hotspot": null },
+        { "id": "t_blad",  "name": "Urinary bladder","aliases": [],                 "system": "Urinary",     "function": "Stores urine; lined by transitional epithelium.", "mesh": null, "hotspot": null },
+        { "id": "t_aorta", "name": "Abdominal aorta","aliases": ["aorta"],          "system": "Heart & vessels","function": "Main artery of the abdomen; branches to the viscera and lower limbs.", "mesh": null, "hotspot": null }
+      ]
+    }
+  ]
+}
