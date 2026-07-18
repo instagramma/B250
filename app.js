@@ -382,6 +382,12 @@ function recordMissedQs(answerLog, sectionKey) {
 let missedDeck = [], missedIndex = 0, missedAnswered = false, missedSelected = -1;
 /* Fuzzy drill state (flip-flop questions — separate from the missed pool, no side effects on it) */
 let fuzzyDeck = [], fuzzyIndex = 0, fuzzyAnswered = false, fuzzyStartCount = 0;
+/* Lab 2 Model Practical (real class-model photos) — recognition + self-grade stations */
+let l2Deck = [], l2Index = 0, l2Revealed = false, l2Timed = false, l2SecLeft = 0, l2Timer = null, l2StartCount = 0, l2Right = 0;
+const LAB2_STATS_KEY = "biol250_lab2stations_v1";
+function loadL2Stats() { try { return JSON.parse(localStorage.getItem(ns(LAB2_STATS_KEY)) || "{}"); } catch (e) { return {}; } }
+function saveL2Stats(o) { try { localStorage.setItem(ns(LAB2_STATS_KEY), JSON.stringify(o)); } catch (e) {} }
+function recordL2(id, ok) { const s = loadL2Stats(); const e = s[id] || { seen: 0, missed: 0 }; e.seen++; if (!ok) e.missed++; e.last = Date.now(); s[id] = e; saveL2Stats(s); }
 
 function loadLocalProgress() {
   try {
@@ -963,6 +969,7 @@ function render() {
   else if (state.route === "simReview") renderSimReview(main);
   else if (state.route === "missedReview") renderMissedReview(main);
   else if (state.route === "fuzzyReview") renderFuzzyReview(main);
+  else if (state.route === "lab2Station") renderLab2Station(main);
   else if (state.route === "cbPicker") renderCbPicker(main);
   else if (state.route === "grMenu")       renderGrMenu(main);
   else if (state.route === "examMenu")     renderExamMenu(main);
@@ -1028,6 +1035,7 @@ function buildTopbar() {
       else if (state.route === "simReview")     state.route = "simExam";
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
+      else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
       else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
@@ -1084,6 +1092,7 @@ function buildTopbar() {
   else if ((state.route === "simExam" || state.route === "simReview") && state.examTitle) titleText = state.examTitle;
   else if (state.route === "missedReview")  titleText = "Missed Questions";
   else if (state.route === "fuzzyReview")   titleText = "Fuzzy Questions";
+  else if (state.route === "lab2Station")   titleText = "Model Practical";
   else if (state.route === "examPicker")    titleText = "Timed Exams";
   else if (state.route === "exam" && state.examSource === "gr")     titleText = "Timed GR Questions";
   else if (state.route === "examResults" && state.examSource === "gr") titleText = "GR Results";
@@ -1569,6 +1578,12 @@ function renderModes(main) {
       { id: "examMenu", icon: "🎓", label: "Simulations & Mini-Mocks",
         desc: "Timed full mock + mini-mocks by system + missed-Q review + history" },
     ]});
+    if (typeof LAB2_MODELS !== "undefined" && LAB2_MODELS.length) {
+      groups.push({ label: "Model Practical — real lab photos", icon: "📸", modes: [
+        { id: "lab2Station", icon: "📸", label: "Model Stations",
+          desc: `${LAB2_MODELS.length} real class-model photos · name it, self-grade (just like the practical)` },
+      ]});
+    }
   }
 
   // ── Practice Exams ─────────────────────────────────────────────────────────
@@ -1671,6 +1686,8 @@ function renderModes(main) {
           missedIndex = 0; missedAnswered = false; missedSelected = -1;
           state.route = "missedReview"; render();
         };
+      } else if (m.id === "lab2Station") {
+        btn.onclick = () => startLab2Practical(false);
       } else if (m.id === "cbPicker") {
         btn.onclick = () => { state.route = "cbPicker"; render(); };
       } else if (m.id === "cbAll") {
@@ -5037,6 +5054,117 @@ function renderFuzzyReview(main) {
     };
     main.appendChild(btn);
   });
+}
+
+/* ─── Lab 2 Model Practical: recognition + self-grade over real class-model photos ───
+   Mirrors how the in-person practical actually feels: look at the model, name it, reveal, self-grade.
+   `weakOnly` builds the deck from your shakiest stations (by miss-rate). Timed = ~60s/station. */
+function _l2ClearTimer() { if (l2Timer) { clearInterval(l2Timer); l2Timer = null; } }
+function startLab2Practical(timed, weakOnly) {
+  if (typeof LAB2_MODELS === "undefined" || !LAB2_MODELS.length) { alert("No lab model photos loaded yet."); return; }
+  let pool = LAB2_MODELS.slice();
+  if (weakOnly) {
+    const st = loadL2Stats();
+    pool = pool.filter(m => { const e = st[m.id]; return e && e.seen && (e.missed / e.seen) >= 0.34; });
+    if (!pool.length) { alert("No weak stations yet — do a full round first, then this drills the ones you miss."); return; }
+  }
+  l2Deck = shuffle(pool); l2Index = 0; l2Revealed = false; l2Timed = !!timed; l2StartCount = l2Deck.length; l2Right = 0;
+  state.route = "lab2Station"; render();
+}
+function _l2StartTimer() {
+  _l2ClearTimer();
+  if (!l2Timed) return;
+  l2SecLeft = 60;
+  l2Timer = setInterval(() => {
+    l2SecLeft--;
+    const el = document.getElementById("l2timer");
+    if (el) { el.textContent = l2SecLeft + "s"; el.style.color = l2SecLeft <= 10 ? "#C0392B" : "var(--muted)"; }
+    if (l2SecLeft <= 0) { _l2ClearTimer(); if (!l2Revealed) { l2Revealed = true; render(); } }
+  }, 1000);
+}
+function renderLab2Station(main) {
+  if (!l2Deck.length) { _l2ClearTimer(); state.route = "modes"; render(); return; }
+  // Finished-all state
+  if (l2Index >= l2Deck.length) {
+    _l2ClearTimer();
+    const pct = l2StartCount ? Math.round(l2Right / l2StartCount * 100) : 0;
+    const wrap = document.createElement("div"); wrap.style.cssText = "text-align:center;padding:40px 20px;";
+    wrap.innerHTML = `<div style="font-size:3.2rem;">${pct >= 80 ? "🏆" : pct >= 60 ? "🎯" : "📸"}</div>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin:8px 0;">Round complete</div>
+      <div style="font-size:2rem;font-weight:900;color:var(--accent);">${l2Right}/${l2StartCount} · ${pct}%</div>
+      <div style="color:#888;margin:10px 0 26px;">You self-graded these — be honest, that's what makes it work.</div>`;
+    const again = document.createElement("button"); again.className = "primaryBtn"; again.style.maxWidth = "320px"; again.textContent = "🔁 Go again"; again.onclick = () => startLab2Practical(l2Timed);
+    const weak = document.createElement("button"); weak.className = "secondaryBtn"; weak.style.maxWidth = "320px"; weak.textContent = "🎯 Drill weak stations"; weak.onclick = () => startLab2Practical(l2Timed, true);
+    const back = document.createElement("button"); back.className = "secondaryBtn"; back.style.maxWidth = "320px"; back.textContent = "Back to Lab 2"; back.onclick = () => { l2Deck = []; state.route = "modes"; render(); };
+    wrap.append(again, weak, back); main.appendChild(wrap);
+    return;
+  }
+  const m = l2Deck[l2Index];
+
+  // status bar
+  const bar = document.createElement("div");
+  bar.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.85rem;color:var(--muted);";
+  bar.innerHTML = `<span>📸 Station ${l2Index + 1} / ${l2StartCount}</span>` +
+    (l2Timed ? `<span id="l2timer" style="font-weight:800;font-variant-numeric:tabular-nums;">${l2SecLeft || 60}s</span>` : `<span>${m.system}</span>`);
+  main.appendChild(bar);
+
+  // the model photo (tap to enlarge)
+  const img = document.createElement("img");
+  img.src = m.file; img.alt = "lab model";
+  img.style.cssText = "width:100%;max-height:52vh;object-fit:contain;background:#111;border-radius:12px;cursor:zoom-in;";
+  img.onclick = () => {
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;";
+    const big = document.createElement("img"); big.src = m.file; big.style.cssText = "max-width:98vw;max-height:98vh;object-fit:contain;";
+    ov.appendChild(big); ov.onclick = () => ov.remove(); document.body.appendChild(ov);
+  };
+  main.appendChild(img);
+
+  const prompt = document.createElement("div");
+  prompt.style.cssText = "font-size:1.05rem;font-weight:700;color:var(--text);margin:14px 0 10px;text-align:center;";
+  prompt.textContent = "What model / structure / view is this? Say it out loud, then reveal.";
+  main.appendChild(prompt);
+
+  if (!l2Revealed) {
+    const reveal = document.createElement("button");
+    reveal.className = "primaryBtn"; reveal.style.cssText += "width:100%;max-width:none;";
+    reveal.textContent = "Reveal answer";
+    reveal.onclick = () => { _l2ClearTimer(); l2Revealed = true; render(); };
+    main.appendChild(reveal);
+    _l2StartTimer();
+  } else {
+    const ans = document.createElement("div");
+    ans.style.cssText = "background:#e7f1ea;border:1px solid #bcd8cc;border-radius:12px;padding:14px 16px;margin-bottom:12px;";
+    ans.innerHTML = `<div style="font-size:1.05rem;font-weight:800;color:var(--accent-ink);">${escapeHtml(m.answer)}</div>
+      <div style="font-size:.86rem;color:#4a5a52;margin-top:6px;line-height:1.5;">${escapeHtml(m.hint)}</div>` +
+      (m.verify ? `<div style="font-size:.78rem;color:#B7791F;margin-top:8px;">⚠️ Best-guess ID — confirm this one against your lab key.</div>` : "");
+    main.appendChild(ans);
+
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:10px;";
+    const grade = (ok) => {
+      recordL2(m.id, ok);
+      if (ok) l2Right++;
+      if (!ok) l2Deck.push(m);   // requeue misses to the end of this round
+      l2Index++; l2Revealed = false; render();
+    };
+    const miss = document.createElement("button");
+    miss.className = "secondaryBtn"; miss.style.cssText += "flex:1;margin:0;border-color:var(--danger);color:var(--danger);";
+    miss.textContent = "👎 Missed it";
+    miss.onclick = () => grade(false);
+    const got = document.createElement("button");
+    got.className = "primaryBtn"; got.style.cssText += "flex:1;margin:0;";
+    got.textContent = "👍 Got it";
+    got.onclick = () => grade(true);
+    row.append(miss, got);
+    main.appendChild(row);
+
+    // timed toggle for next launch
+    const t = document.createElement("div");
+    t.style.cssText = "text-align:center;margin-top:14px;";
+    t.innerHTML = `<span style="font-size:.78rem;color:var(--muted);">Tip: turn on ⏱ timed mode (60s/station) from the end screen to mimic exam pressure.</span>`;
+    main.appendChild(t);
+  }
 }
 
 // initApp() is invoked at the VERY END of this file (see bottom) so that every
