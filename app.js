@@ -6757,6 +6757,28 @@ function renderCustomBuilder(main) {
 /* ══ End new nav functions ══ */
 
 /* ─── STUVIA BANK MENU ─── */
+/* ── Shared bank controls: "how many questions" selector + bank-specific missed pool ── */
+function _bankCountRow(list) {
+  if (state.bankN === undefined) state.bankN = 25;
+  const row = document.createElement("div");
+  row.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:2px 2px 14px;";
+  const lab = document.createElement("span"); lab.textContent = "How many?"; lab.style.cssText = "font-size:.8rem;color:var(--muted);font-weight:700;margin-right:2px;"; row.appendChild(lab);
+  [["10", 10], ["25", 25], ["50", 50], ["100", 100], ["Max", "max"]].forEach(([lbl, val]) => {
+    const on = state.bankN === val;
+    const b = document.createElement("button"); b.textContent = lbl;
+    b.style.cssText = `border:1.5px solid ${on ? "var(--ink)" : "#cfd8e3"};background:${on ? "var(--ink)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:5px 13px;font-size:.82rem;font-weight:700;cursor:pointer;`;
+    b.onclick = () => { state.bankN = val; render(); };
+    row.appendChild(b);
+  });
+  list.appendChild(row);
+}
+function _applyBankN(deck) { const n = state.bankN; return (n === "max" || !n) ? deck : deck.slice(0, n); }
+// Missed questions that belong to THIS bank (filter the missed pool by the bank's own question ids).
+function _bankMissed(bank) {
+  const ids = new Set(); bank.forEach(t => (t.questions || []).forEach(q => { if (q.id) ids.add(q.id); }));
+  const missed = (typeof loadMissedQs === "function") ? loadMissedQs() : [];
+  return missed.filter(m => m.id && ids.has(m.id) && m.options && m.options.length >= 2 && typeof m.correct === "number");
+}
 function renderStuviaMenu(main) {
   // Section-aware: Torso → STUVIA_BANK, Axial → STUVIA_AXIAL.
   const bank = activeStuvia();
@@ -6773,6 +6795,22 @@ function renderStuviaMenu(main) {
   const list = document.createElement("div");
   list.className = "modeList";
 
+  // ── How many? (count selector) ──
+  _bankCountRow(list);
+
+  // ── Missed questions from THIS bank ──
+  const missedB = _bankMissed(bank);
+  if (missedB.length) {
+    const hdrM = document.createElement("div"); hdrM.className = "modeGroupHdr"; hdrM.textContent = "Review"; list.appendChild(hdrM);
+    const mb = document.createElement("button"); mb.className = "modeBtn"; mb.style.cssText = "border:1.5px solid var(--danger);";
+    mb.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed — Stuvia only</span><span class="modeMeta">${missedB.length} missed from this bank${state.bankN !== "max" ? ` · doing ${Math.min(state.bankN, missedB.length)}` : ""}</span>`;
+    mb.onclick = () => {
+      quizDeck = _applyBankN(shuffle(missedB.map(m => ({ id: m.id, q: m.q, options: m.options, correct: m.correct, tf: m.tf }))));
+      state.quizSource = "stuvia"; state.quizDeckKey = "stuvia:" + state.sectionKey + ":missed"; state.prevRoute = "stuviaMenu"; state.route = "quiz"; render();
+    };
+    list.appendChild(mb);
+  }
+
   // ── All topics at once ──
   const hdrAll = document.createElement("div");
   hdrAll.className = "modeGroupHdr";
@@ -6784,11 +6822,12 @@ function renderStuviaMenu(main) {
   const totalQ = bank.reduce((a, t) => a + (t.questions || []).length, 0);
   const allBest = progressState.quizzes && progressState.quizzes["stuvia:" + state.sectionKey + ":all"];
   const allBestTxt = allBest ? ` · Best ${allBest.score}/${allBest.total}` : "";
-  allBtn.innerHTML = `<span class="modeIcon">📚</span><span class="modeLabel">All Questions</span><span class="modeMeta">${totalQ} questions${allBestTxt}</span>`;
+  const nTxt = state.bankN !== "max" ? ` · doing ${Math.min(state.bankN, totalQ)}` : " · all";
+  allBtn.innerHTML = `<span class="modeIcon">📚</span><span class="modeLabel">All Questions</span><span class="modeMeta">${totalQ} questions${nTxt}${allBestTxt}</span>`;
   allBtn.onclick = () => {
     let pool = [];
     bank.forEach(t => pool.push(...(t.questions || [])));
-    quizDeck = shuffle([...pool]);
+    quizDeck = _applyBankN(shuffle([...pool]));
     state.quizSource = "stuvia";
     state.quizDeckKey = "stuvia:" + state.sectionKey + ":all";
     state.prevRoute = "stuviaMenu";
@@ -6813,7 +6852,7 @@ function renderStuviaMenu(main) {
       const bestTxt = best ? ` · Best ${best.score}/${best.total}` : "";
       btn.innerHTML = `<span class="modeIcon">📄</span><span class="modeLabel">${topic.title}</span><span class="modeMeta">${qc} Qs${bestTxt}</span>`;
       btn.onclick = () => {
-        quizDeck = shuffle([...(topic.questions || [])]);
+        quizDeck = _applyBankN(shuffle([...(topic.questions || [])]));
         state.quizSource = "stuvia";
         state.quizDeckKey = "stuvia:" + state.sectionKey + ":" + ti;
         state.prevRoute = "stuviaMenu";
@@ -6846,6 +6885,22 @@ function renderClaudeMenu(main) {
   const list = document.createElement("div");
   list.className = "modeList";
 
+  // ── How many? (count selector) ──
+  _bankCountRow(list);
+
+  // ── Missed questions from THIS bank ──
+  const cbMissed = _bankMissed(bank);
+  if (cbMissed.length) {
+    const hdrM = document.createElement("div"); hdrM.className = "modeGroupHdr"; hdrM.textContent = "Review"; list.appendChild(hdrM);
+    const mb = document.createElement("button"); mb.className = "modeBtn"; mb.style.cssText = "border:1.5px solid var(--danger);";
+    mb.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed — Claude Bank only</span><span class="modeMeta">${cbMissed.length} missed from this bank${state.bankN !== "max" ? ` · doing ${Math.min(state.bankN, cbMissed.length)}` : ""}</span>`;
+    mb.onclick = () => {
+      quizDeck = _applyBankN(shuffle(cbMissed.map(m => ({ id: m.id, q: m.q, options: (m.options || []).map(o => o.replace(/^[A-E]\.\s*/, "")), correct: m.correct, tf: m.tf }))));
+      state.quizSource = "claude"; state.quizDeckKey = "cb:" + state.sectionKey + ":missed"; state.prevRoute = "claudeMenu"; state.route = "quiz"; render();
+    };
+    list.appendChild(mb);
+  }
+
   // Full bank
   const hdrAll = document.createElement("div");
   hdrAll.className = "modeGroupHdr";
@@ -6856,11 +6911,12 @@ function renderClaudeMenu(main) {
   const allBest = progressState.quizzes && progressState.quizzes["cb:" + state.sectionKey + ":all"];
   const allBtn = document.createElement("button");
   allBtn.className = "modeBtn";
-  allBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">All Questions</span><span class="modeMeta">${totalQ} questions${allBest ? ` · Best ${allBest.score}/${allBest.total}` : ""}</span>`;
+  const cbNTxt = state.bankN !== "max" ? ` · doing ${Math.min(state.bankN, totalQ)}` : " · all";
+  allBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">All Questions</span><span class="modeMeta">${totalQ} questions${cbNTxt}${allBest ? ` · Best ${allBest.score}/${allBest.total}` : ""}</span>`;
   allBtn.onclick = () => {
     let pool = [];
     bank.forEach(t => pool.push(...clean(t.questions || [])));
-    quizDeck = shuffle([...pool]);
+    quizDeck = _applyBankN(shuffle([...pool]));
     state.quizSource = "claude";
     state.quizDeckKey = "cb:" + state.sectionKey + ":all";
     state.prevRoute = "claudeMenu";
@@ -6883,7 +6939,7 @@ function renderClaudeMenu(main) {
     btn.className = "modeBtn";
     btn.innerHTML = `<span class="modeIcon">🧠</span><span class="modeLabel">${nameOf(topic.title)}</span><span class="modeMeta">${qc} Qs${best ? ` · Best ${best.score}/${best.total}` : ""}</span>`;
     btn.onclick = () => {
-      quizDeck = shuffle([...clean(topic.questions || [])]);
+      quizDeck = _applyBankN(shuffle([...clean(topic.questions || [])]));
       state.quizSource = "claude";
       state.quizDeckKey = key;
       state.prevRoute = "claudeMenu";
