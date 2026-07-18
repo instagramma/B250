@@ -1007,9 +1007,9 @@ function buildTopbar() {
       else if (state.route === "simReview")     state.route = "simExam";
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
-      else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; } return; }
+      else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
-      else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; } return; }
+      else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; render(); } return; }
       else if (state.route === "catEnd") { state.route = "examMenu"; }
       else if (state.route === "preparednessGeneric") state.route = (state.sectionKey === "lab2" ? "modes" : "sectionMenu");
       else if (state.route === "labeling")      state.route = (state.sectionKey === "lab2" ? "modes" : "diagramMenu");
