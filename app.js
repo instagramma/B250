@@ -552,16 +552,24 @@ function cloudMerge(into, from) {
 async function loadProgress() {
   if (!CLOUD_ENABLED || !currentProfile || _cloudBusy) return;
   _cloudBusy = true;
+  let pulled = false;
   try {
     const { data, error } = await sb.from("progress").select("data").eq("profile", currentProfile).maybeSingle();
     if (!error && data && data.data && typeof data.data === "object") {
       cloudMerge(progressState, data.data);
+      // Invalidate the recall / predicted-score / all-time memos that the FIRST render may have cached
+      // from near-empty local data (which produced a false 0% readiness before the cloud pull landed).
+      if (typeof _predVer !== "undefined") _predVer++;
+      _recallCache = {}; _recallVer = -1; _atMemo = null; _atKey = "";
       saveLocalProgress();   // persist merged copy on this device
       render();
+      pulled = true;
     }
   } catch (e) {}
   _cloudBusy = false;
-  saveProgress(true);   // push the merged result so all devices converge
+  // Only converge devices AFTER a successful pull. If the pull failed, do NOT push local up — that could
+  // overwrite a good cloud record with a stale/near-empty one on a fresh device (ChatGPT audit #3).
+  if (pulled) saveProgress(true);
 }
 async function saveProgress(immediate) {
   if (!CLOUD_ENABLED || !currentProfile) return;
@@ -1285,8 +1293,12 @@ async function renderNotesPage() {
   try {
     const page = await notesPanel.pdf.getPage(notesPanel.page);
     const vp0 = page.getViewport({ scale: 1 });
-    const targetW = (notesPanel.canvas.parentElement.clientWidth || 360) * (window.devicePixelRatio || 1);
-    const scale = targetW / vp0.width;
+    // Render at 2–3× the panel's CSS width so dense notes text stays crisp when scaled to fit.
+    // (Previously used clientWidth × devicePixelRatio, which on a 1× display rendered BELOW native
+    // resolution → blurry.) Supersample with a floor of 2.5× and a cap so the canvas stays sane.
+    const cssW = (notesPanel.canvas.parentElement && notesPanel.canvas.parentElement.clientWidth) || 560;
+    const ss = Math.min(4, Math.max(2.5, (window.devicePixelRatio || 1) * 1.5));
+    const scale = Math.min(6, (cssW * ss) / vp0.width);
     const vp = page.getViewport({ scale });
     const c = notesPanel.canvas, ctx = c.getContext("2d");
     c.width = vp.width; c.height = vp.height; c.style.width = "100%";
@@ -1300,7 +1312,7 @@ function notesGoto(delta) { if (!notesPanel.pdf) return; const p = Math.min(Math
 function ensureNotesPanelDom() {
   if (notesPanel.el) return;
   const el = document.createElement("div");
-  el.style.cssText = "position:fixed;right:16px;bottom:16px;width:min(420px,92vw);max-height:80vh;background:#fff;border:1px solid #bbb;border-radius:12px;box-shadow:0 12px 44px rgba(0,0,0,.4);z-index:100000;display:flex;flex-direction:column;overflow:hidden;";
+  el.style.cssText = "position:fixed;right:16px;bottom:16px;width:min(620px,96vw);max-height:90vh;background:#fff;border:1px solid #bbb;border-radius:12px;box-shadow:0 12px 44px rgba(0,0,0,.4);z-index:100000;display:flex;flex-direction:column;overflow:hidden;";
   const bar = document.createElement("div"); bar.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--ink);color:#fff;cursor:move;user-select:none;touch-action:none;";
   const hdr = document.createElement("div"); hdr.style.cssText = "font-weight:700;font-size:.85rem;flex:1;"; hdr.textContent = "📓 Notes";
   const closeB = document.createElement("button"); closeB.textContent = "✕"; closeB.style.cssText = "background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;line-height:1;"; closeB.title = "Close"; closeB.onclick = closeNotesPanel;
@@ -3150,7 +3162,7 @@ function predictExam(mode, runs, diagFloor) {
   const q = p => scores[Math.min(runs - 1, Math.max(0, Math.round(p * (runs - 1))))];
   const pAtLeast = frac => scores.filter(s => s >= frac * total).length / runs;
   const res = { total, mean: Math.round(mean), meanPct: Math.round(mean / total * 100),
-    lo: q(0.05), hi: q(0.95), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100), diagFloor: !!diagFloor, mockWeighted };
+    lo: Math.round(q(0.05)), hi: Math.round(q(0.95)), p75: Math.round(pAtLeast(0.75) * 100), p90: Math.round(pAtLeast(0.90) * 100), diagFloor: !!diagFloor, mockWeighted };
   _predMemo = {}; _predMemo[key] = res;   // keep only the latest
   return res;
 }
@@ -3287,14 +3299,14 @@ function renderExamOutlook(main, md) {
 }
 
 /* ===== ACTION PLAN — rule-based coaching: what to do next, ranked by point-gain ===== */
-var EXAM_MON = new Date(2026, 6, 20, 9, 0, 0); // target: Mon Jul 20
-var EXAM_TUE = new Date(2026, 6, 21, 9, 0, 0); // fallback if not ready: Tue Jul 21
-var READY_BAR = 75;                            // predicted % considered "ready for Monday"
-// Effective exam day: Monday if you're on track, else Tuesday (your stated fallback).
+var EXAM_MON = new Date(2026, 6, 20, 9, 0, 0); // Torso exam: Mon Jul 20 — HARD deadline, no fallback.
+var READY_BAR = 75;                            // predicted % considered "ready"
+// The Torso exam is Monday. There is NO late-exam fallback (a miss = zero), so the effective date is
+// always Monday; `readyMon` only flags whether you're on track, it does NOT move the date.
 function examInfo(mode) {
   const pred = predictExam(mode);
   const readyMon = !!pred && pred.meanPct >= READY_BAR;
-  const date = readyMon ? EXAM_MON : EXAM_TUE;
+  const date = EXAM_MON;
   const days = Math.max(0, Math.ceil((date - Date.now()) / 86400000));
   return { readyMon, date, days, predPct: pred ? pred.meanPct : 0 };
 }
@@ -3343,7 +3355,7 @@ function buildDaySchedule(d, md) {
     }
     rows.push([wd(dt), task]);
   });
-  rows.push([wd(d.exam.date), `💪 Exam${d.exam.readyMon ? "" : " (fallback day — push to be ready Monday)"}.`]);
+  rows.push([wd(d.exam.date), `💪 EXAM DAY — Torso (Monday). No retake, so be ready.`]);
   return rows;
 }
 /* Recognition-vs-mastery: are you learning concepts, or memorizing specific items?
@@ -3429,7 +3441,7 @@ function renderStudyPlan(main, md) {
   const gap = Math.max(0, READY_BAR - predPct);
   const targetTxt = d.exam.readyMon
     ? `On track for <b>Monday</b> (predicted ${predPct}%).`
-    : `At <b>${predPct}%</b> you're not ready for Monday yet — this plan runs through <b>Tuesday</b> (your fallback). Beat it and take it Monday.`;
+    : `At <b>${predPct}%</b> you're below the 75% bar — and Monday is a hard deadline (no retake). Every hour counts.`;
   let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.exam.days} day${d.exam.days===1?"":"s"} to go</div>
     <div style="font-size:.82rem;color:#666;margin-bottom:10px;">${targetTxt}${gap>0?` Need <b>+${gap} pts</b> to clear 75%.`:` 🎉`} Fastest path up, biggest lever first:</div>`;
   // Strengths — what's already working (keep it warm, don't over-drill it).
@@ -3467,7 +3479,7 @@ function renderStudyPlan(main, md) {
   // day-by-day (date-aware; runs to Monday, or Tuesday if not yet ready)
   const plan = buildDaySchedule(d, md);
   html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0e0cc;">
-    <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day${d.exam.readyMon?"":" (through your Tuesday fallback)"}</div>
+    <div style="font-weight:700;font-size:.82rem;color:#B5560F;margin-bottom:5px;">Day-by-day (Torso exam is Monday)</div>
     ${plan.map(p=>`<div style="font-size:.82rem;color:#444;margin:3px 0;"><b style="color:var(--ink);">${p[0]}:</b> ${p[1]}</div>`).join("")}</div>`;
   card.innerHTML = html;
   main.appendChild(card);
@@ -3494,7 +3506,7 @@ function renderCoach(main) {
   const head = document.createElement("div");
   head.style.cssText = "margin:2px 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;";
   head.innerHTML = `<div style="font-weight:800;font-size:1.05rem;">${md==="closed"?"Closed-book":"With-notes"} · predicted ${pred?pred.meanPct:0}%</div>
-    <div style="font-size:.86rem;opacity:.95;margin-top:4px;">${info.readyMon?`On track for <b>Monday</b>.`:`Not ready for Monday yet — aiming for your <b>Tuesday</b> fallback. ${pred?`P(≥75%) is ${pred.p75}%.`:""}`}</div>
+    <div style="font-size:.86rem;opacity:.95;margin-top:4px;">${info.readyMon?`On track for <b>Monday</b>.`:`Below the 75% bar — and Monday is a hard deadline (no retake). ${pred?`P(≥75%) is ${pred.p75}%.`:""}`}</div>
     <div style="font-size:.8rem;opacity:.85;margin-top:6px;">The honest read: you're strong on <b>${mq.durable}</b> questions, but <b>${mq.fuzzy}</b> are shaky (you flip between right and wrong) and <b>${mq.fast}</b> you answer by reflex. Those aren't learned yet — see below.</div>`;
   main.appendChild(head);
 
@@ -5275,8 +5287,9 @@ function renderLab2Station(main) {
   // status bar
   const bar = document.createElement("div");
   bar.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.85rem;color:var(--muted);";
+  // Don't reveal the system before answering — that gives the identification away. Show it only after Reveal.
   bar.innerHTML = `<span>📸 Station ${l2Index + 1} / ${l2StartCount}</span>` +
-    (l2Timed ? `<span id="l2timer" style="font-weight:800;font-variant-numeric:tabular-nums;">${l2SecLeft || 60}s</span>` : `<span>${m.system}</span>`);
+    (l2Timed ? `<span id="l2timer" style="font-weight:800;font-variant-numeric:tabular-nums;">${l2SecLeft || 60}s</span>` : `<span>${l2Revealed ? m.system : "identify it"}</span>`);
   main.appendChild(bar);
 
   // the model photo (tap to enlarge)
@@ -5743,7 +5756,13 @@ function appendProgressGraph(wrap, sec) {
 }
 // A "Trends & Habits" card appended to a container — surfaces granular behaviour + weak pages/fuzzy.
 function appendTrendsCard(wrap, sec) {
-  const beh = behaviorStats(), tr = _secondGuessTrend(sec), pages = weakestPages(sec, 6), fz = _fuzzyCount();
+  // Weakest Martini pages + the fuzzy count are Torso-scoped signals (Q_BOOKLOC covers Torso only),
+  // so don't show them on Axial / Appendicular / Cumulative / Lab 2 screens — that mixed Torso data
+  // into Lab preparedness (ChatGPT audit #7). Behavior stats (answer-changes) are section-agnostic.
+  const isTorsoView = (sec === "torso");
+  const beh = behaviorStats(), tr = _secondGuessTrend(sec);
+  const pages = isTorsoView ? weakestPages(sec, 6) : [];
+  const fz = isTorsoView ? _fuzzyCount() : 0;
   if (!beh.totalChanges && !pages.length && !fz) return;
   const card = document.createElement("div");
   card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
@@ -5927,7 +5946,10 @@ const SECTION_GROUPS = {
 function _mkHdr(list, text) { const h = document.createElement("div"); h.className = "modeGroupHdr"; h.textContent = text; list.appendChild(h); }
 function buildGenericExamMenu(list, key) {
   const sec = getSection(key), name = (sec.title || key).split(" (")[0];
-  const MINI_N = 60, MINI_SECS = 3000, SIM_N = 120, SIM_SECS = 6000;
+  // Lab Practical II is 50 stations in 50 minutes; other generic sections keep a longer block.
+  const MINI_N = 60, MINI_SECS = 3000;
+  const SIM_N = (key === "lab2") ? 50 : 120;
+  const SIM_SECS = (key === "lab2") ? 3000 : 6000;   // lab2: 50 Qs / 50 min (matches the real practical)
   _mkHdr(list, "Realistic Mock");
   const allPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
@@ -5978,12 +6000,12 @@ function buildGenericExamMenu(list, key) {
   list.appendChild(missBtn);
 }
 function buildCumulativeExamMenu(list) {
-  const SECS = 6000, N = 150, PER_N = 100;
+  const SECS = 4800, N = 200, PER_N = 67;   // real Final: 200 questions in 80 minutes
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative"), sectionStuviaPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · ${Math.min(N, allPool.length)} Qs · skip &amp; flag</span>`;
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · <b>${Math.min(N, allPool.length)} Qs · 80 min</b> · skip &amp; flag</span>`;
   simBtn.onclick = () => launchFullExamPool(shuffle(allPool).slice(0, N), "Cumulative Simulation", SECS);
   list.appendChild(simBtn);
   _mkHdr(list, "By Unit");
@@ -6104,22 +6126,22 @@ function renderExamMenu(main) {
   const fullBtn = document.createElement("button");
   fullBtn.className = "modeBtn";
   fullBtn.style.cssText = "border:2px solid var(--ink);background:#EEF4FB;";
-  fullBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Closest to your actual exam · 100 min · 200 Qs · 50/section · ALL banks (GR + Stuvia + ClaudeBank + Practice Exams) · skip &amp; flag freely</span>`;
-  fullBtn.onclick = () => launchFullExam(buildSimDeck(50, { gr: true, stuvia: true, pe: true, cb: true }), "Simulation");
+  fullBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Simulation — THE REAL DEAL ⭐</span><span class="modeMeta">Matches the real exam · <b>200 Qs · 80 min</b> · 50/section · ALL banks (GR + Stuvia + ClaudeBank + Practice Exams) · skip &amp; flag freely</span>`;
+  fullBtn.onclick = () => launchFullExam(buildSimDeck(50, { gr: true, stuvia: true, pe: true, cb: true }), "Simulation", 4800);
   list.appendChild(fullBtn);
 
   // Stuvia-only simulation
   const stuSimBtn = document.createElement("button");
   stuSimBtn.className = "modeBtn";
-  stuSimBtn.innerHTML = `<span class="modeIcon">📚</span><span class="modeLabel">Stuvia Simulation</span><span class="modeMeta">100 min · 50/section · Stuvia questions only · skip &amp; flag</span>`;
-  stuSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { stuvia: true }), "Stuvia Simulation");
+  stuSimBtn.innerHTML = `<span class="modeIcon">📚</span><span class="modeLabel">Stuvia Simulation</span><span class="modeMeta">200 Qs · 80 min · 50/section · Stuvia questions only · skip &amp; flag</span>`;
+  stuSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { stuvia: true }), "Stuvia Simulation", 4800);
   list.appendChild(stuSimBtn);
 
   // ClaudeBank-only simulation
   const cbSimBtn = document.createElement("button");
   cbSimBtn.className = "modeBtn";
-  cbSimBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">ClaudeBank Simulation</span><span class="modeMeta">100 min · 50/section (as available) · ClaudeBank questions only · skip &amp; flag</span>`;
-  cbSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { cb: true }), "ClaudeBank Simulation");
+  cbSimBtn.innerHTML = `<span class="modeIcon">🤖</span><span class="modeLabel">ClaudeBank Simulation</span><span class="modeMeta">80 min · 50/section (as available) · ClaudeBank questions only · skip &amp; flag</span>`;
+  cbSimBtn.onclick = () => launchFullExam(buildSimDeck(50, { cb: true }), "ClaudeBank Simulation", 4800);
   list.appendChild(cbSimBtn);
 
   // ── Full Exam by Section — Mini Mocks (100 Qs, one section, all 3 banks, full skip/flag timer) ──
