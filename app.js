@@ -382,6 +382,9 @@ function recordMissedQs(answerLog, sectionKey) {
 let missedDeck = [], missedIndex = 0, missedAnswered = false, missedSelected = -1;
 /* Fuzzy drill state (flip-flop questions — separate from the missed pool, no side effects on it) */
 let fuzzyDeck = [], fuzzyIndex = 0, fuzzyAnswered = false, fuzzyStartCount = 0;
+let fuzzyRecallRevealed = false;   // for written free-recall items inside a drill/sprint
+/* 10-minute Sprint state (rotating weak-area micro-session on the home screen) */
+let sprintTimer = null, sprintRot = 0;
 /* Lab 2 Model Practical (real class-model photos) — recognition + self-grade stations */
 let l2Deck = [], l2Index = 0, l2Revealed = false, l2Timed = false, l2SecLeft = 0, l2Timer = null, l2StartCount = 0, l2Right = 0;
 const LAB2_STATS_KEY = "biol250_lab2stations_v1";
@@ -1433,6 +1436,38 @@ function appendStartHere(wrap) {
   card.appendChild(btn);
   wrap.appendChild(card);
 }
+/* 10-minute Sprint card — a rotating weak-area micro-session. Names your weakest Torso region + the
+   notes to skim, then launches ~5 weakest questions on it. Auto-rotates every 10 min while on home. */
+function appendSprintCard(wrap) {
+  if (state.sectionKey && state.sectionKey !== "torso" && state.sectionKey) { /* torso-focused for now */ }
+  let ranked;
+  try { ranked = sprintRankedRegions(); } catch (e) { return; }
+  if (!ranked || !ranked.length) return;
+  const wk = ranked[sprintRot % ranked.length];
+  const focus = wk.r, pct = (wk.v != null) ? Math.round(wk.v) : null;
+  const card = document.createElement("div");
+  card.style.cssText = "background:#fff;border:1.5px solid var(--teal);border-radius:16px;padding:16px 18px;margin:0 0 20px;box-shadow:var(--shadow-sm);";
+  card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--teal);">🔁 10-MINUTE SPRINT</div>
+      <button id="sprintNew" style="background:none;border:none;color:var(--muted);font-size:.75rem;font-weight:700;cursor:pointer;">↻ new focus</button>
+    </div>
+    <div style="font-size:1.12rem;font-weight:800;margin:6px 0 4px;color:var(--text);">Skim your <span style="color:var(--teal-2);">${focus}</span> notes${pct != null ? ` — weakest region (${pct}% ready)` : ""}</div>
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.45;margin-bottom:12px;">Read it, then answer ~5 of your weakest ${focus} questions (plus one you write out). Rotates to your next weak spot every 10 min.</div>`;
+  const btn = document.createElement("button");
+  btn.textContent = "▶ Start " + focus + " sprint";
+  btn.style.cssText = "background:var(--teal);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-size:.95rem;font-weight:800;cursor:pointer;";
+  btn.onclick = () => startSprint(focus);
+  card.appendChild(btn);
+  wrap.appendChild(card);
+  const nb = card.querySelector("#sprintNew");
+  if (nb) nb.onclick = () => { sprintRot++; render(); };
+  // Auto-rotate every 10 minutes, but only while the home screen is showing.
+  if (sprintTimer) clearInterval(sprintTimer);
+  sprintTimer = setInterval(() => {
+    if (state.route !== "home") { clearInterval(sprintTimer); sprintTimer = null; return; }
+    sprintRot++; render();
+  }, 600000);
+}
 function renderHome(main) {
   ensureHoverStyle();
   const wrap = document.createElement("div");
@@ -1471,6 +1506,8 @@ function renderHome(main) {
 
   // Start-here card (one unambiguous next action — kills the "what do I even study" paralysis)
   try { appendStartHere(wrap); } catch (e) {}
+  // 10-minute rotating Sprint card (weak-area micro-session, auto-refreshes)
+  try { appendSprintCard(wrap); } catch (e) {}
 
   // Live question count (subtopics are the source of truth; s.quiz can lag after edits like the T/F add).
   const qCount = (s) => {
@@ -4999,8 +5036,9 @@ function startFuzzyDrill() {
   });
   deck = dedupeQs(deck);
   if (!deck.length) { alert("No fuzzy questions right now — you're steady on everything you've practiced."); return; }
-  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = fuzzyDeck.length;
   state._drillTitle = null;   // plain fuzzy drill
+  state._sprintNote = null;
   state._fuzzyBack = (state.sectionKey && state.sectionKey !== "torso") ? "preparednessGeneric" : "preparedness";
   state.route = "fuzzyReview"; render();
 }
@@ -5020,8 +5058,46 @@ function startPageDrill(page) {
   });
   deck = dedupeQs(deck);   // collapse identical copies (e.g. page 451's 3 "unpaired ganglia" duplicates)
   if (!deck.length) { alert("No testable questions are mapped to p." + page + " yet — drilling your fuzzy set instead."); startFuzzyDrill(); return; }
-  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = fuzzyDeck.length;
   state._drillTitle = "Martini p. " + page;
+  state._sprintNote = null;
+  state._fuzzyBack = "home";
+  state.route = "fuzzyReview"; render();
+}
+/* ─── 10-minute Sprint: rotating weak-area micro-session ───
+   Uses the preparedness engine to rank the Torso regions weakest-first, rotates through them (every
+   10 min on the home card, or on demand), and serves 3–5 of your weakest questions from that region
+   plus one written free-recall item. Read the region's notes, then test it. */
+function sprintRankedRegions() {
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  const regions = ["Thorax", "Abdomen", "Pelvis", "Systemic"];
+  return regions
+    .map(r => ({ r, v: (typeof blueprintReadiness === "function" ? blueprintReadiness(r, md) : null) }))
+    .sort((a, b) => ((a.v == null ? 999 : a.v) - (b.v == null ? 999 : b.v)));  // weakest first (null = untested = top)
+}
+function sprintFocus() { const ranked = sprintRankedRegions(); return ranked.length ? ranked[sprintRot % ranked.length].r : "Thorax"; }
+function startSprint(focus) {
+  focus = focus || sprintFocus();
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
+  const src = (typeof blueprintSources === "function") ? blueprintSources() : {};
+  const ids = (src[focus] || []).map(o => o.id);
+  let deck = [];
+  ids.forEach(id => {
+    const q = idx[id];
+    if (q && q.q && q.options && q.options.length >= 2 && typeof q.correct === "number"
+        && !isDiagramQ(q) && !isFITBQ(q) && !hasDupOptions(q)) deck.push(q);
+  });
+  deck = dedupeQs(deck);
+  if (!deck.length) { alert("Not enough clean questions for a " + focus + " sprint yet — try a mock first."); return; }
+  // weakest first (lowest current recall), then take up to 5
+  deck.sort((a, b) => (qRecall(a.id, md)) - (qRecall(b.id, md)));
+  deck = deck.slice(0, 5).map(q => Object.assign({}, q));
+  deck = shuffle(deck);
+  if (deck.length >= 3) deck[deck.length - 1].recall = true;   // 1 written free-recall item (MC is the priority)
+  fuzzyDeck = deck; fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = deck.length;
+  state._drillTitle = "Sprint · " + focus;
+  state._sprintNote = focus;      // region → shows a "skim your notes" banner + Open-notes button
   state._fuzzyBack = "home";
   state.route = "fuzzyReview"; render();
 }
@@ -5035,8 +5111,9 @@ function startLab2BankDrill() {
   }));
   deck = dedupeQs(deck);
   if (!deck.length) { alert("No Lab 2 questions available."); return; }
-  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyStartCount = fuzzyDeck.length;
+  fuzzyDeck = shuffle(deck); fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = fuzzyDeck.length;
   state._drillTitle = "Lab 2 — Structures & Tissues";
+  state._sprintNote = null;
   state._fuzzyBack = "modes";
   state.route = "fuzzyReview"; render();
 }
@@ -5071,6 +5148,20 @@ function renderFuzzyReview(main) {
   pgBar.innerHTML = `<div style="height:100%;width:${pct}%;background:var(--accent);border-radius:3px;transition:width .3s;"></div>`;
   main.appendChild(pgBar);
 
+  // Sprint "skim your notes" banner (with a one-tap Open-notes button)
+  if (state._sprintNote && typeof NOTES_PDF !== "undefined" && NOTES_PDF[String(state._sprintNote).toLowerCase()]) {
+    const nk = String(state._sprintNote).toLowerCase();
+    const ban = document.createElement("div");
+    ban.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:10px;background:#e7f1ea;border:1px solid #bcd8cc;border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:.85rem;color:var(--accent-ink);";
+    ban.innerHTML = `<span>📖 First, skim your <b>${escapeHtml(state._sprintNote)}</b> notes.</span>`;
+    const ob = document.createElement("button");
+    ob.textContent = "Open notes";
+    ob.style.cssText = "background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;";
+    ob.onclick = () => { try { openNotesPanel(nk); } catch (e) {} };
+    ban.appendChild(ob);
+    main.appendChild(ban);
+  }
+
   const stem = document.createElement("div");
   stem.style.cssText = "font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.55;";
   stem.textContent = q.q || q.question;
@@ -5079,6 +5170,36 @@ function renderFuzzyReview(main) {
   const fb = document.createElement("div");
   fb.style.cssText = "min-height:24px;font-size:.95rem;font-weight:600;margin-bottom:10px;text-align:center;";
   main.appendChild(fb);
+
+  // Written free-recall item (sprint): no options — recall it, reveal, self-grade.
+  if (q.recall) {
+    if (!fuzzyRecallRevealed) {
+      const p = document.createElement("div");
+      p.style.cssText = "font-size:.9rem;color:var(--muted);text-align:center;margin-bottom:12px;";
+      p.textContent = "✍️ Written recall — answer in your own words (out loud or on paper), then reveal.";
+      main.appendChild(p);
+      const rb = document.createElement("button");
+      rb.className = "primaryBtn"; rb.style.cssText += "width:100%;max-width:none;";
+      rb.textContent = "Reveal answer";
+      rb.onclick = () => { fuzzyRecallRevealed = true; render(); };
+      main.appendChild(rb);
+    } else {
+      const ans = document.createElement("div");
+      ans.style.cssText = "background:#e7f1ea;border:1px solid #bcd8cc;border-radius:12px;padding:13px 15px;margin-bottom:12px;font-size:1rem;font-weight:700;color:var(--accent-ink);";
+      ans.textContent = "Answer: " + (q.tf ? ["True", "False"][q.correct] : (q.options[q.correct] || ""));
+      main.appendChild(ans);
+      const row = document.createElement("div"); row.style.cssText = "display:flex;gap:10px;";
+      const grade = (ok) => {
+        if (fuzzyAnswered) return; fuzzyAnswered = true;
+        try { recordQuestionStat(q, ok, null, false); } catch (e) {}
+        setTimeout(() => { fuzzyDeck.splice(qi, 1); if (!ok) fuzzyDeck.push(q); if (fuzzyIndex >= fuzzyDeck.length) fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; render(); }, 500);
+      };
+      const miss = document.createElement("button"); miss.className = "secondaryBtn"; miss.style.cssText += "flex:1;margin:0;border-color:var(--danger);color:var(--danger);"; miss.textContent = "👎 Missed it"; miss.onclick = () => grade(false);
+      const got = document.createElement("button"); got.className = "primaryBtn"; got.style.cssText += "flex:1;margin:0;"; got.textContent = "👍 Got it"; got.onclick = () => grade(true);
+      row.append(miss, got); main.appendChild(row);
+    }
+    return;
+  }
 
   const opts = q.tf ? ["True", "False"] : (q.options || []);
   opts.forEach((opt, i) => {
