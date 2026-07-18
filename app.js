@@ -6722,8 +6722,10 @@ function addCatCard(list, key) {
    ═══════════════════════════════════════════════════════════ */
 function genericRegions(key) {
   if (key === "cumulative") {
+    // Include Stuvia in each unit so cumulative readiness reflects the SAME pool the cumulative
+    // CAT/exam draws from (Appendicular has no Stuvia → sectionStuviaPool returns []). (Audit #5)
     return [["Appendicular", "appendicular"], ["Axial", "axial"], ["Torso", "torso"]]
-      .map(([name, u]) => ({ name, ids: dedupeQs([].concat(sectionGRPool(u), sectionCBPool(u))).map(q => q.id) }));
+      .map(([name, u]) => ({ name, ids: dedupeQs([].concat(sectionGRPool(u), sectionCBPool(u), sectionStuviaPool(u))).map(q => q.id) }));
   }
   const groups = SECTION_GROUPS[key] || [];
   const out = groups.map(([label, icon, idxs]) => ({ name: label, ids: sectionGRPool(key, idxs).map(q => q.id) }));
