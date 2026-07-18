@@ -3679,6 +3679,9 @@ function renderPreparedness(main) {
   // By exam region (Thorax / Abdomen / Pelvis / Systemic) — shown for Performance & Readiness
   appendRegionBars(main, md, metric);
 
+  // Trends & habits (second-guessing over time, weakest Martini pages, fuzzy count)
+  try { appendTrendsCard(main, "torso"); } catch (e) {}
+
   // Mock-exam (Practice Tests) card — a direct 200Q proxy for the real exam
   const mock = prepMockBest(md);
   const mc = document.createElement("div");
@@ -5207,6 +5210,51 @@ function behaviorStats() {
   b.totalChanges = b.r2w + b.w2r + b.w2w;
   return b;
 }
+// Second-guessing trend: net right→wrong flips, earlier half vs recent half of your mocks.
+function _secondGuessTrend(sec) {
+  const atts = allAttempts(sec).filter(a => a.rec && a.rec.changes).map(a => a.rec).sort((x, y) => (x.ts || 0) - (y.ts || 0));
+  if (atts.length < 2) return null;
+  const mid = Math.floor(atts.length / 2);
+  const net = arr => arr.reduce((s, r) => s + ((r.changes.r2w || 0) - (r.changes.w2r || 0)), 0);
+  return { early: net(atts.slice(0, mid)), recent: net(atts.slice(mid)), n: atts.length };
+}
+// Weakest textbook pages (Torso) by your accuracy — the exact pages to reread.
+function weakestPages(sec, limit) {
+  if (typeof Q_BOOKLOC === "undefined") return [];
+  const qs = activeProgress().qstats || {}, byPage = {};
+  Object.keys(Q_BOOKLOC).forEach(id => {
+    const loc = Q_BOOKLOC[id]; const p = loc && (loc.p || loc.page); if (!p) return;
+    const st = qs[id]; if (!st || !st.seen) return;
+    byPage[p] = byPage[p] || { seen: 0, known: 0 };
+    byPage[p].seen += st.seen; byPage[p].known += (st.seen - (st.missed || 0));
+  });
+  return Object.keys(byPage).map(p => ({ page: +p, seen: byPage[p].seen, pct: Math.round(byPage[p].known / byPage[p].seen * 100) }))
+    .filter(r => r.seen >= 3).sort((a, b) => a.pct - b.pct).slice(0, limit || 6);
+}
+function _fuzzyCount() { const md = getStudyMode(); const qs = activeProgress().qstats || {}; let n = 0; Object.keys(qs).forEach(id => { if (isFuzzy(id, md)) n++; }); return n; }
+// A "Trends & Habits" card appended to a container — surfaces granular behaviour + weak pages/fuzzy.
+function appendTrendsCard(wrap, sec) {
+  const beh = behaviorStats(), tr = _secondGuessTrend(sec), pages = weakestPages(sec, 6), fz = _fuzzyCount();
+  if (!beh.totalChanges && !pages.length && !fz) return;
+  const card = document.createElement("div");
+  card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
+  let html = `<div style="font-weight:800;color:#1F3864;margin-bottom:8px;">📊 Trends &amp; Habits</div>`;
+  if (beh.totalChanges) {
+    const trend = tr ? (tr.recent < tr.early ? ` <span style="color:#0F766E;">↓ improving</span>` : tr.recent > tr.early ? ` <span style="color:#C0392B;">↑ getting worse</span>` : "") : "";
+    const verdict = beh.r2w > beh.w2r ? "second-guessing is costing you — trust your first instinct" : beh.w2r > beh.r2w ? "your rechecks tend to help" : "changing answers is roughly neutral";
+    html += `<div style="font-size:.85rem;color:#333;line-height:1.5;margin-bottom:8px;">Answer changes: <b>${beh.r2w}</b> right→wrong · <b>${beh.w2r}</b> wrong→right${trend}<br><span style="color:#666;">${verdict}.</span></div>`;
+    if (beh.flagTotal) html += `<div style="font-size:.82rem;color:#666;margin-bottom:8px;">Flagged-question accuracy: ${Math.round(beh.flagRight / beh.flagTotal * 100)}% (${beh.flagRight}/${beh.flagTotal}) — your instinct on "not sure" ones.</div>`;
+  }
+  if (fz) html += `<div style="font-size:.82rem;color:#B7791F;margin-bottom:8px;">🎲 <b>${fz}</b> fuzzy questions — you flip between right & wrong on these (memorizing, not mastering). CAT now treats them as harder.</div>`;
+  card.innerHTML = html;
+  if (pages.length) {
+    const pt = document.createElement("div"); pt.style.cssText = "margin-top:6px;border-top:1px solid #f0f0f0;padding-top:8px;";
+    pt.innerHTML = `<div style="font-size:.75rem;color:#aaa;margin-bottom:4px;">Weakest Martini pages — reread these</div>`;
+    pages.forEach(p => { const r = document.createElement("div"); r.style.cssText = "display:flex;justify-content:space-between;font-size:.82rem;color:#555;padding:2px 0;"; r.innerHTML = `<span>p. ${p.page}</span><span style="color:${p.pct < 50 ? "#C0392B" : "#B7791F"};font-weight:600;">${p.pct}% · ${p.seen} tries</span>`; pt.appendChild(r); });
+    card.appendChild(pt);
+  }
+  wrap.appendChild(card);
+}
 function renderHistory(main) {
   const all = allAttempts();
   const filter = state.histFilter || "all";
@@ -6566,6 +6614,7 @@ function renderPreparednessGeneric(main) {
   note.style.cssText = "margin-top:12px;font-size:.75rem;color:#aaa;text-align:center;line-height:1.5;";
   note.textContent = "Experimental for non-Torso sections: readiness/performance are recall-weighted over this section's Guided Readings + Claude Bank. Practice raises them; they fade over time.";
   wrap.appendChild(note);
+  try { appendTrendsCard(wrap, key); } catch (e) {}
   main.appendChild(wrap);
 }
 
