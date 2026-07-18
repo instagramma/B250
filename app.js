@@ -349,22 +349,23 @@ function loadMissedQs() {
 function saveMissedQs(arr) {
   try { localStorage.setItem(ns(MISSED_KEY), JSON.stringify(arr)); } catch(e) {}
 }
-function recordMissedQs(answerLog) {
-  const pool = loadMissedQs();
-  const idOf = (o) => (o && o.id) ? o.id : (o && o.q ? o.q.slice(0, 80) : "");
-  const existingKeys = new Set(pool.map(m => m.id || (m.q ? m.q.slice(0, 80) : "")));
-  let changed = false;
-  answerLog.forEach(entry => {
-    if (entry.timedOut || entry.selected !== entry.correct) {
-      const key = idOf(entry.q);
-      if (key && !existingKeys.has(key)) {
-        pool.push({ id: entry.q.id, q: entry.q.q, options: entry.q.options, correct: entry.q.correct, tf: entry.q.tf || false });
-        existingKeys.add(key);
-        changed = true;
-      }
-    }
+// Add ONE wrong-answered question to the missed pool for a section (and the legacy global
+// list). Every practice mode calls this so "Missed Questions" works for everything you take.
+function _missKey(q) { return (q && q.id) ? q.id : (q && q.q ? String(q.q).slice(0, 80) : ""); }
+function addMissed(q, sectionKey) {
+  if (!q || !(q.q || q.question)) return;
+  const rec = { id: q.id, q: q.q || q.question, options: q.options, correct: q.correct, tf: q.tf || false };
+  const key = _missKey(q); if (!key) return;
+  // legacy global list (used by some review entry points)
+  const g = loadMissedQs(); if (!g.some(m => _missKey(m) === key)) { g.push(rec); saveMissedQs(g); }
+  // section-scoped list (used by the section-menu / exam-menu "Missed Questions" cards)
+  const sk = "missed:" + (sectionKey || state.sectionKey);
+  try { const s = JSON.parse(localStorage.getItem(ns(sk)) || "[]"); if (!s.some(m => _missKey(m) === key)) { s.push(rec); localStorage.setItem(ns(sk), JSON.stringify(s)); } } catch (e) {}
+}
+function recordMissedQs(answerLog, sectionKey) {
+  (answerLog || []).forEach(entry => {
+    if (entry.timedOut || entry.selected !== entry.correct) addMissed(entry.q, sectionKey);
   });
-  if (changed) saveMissedQs(pool);
 }
 
 /* Missed Review state */
@@ -564,6 +565,9 @@ function recordQuestionStat(q, wasCorrect, elapsedMs, flagged) {
   const s = progressState.qstats[q.id] || { seen: 0, missed: 0 };
   s.seen += 1;
   if (!wasCorrect) { s.missed += 1; s.lastMissed = new Date().toISOString(); }
+  // Feed the section "Missed Questions" pool from EVERY mode (needs the full question object;
+  // CAT passes only an id and records missed itself). Deduped inside addMissed.
+  if (!wasCorrect && (q.q || q.question) && q.options && typeof addMissed === "function") { try { addMissed(q, state.sectionKey); } catch (e) {} }
   // per-mode mastery (closed-book vs with-notes) — powers Performance / Readiness / Book-Knowledge.
   // Retention model: each question carries a memory half-life S (days) + last-review time t.
   // Spacing-aware: a correct answer near the forgetting point grows S a lot; an immediate repeat
@@ -862,10 +866,10 @@ const state = { route: "home", sectionKey: null, mode: null, subtopicIndex: null
 // catSim/examMenu route on page load can't hit a temporal-dead-zone error. Functions live
 // in the CAT module lower down (hoisted; they only read these once they actually run).
 const CAT_CONFIG = {
-  torso:        { enabled: true,  total: 100, label: "Torso" },
-  cumulative:   { enabled: true,  total: 100, label: "Cumulative" },
-  appendicular: { enabled: false, total: 100, label: "Appendicular" },
-  axial:        { enabled: false, total: 100, label: "Axial" },
+  torso:        { enabled: true,  total: 200, label: "Torso" },
+  cumulative:   { enabled: true,  total: 200, label: "Cumulative" },
+  appendicular: { enabled: false, total: 200, label: "Appendicular" },
+  axial:        { enabled: false, total: 200, label: "Axial" },
 };
 const CAT_MIN_ITEMS = 50, CAT_SE_STOP = 0.32;
 let catState = null;
@@ -6128,14 +6132,38 @@ function renderClaudeMenu(main) {
 function _catHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; } return h; }
 function _logistic(x) { return 1 / (1 + Math.exp(-x)); }
 // Deterministic pseudo-difficulty in logits (~ -1.8..+1.8) from item type/source + a hash spread.
+// Per-question difficulty (logits). Layers real signals so it's meaningful for EVERY bank
+// (GR, ClaudeBank, Stuvia), not a random number:
+//   1. Content features (option count, "all/none of the above", negative wording, stem length)
+//   2. Bloom's-Taxonomy bump for the harder Stuvia items (baked QDIFF, keyed by stem)
+//   3. Your own answer history — a question you keep missing is treated as harder
+//   4. A tiny deterministic jitter to break ties
 function catDifficulty(id, q) {
   let b = 0;
-  if (q) { const n = (q.options || []).length; if (q.tf || n === 2) b -= 0.8; else if (n >= 5) b += 0.3; }
+  const opts = (q && q.options) || [], n = opts.length;
+  const stem = String((q && (q.q || q.question)) || "").toLowerCase();
+  const optsTxt = opts.join(" ").toLowerCase();
+  // 1. content features
+  if ((q && q.tf) || n === 2) b -= 0.7; else if (n >= 5) b += 0.35; else if (n === 4) b += 0.05;
+  if (/\ball of the (above|answers)|none of the (above|answers)/.test(optsTxt)) b += 0.35;
+  if (/\bnot\b|\bexcept\b|\bleast\b|\bincorrect\b/.test(stem)) b += 0.25;   // negatively-worded
+  const words = stem ? stem.split(/\s+/).length : 0;
+  if (words > 28) b += 0.2; else if (words && words < 8) b -= 0.15;
   const bank = bankOfId(id);
-  if (bank === "Stuvia") b += 0.15; else if (bank === "Guided Reading") b -= 0.1;
-  const j = ((Math.abs(_catHash(id)) % 1000) / 1000) * 1.6 - 0.8;   // spread so adaptivity has range
-  b += j;
-  return Math.max(-1.8, Math.min(1.8, b));
+  if (bank === "Guided Reading") b -= 0.05;
+  // 2. Bloom bump (Stuvia harder items)
+  try { if (typeof QDIFF !== "undefined") { const bl = QDIFF[_stemKey(q)]; if (typeof bl === "number") b += bl; } } catch (e) {}
+  // 3. empirical — your own history: the more you miss it, the harder; and FUZZY questions
+  //    (ones you flip between right/wrong = memorizing, not mastering) are treated as harder.
+  try {
+    const st = (activeProgress().qstats || {})[id];
+    if (st && st.seen >= 2) { const miss = (st.missed || 0) / st.seen; b += miss * 0.7; }
+    const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+    if (typeof isFuzzy === "function" && isFuzzy(id, md)) b += 0.5;
+  } catch (e) {}
+  // 4. small deterministic jitter
+  b += ((Math.abs(_catHash(id)) % 1000) / 1000) * 0.4 - 0.2;
+  return Math.max(-2.2, Math.min(2.2, b));
 }
 // Region pools of {id, q, g, b}. Torso = 4 exam regions (25 each); Cumulative = 3 units.
 function catRegions(key) {
@@ -6145,18 +6173,18 @@ function catRegions(key) {
   if (key === "torso") {
     const src = blueprintSources();
     return [
-      { name: "Thorax", quota: 25, pool: clean(src.Thorax.map(o => o.id)) },
-      { name: "Abdomen", quota: 25, pool: clean(src.Abdomen.map(o => o.id)) },
-      { name: "Pelvis", quota: 25, pool: clean(src.Pelvis.map(o => o.id)) },
-      { name: "Systemic", quota: 25, pool: clean(src.Systemic.map(o => o.id)) },
+      { name: "Thorax", quota: 50, pool: clean(src.Thorax.map(o => o.id)) },
+      { name: "Abdomen", quota: 50, pool: clean(src.Abdomen.map(o => o.id)) },
+      { name: "Pelvis", quota: 50, pool: clean(src.Pelvis.map(o => o.id)) },
+      { name: "Systemic", quota: 50, pool: clean(src.Systemic.map(o => o.id)) },
     ];
   }
   if (key === "cumulative") {
     const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
     return [
-      { name: "Appendicular", quota: 34, pool: clean(unit("appendicular")) },
-      { name: "Axial", quota: 33, pool: clean(unit("axial")) },
-      { name: "Torso", quota: 33, pool: clean(unit("torso")) },
+      { name: "Appendicular", quota: 67, pool: clean(unit("appendicular")) },
+      { name: "Axial", quota: 67, pool: clean(unit("axial")) },
+      { name: "Torso", quota: 66, pool: clean(unit("torso")) },
     ];
   }
   return [];
@@ -6164,12 +6192,16 @@ function catRegions(key) {
 function launchCat(key) {
   const cfg = CAT_CONFIG[key];
   if (!cfg || !cfg.enabled) { alert("CAT for this section is coming soon (experimental)."); return; }
-  const regions = catRegions(key).filter(r => r.pool.length);
+  let regions = catRegions(key).filter(r => r.pool.length);
   if (!regions.length) { alert("Not enough questions to run an adaptive test here yet."); return; }
-  regions.forEach(r => { r.pool = shuffle(r.pool); r.served = 0; });
+  // De-duplicate by stem ACROSS regions so the same question can't reappear (e.g. Systemic
+  // master duplicates a Thorax item). Shared seen-set, image-aware key.
+  const seenStem = new Set();
+  regions.forEach(r => { r.pool = shuffle(r.pool).filter(it => { const k = _stemKey(it.q); if (seenStem.has(k)) return false; seenStem.add(k); return true; }); r.served = 0; });
+  regions = regions.filter(r => r.pool.length);
   catState = {
     key, cfg, regions, theta: 0, se: 99,
-    answered: [], used: new Set(), idx: 0, current: null, selected: -1,
+    answered: [], used: new Set(), usedStems: new Set(), idx: 0, current: null, selected: -1,
     total: Math.min(cfg.total, regions.reduce((a, r) => a + Math.min(r.quota, r.pool.length), 0)),
     done: false, startedAt: Date.now(),
   };
@@ -6199,6 +6231,7 @@ function catPickNext() {
   let best = null, bestD = 1e9;
   for (const it of region.pool) {
     if (cs.used.has(it.id)) continue;
+    if (cs.usedStems && cs.usedStems.has(_stemKey(it.q))) continue;   // never repeat a stem
     const d = Math.abs(it.b - cs.theta);
     if (d < bestD) { bestD = d; best = it; }
   }
@@ -6212,9 +6245,12 @@ function catAnswer(sel) {
   const it = cs.current.item;
   const correct = (sel === it.q.correct);
   cs.used.add(it.id);
+  if (cs.usedStems) cs.usedStems.add(_stemKey(it.q));   // block same-stem repeats across regions
   cs.current.region.served++;
   cs.answered.push({ id: it.id, b: it.b, u: correct ? 1 : 0, region: cs.current.region.name });
   try { recordQuestionStat({ id: it.id }, correct, null, false); _predVer++; } catch (e) {}
+  // Feed Missed Questions (section-scoped: cumulative → the item's unit, else the CAT's section)
+  if (!correct) { const ms = (cs.key === "cumulative") ? String(cs.current.region.name).toLowerCase() : cs.key; try { addMissed(it.q, ms); } catch (e) {} }
   catUpdateTheta();
   cs.idx++;
   const n = cs.answered.length;
