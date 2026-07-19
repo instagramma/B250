@@ -46,13 +46,21 @@ function _l3LoadScript(src) {
     document.head.appendChild(s);
   });
 }
+// Load an examples/js add-on and GUARANTEE it attaches to the global THREE.
+// Some CDN/script-tag combinations load the file but don't attach the global
+// (observed with OrbitControls); fetch+eval attaches it reliably, so we fall back.
+async function _l3EnsureAddon(src, check) {
+  try { await _l3LoadScript(src); } catch (e) {}
+  if (check()) return;
+  try { const t = await fetch(src).then(r => r.text()); (0, eval)(t); } catch (e) {}
+}
 async function ensureThree() {
   if (window.THREE && window.THREE.GLTFLoader && window.THREE.OrbitControls) { l3.THREE = window.THREE; return true; }
   await _l3LoadScript(LAB3D_CDN.three);
-  await _l3LoadScript(LAB3D_CDN.orbit);
-  await _l3LoadScript(LAB3D_CDN.gltf);
+  await _l3EnsureAddon(LAB3D_CDN.orbit, () => window.THREE && window.THREE.OrbitControls);
+  await _l3EnsureAddon(LAB3D_CDN.gltf, () => window.THREE && window.THREE.GLTFLoader);
   l3.THREE = window.THREE;
-  return !!(l3.THREE && l3.THREE.GLTFLoader);
+  return !!(l3.THREE && l3.THREE.GLTFLoader && l3.THREE.OrbitControls);
 }
 function _l3WebGLOK() {
   try { const c = document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"))); }
