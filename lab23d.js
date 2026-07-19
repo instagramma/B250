@@ -278,6 +278,10 @@ function _l3GhostExcept(targetName) {
 var _l3Selected = null;
 function _l3Select(structId, fromTap) {
   _l3Selected = structId;
+  // When a search filter is active, ghost the rest semi-transparent so the picked
+  // structure is visible in context. With no filter, just highlight (no ghost).
+  if (l3.mode === "explore" && (l3.filter || "").trim()) { _l3GhostExcept(structId); }
+  else { _l3ClearGhost(); }
   _l3HighlightMesh(structId);
   render();
 }
