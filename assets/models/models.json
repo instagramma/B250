@@ -1,103 +1,169 @@
 {
   "schemaVersion": 1,
-  "note": "Lab 2 3D Anatomy Explorer manifest. GLBs are stored LOCALLY at the paths below (never hotlinked). Until a real GLB is installed, the viewer shows a clearly-marked render-test object, NOT anatomy. Each structure binds to the model either by `mesh` (named mesh in the GLB) or `hotspot` ([x,y,z] in model space). Fill `mesh`/`hotspot` when the real GLB lands — no viewer changes needed.",
+  "generatedAt": "2026-07-18",
+  "defaultModel": "torso",
+  "labels": {
+    "file": "labels.json",
+    "key": "nodeName",
+    "value": "label",
+    "provenance": "labelSource"
+  },
+  "crosswalks": [
+    {
+      "file": "hra-united-male-crosswalk.csv",
+      "models": [
+        "heart",
+        "torso"
+      ],
+      "nodeNameColumn": "node_name",
+      "labelColumn": "label",
+      "ontologyIdColumn": "OntologyID"
+    },
+    {
+      "file": "hra-brain-male-v1.3-crosswalk.csv",
+      "models": [
+        "brain"
+      ],
+      "nodeNameColumn": "node_name",
+      "labelColumn": "label",
+      "ontologyIdColumn": "OntologyID"
+    }
+  ],
+  "labelCoverage": {
+    "heart": {
+      "hraCrosswalk": 39,
+      "generatedFromMeshName": 0
+    },
+    "brain": {
+      "hraCrosswalk": 102,
+      "generatedFromMeshName": 181
+    },
+    "torso": {
+      "hraCrosswalk": 268,
+      "generatedFromMeshName": 14
+    }
+  },
   "models": [
     {
       "id": "heart",
-      "title": "Heart",
-      "glb": "assets/models/heart.glb",
-      "poster": "assets/models/heart_poster.jpg",
-      "source": "PENDING (Codex to supply — e.g. Z-Anatomy CC BY-SA 4.0 or a verified NIH 3D model)",
-      "version": "",
-      "creator": "",
-      "license": "",
-      "attribution": "",
-      "installed": false,
-      "cameraPresets": {
-        "anterior":  { "pos": [0, 0, 3.2], "target": [0, 0, 0] },
-        "posterior": { "pos": [0, 0, -3.2], "target": [0, 0, 0] },
-        "superior":  { "pos": [0, 3.2, 0.001], "target": [0, 0, 0] },
-        "inferior":  { "pos": [0, -3.2, 0.001], "target": [0, 0, 0] },
-        "left":      { "pos": [3.2, 0, 0], "target": [0, 0, 0] }
+      "title": "Heart and Major Vessels",
+      "file": "heart.glb",
+      "poster": "../posters/heart.webp",
+      "purpose": "External heart orientation, chambers, valves, coronary vessels, aortic arch, pulmonary vessels, and superior vena cava.",
+      "bytes": 1862020,
+      "sha256": "3f7ec7b4bda8386301747e34c9e5be0b79f9d9eb468241d33c78d95aa828f7ae",
+      "meshCount": 39,
+      "triangleCount": 152556,
+      "materialCount": 3,
+      "selectionKey": "mesh.name",
+      "extensionsRequired": [
+        "KHR_mesh_quantization"
+      ],
+      "initialView": {
+        "frontAxis": "+Z",
+        "upAxis": "+Y",
+        "fit": "boundingSphere"
       },
-      "structures": [
-        { "id": "h_ra",  "name": "Right atrium",              "aliases": ["RA"],                     "system": "Heart & vessels", "function": "Receives deoxygenated blood from the venae cavae; pumps it to the right ventricle.", "mesh": null, "hotspot": null },
-        { "id": "h_rv",  "name": "Right ventricle",           "aliases": ["RV"],                     "system": "Heart & vessels", "function": "Pumps deoxygenated blood to the lungs via the pulmonary trunk.", "mesh": null, "hotspot": null },
-        { "id": "h_la",  "name": "Left atrium",               "aliases": ["LA"],                     "system": "Heart & vessels", "function": "Receives oxygenated blood from the pulmonary veins; pumps it to the left ventricle.", "mesh": null, "hotspot": null },
-        { "id": "h_lv",  "name": "Left ventricle",            "aliases": ["LV"],                     "system": "Heart & vessels", "function": "Thickest chamber; pumps oxygenated blood into the aorta to the whole body.", "mesh": null, "hotspot": null },
-        { "id": "h_ivs", "name": "Interventricular septum",   "aliases": ["IV septum"],              "system": "Heart & vessels", "function": "Muscular wall separating the two ventricles.", "mesh": null, "hotspot": null },
-        { "id": "h_tri", "name": "Tricuspid valve",           "aliases": ["right AV valve"],         "system": "Heart & vessels", "function": "Right atrioventricular valve; prevents backflow into the right atrium.", "mesh": null, "hotspot": null },
-        { "id": "h_mit", "name": "Bicuspid (mitral) valve",   "aliases": ["mitral", "left AV valve"],"system": "Heart & vessels", "function": "Left atrioventricular valve; prevents backflow into the left atrium.", "mesh": null, "hotspot": null },
-        { "id": "h_ao",  "name": "Aorta",                     "aliases": ["ascending aorta", "arch"],"system": "Heart & vessels", "function": "Great artery carrying oxygenated blood from the left ventricle to the body.", "mesh": null, "hotspot": null },
-        { "id": "h_pt",  "name": "Pulmonary trunk",           "aliases": ["pulmonary artery"],       "system": "Heart & vessels", "function": "Carries deoxygenated blood from the right ventricle to the lungs.", "mesh": null, "hotspot": null },
-        { "id": "h_svc", "name": "Superior vena cava",        "aliases": ["SVC"],                    "system": "Heart & vessels", "function": "Returns deoxygenated blood from the upper body to the right atrium.", "mesh": null, "hotspot": null },
-        { "id": "h_ivc", "name": "Inferior vena cava",        "aliases": ["IVC"],                    "system": "Heart & vessels", "function": "Returns deoxygenated blood from the lower body to the right atrium.", "mesh": null, "hotspot": null },
-        { "id": "h_pv",  "name": "Pulmonary veins",           "aliases": [],                         "system": "Heart & vessels", "function": "Return oxygenated blood from the lungs to the left atrium.", "mesh": null, "hotspot": null },
-        { "id": "h_lca", "name": "Left coronary artery",      "aliases": ["LAD", "circumflex"],      "system": "Heart & vessels", "function": "Supplies the left heart wall; branches into anterior interventricular (LAD) and circumflex.", "mesh": null, "hotspot": null },
-        { "id": "h_cs",  "name": "Coronary sinus",            "aliases": [],                         "system": "Heart & vessels", "function": "Large vein on the posterior heart draining cardiac veins into the right atrium.", "mesh": null, "hotspot": null }
+      "source": {
+        "title": "3D Reference Organ Set for Male, v1.10",
+        "creator": "Kristen Browne; Heidi Schlehlein",
+        "identifier": "HBM833.WZWN.425",
+        "doi": "https://doi.org/10.48539/HBM833.WZWN.425",
+        "record": "https://cdn.humanatlas.io/hra-kg--staging/ref-organ/united-male/v1.10",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "modifications": [
+        "Extracted heart, coronary, pulmonary, aortic arch, and superior vena cava subtrees from the aligned HRA united-male source.",
+        "Simplified to 60 percent target geometry with a 0.5 percent error ceiling.",
+        "Quantized and optimized with gltfpack 1.2 while preserving anatomical mesh names."
+      ],
+      "knownGaps": [
+        "The long inferior vena cava and neck branches were omitted to keep the heart large and useful in the initial view.",
+        "Use hide/isolate controls to expose internal chambers and valves."
       ]
     },
     {
       "id": "brain",
       "title": "Brain",
-      "glb": "assets/models/brain.glb",
-      "poster": "assets/models/brain_poster.jpg",
-      "source": "PENDING (Codex to supply)",
-      "version": "", "creator": "", "license": "", "attribution": "", "installed": false,
-      "cameraPresets": {
-        "superior":  { "pos": [0, 3.2, 0.001], "target": [0, 0, 0] },
-        "inferior":  { "pos": [0, -3.2, 0.001], "target": [0, 0, 0] },
-        "sagittal":  { "pos": [3.2, 0, 0], "target": [0, 0, 0] },
-        "anterior":  { "pos": [0, 0, 3.2], "target": [0, 0, 0] },
-        "posterior": { "pos": [0, 0, -3.2], "target": [0, 0, 0] }
+      "file": "brain.glb",
+      "poster": "../posters/brain.webp",
+      "purpose": "Whole-brain orientation and selection of cortical gyri, deep nuclei, ventricles, brainstem, cerebellum, hippocampus, optic structures, and white-matter structures.",
+      "bytes": 11977312,
+      "sha256": "2b9ad5b53e40e9f0936da74f7be38d2eed15604e26358c3870a0ea13499b9a35",
+      "meshCount": 283,
+      "triangleCount": 656268,
+      "materialCount": 2,
+      "selectionKey": "mesh.name",
+      "extensionsRequired": [],
+      "initialView": {
+        "frontAxis": "+Z",
+        "upAxis": "+Y",
+        "fit": "boundingSphere"
       },
-      "structures": [
-        { "id": "b_front", "name": "Frontal lobe",        "aliases": [],                 "system": "Brain", "function": "Voluntary movement, executive function, personality, speech production (Broca's).", "mesh": null, "hotspot": null },
-        { "id": "b_par",   "name": "Parietal lobe",       "aliases": [],                 "system": "Brain", "function": "Somatosensory processing and spatial awareness.", "mesh": null, "hotspot": null },
-        { "id": "b_temp",  "name": "Temporal lobe",       "aliases": [],                 "system": "Brain", "function": "Hearing, memory, and language comprehension (Wernicke's).", "mesh": null, "hotspot": null },
-        { "id": "b_occ",   "name": "Occipital lobe",      "aliases": [],                 "system": "Brain", "function": "Visual processing.", "mesh": null, "hotspot": null },
-        { "id": "b_cbl",   "name": "Cerebellum",          "aliases": [],                 "system": "Brain", "function": "Coordination, balance, and fine motor control.", "mesh": null, "hotspot": null },
-        { "id": "b_cc",    "name": "Corpus callosum",     "aliases": [],                 "system": "Brain", "function": "Large white-matter tract connecting the two cerebral hemispheres.", "mesh": null, "hotspot": null },
-        { "id": "b_thal",  "name": "Thalamus",            "aliases": [],                 "system": "Brain", "function": "Relay station for sensory and motor signals to the cortex.", "mesh": null, "hotspot": null },
-        { "id": "b_hyp",   "name": "Hypothalamus",        "aliases": [],                 "system": "Brain", "function": "Homeostasis — controls the pituitary, temperature, hunger, thirst.", "mesh": null, "hotspot": null },
-        { "id": "b_pit",   "name": "Pituitary gland",     "aliases": ["hypophysis"],     "system": "Brain", "function": "Master endocrine gland, hangs from the hypothalamus.", "mesh": null, "hotspot": null },
-        { "id": "b_mid",   "name": "Midbrain",            "aliases": ["mesencephalon"],  "system": "Brain", "function": "Uppermost brainstem; visual/auditory reflexes.", "mesh": null, "hotspot": null },
-        { "id": "b_pons",  "name": "Pons",                "aliases": [],                 "system": "Brain", "function": "Bridges cerebrum and cerebellum; relays and helps control breathing.", "mesh": null, "hotspot": null },
-        { "id": "b_med",   "name": "Medulla oblongata",   "aliases": ["medulla"],        "system": "Brain", "function": "Controls heart rate, breathing, and blood pressure.", "mesh": null, "hotspot": null },
-        { "id": "b_chi",   "name": "Optic chiasm",        "aliases": [],                 "system": "Brain", "function": "Crossing point of the optic nerves (CN II).", "mesh": null, "hotspot": null },
-        { "id": "b_vent",  "name": "Lateral ventricle",   "aliases": ["ventricles"],     "system": "Brain", "function": "CSF-filled cavity within each cerebral hemisphere.", "mesh": null, "hotspot": null }
+      "source": {
+        "title": "3D Reference Organ for Brain, Male v1.3",
+        "creator": "Kristen Browne; Heidi Schlehlein",
+        "identifier": "HBM929.XKCL.339",
+        "doi": "https://doi.org/10.48539/HBM929.XKCL.339",
+        "record": "https://3d.nih.gov/entries/20960?version=1",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "modifications": [
+        "No geometry modification; the official NIH 3D input GLB is packaged unchanged."
+      ],
+      "knownGaps": [
+        "Deep structures are occluded in the whole-brain view and require hide/isolate controls.",
+        "This is an anatomical reference model, not a replica of the classroom plastic brain model."
       ]
     },
     {
       "id": "torso",
-      "title": "Torso / Viscera",
-      "glb": "assets/models/torso.glb",
-      "poster": "assets/models/torso_poster.jpg",
-      "source": "PENDING (Codex to supply)",
-      "version": "", "creator": "", "license": "", "attribution": "", "installed": false,
-      "cameraPresets": {
-        "anterior":  { "pos": [0, 0, 3.4], "target": [0, 0, 0] },
-        "posterior": { "pos": [0, 0, -3.4], "target": [0, 0, 0] },
-        "left":      { "pos": [3.4, 0, 0], "target": [0, 0, 0] },
-        "right":     { "pos": [-3.4, 0, 0], "target": [0, 0, 0] }
+      "title": "Torso Systems",
+      "file": "torso.glb",
+      "poster": "../posters/torso.webp",
+      "purpose": "Spatial relationships among thoracic, abdominal, urinary, digestive, vascular, lymphatic, vertebral, and pelvic structures.",
+      "bytes": 7446320,
+      "sha256": "667413ddcff92355f079fb685e95f2c97cf7b0e050995b6d1e651b72306880ae",
+      "meshCount": 282,
+      "triangleCount": 515581,
+      "materialCount": 138,
+      "selectionKey": "mesh.name",
+      "extensionsRequired": [
+        "KHR_mesh_quantization"
+      ],
+      "initialView": {
+        "frontAxis": "+Z",
+        "upAxis": "+Y",
+        "fit": "boundingSphere"
       },
-      "structures": [
-        { "id": "t_trach", "name": "Trachea",        "aliases": ["windpipe"],       "system": "Respiratory", "function": "Conducts air to the bronchi; held open by C-shaped hyaline cartilage rings.", "mesh": null, "hotspot": null },
-        { "id": "t_lung",  "name": "Lungs",          "aliases": [],                 "system": "Respiratory", "function": "Site of gas exchange (right lung 3 lobes, left 2).", "mesh": null, "hotspot": null },
-        { "id": "t_diaph", "name": "Diaphragm",      "aliases": [],                 "system": "Respiratory", "function": "Primary muscle of breathing; separates thorax from abdomen.", "mesh": null, "hotspot": null },
-        { "id": "t_liver", "name": "Liver",          "aliases": [],                 "system": "Digestive",   "function": "Largest gland; produces bile, processes nutrients, detoxifies.", "mesh": null, "hotspot": null },
-        { "id": "t_gb",    "name": "Gallbladder",    "aliases": [],                 "system": "Digestive",   "function": "Stores and concentrates bile.", "mesh": null, "hotspot": null },
-        { "id": "t_stom",  "name": "Stomach",        "aliases": [],                 "system": "Digestive",   "function": "Mixes food with gastric juice; begins protein digestion.", "mesh": null, "hotspot": null },
-        { "id": "t_spl",   "name": "Spleen",         "aliases": [],                 "system": "Lymphatic",   "function": "Largest lymphatic organ; filters blood, recycles RBCs.", "mesh": null, "hotspot": null },
-        { "id": "t_panc",  "name": "Pancreas",       "aliases": [],                 "system": "Digestive",   "function": "Endocrine (islets → insulin/glucagon) and exocrine (digestive enzymes).", "mesh": null, "hotspot": null },
-        { "id": "t_duo",   "name": "Duodenum",       "aliases": [],                 "system": "Digestive",   "function": "First part of the small intestine; receives bile and pancreatic juice.", "mesh": null, "hotspot": null },
-        { "id": "t_si",    "name": "Small intestine","aliases": ["jejunum","ileum"],"system": "Digestive",   "function": "Main site of digestion and nutrient absorption (villi).", "mesh": null, "hotspot": null },
-        { "id": "t_li",    "name": "Large intestine","aliases": ["colon"],          "system": "Digestive",   "function": "Absorbs water and electrolytes; forms feces.", "mesh": null, "hotspot": null },
-        { "id": "t_kid",   "name": "Kidneys",        "aliases": [],                 "system": "Urinary",     "function": "Filter blood, form urine (nephrons); regulate fluid/electrolytes.", "mesh": null, "hotspot": null },
-        { "id": "t_adr",   "name": "Adrenal glands", "aliases": ["suprarenal"],     "system": "Endocrine",   "function": "Sit atop kidneys; cortex → steroids, medulla → epinephrine.", "mesh": null, "hotspot": null },
-        { "id": "t_ure",   "name": "Ureters",        "aliases": [],                 "system": "Urinary",     "function": "Carry urine from kidneys to the bladder.", "mesh": null, "hotspot": null },
-        { "id": "t_blad",  "name": "Urinary bladder","aliases": [],                 "system": "Urinary",     "function": "Stores urine; lined by transitional epithelium.", "mesh": null, "hotspot": null },
-        { "id": "t_aorta", "name": "Abdominal aorta","aliases": ["aorta"],          "system": "Heart & vessels","function": "Main artery of the abdomen; branches to the viscera and lower limbs.", "mesh": null, "hotspot": null }
+      "source": {
+        "title": "3D Reference Organ Set for Male, v1.10",
+        "creator": "Kristen Browne; Heidi Schlehlein",
+        "identifier": "HBM833.WZWN.425",
+        "doi": "https://doi.org/10.48539/HBM833.WZWN.425",
+        "record": "https://cdn.humanatlas.io/hra-kg--staging/ref-organ/united-male/v1.10",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "includedSystems": [
+        "heart and major thoracic/abdominal vessels",
+        "lungs, trachea, main bronchi, and lobar bronchi",
+        "liver, gallbladder, biliary tree, pancreas, small intestine, and large intestine",
+        "kidneys, renal pelvises, ureters, urinary bladder, and renal vessels",
+        "spleen and thymus",
+        "vertebrae and pelvis"
+      ],
+      "modifications": [
+        "Extracted 29 exam-relevant anatomical subtrees from the aligned 242 MB HRA united-male source.",
+        "Simplified to a 40 percent target with a 0.75 percent error ceiling.",
+        "Quantized and optimized with gltfpack 1.2 while preserving 282 selectable anatomical mesh names."
+      ],
+      "knownGaps": [
+        "The HRA source does not include the stomach, esophagus, diaphragm, ribs, sternum, or a classroom-model body shell in this set.",
+        "Use the real classroom photos as the authority for exact model appearance, removable pieces, numbering, and the omitted structures.",
+        "This model is for 3D relationships and identification practice, not a literal digital twin of the lab torso."
       ]
     }
   ]
