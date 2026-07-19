@@ -120,7 +120,7 @@ function _l3Dispose() {
   try { if (l3.renderer) { l3.renderer.forceContextLoss && l3.renderer.forceContextLoss(); l3.renderer.dispose(); if (l3.renderer.domElement && l3.renderer.domElement.parentNode) l3.renderer.domElement.parentNode.removeChild(l3.renderer.domElement); } } catch (e) {}
   if (l3._onResize) { try { window.removeEventListener("resize", l3._onResize); } catch (e) {} l3._onResize = null; }
   l3.renderer = l3.scene = l3.camera = l3.controls = l3.root = null;
-  l3.highlightMesh = null; l3._origMat = null; l3._loadedId = null; l3.installed = false;
+  l3.highlightMesh = null; l3._origMat = null; l3._ghosted = null; l3._loadedId = null; l3.installed = false;
 }
 function _l3PixelCap() {
   const small = (window.innerWidth || 1024) <= 480;
@@ -248,7 +248,32 @@ function _l3Isolate(meshName) {
   let node = null; l3.root.traverse(o => { if (!node && o.name === meshName) node = o; });
   if (node) node.traverse(o => { o.visible = true; });
 }
-function _l3ShowAll() { if (l3.root) l3.root.traverse(o => { o.visible = true; }); }
+function _l3ShowAll() { _l3ClearGhost(); if (l3.root) l3.root.traverse(o => { o.visible = true; }); }
+// Practical "ghost" mode: make everything EXCEPT the pinned structure semi-transparent
+// (still visible for context) so the highlighted target stands out even when buried.
+function _l3ClearGhost() {
+  if (l3._ghosted) {
+    l3._ghosted.forEach(g => { if (g.mesh && g.mesh.material && g.mesh.material !== g.mat) { const m = g.mesh.material; g.mesh.material = g.mat; if (m && m.dispose) m.dispose(); } });
+  }
+  l3._ghosted = null;
+}
+function _l3GhostExcept(targetName) {
+  _l3ClearGhost();
+  if (!l3.root) return;
+  const keep = new Set();
+  let node = null; l3.root.traverse(o => { if (!node && o.name === targetName) node = o; });
+  if (node) node.traverse(o => { if (o.isMesh) keep.add(o); });
+  const reg = [];
+  l3.root.traverse(o => {
+    if (o.isMesh && !keep.has(o)) {
+      const orig = o.material;
+      const src = Array.isArray(orig) ? orig[0] : orig;
+      const gm = src.clone(); gm.transparent = true; gm.opacity = 0.35; gm.depthWrite = false;
+      o.material = gm; reg.push({ mesh: o, mat: orig });
+    }
+  });
+  l3._ghosted = reg;
+}
 
 var _l3Selected = null;
 function _l3Select(structId, fromTap) {
@@ -291,7 +316,7 @@ function _l3PracticalNext(first) {
   const others = l3.structs.filter(x => x.id !== s.id).map(x => x.name);
   p.choices = shuffle([s.name].concat(shuffle(others).slice(0, 3)));
   p.answered = false; p.chosen = null; p.timedOut = false; p.secLeft = 60;
-  _l3ShowAll(); _l3HighlightMesh(s.mesh);       // pin the target (name hidden)
+  _l3ShowAll(); _l3GhostExcept(s.mesh); _l3HighlightMesh(s.mesh);   // ghost the rest so the pinned target is visible
   render();
   p.timer = setInterval(() => {
     p.secLeft--; const el = document.getElementById("l3prtimer");
