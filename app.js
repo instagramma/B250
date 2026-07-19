@@ -391,25 +391,55 @@ let l2FirstScored = new Set();   // station ids already scored for FIRST-PASS th
 let l2FirstCorrect = 0;          // first-attempt correct this round (the honest round score)
 let l2Recovered = 0;             // got right later on a requeue (recovery — shown separately, doesn't inflate score)
 let l2TimedOut = false;          // current station hit the 60s limit → auto-scored as a miss
+let l2StationLocked = false;     // true once THIS station's first-pass result is recorded — set the instant
+                                  // a timeout fires, so leaving without pressing Next still counts the miss
 // Per-station tally now lives in progressState.lab2stations so it SYNCS (own Lab model-readiness metric,
 // kept separate from MCQ/diagram readiness). firstDone/firstOk track first-pass accuracy over time.
 function loadL2Stats() { return (progressState && progressState.lab2stations) || {}; }
+// `first` here means "first attempt THIS ROUND" (requeues within a round don't recount) — kept for the
+// per-round first-pass score shown at the end of a practical round. It is NOT the same as "the very first
+// time this station has ever been attempted, across every round/device" — that lifetime fact is what real
+// readiness needs, so we track it separately as `everSeen`/`trueFirstOk`, set ONCE and never overwritten
+// (immutable first-pass — a later correct re-attempt can never retroactively turn a real miss into a hit).
 function recordL2(id, ok, first) {
   if (!progressState.lab2stations) progressState.lab2stations = {};
   const e = progressState.lab2stations[id] || { seen: 0, missed: 0, firstDone: 0, firstOk: 0 };
+  const lifetimeFirst = !e.everSeen;
   e.seen++; if (!ok) e.missed++;
   if (first) { e.firstDone++; if (ok) e.firstOk++; }
+  if (lifetimeFirst) { e.everSeen = true; e.trueFirstOk = !!ok; }
   e.last = Date.now();
   progressState.lab2stations[id] = e;
   saveLocalProgress();   // debounced cloud push → syncs the model-readiness metric across devices
 }
-// Overall first-pass model-station accuracy (0..100) across everything you've stationed — the Lab model
-// readiness dimension. Null until you've done at least one station.
+// Real Lab-2 photo readiness, as TWO honest numbers instead of one misleading blended percentage:
+//   coverage   — how many of the 18 real-model photos you've EVER looked at (unique, not per-round)
+//   firstPass  — of the ones you've attempted, what % did you get right on your true first-ever try
+// The 2 photos flagged `verify:true` (unconfirmed IDs — lm11/lm12, the transparent cast) are excluded
+// from firstPass scoring until their answer is confirmed against the lab key; they still count toward
+// coverage's denominator so the number isn't inflated by pretending they don't exist.
 function lab2ModelReadiness() {
   const s = (progressState && progressState.lab2stations) || {};
-  let done = 0, ok = 0;
-  Object.keys(s).forEach(id => { done += s[id].firstDone || 0; ok += s[id].firstOk || 0; });
-  return done ? { pct: Math.round(ok / done * 100), ok, done } : null;
+  const all = (typeof LAB2_MODELS !== "undefined" && LAB2_MODELS) || [];
+  const scoreable = all.filter(m => !m.verify);
+  const totalAll = all.length || Object.keys(s).length;
+  const coveredAll = all.length ? all.filter(m => s[m.id] && s[m.id].everSeen).length
+                                  : Object.keys(s).filter(id => s[id].everSeen).length;
+  const scoreablePool = scoreable.length ? scoreable : all;
+  const attempted = scoreablePool.filter(m => s[m.id] && s[m.id].everSeen);
+  const firstPassOk = attempted.filter(m => s[m.id].trueFirstOk).length;
+  return {
+    coverage: { covered: coveredAll, total: totalAll },
+    firstPass: attempted.length ? { ok: firstPassOk, done: attempted.length, pct: Math.round(firstPassOk / attempted.length * 100) } : null,
+    unconfirmedExcluded: all.length - scoreable.length,
+  };
+}
+// Legacy shape some older call sites may still expect: a single blended pct. Derived from the two real
+// numbers above so nothing silently reads a fabricated 100% again — null until BOTH dimensions exist.
+function lab2ModelReadinessLegacyPct() {
+  const r = lab2ModelReadiness();
+  if (!r || !r.firstPass) return null;
+  return r.firstPass.pct;
 }
 
 function loadLocalProgress() {
@@ -523,21 +553,25 @@ let _cloudPushT = null, _cloudBusy = false;
 function cloudMerge(into, from) {
   into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
   // Lab 2 model-station stats (own readiness dimension) — best-of merge across devices.
+  // everSeen/trueFirstOk are the LIFETIME-first fact and must stay immutable once set on either side:
+  // once true first-pass result is written, no later merge (from any device) may flip it.
   into.lab2stations = into.lab2stations || {};
   Object.keys(from.lab2stations || {}).forEach(id => {
     const b = from.lab2stations[id], a = into.lab2stations[id];
     if (!a) { into.lab2stations[id] = JSON.parse(JSON.stringify(b)); return; }
     a.seen = Math.max(a.seen || 0, b.seen || 0); a.missed = Math.max(a.missed || 0, b.missed || 0);
     a.firstDone = Math.max(a.firstDone || 0, b.firstDone || 0); a.firstOk = Math.max(a.firstOk || 0, b.firstOk || 0);
+    if (!a.everSeen && b.everSeen) { a.everSeen = true; a.trueFirstOk = !!b.trueFirstOk; }   // immutable — only ever SET, never overwritten
     if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
   });
-  // 3D Explorer practical stats — own readiness dimension, best-of merge.
+  // 3D Explorer practical stats — own readiness dimension, best-of merge. Same immutability rule.
   into.lab3d = into.lab3d || {};
   Object.keys(from.lab3d || {}).forEach(k => {
     const b = from.lab3d[k], a = into.lab3d[k];
     if (!a) { into.lab3d[k] = JSON.parse(JSON.stringify(b)); return; }
     a.seen = Math.max(a.seen || 0, b.seen || 0); a.missed = Math.max(a.missed || 0, b.missed || 0);
     a.firstDone = Math.max(a.firstDone || 0, b.firstDone || 0); a.firstOk = Math.max(a.firstOk || 0, b.firstOk || 0);
+    if (!a.everSeen && b.everSeen) { a.everSeen = true; a.trueFirstOk = !!b.trueFirstOk; }
     if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
   });
   Object.keys(from.quizzes || {}).forEach(k => {
@@ -696,10 +730,11 @@ function qExamProb(id, mode, guess) {
    live view, so you can study again from zero without losing anything. The
    all-time view merges the archive with your current data. */
 const ARCHIVE_KEY = "biol250_alltime_v1";
-function loadArchive() { try { return JSON.parse(localStorage.getItem(ns(ARCHIVE_KEY))) || { quizzes:{}, qstats:{}, examAttempts:{} }; } catch (e) { return { quizzes:{}, qstats:{}, examAttempts:{} }; } }
+function loadArchive() { try { return JSON.parse(localStorage.getItem(ns(ARCHIVE_KEY))) || { quizzes:{}, qstats:{}, examAttempts:{}, lab2stations:{}, lab3d:{} }; } catch (e) { return { quizzes:{}, qstats:{}, examAttempts:{}, lab2stations:{}, lab3d:{} }; } }
 function saveArchive(a) { try { localStorage.setItem(ns(ARCHIVE_KEY), JSON.stringify(a)); } catch (e) {} }
 function mergeProgress(into, from) {
   into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
+  into.lab2stations = into.lab2stations || {}; into.lab3d = into.lab3d || {};
   Object.keys(from.quizzes || {}).forEach(k => {
     const b = from.quizzes[k], a = into.quizzes[k];
     if (!a) { into.quizzes[k] = JSON.parse(JSON.stringify(b)); return; }
@@ -734,6 +769,38 @@ function mergeProgress(into, from) {
   into.reports = into.reports || [];
   { const rs = new Set(into.reports.map(r => (r.id||"")+"|"+(r.date||"")+"|"+(r.reason||"")));
     (from.reports || []).forEach(r => { const k=(r.id||"")+"|"+(r.date||"")+"|"+(r.reason||""); if(!rs.has(k)){rs.add(k); into.reports.push(r);} }); }
+  // Exam/quiz attempt HISTORY — was completely missing from this function, so "Start fresh" silently
+  // dropped every past mock/timed-exam/CAT attempt instead of archiving it (they're not in `quizzes` or
+  // `qstats`, which is all this function used to touch). Same dedup-by-date+score, cap-10 approach as
+  // the cloud merge, so History keeps working after a reset.
+  Object.keys(from.examAttempts || {}).forEach(k => {
+    const bar = from.examAttempts[k] || [], aar = into.examAttempts[k];
+    if (!aar) { into.examAttempts[k] = JSON.parse(JSON.stringify(bar)); return; }
+    const seen = new Set(), out = [];
+    [...aar, ...bar].forEach(x => { const key = (x.date || "") + ":" + (x.pct ?? "") + ":" + (x.score ?? ""); if (!seen.has(key)) { seen.add(key); out.push(x); } });
+    out.sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+    into.examAttempts[k] = out.slice(0, 10);
+  });
+  // Lab 2 photo-station stats — ALSO missing before, so "Start fresh" deleted (not archived) real-photo
+  // coverage/first-pass history. Counts are additive (archive + what accrued since the last reset);
+  // everSeen/trueFirstOk is the immutable lifetime-first fact, only ever set, never overwritten.
+  Object.keys(from.lab2stations || {}).forEach(id => {
+    const b = from.lab2stations[id], a = into.lab2stations[id];
+    if (!a) { into.lab2stations[id] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = (a.seen || 0) + (b.seen || 0); a.missed = (a.missed || 0) + (b.missed || 0);
+    a.firstDone = (a.firstDone || 0) + (b.firstDone || 0); a.firstOk = (a.firstOk || 0) + (b.firstOk || 0);
+    if (!a.everSeen && b.everSeen) { a.everSeen = true; a.trueFirstOk = !!b.trueFirstOk; }
+    if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
+  });
+  // 3D Explorer practical stats — same fix, same reasoning as lab2stations above.
+  Object.keys(from.lab3d || {}).forEach(k => {
+    const b = from.lab3d[k], a = into.lab3d[k];
+    if (!a) { into.lab3d[k] = JSON.parse(JSON.stringify(b)); return; }
+    a.seen = (a.seen || 0) + (b.seen || 0); a.missed = (a.missed || 0) + (b.missed || 0);
+    a.firstDone = (a.firstDone || 0) + (b.firstDone || 0); a.firstOk = (a.firstOk || 0) + (b.firstOk || 0);
+    if (!a.everSeen && b.everSeen) { a.everSeen = true; a.trueFirstOk = !!b.trueFirstOk; }
+    if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
+  });
   return into;
 }
 /* All-time view = archive merged with current. This is expensive (parse + deep-clone + merge),
@@ -1087,7 +1154,7 @@ function buildTopbar() {
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
       else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
-      else if (state.route === "lab3d")          { try { if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
+      else if (state.route === "lab3d")          { try { if (typeof _l3StopPracticalTimer === "function") _l3StopPracticalTimer(); else if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
       else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
@@ -1125,8 +1192,8 @@ function buildTopbar() {
   else if (state.route === "ownerStats") titleText = "Class Stats 👑";
   else if (state.route === "stuviaMenu")     titleText = "Stuvia Bank";
   else if (state.route === "claudeMenu")     titleText = "Claude Bank";
-  else if (state.route === "catSim")         titleText = "CAT Simulation 🧪";
-  else if (state.route === "catEnd")         titleText = "CAT Results 🧪";
+  else if (state.route === "catSim")         titleText = "Adaptive Ability Index 🧪";
+  else if (state.route === "catEnd")         titleText = "Adaptive Ability Index Results 🧪";
   else if (state.route === "preparednessGeneric") titleText = "Preparedness";
   else if (state.route === "labelTag") titleText = "Tag Diagram Spots";
   else if (state.route === "fullExam")        titleText = state.examTitle || "Simulation";
@@ -1448,7 +1515,7 @@ function renderOwnerStats(main) {
     if (s.recent && s.recent.length) {
       const rl = document.createElement("div"); rl.style.cssText = "margin-top:10px;border-top:1px solid #f0f0f0;padding-top:8px;";
       rl.innerHTML = `<div style="font-size:.72rem;color:#aaa;margin-bottom:4px;">Recent</div>`;
-      s.recent.forEach(a => { const r = document.createElement("div"); r.style.cssText = "display:flex;justify-content:space-between;font-size:.82rem;color:#555;padding:2px 0;"; const pct = (typeof a.pct === "number") ? a.pct + "%" : (a.kind === "cat" ? ("CAT " + (a.readiness != null ? a.readiness + "%" : "")) : "—"); r.innerHTML = `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;">${a.title || a._key || "Attempt"}</span><span style="color:#888;">${pct} · ${a.date || ""}</span>`; rl.appendChild(r); });
+      s.recent.forEach(a => { const r = document.createElement("div"); r.style.cssText = "display:flex;justify-content:space-between;font-size:.82rem;color:#555;padding:2px 0;"; const pct = (typeof a.pct === "number") ? a.pct + "%" : (a.kind === "cat" ? ("AAI " + (a.readiness != null ? a.readiness + "/100" : "")) : "—"); r.innerHTML = `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;">${a.title || a._key || "Attempt"}</span><span style="color:#888;">${pct} · ${a.date || ""}</span>`; rl.appendChild(r); });
       card.appendChild(rl);
     }
     wrap.appendChild(card);
@@ -3261,6 +3328,7 @@ function prepMetricToggle(main, metric) {
     : metric === "book"
     ? "<b>Book knowledge</b> — your current recall across all 76 official Martini sections, weighted equally. Fades if you stop reviewing."
     : "<b>Readiness</b> — of <i>all</i> questions in each system, how much you'd recall today. Untried or forgotten counts as 0.";
+  exp.innerHTML += ` Bank-coverage estimate — directional, not a validated pass probability.`;
   main.appendChild(exp);
 }
 function prepModeToggle(main, md) {
@@ -3297,6 +3365,22 @@ function recentMockAvg(mode) {
   const vals = recs.slice(0, 3).map(a => a.rec.pct);     // most recent up to 3
   return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
 }
+// The single MOST RECENT full, timed, realistic mock — the primary readiness signal (an actual
+// timed 200-Q performance beats any model's estimate). Everything else on this screen (predicted
+// score, true-preparedness, bank coverage, Adaptive Ability Index) is a directional ESTIMATE meant
+// to guide study, not a validated probability of passing — this is the one number closest to "the
+// real thing," so it's surfaced separately and first.
+function latestMock(mode) {
+  const recs = (typeof allAttempts === "function" ? allAttempts() : []).filter(a =>
+    a.kind === "mock" &&
+    (a.rec.total || 0) >= 150 &&
+    !/mini/i.test(a.rec.title || a.title || "") &&
+    a.rec.mode === mode &&
+    typeof a.rec.pct === "number");
+  if (!recs.length) return null;
+  const a = recs[0];
+  return { pct: a.rec.pct, score: a.rec.score, total: a.rec.total, date: a.rec.date || "", title: a.rec.title || a.title || "Full mock" };
+}
 /* Predicted Exam Score card — the headline "am I ready?" forecast. */
 function _bpAttempted(md) {
   const pools = blueprintSources(); let n = 0;
@@ -3304,19 +3388,33 @@ function _bpAttempted(md) {
   return n;
 }
 function renderExamOutlook(main, md) {
+  // PRIMARY signal: the latest full, timed, realistic mock — an actual timed performance beats any
+  // model's estimate. Shown first and separately from the estimates below (which are all directional).
+  const latest = latestMock(md);
+  if (latest) {
+    const lc = document.createElement("div");
+    lc.style.cssText = "margin:6px 0 10px;padding:14px 16px;border-radius:14px;background:#0F3D2E;color:#fff;border:2px solid #34D399;";
+    lc.innerHTML = `<div style="font-weight:800;font-size:.82rem;letter-spacing:.03em;opacity:.9;">📍 PRIMARY SIGNAL — YOUR LATEST FULL MOCK</div>
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <div style="font-size:2.2rem;font-weight:900;line-height:1;">${latest.pct}%</div>
+        <div style="font-size:.85rem;opacity:.9;">${latest.score}/${latest.total} · ${escapeHtml(latest.title)} · ${escapeHtml(latest.date || "")}</div>
+      </div>
+      <div style="font-size:.74rem;opacity:.85;margin-top:6px;">This is a real timed result, not an estimate. Everything below (predicted score, true preparedness, bank coverage, Adaptive Ability Index) is a directional estimate meant to guide study — none of them are a validated probability of passing.</div>`;
+    main.appendChild(lc);
+  }
   const diagOn = !!state.predDiagrams;
   const pred = predictExam(md, undefined, diagOn);
   const card = document.createElement("div");
   card.style.cssText = "margin:6px 0 14px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;";
   if (!pred || _bpAttempted(md) < 5) {
-    card.innerHTML = `<div style="font-weight:800;font-size:1rem;margin-bottom:4px;">🔮 Predicted exam score</div>
-      <div style="font-size:.85rem;opacity:.9;">Practice some questions in <b>${md==="closed"?"closed-book":"with-notes"}</b> mode and this forecasts your 200-question exam result (score, likely range, and odds of clearing 75% / 90%).</div>`;
+    card.innerHTML = `<div style="font-weight:800;font-size:1rem;margin-bottom:4px;">🔮 Predicted exam score <span style="font-weight:500;opacity:.75;font-size:.72rem;">(directional estimate)</span></div>
+      <div style="font-size:.85rem;opacity:.9;">Practice some questions in <b>${md==="closed"?"closed-book":"with-notes"}</b> mode and this forecasts your 200-question exam result (score, likely range, and odds of clearing 75% / 90%). ${latest ? "Your latest mock above is the more reliable number until then." : ""}</div>`;
     main.appendChild(card); return;
   }
   const cal = recentMockAvg(md);
   const calLine = cal != null ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.25);font-size:.8rem;opacity:.95;">📏 Weighted <b>25%</b> toward your realistic-mock average (<b>${cal}%</b>) — mocks are the strongest readiness signal.</div>` : "";
   card.innerHTML = `
-    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;">🔮 Predicted exam score <span style="font-weight:600;opacity:.85;font-size:.8rem;">· if it were today · ${md==="closed"?"closed-book":"with-notes"}</span></div>
+    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;">🔮 Predicted exam score <span style="font-weight:500;opacity:.75;font-size:.72rem;">(directional estimate, not a validated pass probability)</span> <span style="font-weight:600;opacity:.85;font-size:.8rem;">· if it were today · ${md==="closed"?"closed-book":"with-notes"}</span></div>
     <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
       <div style="font-size:2.6rem;font-weight:800;line-height:1;">${pred.mean}<span style="font-size:1.1rem;font-weight:600;opacity:.8;">/${pred.total}</span></div>
       <div style="font-size:1.3rem;font-weight:700;opacity:.95;">${pred.meanPct}%</div>
@@ -3486,12 +3584,17 @@ function renderStudyPlan(main, md) {
   const card = document.createElement("div");
   card.style.cssText = "margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#fff;border:2px solid #E67E22;";
   const predPct = d.pred ? d.pred.meanPct : 0;
-  const gap = Math.max(0, READY_BAR - predPct);
+  const gapPct = Math.max(0, READY_BAR - predPct);   // gap is in PERCENTAGE POINTS of the predicted score
+  // Torso exam = 200 questions / 250 points → convert the abstract percentage gap into concrete, unambiguous
+  // units too. "Need +27 pts" used to read as if it meant raw exam points (out of 250) or questions — it was
+  // actually percentage points of the Monte-Carlo prediction. Show all three so nothing is misread.
+  const gapQs = Math.round(gapPct / 100 * 200);
+  const gapExamPts = Math.round(gapPct / 100 * 250);
   const targetTxt = d.exam.readyMon
     ? `On track for <b>Monday</b> (predicted ${predPct}%).`
     : `At <b>${predPct}%</b> you're below the 75% bar — and Monday is a hard deadline (no retake). Every hour counts.`;
   let html = `<div style="font-weight:800;font-size:1rem;color:#B5560F;margin-bottom:2px;">📋 Your plan — ${d.exam.days} day${d.exam.days===1?"":"s"} to go</div>
-    <div style="font-size:.82rem;color:#666;margin-bottom:10px;">${targetTxt}${gap>0?` Need <b>+${gap} pts</b> to clear 75%.`:` 🎉`} Fastest path up, biggest lever first:</div>`;
+    <div style="font-size:.82rem;color:#666;margin-bottom:10px;">${targetTxt}${gapPct>0?` Need <b>+${gapPct} percentage points</b> to clear 75% — roughly <b>${gapQs} more questions</b> right (out of 200) / <b>${gapExamPts} exam points</b> (out of 250).`:` 🎉`} Fastest path up, biggest lever first:</div>`;
   // Strengths — what's already working (keep it warm, don't over-drill it).
   const _ps = prepScore(md);
   if (_ps.strengths.length) {
@@ -3753,12 +3856,12 @@ function renderPrepVerdict(main, md) {
   card.style.cssText = `margin:6px 0 14px;padding:15px 16px;border-radius:14px;background:#fff;border:2px solid ${col};`;
   const confNote = p.confidence === "high" ? "based on a broad sample" : p.confidence === "medium" ? "based on a moderate sample" : "based on a thin sample so far";
   let html = `<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
-      <div style="font-weight:800;font-size:1rem;color:${col};">🧭 True preparedness</div>
+      <div style="font-weight:800;font-size:1rem;color:${col};">🧭 True preparedness <span style="font-weight:500;color:#999;font-size:.68rem;">(directional estimate)</span></div>
       <div style="font-size:2rem;font-weight:800;line-height:1;color:${col};">${p.overall}%</div>
       <div style="font-size:.82rem;color:#666;">${md==="closed"?"closed-book":"with-notes"} · ${confNote}</div>
     </div>
     <div style="font-size:.9rem;font-weight:700;color:${col};margin:6px 0 2px;">${verdict}</div>
-    <div style="font-size:.76rem;color:#888;line-height:1.4;margin-bottom:8px;">Skill on what you've practiced × how broadly you've sampled (a solid ~40-question sample per region counts as representative — you don't have to finish the whole bank) × a memorizing-vs-mastering check.</div>`;
+    <div style="font-size:.76rem;color:#888;line-height:1.4;margin-bottom:8px;">Skill on what you've practiced × how broadly you've sampled (a solid ~40-question sample per region counts as representative — you don't have to finish the whole bank) × a memorizing-vs-mastering check. This estimates readiness to guide study — it is not a validated pass probability; your latest full timed mock is the more reliable signal.</div>`;
   // The 4 main regions at a glance (Thorax / Abdomen / Pelvis / Systemic)
   html += `<div style="display:flex;gap:6px;margin:6px 0 2px;">` + p.regions.map(rg => {
     const rc = rg.attempted === 0 ? "#bbb" : _prepBandColor(rg.score);
@@ -5300,7 +5403,7 @@ function startLab2Practical(timed, weakOnly) {
     if (!pool.length) { alert("No weak stations yet — do a full round first, then this drills the ones you miss."); return; }
   }
   l2Deck = shuffle(pool); l2Index = 0; l2Revealed = false; l2Timed = !!timed; l2StartCount = l2Deck.length;
-  l2FirstScored = new Set(); l2FirstCorrect = 0; l2Recovered = 0; l2TimedOut = false;
+  l2FirstScored = new Set(); l2FirstCorrect = 0; l2Recovered = 0; l2TimedOut = false; l2StationLocked = false;
   state.route = "lab2Station"; render();
 }
 function _l2StartTimer() {
@@ -5311,8 +5414,29 @@ function _l2StartTimer() {
     l2SecLeft--;
     const el = document.getElementById("l2timer");
     if (el) { el.textContent = l2SecLeft + "s"; el.style.color = l2SecLeft <= 10 ? "#C0392B" : "var(--muted)"; }
-    if (l2SecLeft <= 0) { _l2ClearTimer(); if (!l2Revealed) { l2Revealed = true; l2TimedOut = true; render(); } }
+    if (l2SecLeft <= 0) {
+      _l2ClearTimer();
+      if (!l2Revealed) {
+        l2Revealed = true; l2TimedOut = true;
+        _l2ScoreCurrent(false);   // IMMUTABLE first-pass: lock the miss in right now, don't wait for Next —
+                                  // if the student leaves the station/route without pressing Next, it still counts.
+        render();
+      }
+    }
   }, 1000);
+}
+// Records the first-pass result for the CURRENT station exactly once. Safe to call more than once
+// (e.g. a timeout locks the miss immediately; the eventual "Next →" click just advances) because the
+// l2StationLocked guard makes every call after the first a no-op — the result can't be overwritten.
+function _l2ScoreCurrent(ok) {
+  if (l2StationLocked) return;
+  const m = l2Deck[l2Index]; if (!m) return;
+  const first = !l2FirstScored.has(m.id);        // first attempt at this station THIS round?
+  if (first) { l2FirstScored.add(m.id); if (ok) l2FirstCorrect++; }
+  else if (ok) { l2Recovered++; }                // got it on a requeue = recovery, NOT first-pass score
+  recordL2(m.id, ok, first);                     // syncs; first-pass tracked separately
+  if (!ok) l2Deck.push(m);                        // requeue for more practice (doesn't change the score)
+  l2StationLocked = true;
 }
 function renderLab2Station(main) {
   if (!l2Deck.length) { _l2ClearTimer(); state.route = "modes"; render(); return; }
@@ -5375,12 +5499,8 @@ function renderLab2Station(main) {
     main.appendChild(ans);
 
     const grade = (ok) => {
-      const first = !l2FirstScored.has(m.id);        // first attempt at this station THIS round?
-      if (first) { l2FirstScored.add(m.id); if (ok) l2FirstCorrect++; }
-      else if (ok) { l2Recovered++; }                // got it on a requeue = recovery, NOT first-pass score
-      recordL2(m.id, ok, first);                     // syncs; first-pass tracked separately
-      if (!ok) l2Deck.push(m);                        // requeue for more practice (doesn't change the score)
-      l2Index++; l2Revealed = false; l2TimedOut = false; render();
+      _l2ScoreCurrent(ok);   // no-op if a timeout already locked this station's result — can't double-record
+      l2Index++; l2Revealed = false; l2TimedOut = false; l2StationLocked = false; render();
     };
 
     if (l2TimedOut) {
@@ -7001,7 +7121,11 @@ function catDifficulty(id, q) {
       const n = st.seen, miss = (st.missed || 0) / n;
       const emp = (miss - 0.45) * 2.4;                 // observed hardness in logits (miss-rate → difficulty)
       const w = Math.min(0.55, n / (n + 10));          // data weight: rises with responses, capped at 0.55
-      b += emp * w;                                    // heuristic dominates until enough data is captured
+      // TRUE blend (interpolate), not additive: was `b += emp * w`, which stacked the empirical term ON
+      // TOP of the full heuristic instead of letting the heuristic's own weight shrink as w grows — at
+      // w=0.55 that meant 100% heuristic + 55% empirical (155% total), not the intended "mostly-static,
+      // shifts toward observed difficulty as data accrues." This converges toward `emp` as w → its cap.
+      b = b * (1 - w) + emp * w;
     }
     const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
     if (typeof isFuzzy === "function" && isFuzzy(id, md)) b += 0.5;
@@ -7036,7 +7160,7 @@ function catRegions(key) {
 }
 function launchCat(key) {
   const cfg = CAT_CONFIG[key];
-  if (!cfg || !cfg.enabled) { alert("CAT for this section is coming soon (experimental)."); return; }
+  if (!cfg || !cfg.enabled) { alert("The Adaptive Ability Index for this section is coming soon (experimental)."); return; }
   let regions = catRegions(key).filter(r => r.pool.length);
   if (!regions.length) { alert("Not enough questions to run an adaptive test here yet."); return; }
   // De-duplicate by stem ACROSS regions so the same question can't reappear (e.g. Systemic
@@ -7115,18 +7239,21 @@ function catFinish() {
   cs.regionStats = reg;
   try {
     recordAttempt("cat:" + cs.key, {
-      title: "CAT Simulation (Experimental)", kind: "cat",
+      title: "Adaptive Ability Index (Experimental)", kind: "cat",
       mode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
       score: correct, total: n, pct: cs.pct,
       theta: Math.round(cs.theta * 100) / 100, se: Math.round(cs.se * 100) / 100, readiness: cs.readiness,
     });
   } catch (e) {}
 }
+// Deliberately NOT a pass/fail readiness verdict — the Adaptive Ability Index is an uncalibrated
+// experimental estimate (see catDifficulty), so it should never claim to predict exam outcome. These
+// labels describe where your estimated ability sits relative to the target band, nothing more.
 function catVerdict(theta, se) {
   const lo = theta - 1.96 * se, hi = theta + 1.96 * se;
-  if (lo > 0.3) return { txt: "Likely ready", color: "#0F766E", emoji: "✅" };
-  if (hi < -0.3) return { txt: "Not ready yet", color: "#C0392B", emoji: "📚" };
-  return { txt: "Borderline — keep drilling", color: "#B7791F", emoji: "⚖️" };
+  if (lo > 0.3) return { txt: "Above target band", color: "#0F766E", emoji: "📈" };
+  if (hi < -0.3) return { txt: "Below target band — keep drilling", color: "#C0392B", emoji: "📚" };
+  return { txt: "Within target band — keep drilling", color: "#B7791F", emoji: "⚖️" };
 }
 function renderCatSim(main) {
   const cs = catState;
@@ -7172,10 +7299,10 @@ function renderCatEnd(main) {
   wrap.style.cssText = "max-width:640px;margin:0 auto;";
   wrap.innerHTML = `
     <div style="text-align:center;background:linear-gradient(135deg,#7C3AED 0%,#4338CA 100%);color:#fff;border-radius:18px;padding:26px 20px;margin-bottom:18px;">
-      <div style="font-size:.8rem;font-weight:700;letter-spacing:.5px;opacity:.85;">🧪 CAT SIMULATION · EXPERIMENTAL</div>
+      <div style="font-size:.8rem;font-weight:700;letter-spacing:.5px;opacity:.85;">🧪 ADAPTIVE ABILITY INDEX · EXPERIMENTAL</div>
       <div style="font-size:2.6rem;margin:6px 0;">${v.emoji}</div>
       <div style="font-size:1.5rem;font-weight:800;">${v.txt}</div>
-      <div style="font-size:1rem;opacity:.9;margin-top:6px;">Estimated readiness ${cs.readiness}% · ${cs.answered.length} items · ${cs.pct}% correct</div>
+      <div style="font-size:1rem;opacity:.9;margin-top:6px;">Adaptive Ability Index: ${cs.readiness}/100 · ${cs.answered.length} items · ${cs.pct}% correct</div>
       <div style="font-size:.78rem;opacity:.8;margin-top:8px;">ability θ = ${cs.theta.toFixed(2)} ± ${(1.96 * cs.se).toFixed(2)} (95% CI)</div>
     </div>`;
   // per-region
@@ -7210,11 +7337,11 @@ function addCatCard(list, key) {
   const b = document.createElement("button"); b.className = "modeBtn";
   if (cfg.enabled) {
     b.style.cssText = "border:2px solid #7C3AED;background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);";
-    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">CISSP-style: adapts to your level & stops early · ${cfg.total} Qs max</span>`;
+    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">Adaptive Ability Index <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">CISSP-style: adapts to your level & stops early · ${cfg.total} Qs max · directional estimate, not a readiness verdict</span>`;
     b.onclick = () => launchCat(key);
   } else {
     b.style.cssText = "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
-    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">Adaptive engine coming soon for ${cfg.label}</span>`;
+    b.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">Adaptive Ability Index <span style="font-size:.7rem;color:#7C3AED;font-weight:700;">EXPERIMENTAL</span></span><span class="modeMeta">Adaptive engine coming soon for ${cfg.label}</span>`;
     b.onclick = () => alert("The adaptive CAT for " + cfg.label + " is coming soon — it's live for Torso and the Cumulative final. (Experimental)");
   }
   list.appendChild(b);
@@ -7265,18 +7392,49 @@ function renderPreparednessGeneric(main) {
       </div>
       <div style="font-size:.75rem;opacity:.8;margin-top:10px;">${cov.attempted}/${cov.total} questions attempted · recall-weighted, decays over time</div>
     </div>`;
-  // Lab 2 only: model-station readiness — a SEPARATE dimension (first-pass recognition of the real
-  // class-model photos), kept apart from the MCQ readiness above so they're not blended into one score.
-  if (key === "lab2" && typeof lab2ModelReadiness === "function") {
-    const mr = lab2ModelReadiness();
+  // Lab 2 only: FOUR separate, honest dimensions — MCQ (above), real-photo stations, labeling, and
+  // course-filtered 3D. Never blended into one number until every dimension actually has data, so an
+  // empty dimension can't silently read as "0% dragging you down" OR get ignored as if it doesn't exist.
+  if (key === "lab2") {
+    const dims = { mcq: null, photos: null, labeling: null, threeD: null };
+    if (cov.attempted > 0) dims.mcq = { pct: perf, label: `${cov.attempted}/${cov.total} MCQs attempted` };
+    if (typeof lab2ModelReadiness === "function") {
+      const mr = lab2ModelReadiness();
+      if (mr.firstPass) dims.photos = { pct: mr.firstPass.pct, label: `${mr.firstPass.ok}/${mr.firstPass.done} scored right first try`, coverage: mr.coverage };
+      else if (mr.coverage.covered > 0) dims.photos = { pct: null, label: `${mr.coverage.covered}/${mr.coverage.total} viewed, none scoreable yet`, coverage: mr.coverage };
+    }
+    const labQ = progressState.quizzes && progressState.quizzes["labeling:lab2"];
+    if (labQ && labQ.attempts) dims.labeling = { pct: labQ.bestScore, label: `best ${labQ.bestScore}% over ${labQ.attempts} attempt${labQ.attempts === 1 ? "" : "s"}` };
+    if (typeof lab3dReadiness === "function") {
+      const l3r = lab3dReadiness(true);   // true = course-filtered (BIOL 250 Lab 2 whitelist only)
+      if (l3r) dims.threeD = { pct: l3r.pct, label: `${l3r.ok}/${l3r.done} structures right first try (3D)` };
+    }
     const mc = document.createElement("div");
     mc.style.cssText = "background:#fff;border:1.5px solid var(--teal);border-radius:14px;padding:14px 18px;margin-bottom:16px;";
-    mc.innerHTML = mr
-      ? `<div style="font-weight:800;color:var(--teal-2);">📸 Model stations — first-pass readiness</div>
-         <div style="font-size:1.8rem;font-weight:900;color:${_prepBandColor(mr.pct)};margin:4px 0;">${mr.pct}%</div>
-         <div style="font-size:.8rem;color:var(--muted);">${mr.ok}/${mr.done} real-model photos identified right on the FIRST try. Separate from the MCQ readiness above — this is the practical dimension.</div>`
-      : `<div style="font-weight:800;color:var(--teal-2);">📸 Model stations — first-pass readiness</div>
-         <div style="font-size:.85rem;color:var(--muted);margin-top:4px;">No model stations done yet. Run <b>Model Stations</b> (timed) to build this — it tracks first-attempt recognition of your real class photos, separate from the quiz score.</div>`;
+    let dimHtml = `<div style="font-weight:800;color:var(--teal-2);margin-bottom:8px;">🧭 Lab 2 — four separate dimensions</div>`;
+    const dimRow = (label, icon, d, emptyMsg) => {
+      if (!d) return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px solid #f0f0f0;"><span style="font-size:.86rem;color:#888;">${icon} ${label}</span><span style="font-size:.78rem;color:#aaa;">${emptyMsg}</span></div>`;
+      const pctTxt = d.pct == null ? "—" : d.pct + "%";
+      const color = d.pct == null ? "#999" : _prepBandColor(d.pct);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px solid #f0f0f0;"><span style="font-size:.86rem;">${icon} ${label}</span><span style="font-size:.9rem;font-weight:800;color:${color};">${pctTxt} <span style="font-weight:500;color:#888;font-size:.74rem;">· ${d.label}</span></span></div>`;
+    };
+    dimHtml += dimRow("MCQ", "📝", dims.mcq, "not attempted yet");
+    dimHtml += dimRow("Photo stations", "📸", dims.photos, "no stations run yet");
+    if (dims.photos && dims.photos.coverage) {
+      dimHtml += `<div style="font-size:.72rem;color:#aaa;padding-left:22px;margin-top:-2px;">Coverage: ${dims.photos.coverage.covered}/${dims.photos.coverage.total} unique photos ever viewed${(typeof lab2ModelReadiness === "function" && lab2ModelReadiness().unconfirmedExcluded) ? ` (2 unconfirmed IDs excluded from scoring — verify against your lab key)` : ""}</div>`;
+    }
+    dimHtml += dimRow("Labeling", "🏷️", dims.labeling, "no labeling drill yet");
+    dimHtml += dimRow("3D Explorer", "🧊", dims.threeD, "no course-relevant 3D practice yet");
+    const have = Object.values(dims).filter(Boolean);
+    if (have.length === 4) {
+      const combined = Math.round(have.reduce((s, d) => s + (d.pct || 0), 0) / 4);
+      dimHtml += `<div style="margin-top:10px;padding-top:10px;border-top:2px solid var(--teal);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:800;">Combined Lab 2 score</span><span style="font-size:1.3rem;font-weight:900;color:${_prepBandColor(combined)};">${combined}%</span></div>
+        <div style="font-size:.72rem;color:#aaa;margin-top:2px;">Simple average of all 4 — only shown once every dimension has real data, so it can't hide a blind spot.</div>`;
+    } else {
+      dimHtml += `<div style="font-size:.74rem;color:#B7791F;margin-top:8px;">Combined score unlocks once all 4 dimensions have data (${have.length}/4 so far) — no single-number readiness until the whole practical is represented.</div>`;
+    }
+    mc.innerHTML = dimHtml;
     wrap.appendChild(mc);
   }
   // per-region readiness bars
@@ -7297,7 +7455,7 @@ function renderPreparednessGeneric(main) {
     const a = catAtt[0];
     const cc = document.createElement("div");
     cc.style.cssText = "background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.9rem;color:#5B21B6;";
-    cc.innerHTML = `🧪 <b>Last adaptive test:</b> readiness ${a.readiness}% · ${a.score}/${a.total} · ${a.date}`;
+    cc.innerHTML = `🧪 <b>Last Adaptive Ability Index:</b> ${a.readiness}/100 · ${a.score}/${a.total} · ${a.date}`;
     wrap.appendChild(cc);
   }
   // launch CAT (only for sections where CAT is defined — e.g. not lab practicals)
@@ -7305,7 +7463,7 @@ function renderPreparednessGeneric(main) {
     const catBtn = document.createElement("button"); catBtn.className = "modeBtn";
     const en = CAT_CONFIG[key].enabled;
     catBtn.style.cssText = en ? "border:2px solid #7C3AED;background:#F5F3FF;font-weight:700;" : "border:2px dashed #C4B5FD;background:#FAF5FF;opacity:.75;";
-    catBtn.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">CAT Simulation — Adaptive</span><span class="modeMeta">${en ? "CISSP-style adaptive · Experimental" : "Coming soon for this section"}</span>`;
+    catBtn.innerHTML = `<span class="modeIcon">🧪</span><span class="modeLabel">Adaptive Ability Index</span><span class="modeMeta">${en ? "CISSP-style adaptive · Experimental · directional estimate" : "Coming soon for this section"}</span>`;
     catBtn.onclick = () => en ? launchCat(key) : alert("Adaptive CAT is coming soon for this section (experimental).");
     wrap.appendChild(catBtn);
   }

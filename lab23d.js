@@ -76,19 +76,28 @@ function _l3Path(rel) {
   parts.forEach(p => { if (p === "..") base.pop(); else if (p !== ".") base.push(p); });
   return base.join("/");
 }
+// Shared manifest/labels loader — used both by the normal "tap the menu card" entry (open3DExplorer)
+// AND by render3DExplorer itself when the route is entered directly (page refresh / restored resume
+// state lands on route "lab3d" without ever calling open3DExplorer). Without this second path, a direct
+// refresh left l3.manifest null and render3DExplorer crashed reading `l3.manifest.models` → blank page.
+function _l3EnsureManifest() {
+  if (l3.manifest && l3.labels) return Promise.resolve();
+  if (l3._manifestP) return l3._manifestP;   // de-dupe concurrent calls (e.g. two renders in a row)
+  l3._manifestP = Promise.all([
+    fetch(LAB3D_BASE + "models.json?v=" + LAB3D_VER),
+    fetch(LAB3D_BASE + "labels.json?v=" + LAB3D_VER),
+  ]).then(([mR, lR]) => Promise.all([mR.json(), lR.json()]))
+    .then(([m, l]) => {
+      l3.manifest = m; l3.labels = l;
+      if (!l3.modelId) l3.modelId = (l3.manifest && l3.manifest.defaultModel) || ((l3.manifest.models[0] || {}).id);
+    })
+    .catch(() => { l3.manifest = l3.manifest || { models: [] }; l3.labels = l3.labels || { models: {} }; })
+    .finally(() => { l3._manifestP = null; });
+  return l3._manifestP;
+}
 async function open3DExplorer() {
   state.route = "lab3d";
-  if (!l3.manifest || !l3.labels) {
-    try {
-      const [mR, lR] = await Promise.all([
-        fetch(LAB3D_BASE + "models.json?v=" + LAB3D_VER),
-        fetch(LAB3D_BASE + "labels.json?v=" + LAB3D_VER),
-      ]);
-      l3.manifest = await mR.json();
-      l3.labels = await lR.json();
-    } catch (e) { l3.manifest = l3.manifest || { models: [] }; l3.labels = l3.labels || { models: {} }; }
-  }
-  if (!l3.modelId) l3.modelId = (l3.manifest && l3.manifest.defaultModel) || ((l3.manifest.models[0] || {}).id);
+  await _l3EnsureManifest();
   render();
 }
 function _l3Model() { return (l3.manifest && l3.manifest.models || []).find(m => m.id === l3.modelId) || null; }
@@ -293,24 +302,81 @@ function render3DStatus() {
     el.innerHTML = `<span style="color:#B7791F;">⚠️ Couldn't load the <b>${escapeHtml((_l3Model() || {}).title || "")}</b> model. On the live site the largest model may still be uploading — try Reload in a minute. Showing its poster meanwhile.</span>`;
   } else { el.textContent = l3.status || ""; }
 }
-/* ---- 3D practical scoring (separate synced dimension: progressState.lab3d, source "3d") ---- */
+/* ---- 3D practical scoring (separate synced dimension: progressState.lab3d, source "3d") ----
+   Same lifetime-first-pass fix as the photo stations (see recordL2/lab2ModelReadiness in app.js):
+   `first` is per-ROUND first attempt (kept for the round's end-screen score); `everSeen`/`trueFirstOk`
+   is the LIFETIME-first fact, set once and never overwritten, so cumulative readiness can't inflate
+   past reality just because you replayed a round and got lucky on the per-round "first" flag again. */
 function record3D(modelId, structId, ok, first) {
   const k = modelId + ":" + structId;
   if (!progressState.lab3d) progressState.lab3d = {};
   const e = progressState.lab3d[k] || { seen: 0, missed: 0, firstDone: 0, firstOk: 0 };
+  const lifetimeFirst = !e.everSeen;
   e.seen++; if (!ok) e.missed++; if (first) { e.firstDone++; if (ok) e.firstOk++; }
+  if (lifetimeFirst) { e.everSeen = true; e.trueFirstOk = !!ok; }
   e.last = Date.now(); e.src = "3d"; progressState.lab3d[k] = e; saveLocalProgress();
 }
-function lab3dReadiness() {
-  const s = (progressState && progressState.lab3d) || {}; let done = 0, ok = 0;
-  Object.keys(s).forEach(k => { done += s[k].firstDone || 0; ok += s[k].firstOk || 0; });
+// courseOnly=true restricts to keys whose structId is on the BIOL 250 Lab 2 whitelist (see
+// _l3IsWhitelisted) — but only if labels for that model are already loaded in THIS session (needed to
+// resolve structId → human name for the whitelist match). If labels aren't loaded yet, falls back to
+// unfiltered — safe in practice because startL3Practical() now only ever records whitelisted structures
+// going forward, so there's no meaningful stale non-whitelisted data to worry about filtering out.
+function lab3dReadiness(courseOnly) {
+  const s = (progressState && progressState.lab3d) || {};
+  let done = 0, ok = 0;
+  Object.keys(s).forEach(k => {
+    if (courseOnly && l3.labels && !_l3KeyWhitelisted(k)) return;
+    const done1 = s[k].everSeen ? 1 : 0, ok1 = (s[k].everSeen && s[k].trueFirstOk) ? 1 : 0;
+    done += done1; ok += ok1;
+  });
   return done ? { pct: Math.round(ok / done * 100), ok, done } : null;
 }
+/* ---- BIOL 250 Lab 2 whitelist for Practical mode ----
+   labels.json carries every officially-labeled structure in the source anatomy pack (heart 39 /
+   brain 283 / torso 282) — WAY more than the ~9 systems Lab 2 (Labs 12–23: Endocrine, Blood, Heart,
+   Vessels, Lymphatic, Respiratory, Digestive, Urinary, Reproductive) actually covers. Quizzing every
+   generic label would test material Gabe was never assigned. Instead of guessing which ~15 per model
+   are "high-yield," the whitelist is DERIVED from what he's actually being taught: any structure whose
+   name shows up in LAB2_BANK (the Lab-2 MCQ bank, sourced from his real Lab 2 worksheets) or in the
+   LAB2_MODELS real-photo answers/hints is fair game; everything else is held out of Practical mode. */
+function _l3Corpus() {
+  if (l3._corpus) return l3._corpus;
+  let text = "";
+  try { (typeof LAB2_BANK !== "undefined" ? LAB2_BANK : []).forEach(grp => (grp.questions || []).forEach(q => { text += " " + (q.q || "") + " " + (q.options || []).join(" "); })); } catch (e) {}
+  try { (typeof LAB2_MODELS !== "undefined" ? LAB2_MODELS : []).forEach(m => { text += " " + (m.answer || "") + " " + (m.hint || ""); }); } catch (e) {}
+  l3._corpus = text.toLowerCase();
+  return l3._corpus;
+}
+function _l3IsWhitelisted(struct) {
+  const corpus = _l3Corpus();
+  const name = (struct.name || "").toLowerCase().replace(/[()]/g, "");
+  if (!name) return false;
+  if (name.length >= 4 && corpus.includes(name)) return true;
+  const words = name.split(/\s+/).filter(w => w.length >= 5);   // e.g. "left atrium" → try "atrium"
+  return words.some(w => corpus.includes(w));
+}
+function _l3KeyWhitelisted(key) {
+  const [modelId, structId] = key.split(":");
+  const rows = (l3.labels && l3.labels.models && l3.labels.models[modelId]) || [];
+  const row = rows.find(r => r.nodeName === structId);
+  if (!row) return false;
+  return _l3IsWhitelisted({ name: row.label || row.nodeName });
+}
+function _l3PracticalPool() {
+  const wl = l3.structs.filter(_l3IsWhitelisted);
+  return wl;
+}
+function _l3StopPracticalTimer() { if (l3.pr && l3.pr.timer) { clearInterval(l3.pr.timer); l3.pr.timer = null; } }
 function startL3Practical() {
   if (!l3.installed || !l3.structs.length) { alert("Practical needs the model loaded. Explore/rotate works; if the model is still loading, give it a moment."); return; }
+  _l3StopPracticalTimer();   // guard against a lingering timer from a previous round/mode-switch
   _l3ShowAll(); _l3ClearHighlight();
+  const pool = _l3PracticalPool();
+  if (pool.length < 4) {
+    alert("Not enough of this model's structures are tagged as BIOL 250 Lab 2 material yet to run a fair Practical round (" + pool.length + " found). Try Explore mode, or drill the Real Class Model photo stations instead — those are the exam authority anyway.");
+    return;
+  }
   l3.mode = "practical";
-  const pool = l3.structs.slice();
   l3.pr = { deck: shuffle(pool.slice()), i: 0, firstScored: new Set(), firstOk: 0, total: pool.length, recovered: 0, secLeft: 60, answered: false, chosen: null, timedOut: false, timer: null, useTap: false };
   _l3PracticalNext(true);
 }
@@ -353,6 +419,15 @@ function render3DExplorer(main) {
     m.innerHTML = "This device/browser doesn't support WebGL, so the 3D viewer can't run here.<br>Use the <b>Real Class Models</b> photo stations instead.";
     main.appendChild(m); return;
   }
+  // Direct-refresh / restored-route guard: if the route was restored straight to "lab3d" (page reload,
+  // resume state) without going through open3DExplorer(), the manifest/labels were never fetched and
+  // every line below that reads l3.manifest.models would throw on null → blank page. Fetch here instead.
+  if (!l3.manifest || !l3.labels) {
+    const m = document.createElement("div"); m.style.cssText = "padding:40px 20px;text-align:center;color:#888;";
+    m.textContent = "Loading 3D Explorer…"; main.appendChild(m);
+    _l3EnsureManifest().then(() => render());
+    return;
+  }
   if (!l3.THREE) {
     const m = document.createElement("div"); m.style.cssText = "padding:40px 20px;text-align:center;color:#888;";
     m.textContent = "Loading 3D engine…"; main.appendChild(m);
@@ -367,7 +442,7 @@ function render3DExplorer(main) {
   (l3.manifest.models || []).forEach(mm => {
     const b = document.createElement("button"); const on = mm.id === l3.modelId;
     b.textContent = mm.title;
-    b.style.cssText = `border:1.5px solid ${on ? "var(--ink)" : "#cfd8e3"};background:${on ? "var(--ink)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:6px 14px;font-size:.85rem;font-weight:700;cursor:pointer;`;
+    b.style.cssText = `border:1.5px solid ${on ? "var(--ink)" : "#cfd8e3"};background:${on ? "var(--ink)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:999px;padding:11px 16px;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;font-size:.85rem;font-weight:700;cursor:pointer;`;
     b.onclick = () => { if (l3.modelId !== mm.id) { l3.modelId = mm.id; l3._loadedId = null; l3.mode = "explore"; _l3Selected = null; l3.filter = ""; render(); } };
     sel.appendChild(b);
   });
@@ -388,10 +463,10 @@ function render3DExplorer(main) {
   const pr = document.createElement("div"); pr.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;";
   ["front", "back", "left", "right", "top"].forEach(name => {
     const b = document.createElement("button"); b.textContent = name;
-    b.style.cssText = "border:1px solid #cfd8e3;background:#fff;color:#41506a;border-radius:8px;padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;text-transform:capitalize;";
+    b.style.cssText = "border:1px solid #cfd8e3;background:#fff;color:#41506a;border-radius:8px;padding:10px 14px;min-height:40px;box-sizing:border-box;display:inline-flex;align-items:center;font-size:.78rem;font-weight:600;cursor:pointer;text-transform:capitalize;";
     b.onclick = () => _l3View(name); pr.appendChild(b);
   });
-  const rst = document.createElement("button"); rst.textContent = "⟲ reset"; rst.style.cssText = "border:1px solid #cfd8e3;background:#f3f6fa;color:#41506a;border-radius:8px;padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;";
+  const rst = document.createElement("button"); rst.textContent = "⟲ reset"; rst.style.cssText = "border:1px solid #cfd8e3;background:#f3f6fa;color:#41506a;border-radius:8px;padding:10px 14px;min-height:40px;box-sizing:border-box;display:inline-flex;align-items:center;font-size:.78rem;font-weight:600;cursor:pointer;";
   rst.onclick = () => { if (l3.root) { _l3ShowAll(); _l3FrameModel(l3.root); } }; pr.appendChild(rst);
   wrap.appendChild(pr);
 
@@ -401,7 +476,7 @@ function render3DExplorer(main) {
     const on = (mk === "explore" && l3.mode === "explore") || (mk === "practical" && (l3.mode === "practical" || l3.mode === "practicalEnd"));
     const b = document.createElement("button"); b.textContent = lbl;
     b.style.cssText = `flex:1;border:1.5px solid ${on ? "var(--teal)" : "#cfd8e3"};background:${on ? "var(--teal)" : "#fff"};color:${on ? "#fff" : "#41506a"};border-radius:10px;padding:9px;font-size:.85rem;font-weight:700;cursor:pointer;`;
-    b.onclick = () => { if (mk === "explore") { l3.mode = "explore"; _l3ShowAll(); _l3ClearHighlight(); render(); } else { startL3Practical(); } };
+    b.onclick = () => { if (mk === "explore") { _l3StopPracticalTimer(); l3.mode = "explore"; _l3ShowAll(); _l3ClearHighlight(); render(); } else { startL3Practical(); } };
     modes.appendChild(b);
   });
   wrap.appendChild(modes);
@@ -444,7 +519,7 @@ function _l3RenderExplore(wrap) {
         ${s.ontologyId ? ` · <span style="color:#7c8a83;">${escapeHtml(s.ontologyId)}</span>` : ""}
       </div>`;
     const ctl = document.createElement("div"); ctl.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;";
-    const mk = (label, fn) => { const b = document.createElement("button"); b.textContent = label; b.style.cssText = "border:1px solid #bcd8cc;background:#fff;color:#2c6b52;border-radius:8px;padding:4px 10px;font-size:.76rem;font-weight:700;cursor:pointer;"; b.onclick = fn; return b; };
+    const mk = (label, fn) => { const b = document.createElement("button"); b.textContent = label; b.style.cssText = "border:1px solid #bcd8cc;background:#fff;color:#2c6b52;border-radius:8px;padding:9px 13px;min-height:38px;box-sizing:border-box;display:inline-flex;align-items:center;font-size:.76rem;font-weight:700;cursor:pointer;"; b.onclick = fn; return b; };
     ctl.appendChild(mk("Isolate", () => { _l3Isolate(s.mesh); _l3HighlightMesh(s.mesh); }));
     ctl.appendChild(mk("Hide", () => { _l3SetVisible(s.mesh, false); }));
     ctl.appendChild(mk("Show all", () => { _l3ShowAll(); _l3HighlightMesh(s.mesh); }));
