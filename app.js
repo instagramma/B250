@@ -2097,14 +2097,15 @@ function renderQuiz(main) {
       gotIt.className = "nextBtn";
       gotIt.style.cssText = "flex:1;background:#27ae60;";
       gotIt.textContent = "✓ Got it";
-      gotIt.onclick = () => { quizScore++; quizAnswered = true; quizSelected = -3; recordQuestionStat(q, true, qElapsed()); render(); };
+      // Self-grade auto-advances straight to the next card (no extra Next click).
+      gotIt.onclick = () => { quizScore++; recordQuestionStat(q, true, qElapsed()); quizIndex++; quizAnswered = false; quizSelected = -1; render(); };
       selfBar.appendChild(gotIt);
 
       const missedIt = document.createElement("button");
       missedIt.className = "secondaryBtn";
       missedIt.style.cssText = "flex:1;";
       missedIt.textContent = "✗ Missed it";
-      missedIt.onclick = () => { quizAnswered = true; quizSelected = -3; recordQuestionStat(q, false, qElapsed()); render(); };
+      missedIt.onclick = () => { recordQuestionStat(q, false, qElapsed()); quizIndex++; quizAnswered = false; quizSelected = -1; render(); };
       selfBar.appendChild(missedIt);
 
       main.appendChild(selfBar);
