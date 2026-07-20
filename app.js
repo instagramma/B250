@@ -6220,7 +6220,9 @@ function buildGenericExamMenu(list, key) {
 // (the same split the Torso lecture exam uses).
 function _cumulativeBlocks() {
   const idx = buildQuestionIndex();
-  const toQ = ids => dedupeQs(ids.map(id => idx[id]).filter(q => q && isExamEligible(q) && !isDiagramQ(q)));
+  // idx maps id→question but the id is the KEY, not a field on the object — re-attach it so
+  // dedup + the per-question option-shuffle cache work (they key on q.id).
+  const toQ = ids => dedupeQs(ids.map(id => { const q = idx[id]; return q ? Object.assign({}, q, { id: id }) : null; }).filter(q => q && isExamEligible(q) && !isDiagramQ(q)));
   const unitIds = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
   let src = {};
   try { src = blueprintSources() || {}; } catch (e) {}
@@ -6238,7 +6240,7 @@ function _cumulativeDeck(per) {
   const bl = _cumulativeBlocks();
   const seen = new Set(); const deck = [];
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
-    const picked = shuffle(bl[name] || []).filter(q => { const k = q.id || _stemKey(q.q); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, per);
+    const picked = shuffle(bl[name] || []).filter(q => { const k = (q.id != null) ? q.id : String(q.q || ""); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, per);
     deck.push(...picked);
   });
   return shuffle(deck);
