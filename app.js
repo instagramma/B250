@@ -2210,8 +2210,12 @@ function renderQuiz(main) {
   }
 
   // ── MCQ / T-F ─────────────────────────────────────────────────────────
-  // Shuffle options — cached per question index so they're stable mid-answer
-  if (_qShCache.key !== quizIndex) { _qShCache.key = quizIndex; _qShCache.opts = shuffle([...q.options]); }
+  // Shuffle options — cached per QUESTION (by id + deck), not per index. Keying on the
+  // index alone caused a new quiz at the same position to reuse the PREVIOUS question's
+  // shuffled options (stem said one thing, choices came from another question). Tie the
+  // cache to the actual question so options always belong to the stem on screen.
+  const _qKey = (q && q.id != null ? "id:" + q.id : "stem:" + String((q && (q.q || q.question)) || "").slice(0, 60)) + "|dk:" + (state.quizDeckKey || "") + "|ix:" + quizIndex;
+  if (_qShCache.key !== _qKey) { _qShCache.key = _qKey; _qShCache.opts = shuffle([...q.options]); }
   const _qSOpts = _qShCache.opts;
   const _qSCorr = _qSOpts.indexOf(q.options[q.correct]);
 
@@ -4587,8 +4591,10 @@ function renderExam(main) {
   hint.textContent = q.tf ? "Press 1 = True · 2 = False" : `Press 1–${Math.min(q.options.length, 5)} to select (A–E)`;
   main.appendChild(hint);
 
-  // Shuffle options — cached per question index
-  if (_eShCache.key !== examIndex) { _eShCache.key = examIndex; _eShCache.opts = shuffle([...q.options]); }
+  // Shuffle options — cached per QUESTION (by id), not per index, so a new exam at the
+  // same position can't reuse the previous question's options (stem/answer mismatch).
+  const _eKey = (q && q.id != null ? "eid:" + q.id : "eix:" + examIndex);
+  if (_eShCache.key !== _eKey) { _eShCache.key = _eKey; _eShCache.opts = shuffle([...q.options]); }
   const _eSOpts = _eShCache.opts;
   _examSCorrect = _eSOpts.indexOf(q.options[q.correct]); // store for DOM highlight
 
@@ -4782,8 +4788,9 @@ document.addEventListener("keydown", (e) => {
   const displayIdx = num - 1;
   const q = examDeck[examIndex];
   if (!q || displayIdx >= q.options.length) return;
-  // Convert shuffled display index to original option index
-  const origIdx = (_eShCache.opts.length && _eShCache.key === examIndex)
+  // Convert shuffled display index to original option index (key must match renderExam's)
+  const _eKey = (q && q.id != null ? "eid:" + q.id : "eix:" + examIndex);
+  const origIdx = (_eShCache.opts.length && _eShCache.key === _eKey)
     ? q.options.indexOf(_eShCache.opts[displayIdx])
     : displayIdx;
   examSelectAnswer(origIdx, displayIdx);
