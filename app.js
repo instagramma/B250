@@ -1376,7 +1376,7 @@ function qRegionSection(id) {
   }
   const r = _qRegionMap[id]; return (r && NOTES_PDF[r]) ? r : null;
 }
-let notesPanel = { el: null, section: null, page: 1, pages: 0, pdf: null, cache: {}, rendering: false };
+let notesPanel = { el: null, section: null, page: 1, pages: 0, pdf: null, cache: {}, rendering: false, zoom: 1 };
 function closeNotesPanel() { if (notesPanel.el) { notesPanel.el.remove(); notesPanel.el = null; } }
 function _notesWorker() { try { if (typeof pdfjsLib !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; } catch (e) {} }
 async function openNotesPanel(section) {
@@ -1386,6 +1386,7 @@ async function openNotesPanel(section) {
   ensureNotesPanelDom();
   if (notesPanel.section !== section) {
     notesPanel.section = section; notesPanel.page = 1;
+    notesPanel.zoom = 1; if (notesPanel.zoomLabel) notesPanel.zoomLabel.textContent = "100%";
     notesPanel.hdr.textContent = "📓 " + NOTES_LABEL[section] + " Notes";
     if (notesPanel.cache[section]) { notesPanel.pdf = notesPanel.cache[section]; notesPanel.pages = notesPanel.pdf.numPages; renderNotesPage(); }
     else {
@@ -1406,10 +1407,12 @@ async function renderNotesPage() {
     // resolution → blurry.) Supersample with a floor of 2.5× and a cap so the canvas stays sane.
     const cssW = (notesPanel.canvas.parentElement && notesPanel.canvas.parentElement.clientWidth) || 560;
     const ss = Math.min(4, Math.max(2.5, (window.devicePixelRatio || 1) * 1.5));
-    const scale = Math.min(6, (cssW * ss) / vp0.width);
+    const z = notesPanel.zoom || 1;
+    // Render at zoom×supersample so zoomed-in text stays crisp (not just CSS-stretched).
+    const scale = Math.min(8, (cssW * ss * z) / vp0.width);
     const vp = page.getViewport({ scale });
     const c = notesPanel.canvas, ctx = c.getContext("2d");
-    c.width = vp.width; c.height = vp.height; c.style.width = "100%";
+    c.width = vp.width; c.height = vp.height; c.style.width = (100 * z) + "%";
     await page.render({ canvasContext: ctx, viewport: vp }).promise;
     notesPanel.counter.textContent = "p. " + notesPanel.page + " / " + notesPanel.pages;
     notesPanel.status.textContent = "";
@@ -1417,16 +1420,31 @@ async function renderNotesPage() {
   notesPanel.rendering = false;
 }
 function notesGoto(delta) { if (!notesPanel.pdf) return; const p = Math.min(Math.max(1, notesPanel.page + delta), notesPanel.pages); if (p !== notesPanel.page) { notesPanel.page = p; renderNotesPage(); } }
+function notesZoom(delta) {
+  const z = Math.round(Math.min(3, Math.max(1, (notesPanel.zoom || 1) + delta)) * 100) / 100;
+  if (z === notesPanel.zoom) return;
+  notesPanel.zoom = z;
+  if (notesPanel.zoomLabel) notesPanel.zoomLabel.textContent = Math.round(z * 100) + "%";
+  renderNotesPage();
+}
+function notesZoomSet(z) { notesPanel.zoom = z; if (notesPanel.zoomLabel) notesPanel.zoomLabel.textContent = Math.round(z * 100) + "%"; renderNotesPage(); }
 function ensureNotesPanelDom() {
   if (notesPanel.el) return;
   const el = document.createElement("div");
   el.style.cssText = "position:fixed;right:16px;bottom:16px;width:min(620px,96vw);max-height:90vh;background:#fff;border:1px solid #bbb;border-radius:12px;box-shadow:0 12px 44px rgba(0,0,0,.4);z-index:100000;display:flex;flex-direction:column;overflow:hidden;";
   const bar = document.createElement("div"); bar.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--ink);color:#fff;cursor:move;user-select:none;touch-action:none;";
   const hdr = document.createElement("div"); hdr.style.cssText = "font-weight:700;font-size:.85rem;flex:1;"; hdr.textContent = "📓 Notes";
-  const closeB = document.createElement("button"); closeB.textContent = "✕"; closeB.style.cssText = "background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;line-height:1;"; closeB.title = "Close"; closeB.onclick = closeNotesPanel;
-  bar.append(hdr, closeB); el.appendChild(bar);
+  // zoom controls (− %  +) — render sharper when zoomed; double-tap the page also toggles zoom
+  const zBtnCss = "background:rgba(255,255,255,.18);border:none;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;line-height:1;border-radius:6px;width:26px;height:24px;";
+  const zOut = document.createElement("button"); zOut.textContent = "−"; zOut.title = "Zoom out"; zOut.style.cssText = zBtnCss; zOut.onclick = () => notesZoom(-0.25);
+  const zLabel = document.createElement("div"); zLabel.style.cssText = "font-size:.72rem;min-width:34px;text-align:center;font-weight:700;"; zLabel.textContent = "100%";
+  const zIn = document.createElement("button"); zIn.textContent = "+"; zIn.title = "Zoom in"; zIn.style.cssText = zBtnCss; zIn.onclick = () => notesZoom(0.25);
+  const closeB = document.createElement("button"); closeB.textContent = "✕"; closeB.style.cssText = "background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;line-height:1;margin-left:4px;"; closeB.title = "Close"; closeB.onclick = closeNotesPanel;
+  bar.append(hdr, zOut, zLabel, zIn, closeB); el.appendChild(bar);
   const body = document.createElement("div"); body.style.cssText = "overflow:auto;flex:1;background:#eef0f2;padding:6px;-webkit-overflow-scrolling:touch;";
   const canvas = document.createElement("canvas"); canvas.style.cssText = "width:100%;display:block;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.25);border-radius:2px;"; body.appendChild(canvas); el.appendChild(body);
+  // double-tap / double-click the page toggles between fit (100%) and 2×
+  canvas.addEventListener("dblclick", () => notesZoomSet((notesPanel.zoom || 1) > 1 ? 1 : 2));
   const status = document.createElement("div"); status.style.cssText = "font-size:.72rem;color:#888;text-align:center;padding:3px;"; el.appendChild(status);
   const nav = document.createElement("div"); nav.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;border-top:1px solid #eee;";
   const prev = document.createElement("button"); prev.textContent = "‹ Prev"; prev.style.cssText = "border:1px solid #ccc;background:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-weight:600;"; prev.onclick = () => notesGoto(-1);
@@ -1439,7 +1457,7 @@ function ensureNotesPanelDom() {
   bar.addEventListener("pointerdown", (e) => { if (e.target === closeB) return; drag = true; const r = el.getBoundingClientRect(); dx = e.clientX - r.left; dy = e.clientY - r.top; el.style.right = "auto"; el.style.bottom = "auto"; el.style.left = r.left + "px"; el.style.top = r.top + "px"; });
   document.addEventListener("pointermove", (e) => { if (!drag) return; el.style.left = Math.max(0, e.clientX - dx) + "px"; el.style.top = Math.max(0, e.clientY - dy) + "px"; });
   document.addEventListener("pointerup", () => { drag = false; });
-  notesPanel.el = el; notesPanel.hdr = hdr; notesPanel.canvas = canvas; notesPanel.status = status; notesPanel.counter = counter;
+  notesPanel.el = el; notesPanel.hdr = hdr; notesPanel.canvas = canvas; notesPanel.status = status; notesPanel.counter = counter; notesPanel.zoomLabel = zLabel;
 }
 // Small "📓 Notes" launcher for with-notes practice — only when the question maps to a notes doc.
 function notesBtn(q) {
