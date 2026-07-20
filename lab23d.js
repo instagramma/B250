@@ -385,8 +385,11 @@ function _l3PracticalNext(first) {
   if (p.timer) { clearInterval(p.timer); p.timer = null; }
   if (p.i >= p.deck.length) { l3.mode = "practicalEnd"; render(); return; }
   const s = p.deck[p.i];
-  const others = l3.structs.filter(x => x.id !== s.id).map(x => x.name);
-  p.choices = shuffle([s.name].concat(shuffle(others).slice(0, 3)));
+  // Distractors must be DISTINCT labels and never equal the answer (many meshes share a
+  // label — torso "minor calyx" ×18, brain L/R pairs — which otherwise duplicates choices).
+  const seen = new Set([s.name]); const others = [];
+  shuffle(l3.structs.slice()).forEach(x => { if (x.id !== s.id && !seen.has(x.name)) { seen.add(x.name); others.push(x.name); } });
+  p.choices = shuffle([s.name].concat(others.slice(0, 3)));
   p.answered = false; p.chosen = null; p.timedOut = false; p.secLeft = 60;
   _l3ShowAll(); _l3GhostExcept(s.mesh); _l3HighlightMesh(s.mesh);   // ghost the rest so the pinned target is visible
   render();

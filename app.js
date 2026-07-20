@@ -1824,6 +1824,13 @@ function renderModes(main) {
     ]});
   }
 
+  // ── Lab 2 is a PRACTICAL — lead with the identify-it tools, push reading/tests down ──
+  if (state.sectionKey === "lab2") {
+    const order = ["Real Class Models", "Structure & Tissue", "3D Anatomy Explorer", "Diagrams", "Preparedness", "Practice Tests", "Guided Readings", "Practice Exams"];
+    const rank = (g) => { const i = order.findIndex(o => (g.label || "").startsWith(o)); return i < 0 ? 99 : i; };
+    groups.sort((a, b) => rank(a) - rank(b));
+  }
+
   // ── Render groups ──────────────────────────────────────────────────────────
   groups.forEach(group => {
     const hdr = document.createElement("div");
