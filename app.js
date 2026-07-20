@@ -1750,6 +1750,8 @@ function renderModes(main) {
     groups.push({ label: "Mock Practical — like the real exam", icon: "🔬", modes: [
       { id: "lab2Mock", icon: "🔬", label: "Mock Practical — 50 Q · 50 min",
         desc: "Timed like the real practical · randomized · identify structures + tissue/function + labeling diagrams · skip & flag" },
+      { id: "lab2Sprint", icon: "⚡", label: "Sprint — 10 Q · 10 min",
+        desc: "Quick focused burst · your weak areas first · identify + tissue/function + diagrams" },
     ]});
     groups.push({ label: "Preparedness", icon: "🎯", modes: [
       { id: "preparednessGeneric", icon: "🎯", label: "Preparedness Score",
@@ -1887,6 +1889,8 @@ function renderModes(main) {
         };
       } else if (m.id === "lab2Mock") {
         btn.onclick = () => { const pool = lab2MockPool(); if (pool.length < 5) { alert("Not enough Lab 2 questions available."); return; } launchFullExamPool(shuffle(pool).slice(0, 50), "Lab 2 Mock Practical", 3000); };
+      } else if (m.id === "lab2Sprint") {
+        btn.onclick = () => { const d = lab2SprintDeck(10); if (d.length < 3) { alert("Not enough Lab 2 questions available."); return; } launchFullExamPool(d, "Lab 2 Sprint", 600); };
       } else if (m.id === "lab2Station") {
         btn.onclick = () => startLab2Practical(false);
       } else if (m.id === "lab2Bank") {
@@ -6198,6 +6202,22 @@ function lab2MockPool() {
   if (gr && gr.subtopics) gr.subtopics.forEach(t => (t.quiz || []).forEach(q => { if (isExamEligible(q) && (q.options || []).length >= 2) pool.push(q); }));
   pool = pool.concat(lab2DiagramMCQs());          // on-diagram labeling identify questions (image-based)
   return dedupeQs(pool);
+}
+// Quick Lab 2 "sprint" deck — n weak-first questions (missed / low-recall seen items lead,
+// filled with fresh random so it always has diagrams + variety). Short focused burst.
+function lab2SprintDeck(n) {
+  const pool = lab2MockPool();
+  const mode = (typeof getStudyMode === "function") ? getStudyMode() : "closed";
+  let deck = [];
+  try {
+    const seenWeak = pool.filter(q => { const m = _qm(q.id, mode); return m && m.s > 0 && qRecall(q.id, mode) < 0.7; });
+    deck = shuffle(seenWeak).slice(0, n);
+  } catch (e) {}
+  if (deck.length < n) {
+    const have = new Set(deck.map(q => q.id));
+    deck = deck.concat(shuffle(pool.filter(q => !have.has(q.id))).slice(0, n - deck.length));
+  }
+  return shuffle(deck).slice(0, n);
 }
 const SECTION_GROUPS = {
   axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
