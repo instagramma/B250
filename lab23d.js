@@ -129,7 +129,7 @@ function _l3Dispose() {
   try { if (l3.renderer) { l3.renderer.forceContextLoss && l3.renderer.forceContextLoss(); l3.renderer.dispose(); if (l3.renderer.domElement && l3.renderer.domElement.parentNode) l3.renderer.domElement.parentNode.removeChild(l3.renderer.domElement); } } catch (e) {}
   if (l3._onResize) { try { window.removeEventListener("resize", l3._onResize); } catch (e) {} l3._onResize = null; }
   l3.renderer = l3.scene = l3.camera = l3.controls = l3.root = null;
-  l3.highlightMesh = null; l3._origMat = null; l3._ghosted = null; l3._ghostMats = null; l3._loadedId = null; l3.installed = false;
+  l3.highlightMesh = null; l3._origMat = null; l3._marker = null; l3._ghosted = null; l3._ghostMats = null; l3._loadedId = null; l3.installed = false;
 }
 function _l3PixelCap() {
   const small = (window.innerWidth || 1024) <= 480;
@@ -153,7 +153,11 @@ function _l3InitScene(container) {
   l3.renderer = renderer; l3.scene = scene; l3.camera = camera; l3.controls = controls;
   l3._onResize = () => { if (!l3.renderer) return; const ww = container.clientWidth || w; renderer.setSize(ww, h); camera.aspect = ww / h; camera.updateProjectionMatrix(); };
   window.addEventListener("resize", l3._onResize);
-  const loop = () => { if (!l3.renderer) return; l3.raf = requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); };
+  const loop = () => {
+    if (!l3.renderer) return; l3.raf = requestAnimationFrame(loop); controls.update();
+    if (l3._marker) { const s = 1 + 0.35 * Math.sin(Date.now() * 0.005); l3._marker.scale.setScalar(s); if (l3._marker.userData.ring) l3._marker.userData.ring.quaternion.copy(camera.quaternion); }
+    renderer.render(scene, camera);
+  };
   loop();
   // tap-to-identify (raycast → mesh.name → structure)
   const ray = new T.Raycaster(), ptr = new T.Vector2();
@@ -227,9 +231,37 @@ function _l3LoadModel(host) {
     }
   );
 }
+function _l3ClearMarker() {
+  if (l3._marker && l3.scene) { try { l3.scene.remove(l3._marker); l3._marker.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); } catch (e) {} }
+  l3._marker = null;
+}
 function _l3ClearHighlight() {
   if (l3.highlightMesh && l3._origMat) { l3.highlightMesh.material = l3._origMat; }
   l3.highlightMesh = null; l3._origMat = null;
+  _l3ClearMarker();
+}
+// A pulsing, always-on-top marker (halo sphere + ring) at the structure — so even TINY
+// structures are obvious. Renders over everything (depthTest off) and pulses in the loop.
+function _l3Mark(node) {
+  _l3ClearMarker();
+  if (!node || !l3.scene) return;
+  const T = l3.THREE;
+  const box = new T.Box3().setFromObject(node);
+  if (box.isEmpty()) return;
+  const c = box.getCenter(new T.Vector3()), sz = box.getSize(new T.Vector3());
+  const structR = Math.max(sz.x, sz.y, sz.z) * 0.6 || 0.01;
+  const modelR = l3._frameMax || 1;
+  const R = Math.max(modelR * 0.028, structR);   // never smaller than ~3% of the model
+  const grp = new T.Group();
+  // translucent glow halo (see the structure through it)
+  const halo = new T.Mesh(new T.SphereGeometry(R, 20, 14), new T.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.32, depthTest: false, depthWrite: false }));
+  halo.renderOrder = 998;
+  // bright ring outline (billboarded via always-on-top torus)
+  const ring = new T.Mesh(new T.TorusGeometry(R * 1.35, R * 0.12, 8, 28), new T.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.95, depthTest: false, depthWrite: false }));
+  ring.renderOrder = 999;
+  grp.add(halo); grp.add(ring); grp.position.copy(c);
+  grp.userData.baseR = R; grp.userData.ring = ring;
+  l3.scene.add(grp); l3._marker = grp;
 }
 function _l3HighlightMesh(meshName) {
   _l3ClearHighlight();
@@ -243,8 +275,11 @@ function _l3HighlightMesh(meshName) {
   if (!target) return;
   l3.highlightMesh = target; l3._origMat = target.material;
   const src = Array.isArray(target.material) ? target.material[0] : target.material;
-  const hm = src.clone(); hm.emissive = new l3.THREE.Color(0xffcc33); hm.emissiveIntensity = 0.95;
+  const hm = src.clone();
+  hm.emissive = new l3.THREE.Color(0xffee00); hm.emissiveIntensity = 1.4;   // brighter glow
+  if (hm.color) hm.color = new l3.THREE.Color(0xfff27a);                     // lighten so it pops
   target.material = hm;
+  _l3Mark(node);   // add the pulsing on-top marker for small structures
 }
 function _l3SetVisible(meshName, vis) {
   if (!l3.root) return;

@@ -5347,25 +5347,42 @@ function renderMissedReview(main) {
         b.disabled = true;
         if (j === q.correct) b.classList.add("correct");
       });
-      fb.textContent = isCorrect ? "✅ Correct! Removed from missed list." : "❌ Wrong — keeping it in the pool.";
+      fb.textContent = isCorrect ? "✅ Correct! Removed from missed list on Next." : "❌ Wrong — keeping it in the pool.";
       fb.style.color = isCorrect ? "#27ae60" : "#c0392b";
-      setTimeout(() => {
+      const advance = () => {
         if (isCorrect) {
-          // Remove from deck and from storage
           const key = q.q.slice(0, 80);
           missedDeck.splice(qi, 1);
           const pool = loadMissedQs().filter(m => m.q.slice(0, 80) !== key);
           saveMissedQs(pool);
           if (missedIndex >= missedDeck.length && missedIndex > 0) missedIndex = 0;
         } else {
-          // Shuffle to end
-          missedDeck.splice(qi, 1);
-          missedDeck.push(q);
+          missedDeck.splice(qi, 1); missedDeck.push(q);
           if (missedIndex >= missedDeck.length) missedIndex = 0;
         }
-        missedAnswered = false; missedSelected = -1;
-        render();
-      }, 900);
+        missedAnswered = false; missedSelected = -1; render();
+      };
+      // Martini reference + lookup (routed through resolveBookReference) + notes + manual Next
+      const refWrap = document.createElement("div"); refWrap.style.cssText = "margin-top:14px;";
+      const ansText = q.tf ? (["True", "False"][q.correct] || "") : (q.options ? q.options[q.correct] : "");
+      try {
+        const R = resolveBookReference(q);
+        const page = R.page || (R.locator && R.locator.page) || null, ch = R.ch;
+        if (ch || page) {
+          const cm = ch ? CHAP_META[ch] : null;
+          const cite = document.createElement("div");
+          cite.style.cssText = "text-align:center;font-size:.8rem;color:#777;margin:6px 0;line-height:1.4;";
+          cite.innerHTML = cm ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)}${page ? ` &nbsp;·&nbsp; <b>p. ${page}</b>` : ""}` : `📖 <b>Martini</b>${page ? ` &nbsp;·&nbsp; p. ${page}` : ""}`;
+          refWrap.appendChild(cite);
+        }
+      } catch (e) {}
+      const look = document.createElement("button"); look.className = "tbLookBtn"; look.style.cssText = "display:block;width:100%;margin:6px 0;"; look.innerHTML = "📖 Look it up in Martini";
+      look.onclick = () => showTextbookPanel(q.q, ansText, q);
+      refWrap.appendChild(look);
+      { const nb = notesBtn(q); if (nb) { nb.style.cssText = "display:block;width:100%;margin:6px 0;background:#fff;color:var(--ink);border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;"; nb.onclick = () => openNotesPanel(qRegionSection(q.id)); refWrap.appendChild(nb); } }
+      const nextB = document.createElement("button"); nextB.className = "primaryBtn"; nextB.style.cssText += "width:100%;max-width:none;margin:6px 0;"; nextB.textContent = "Next →"; nextB.onclick = advance;
+      refWrap.appendChild(nextB);
+      main.appendChild(refWrap);
     };
     main.appendChild(btn);
   });
