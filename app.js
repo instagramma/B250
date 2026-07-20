@@ -1747,6 +1747,10 @@ function renderModes(main) {
 
   // ── Practice Tests — timed sims + mini-mocks (Lab 2 gets the full treatment) ──
   if (state.sectionKey === "lab2") {
+    groups.push({ label: "Mock Practical — like the real exam", icon: "🔬", modes: [
+      { id: "lab2Mock", icon: "🔬", label: "Mock Practical — 50 Q · 50 min",
+        desc: "Timed like the real practical · randomized · identify structures + tissue/function + labeling diagrams · skip & flag" },
+    ]});
     groups.push({ label: "Preparedness", icon: "🎯", modes: [
       { id: "preparednessGeneric", icon: "🎯", label: "Preparedness Score",
         desc: "Readiness by lab-practical system (recall-weighted)" },
@@ -1826,7 +1830,7 @@ function renderModes(main) {
 
   // ── Lab 2 is a PRACTICAL — lead with the identify-it tools, push reading/tests down ──
   if (state.sectionKey === "lab2") {
-    const order = ["Real Class Models", "Structure & Tissue", "3D Anatomy Explorer", "Diagrams", "Preparedness", "Practice Tests", "Guided Readings", "Practice Exams"];
+    const order = ["Mock Practical", "Real Class Models", "Structure & Tissue", "3D Anatomy Explorer", "Diagrams", "Preparedness", "Practice Tests", "Guided Readings", "Practice Exams"];
     const rank = (g) => { const i = order.findIndex(o => (g.label || "").startsWith(o)); return i < 0 ? 99 : i; };
     groups.sort((a, b) => rank(a) - rank(b));
   }
@@ -1881,6 +1885,8 @@ function renderModes(main) {
           missedIndex = 0; missedAnswered = false; missedSelected = -1;
           state.route = "missedReview"; render();
         };
+      } else if (m.id === "lab2Mock") {
+        btn.onclick = () => { const pool = lab2MockPool(); if (pool.length < 5) { alert("Not enough Lab 2 questions available."); return; } launchFullExamPool(shuffle(pool).slice(0, 50), "Lab 2 Mock Practical", 3000); };
       } else if (m.id === "lab2Station") {
         btn.onclick = () => startLab2Practical(false);
       } else if (m.id === "lab2Bank") {
@@ -6154,6 +6160,45 @@ function sectionStuviaPool(key) {
   bank.forEach(t => (t.questions || []).forEach(q => { if (isExamEligible(q)) out.push(q); }));
   return out;
 }
+// Lab 2 Mock Practical pool: structure/tissue/function bank + Lab-2 Guided-Reading questions
+// INCLUDING the labeling-diagram (image) items — the real practical is image-based, so unlike
+// the lecture sims we do NOT filter out diagrams here.
+// Turn each Lab 2 labeling diagram into image "Identify structure #N" MCQs — the worksheet
+// images carry printed numbers, so this reproduces the on-diagram identify tasks of the practical.
+function lab2DiagramMCQs() {
+  const gr = (typeof DATA !== "undefined" && DATA.sections) ? DATA.sections.lab2 : null;
+  if (!gr) return [];
+  let ex = [];
+  (gr.subtopics || []).forEach(t => { if (t.labeling) ex = ex.concat(t.labeling); });
+  if (gr.labeling) ex = ex.concat(gr.labeling);
+  const global = [];
+  ex.forEach(e => (e.wordBank || (e.blanks || []).map(b => b.correct)).forEach(w => { if (w && global.indexOf(w) < 0) global.push(w); }));
+  const out = [];
+  ex.forEach((e, ei) => {
+    if (!e.image) return;
+    const bank = (e.wordBank && e.wordBank.length) ? e.wordBank : (e.blanks || []).map(b => b.correct);
+    (e.blanks || []).forEach(b => {
+      if (!b.correct) return;
+      let distPool = bank.filter(w => w && w !== b.correct);
+      if (distPool.length < 3) distPool = distPool.concat(global.filter(w => w !== b.correct && distPool.indexOf(w) < 0));
+      const distractors = shuffle(distPool).slice(0, 3);
+      if (distractors.length < 3) return;   // need a full 4-option MCQ
+      const options = shuffle([b.correct].concat(distractors));
+      out.push({ id: "L2D-" + ei + "-" + b.num, q: "Identify the structure labeled #" + b.num + " in this diagram.", images: [e.image], options: options, correct: options.indexOf(b.correct) });
+    });
+  });
+  return out;
+}
+function lab2MockPool() {
+  let pool = [];
+  if (typeof LAB2_BANK !== "undefined" && LAB2_BANK.length) {
+    LAB2_BANK.forEach(t => (t.questions || []).forEach(q => { if (isExamEligible(q)) pool.push(Object.assign({}, q, { options: (q.options || []).map(o => o.replace(/^[A-E]\.\s*/, "")) })); }));
+  }
+  const gr = (typeof DATA !== "undefined" && DATA.sections) ? DATA.sections.lab2 : null;
+  if (gr && gr.subtopics) gr.subtopics.forEach(t => (t.quiz || []).forEach(q => { if (isExamEligible(q) && (q.options || []).length >= 2) pool.push(q); }));
+  pool = pool.concat(lab2DiagramMCQs());          // on-diagram labeling identify questions (image-based)
+  return dedupeQs(pool);
+}
 const SECTION_GROUPS = {
   axial: [["Head & Neck", "💀", [0,1,2,3,4,5,6,7,8,9]], ["Spinal Cord & Column", "🦴", [10,11]], ["Neural Tissue", "🧠", [12]]],
   appendicular: [["Upper Extremity", "💪", [0,1,2,3,4,5,6,7]], ["Lower Extremity", "🦵", [8,9,10,11,12]], ["Foundations", "🔬", [13,14,15,16,17,18,19]]],
@@ -7705,6 +7750,13 @@ function renderFullExam(main) {
   qText.className = "feQText";
   qText.textContent = q.q || q.question;
   qCard.appendChild(qText);
+
+  // Diagram/labeling questions carry an image — show it (the lab practical is image-based).
+  if (q.images && q.images.length) {
+    const imgWrap = document.createElement("div"); imgWrap.className = "qImageWrap";
+    q.images.forEach(img => { const el = document.createElement("img"); el.className = "qImage"; el.src = "images/" + img; el.loading = "lazy"; el.onclick = () => el.classList.toggle("qImageZoomed"); imgWrap.appendChild(el); });
+    qCard.appendChild(imgWrap);
+  }
 
   const LETTERS = ["A","B","C","D","E"];
   const feSOpts = (fullExamShuffledOrders[fullExamIndex]) || (q.options || []);
