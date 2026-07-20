@@ -82,7 +82,7 @@ function escapeHtml(s) {
 }
 /* Inverse-document-frequency, computed once, so distinctive anatomy terms
    (e.g. "seminalplasmin") outweigh common words (e.g. "gland", "blood"). */
-let _tbIdf = null, _tbLow = null, _tbProse = null, _tbQual = null;
+let _tbIdf = null, _tbLow = null, _tbProse = null, _tbQual = null, _tbChap = null;
 // function words that flow in real prose but are sparse in figure-caption "label salad"
 const TB_FUNC = new Set("the of and a to in is that it for as with are this by be on or an which from at not but they these can when into than has have its also such may each within between through during because while where how other some more most less their his her them we you".split(" "));
 const TB_REVIEW_RE = /concept check|chapter review|reviewing facts|reviewing concepts|study outline|answers tab|see the blue answers|clinical case|clinical note|level 1|level 2|level 3|checkpoint|related clinical terms|key terms/;
@@ -92,10 +92,12 @@ function tbBuildIndex() {
   _tbLow = new Array(TEXTBOOK.length);
   _tbProse = new Array(TEXTBOOK.length);
   _tbQual = new Array(TEXTBOOK.length);
+  _tbChap = new Array(TEXTBOOK.length);
   const N = TEXTBOOK.length;
   for (let i = 0; i < N; i++) {
     const low = TEXTBOOK[i][1].toLowerCase();
     _tbLow[i] = low;
+    _tbChap[i] = (typeof pageToChapter === "function") ? pageToChapter(TEXTBOOK[i][0]) : null;
     const words = low.match(/[a-z][a-z\-]+/g) || [];
     let fc = 0; for (const w of words) if (TB_FUNC.has(w)) fc++;
     _tbProse[i] = words.length ? fc / words.length : 0; // high = coherent prose; low = figure-label salad
@@ -164,8 +166,139 @@ function highlightPassage(res) {
   });
   return html;
 }
-function showTextbookPanel(question, answerText) {
-  const res = searchTextbook(question, answerText);
+/* ═══════════════ CENTRALIZED MARTINI REFERENCE RESOLVER ═══════════════
+   One resolver for EVERY Martini citation/popup (quiz, sprint/fuzzy, custom, exams,
+   missed analytics, flashcards). Precedence (per audit):
+     1. explicit q.ch / q.page
+     2. Q_BOOKLOC[q.id] {s: section, p: source page} → hard chapter scope
+     3. chapter-scoped explanatory search inside that chapter
+     4. unrestricted search ONLY when no metadata exists
+     5. else "No verified passage found" (never a weak global match)
+   The mapped page is where the question APPEARS; we search its chapter for the best
+   explanatory excerpt. The stem's anatomical concept MUST appear; answer words never
+   compensate for a missing concept; T/F never searches "True"/"False". */
+const TB_GENERIC = new Set("while likely occur occurs occurring true false yes none all both neither each many few any some most more less other following above below increased decreased unchanged higher lower greater smaller normal abnormal same different present absent during after before because usually often always never mostly primarily mainly generally typically approximately about".split(" "));
+const TB_ENDMATTER_RE = /\bglossary\b|\bindex\b|\bappendix\b|answers to|answer key|\bcredits\b/;
+// consecutive meaningful stem words → 2-word anatomical phrases (e.g. "costal breathing")
+function _conceptPhrases(stem) {
+  const words = String(stem).toLowerCase().match(/[a-z][a-z\-]{2,}/g) || [];
+  const ph = [];
+  for (let i = 0; i < words.length - 1; i++) {
+    const a = words[i], b = words[i + 1];
+    if (!TB_STOP.has(a) && !TB_GENERIC.has(a) && !TB_STOP.has(b) && !TB_GENERIC.has(b)) ph.push(a + " " + b);
+  }
+  return ph;
+}
+function _tbIsEndMatter(i) {
+  const low = _tbLow[i];
+  if (TB_ENDMATTER_RE.test(low)) return true;
+  // index-style page: many ", 123" number cross-refs relative to word count
+  const numRefs = (low.match(/,\s*\d{2,4}\b/g) || []).length;
+  const words = (low.match(/[a-z]+/g) || []).length;
+  return words > 25 && numRefs / words > 0.05;
+}
+// Concept tokens from a stem/assertion — meaningful words only (no stop/generic).
+function _tbConcept(stem) {
+  return tbTokens(stem).filter(w => w.length > 3 && !TB_GENERIC.has(w));
+}
+function resolveBookReference(q) {
+  const out = { ref: null, page: null, ch: null, locator: null, srcPage: null, srcSec: null, confidence: 0, reason: "no-question", source: "" };
+  if (!q || typeof TEXTBOOK === "undefined" || !TEXTBOOK.length) { out.reason = "no-textbook"; return out; }
+  tbBuildIndex();
+  const stem = String(q.q || q.question || "");
+  const isTF = !!q.tf;
+  // answer text — NEVER for T/F; ignore generic answers; treat multiword as an exact phrase only
+  let ansPhrase = "";
+  if (!isTF && typeof q.correct === "number" && q.options && q.options[q.correct] != null) {
+    const a = String(q.options[q.correct]).toLowerCase().replace(/^[a-e]\.\s*/, "").replace(/^(the|a|an)\s+/, "").replace(/[.;,]\s*$/, "").trim();
+    const GENERIC_FULL = /^(all|none|both|neither) of the (above|answers|following|these)|^none of the answers are correct|^all of these|^n\/a$/;
+    const meaningful = a.split(/\s+/).some(w => w.length > 3 && !TB_GENERIC.has(w));
+    if (a.length > 3 && meaningful && !GENERIC_FULL.test(a)) ansPhrase = a;
+  }
+  // 1/2. scope chapter + source page from metadata
+  let scopeCh = null, srcPage = null, srcSec = null, source = "";
+  if (q.ch) { scopeCh = parseInt(q.ch, 10); srcPage = q.page || null; source = "q.ch"; }
+  if ((scopeCh == null || isNaN(scopeCh)) && typeof Q_BOOKLOC !== "undefined" && q.id && Q_BOOKLOC[q.id]) {
+    const loc = Q_BOOKLOC[q.id]; srcSec = loc.s || null; srcPage = loc.p || srcPage;
+    if (loc.s) scopeCh = parseInt(String(loc.s).split(".")[0], 10);
+    if ((scopeCh == null || isNaN(scopeCh)) && loc.p && typeof pageToChapter === "function") scopeCh = pageToChapter(loc.p);
+    source = "Q_BOOKLOC";
+  }
+  if (isNaN(scopeCh)) scopeCh = null;
+  out.srcPage = srcPage; out.srcSec = srcSec; out.source = source; out.ch = scopeCh;
+  if (scopeCh != null) out.locator = { ch: scopeCh, sec: srcSec, page: srcPage };
+  // concept + phrases from the assertion
+  const concept = _tbConcept(stem);
+  if (!concept.length) { out.reason = "no-concept"; return out; }
+  let topic = null, topicIdf = -1;
+  concept.forEach(w => { const v = _tbIdf[w] || 0; if (v > topicIdf) { topicIdf = v; topic = w; } });
+  const phrases = _conceptPhrases(stem);
+  const weights = Object.create(null);
+  concept.forEach(w => { weights[w] = (weights[w] || 0) + (_tbIdf[w] || 6); });
+  const scan = (restrict) => {
+    let best = null, bestScore = 0, bestIdx = -1;
+    for (let i = 0; i < TEXTBOOK.length; i++) {
+      if (restrict && _tbChap[i] !== scopeCh) continue;
+      const low = _tbLow[i];
+      if (topic && !low.includes(topic)) continue;   // concept MUST appear
+      if (_tbIsEndMatter(i)) continue;                // no glossary/index/answer-key
+      let score = 0, hits = 0;
+      for (const w in weights) if (low.includes(w)) { score += weights[w]; hits++; }
+      if (hits < 1) continue;
+      phrases.forEach(p => { if (low.includes(p)) score += 30; });  // exact anatomical phrase (proximity)
+      if (ansPhrase && low.includes(ansPhrase)) score += 15;        // exact multiword answer only
+      score *= (0.25 + 0.75 * _tbQual[i]);
+      if (score > bestScore) { bestScore = score; best = { page: TEXTBOOK[i][0], text: TEXTBOOK[i][1] }; bestIdx = i; }
+    }
+    return best ? { best, bestScore, bestIdx } : null;
+  };
+  let r = null, mode = "";
+  if (scopeCh != null) { r = scan(true); mode = "chapter-scoped"; }
+  else { r = scan(false); mode = "unrestricted"; }
+  const MIN = 10;
+  if (!r || r.bestScore < MIN) { out.reason = (scopeCh != null) ? "no-verified-passage-in-ch" + scopeCh : "no-verified-passage"; return out; }
+  out.ref = { page: r.best.page, text: r.best.text, ansPhrase: ansPhrase, qTok: concept.concat(ansPhrase ? ansPhrase.split(/\s+/) : []) };
+  out.page = r.best.page; out.confidence = Math.round(r.bestScore); out.reason = mode;
+  return out;
+}
+/* Regression + Q_BOOKLOC cross-chapter audit (run from console: _auditBookRefs()). */
+function _auditBookRefs(sampleN) {
+  const idx = (typeof buildQuestionIndex === "function") ? buildQuestionIndex() : {};
+  const results = { regressions: [], crossChapter: 0, endMatterRejected: 0, inMappedChapter: 0, totalChecked: 0 };
+  const reg = (id, wantCh, wantNotPage) => {
+    const q = idx[id]; if (!q) { results.regressions.push({ id, ok: false, note: "missing" }); return; }
+    const r = resolveBookReference(q);
+    const gotCh = r.page != null ? pageToChapter(r.page) : null;
+    results.regressions.push({ id, page: r.page, gotCh, reason: r.reason, confidence: r.confidence, ok: (wantCh == null || gotCh === wantCh) && (!wantNotPage || r.page !== wantNotPage) });
+  };
+  reg("ST-0133", 24, 555);   // respiratory, not heart p.555
+  reg("ST-0933", 22, null);  // arterial valves — Ch 22 not 21
+  reg("ST-0318", 25, null);  // esophageal hiatus — Ch 25 not lymphatic 23
+  // audit: resolved chapter vs Q_BOOKLOC chapter, on a sample
+  const ids = (typeof Q_BOOKLOC !== "undefined") ? Object.keys(Q_BOOKLOC) : [];
+  const step = Math.max(1, Math.floor(ids.length / (sampleN || 300)));
+  for (let i = 0; i < ids.length; i += step) {
+    const id = ids[i], q = idx[id]; if (!q) continue;
+    const mapCh = parseInt(String(Q_BOOKLOC[id].s || "").split(".")[0], 10);
+    const r = resolveBookReference(q); if (!r.page) continue;
+    results.totalChecked++;
+    const gotCh = pageToChapter(r.page);
+    if (gotCh === mapCh) results.inMappedChapter++; else results.crossChapter++;
+  }
+  results.inMappedPct = results.totalChecked ? Math.round(results.inMappedChapter / results.totalChecked * 100) : 0;
+  return results;
+}
+// Popup: pass a QUESTION object to route through resolveBookReference; the legacy
+// (questionText, answerText) form is kept for the glossary/term lookup only.
+function showTextbookPanel(question, answerText, qObj) {
+  let res = null, locator = null, answerLabel = answerText;
+  if (qObj) {
+    const R = resolveBookReference(qObj);
+    res = R.ref; locator = R.locator;
+    if (qObj.tf) answerLabel = (typeof qObj.correct === "number" && qObj.options) ? qObj.options[qObj.correct] : answerText;
+  } else {
+    res = searchTextbook(question, answerText);
+  }
   const overlay = document.createElement("div");
   overlay.className = "tbOverlay";
   overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
@@ -175,17 +308,20 @@ function showTextbookPanel(question, answerText) {
     panel.innerHTML =
       `<div class="tbHead"><span class="tbBadge">📖 Martini 9e · p. ${res.page}</span>
         <button class="tbClose" aria-label="Close">✕</button></div>
-       <div class="tbAnswerLine"><span class="tbAnswerLabel">Answer</span> ${escapeHtml(answerText)}</div>
+       <div class="tbAnswerLine"><span class="tbAnswerLabel">Answer</span> ${escapeHtml(answerLabel)}</div>
        <div class="tbBody">${highlightPassage(res)}</div>
        <div class="tbFoot">Highlighted from the course textbook · verify against the printed page for figures.
          <button class="pdfLookBtn">📄 View in Annotated PDF</button>
        </div>`;
     panel.querySelector(".pdfLookBtn").onclick = () => openPdfAtPage(res.page + 31);
   } else {
+    const loc = locator ? `<div class="tbFoot">Mapped to <b>Ch ${locator.ch}${locator.sec ? " §" + locator.sec : ""}</b>${locator.page ? " · source p. " + locator.page : ""} — but no verified explanatory passage was found for this question.</div>` : "";
     panel.innerHTML =
       `<div class="tbHead"><span class="tbBadge">📖 Martini 9e</span>
         <button class="tbClose" aria-label="Close">✕</button></div>
-       <div class="tbBody">No close textbook passage found for this one. The answer is <strong>${escapeHtml(answerText)}</strong> — try the index for related terms.</div>`;
+       <div class="tbAnswerLine"><span class="tbAnswerLabel">Answer</span> ${escapeHtml(answerLabel)}</div>
+       <div class="tbBody"><b>No verified passage found.</b> We won't show a weak/global match that could point to the wrong topic.</div>
+       ${loc}`;
   }
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
@@ -2274,9 +2410,8 @@ function renderQuiz(main) {
     // Martini textbook reference — Claude Bank carries a curated chapter/page (q.ch/q.page);
     // GR & Stuvia fall back to a live best-match lookup.
     try {
-      let ch = null, page = null;
-      if (q.ch) { ch = q.ch; page = q.page || null; }
-      else { const res = searchTextbook(q.q, q.options[q.correct]); if (res && res.page) { page = res.page; ch = pageToChapter(page); } }
+      const R = resolveBookReference(q);
+      const ch = R.ch, page = R.page || (R.locator && R.locator.page) || null;
       if (ch || page) {
         const cm = ch ? CHAP_META[ch] : null;
         const cite = document.createElement("div");
@@ -2292,7 +2427,7 @@ function renderQuiz(main) {
     const look = document.createElement("button");
     look.className = "tbLookBtn";
     look.innerHTML = "📖 Look it up in Martini";
-    look.onclick = () => showTextbookPanel(q.q, q.options[q.correct]);
+    look.onclick = () => showTextbookPanel(q.q, q.options[q.correct], q);
     fb.appendChild(look);
     { const nb = notesBtn(q); if (nb) fb.appendChild(nb); }   // 📓 your notes (with-notes mode)
     fb.appendChild(reportBtn(q));
@@ -4159,7 +4294,7 @@ function renderMissedStats(main) {
     if (!meta) return;
     const ans = meta.options[meta.correct];
     let pg = null, ch = meta.hintCh;
-    try { const res = searchTextbook(meta.q, ans); if (res && res.page) { pg = res.page; const c = pageToChapter(pg); if (c) ch = c; } } catch (e) {}
+    try { const R = resolveBookReference(Object.assign({}, meta, { id: r.id })); pg = R.page || (R.locator && R.locator.page) || null; if (R.ch) ch = R.ch; } catch (e) {}
     const cm = ch ? CHAP_META[ch] : null;
     const rate = Math.round(r.missed / r.seen * 100);
 
@@ -4335,21 +4470,22 @@ function showExamNextBtn() {
   const q = examDeck[examIndex];
   if (q) {
     try {
-      const res = searchTextbook(q.q, q.options[q.correct]);
-      if (res && res.page) {
-        const ch = pageToChapter(res.page); const cm = ch ? CHAP_META[ch] : null;
+      const R = resolveBookReference(q);
+      const page = R.page || (R.locator && R.locator.page) || null; const ch = R.ch;
+      if (ch || page) {
+        const cm = ch ? CHAP_META[ch] : null;
         const cite = document.createElement("div");
         cite.style.cssText = "font-size:.8rem;color:#777;margin:2px 0 8px;line-height:1.4;";
         cite.innerHTML = cm
-          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)} &nbsp;·&nbsp; <b>p. ${res.page}</b>`
-          : `📖 <b>Martini</b> &nbsp;·&nbsp; p. ${res.page}`;
+          ? `📖 <b>Martini Ch ${ch}</b> — ${escapeHtml(cm.name)}${page ? ` &nbsp;·&nbsp; <b>p. ${page}</b>` : ""}`
+          : `📖 <b>Martini</b>${page ? ` &nbsp;·&nbsp; p. ${page}` : ""}`;
         wrap.appendChild(cite);
       }
     } catch (e) {}
     const look = document.createElement("button");
     look.textContent = "📖 Look it up in Martini";
     look.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:var(--ink);border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;";
-    look.onclick = () => { clearExamAutoAdv(); showTextbookPanel(q.q, q.options[q.correct]); };
+    look.onclick = () => { clearExamAutoAdv(); showTextbookPanel(q.q, q.options[q.correct], q); };
     wrap.appendChild(look);
     { const nb = notesBtn(q); if (nb) { nb.style.cssText = "display:block;width:100%;margin:0 0 8px;background:#fff;color:var(--ink);border:1.5px solid #cfe0f2;border-radius:12px;padding:11px;font-size:.9rem;font-weight:700;cursor:pointer;"; nb.onclick = () => { clearExamAutoAdv(); openNotesPanel(qRegionSection(q.id)); }; wrap.appendChild(nb); } }
   }
