@@ -6215,21 +6215,49 @@ function buildGenericExamMenu(list, key) {
   };
   list.appendChild(missBtn);
 }
+// The four real cumulative-final blocks (50 each = 200): Appendicular, Axial, Torso-regional
+// (Thorax+Abdomen+Pelvis), and Systemic — Systemic pulled out of Torso via blueprintSources()
+// (the same split the Torso lecture exam uses).
+function _cumulativeBlocks() {
+  const idx = buildQuestionIndex();
+  const toQ = ids => dedupeQs(ids.map(id => idx[id]).filter(q => q && isExamEligible(q) && !isDiagramQ(q)));
+  const unitIds = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
+  let src = {};
+  try { src = blueprintSources() || {}; } catch (e) {}
+  const rIds = [].concat(src.Thorax || [], src.Abdomen || [], src.Pelvis || []).map(o => o.id);
+  const sIds = (src.Systemic || []).map(o => o.id);
+  return {
+    Appendicular: toQ(unitIds("appendicular")),
+    Axial:        toQ(unitIds("axial")),
+    Torso:        toQ(rIds),
+    Systemic:     toQ(sIds),
+  };
+}
+// Draw exactly `per` from each block (deduped across blocks), then shuffle into one deck.
+function _cumulativeDeck(per) {
+  const bl = _cumulativeBlocks();
+  const seen = new Set(); const deck = [];
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
+    const picked = shuffle(bl[name] || []).filter(q => { const k = q.id || _stemKey(q.q); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, per);
+    deck.push(...picked);
+  });
+  return shuffle(deck);
+}
 function buildCumulativeExamMenu(list) {
-  const SECS = 4800, N = 200, PER_N = 67;   // real Final: 200 questions in 80 minutes
+  const SECS = 4800, PER = 50;   // real Final: 50 Appendicular + 50 Axial + 50 Torso + 50 Systemic = 200
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
-  const allPool = dedupeQs([].concat(sectionGRPool("appendicular"), sectionGRPool("axial"), sectionGRPool("torso"), sectionCBPool("cumulative"), sectionStuviaPool("cumulative")));
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Appendicular + Axial + Torso mixed · <b>${Math.min(N, allPool.length)} Qs · 80 min</b> · skip &amp; flag</span>`;
-  simBtn.onclick = () => launchFullExamPool(shuffle(allPool).slice(0, N), "Cumulative Simulation", SECS);
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Exam structure: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · skip &amp; flag</span>`;
+  simBtn.onclick = () => { const deck = _cumulativeDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation", SECS); };
   list.appendChild(simBtn);
-  _mkHdr(list, "By Unit");
-  [["appendicular","🦴","Appendicular"], ["axial","🦷","Axial"], ["torso","🫁","Torso"]].forEach(([k, icon, label]) => {
-    const pool = sectionGRPool(k);
+  _mkHdr(list, "By Block — 50-Q practice test");
+  const PER_N = 67;
+  [["Appendicular","🦴"], ["Axial","🦷"], ["Torso","🫁"], ["Systemic","🩺"]].forEach(([name, icon]) => {
+    const pool = (_cumulativeBlocks()[name]) || [];
     const b = document.createElement("button"); b.className = "modeBtn";
-    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${label} — Practice Test</span><span class="modeMeta">${Math.min(PER_N, pool.length)} Qs · ~50 min · skip &amp; flag</span>`;
-    b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER_N), label + " (Cumulative)", SECS);
+    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${name} — Practice Test</span><span class="modeMeta">${Math.min(PER, pool.length)} Qs · skip &amp; flag</span>`;
+    b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER), name + " (Cumulative)", SECS);
     list.appendChild(b);
   });
   addCatCard(list, "cumulative");
@@ -7182,10 +7210,14 @@ function catRegions(key) {
   }
   if (key === "cumulative") {
     const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
+    let src = {}; try { src = blueprintSources() || {}; } catch (e) {}
+    const rIds = [].concat(src.Thorax || [], src.Abdomen || [], src.Pelvis || []).map(o => o.id);
+    const sIds = (src.Systemic || []).map(o => o.id);
     return [
-      { name: "Appendicular", quota: 67, pool: clean(unit("appendicular")) },
-      { name: "Axial", quota: 67, pool: clean(unit("axial")) },
-      { name: "Torso", quota: 66, pool: clean(unit("torso")) },
+      { name: "Appendicular", quota: 50, pool: clean(unit("appendicular")) },
+      { name: "Axial", quota: 50, pool: clean(unit("axial")) },
+      { name: "Torso", quota: 50, pool: clean(rIds) },
+      { name: "Systemic", quota: 50, pool: clean(sIds) },
     ];
   }
   return [];
