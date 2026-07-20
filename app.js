@@ -6364,7 +6364,11 @@ function lab2MockPool() {
   }
   const gr = (typeof DATA !== "undefined" && DATA.sections) ? DATA.sections.lab2 : null;
   if (gr && gr.subtopics) gr.subtopics.forEach(t => (t.quiz || []).forEach(q => { if (isExamEligible(q) && (q.options || []).length >= 2) pool.push(q); }));
-  pool = pool.concat(lab2DiagramMCQs());          // on-diagram labeling identify questions (image-based)
+  // NOTE: the on-diagram "identify #N" MCQs are DISABLED in the timed mock/sprint — several
+  // worksheet PNGs are cropped at the left/top edge in the SOURCE (e.g. box #1's number is cut
+  // off), so "identify #N" is unanswerable. Diagram practice lives in the drag-drop Diagram
+  // Labeling mode. Re-enable once clean full-margin images are re-extracted from the lab PDFs.
+  // pool = pool.concat(lab2DiagramMCQs());
   return dedupeQs(pool);
 }
 // Quick Lab 2 "sprint" deck — n weak-first questions (missed / low-recall seen items lead,
