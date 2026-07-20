@@ -267,7 +267,7 @@ function _auditBookRefs(sampleN) {
   const results = { regressions: [], crossChapter: 0, endMatterRejected: 0, inMappedChapter: 0, totalChecked: 0 };
   const reg = (id, wantCh, wantNotPage) => {
     const q = idx[id]; if (!q) { results.regressions.push({ id, ok: false, note: "missing" }); return; }
-    const r = resolveBookReference(q);
+    const r = resolveBookReference(Object.assign({}, q, { id: id }));  // id is the index KEY, attach it
     const gotCh = r.page != null ? pageToChapter(r.page) : null;
     results.regressions.push({ id, page: r.page, gotCh, reason: r.reason, confidence: r.confidence, ok: (wantCh == null || gotCh === wantCh) && (!wantNotPage || r.page !== wantNotPage) });
   };
@@ -280,7 +280,7 @@ function _auditBookRefs(sampleN) {
   for (let i = 0; i < ids.length; i += step) {
     const id = ids[i], q = idx[id]; if (!q) continue;
     const mapCh = parseInt(String(Q_BOOKLOC[id].s || "").split(".")[0], 10);
-    const r = resolveBookReference(q); if (!r.page) continue;
+    const r = resolveBookReference(Object.assign({}, q, { id: id })); if (!r.page) continue;
     results.totalChecked++;
     const gotCh = pageToChapter(r.page);
     if (gotCh === mapCh) results.inMappedChapter++; else results.crossChapter++;
