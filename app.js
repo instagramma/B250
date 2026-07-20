@@ -111,6 +111,13 @@ function tbBuildIndex() {
 function searchTextbook(question, answerText) {
   if (typeof TEXTBOOK === "undefined" || !TEXTBOOK.length) return null;
   tbBuildIndex();
+  // Answer-anchoring HURTS when the answer is a generic word (True/False/while/increased/etc.):
+  // e.g. an SA-node T/F matched "true acetabulum" (a hip passage). If the answer carries no real
+  // anatomical term, ignore it and rank on the question's concept only.
+  const GENERIC_ANS = new Set("true false yes no none all both neither each many few increased decreased unchanged while during after before more less higher lower greater smaller normal abnormal same different present absent".split(" "));
+  const ansWords = String(answerText || "").toLowerCase().replace(/^(the|a|an)\s+/, "").replace(/[.;,]$/, "").split(/\s+/);
+  const ansMeaningful = ansWords.some(w => w.length > 4 && !GENERIC_ANS.has(w));
+  if (!ansMeaningful) answerText = "";
   const qTok = tbTokens(question);
   const aTok = tbTokens(answerText);
   const ansPhrase = String(answerText || "").toLowerCase().replace(/^(the|a|an)\s+/, "").replace(/[.;,]$/, "").trim();
@@ -123,7 +130,7 @@ function searchTextbook(question, answerText) {
   const TB_TOPIC_SKIP = new Set("least most following type common kind example correct except best structure function part called known located found number result involved associated".split(" "));
   let topic = null, topicIdf = 0;
   qTok.forEach(w => { if (w.length > 4 && !aTok.includes(w) && !TB_TOPIC_SKIP.has(w)) { const v = _tbIdf[w] || 0; if (v > topicIdf) { topicIdf = v; topic = w; } } });
-  let best = null, bestScore = 0;
+  let best = null, bestScore = 0, bestIdx = -1;
   for (let i = 0; i < TEXTBOOK.length; i++) {
     const low = _tbLow[i];
     let score = 0;
@@ -132,9 +139,13 @@ function searchTextbook(question, answerText) {
     if (topic && ansPhrase && low.includes(topic) && low.includes(ansPhrase)) score += 20; // answer + question concept together
     // down-weight figure-caption label-salad, tables, and end-of-section review/answer blocks
     score *= (0.2 + 0.8 * _tbQual[i]);
-    if (score > bestScore) { bestScore = score; best = { page: TEXTBOOK[i][0], text: TEXTBOOK[i][1] }; }
+    if (score > bestScore) { bestScore = score; best = { page: TEXTBOOK[i][0], text: TEXTBOOK[i][1] }; bestIdx = i; }
   }
   if (!best || bestScore < 12) return null;
+  // Precision guard: if the STEM has a clear concept word but the winning passage doesn't contain
+  // it, the match is a spurious answer-word collision (e.g. "SA node" T/F → "true acetabulum").
+  // Show NO reference rather than a wrong one.
+  if (topic && bestIdx >= 0 && !_tbLow[bestIdx].includes(topic)) return null;
   best.score = Math.round(bestScore); best.ansPhrase = ansPhrase; best.qTok = qTok.concat(aTok);
   return best;
 }
