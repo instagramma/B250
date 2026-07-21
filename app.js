@@ -8143,10 +8143,10 @@ function renderFullExam(main) {
   // ⏸ Pause & save — stop the clock, snapshot the session, and return home. Resume later from
   // the banner on Home / the exam menu, or discard it and start fresh.
   const pauseRow = document.createElement("div");
-  pauseRow.style.cssText = "text-align:center;margin:6px 0 0;";
+  pauseRow.style.cssText = "text-align:center;margin:12px 0 2px;";
   const pauseBtn = document.createElement("button");
-  pauseBtn.textContent = "⏸ Pause & save — continue later";
-  pauseBtn.style.cssText = "background:none;border:none;color:var(--muted);font-size:.8rem;font-weight:700;cursor:pointer;text-decoration:underline;";
+  pauseBtn.textContent = "⏸ Pause & Save — continue later";
+  pauseBtn.style.cssText = "background:#F59E0B;color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:.98rem;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(245,158,11,.35);";
   pauseBtn.onclick = () => {
     savePausedExam();
     clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
