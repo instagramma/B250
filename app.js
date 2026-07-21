@@ -6584,21 +6584,43 @@ function buildGenericExamMenu(list, key) {
 // The four real cumulative-final blocks (50 each = 200): Appendicular, Axial, Torso-regional
 // (Thorax+Abdomen+Pelvis), and Systemic — Systemic pulled out of Torso via blueprintSources()
 // (the same split the Torso lecture exam uses).
+// Is a bank group / GR subtopic title SYSTEMIC (its own consideration) vs REGIONAL?
+// Systemic = the foundational/organ-system content taught inside each unit (cell, tissue, bone
+// tissue, integument, skeletal/muscular systems, neural tissue, ANS/senses, and all the Torso
+// systems). Regional = the actual regional dissection (UE/LE, head & neck, spine, thorax, etc.).
+function _isSystemicGroupTitle(title) {
+  const t = String(title || "").toLowerCase();
+  // explicit REGIONAL markers win first
+  if (/upper extremity|lower extremity|upper limb|lower limb|pectoral girdle|pelvic girdle|appendicular skeleton|appendicular joint|limb (bones|muscles)|head and neck|spinal cord and spinal column|\bthorax\b|\babdomen\b|\bpelvis\b|perineum/.test(t)) return false;
+  // SYSTEMIC markers
+  return /foundation|introduction|body organization|\bcell\b|tissue|histolog|integument|bone tissue|osseous|ossification|skeletal|muscular|muscle (physiology|tissue)|neural tissue|cross[ -]?section|autonomic|special senses|\bsenses\b|endocrine|\bblood\b|\bheart\b|vessel|circulation|lymphatic|digestive|urinary|reproductive|embryolog|nervous/.test(t);
+}
 function _cumulativeBlocks() {
   const idx = buildQuestionIndex();
   // idx maps id→question but the id is the KEY, not a field on the object — re-attach it so
   // dedup + the per-question option-shuffle cache work (they key on q.id).
   const toQ = ids => dedupeQs(ids.map(id => { const q = idx[id]; return q ? Object.assign({}, q, { id: id }) : null; }).filter(q => q && isExamEligible(q) && !isDiagramQ(q)));
-  const unitIds = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
+  // Split a unit's banks into REGIONAL vs SYSTEMIC by group/subtopic title.
+  function unitSplit(k) {
+    const reg = [], sys = [];
+    const push = (q, title) => { if (q && q.id != null) (_isSystemicGroupTitle(title) ? sys : reg).push(q.id); };
+    (((DATA.sections[k] || {}).subtopics) || []).forEach(t => (t.quiz || []).forEach(q => push(q, t.title || t.name || "")));
+    (activeStuvia(k) || []).forEach(g => (g.questions || []).forEach(q => push(q, g.title || g.name || "")));
+    (activeClaudeBank(k) || []).forEach(g => (g.questions || []).forEach(q => push(q, g.title || g.name || "")));
+    return { reg, sys };
+  }
+  const ap = unitSplit("appendicular");
+  const ax = unitSplit("axial");
+  // Torso already has a regional/systemic split via the blueprint.
   let src = {};
   try { src = blueprintSources() || {}; } catch (e) {}
-  const rIds = [].concat(src.Thorax || [], src.Abdomen || [], src.Pelvis || []).map(o => o.id);
-  const sIds = (src.Systemic || []).map(o => o.id);
+  const torsoRegIds = [].concat(src.Thorax || [], src.Abdomen || [], src.Pelvis || []).map(o => o.id);
+  const torsoSysIds = (src.Systemic || []).map(o => o.id);
   return {
-    Appendicular: toQ(unitIds("appendicular")),
-    Axial:        toQ(unitIds("axial")),
-    Torso:        toQ(rIds),
-    Systemic:     toQ(sIds),
+    Appendicular: toQ(ap.reg),                                   // regional only (UE / LE)
+    Axial:        toQ(ax.reg),                                   // regional only (head & neck / spine)
+    Torso:        toQ(torsoRegIds),                              // regional only (thorax / abdomen / pelvis)
+    Systemic:     toQ([].concat(ap.sys, ax.sys, torsoSysIds)),   // systemic across ALL units, unified
   };
 }
 // Draw exactly `per` from each block (deduped across blocks), then shuffle into one deck.
@@ -7641,15 +7663,13 @@ function catRegions(key) {
     ];
   }
   if (key === "cumulative") {
-    const unit = k => dedupeQs([].concat(sectionGRPool(k), sectionCBPool(k), sectionStuviaPool(k))).map(q => q.id);
-    let src = {}; try { src = blueprintSources() || {}; } catch (e) {}
-    const rIds = [].concat(src.Thorax || [], src.Abdomen || [], src.Pelvis || []).map(o => o.id);
-    const sIds = (src.Systemic || []).map(o => o.id);
+    // Use the same 4-block definition as the cumulative deck: 3 regional units + unified Systemic.
+    const bl = _cumulativeBlocks();
     return [
-      { name: "Appendicular", quota: 50, pool: clean(unit("appendicular")) },
-      { name: "Axial", quota: 50, pool: clean(unit("axial")) },
-      { name: "Torso", quota: 50, pool: clean(rIds) },
-      { name: "Systemic", quota: 50, pool: clean(sIds) },
+      { name: "Appendicular", quota: 50, pool: clean((bl.Appendicular || []).map(q => q.id)) },
+      { name: "Axial", quota: 50, pool: clean((bl.Axial || []).map(q => q.id)) },
+      { name: "Torso", quota: 50, pool: clean((bl.Torso || []).map(q => q.id)) },
+      { name: "Systemic", quota: 50, pool: clean((bl.Systemic || []).map(q => q.id)) },
     ];
   }
   return [];
