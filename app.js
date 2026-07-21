@@ -1618,7 +1618,17 @@ function notesBtn(q) {
 }
 
 /* ---------------- OWNER DASHBOARD (class-wide stats, pulled from cloud sync) ---------------- */
-const OWNER_PROFILES = ["gabe"];  // only these profiles see the class-stats view
+const OWNER_PROFILES = ["gabe", "sam", "darren"];  // these profiles can view the class-stats dashboard
+// Unit ("consideration") id-sets, memoized — used to break each profile's stats down by unit.
+let _unitSetsCache = null;
+function _unitIdSets() {
+  if (_unitSetsCache) return _unitSetsCache;
+  let bl = {};
+  try { bl = _cumulativeBlocks(); } catch (e) { return {}; }
+  const out = {};
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(u => out[u] = new Set((bl[u] || []).map(q => q.id)));
+  _unitSetsCache = out; return out;
+}
 function isOwner() { return CLOUD_ENABLED && currentProfile && OWNER_PROFILES.includes(String(currentProfile).trim().toLowerCase()); }
 let ownerStats = { data: null, err: null, loading: false };
 async function fetchOwnerStats() {
@@ -1642,14 +1652,22 @@ function _relTime(iso) {
 function profileSummary(row) {
   const d = row.data || {}, qs = d.qstats || {};
   let ids = 0, seen = 0, missed = 0;
-  Object.keys(qs).forEach(id => { ids++; seen += qs[id].seen || 0; missed += qs[id].missed || 0; });
+  // Per-consideration (unit) breakdown
+  const units = _unitIdSets();
+  const uNames = ["Appendicular", "Axial", "Torso", "Systemic"];
+  const byUnit = {}; uNames.forEach(u => byUnit[u] = { practiced: 0, seen: 0, missed: 0 });
+  Object.keys(qs).forEach(id => {
+    ids++; const st = qs[id]; seen += st.seen || 0; missed += st.missed || 0;
+    for (const u of uNames) { if (units[u] && units[u].has(id)) { byUnit[u].practiced++; byUnit[u].seen += st.seen || 0; byUnit[u].missed += st.missed || 0; break; } }
+  });
+  uNames.forEach(u => { const b = byUnit[u]; b.acc = b.seen ? Math.round((b.seen - b.missed) / b.seen * 100) : null; });
   const acc = seen ? Math.round((seen - missed) / seen * 100) : null;
   let att = [];
   Object.keys(d.examAttempts || {}).forEach(k => (d.examAttempts[k] || []).forEach(a => att.push(Object.assign({ _key: k }, a))));
   att.sort((a, b) => (b.ts || 0) - (a.ts || 0));
   const mocks = att.filter(a => (a.total || 0) >= 100 && typeof a.pct === "number");
   const bestMock = mocks.length ? Math.max(...mocks.map(a => a.pct)) : null;
-  return { profile: row.profile, updated: row.updated_at, practiced: ids, seen, acc, attempts: att.length, mocks: mocks.length, bestMock, recent: att.slice(0, 4) };
+  return { profile: row.profile, updated: row.updated_at, practiced: ids, seen, acc, attempts: att.length, mocks: mocks.length, bestMock, byUnit: byUnit, recent: att.slice(0, 4) };
 }
 function renderOwnerStats(main) {
   if (!isOwner()) { const p = document.createElement("p"); p.className = "comingSoonMsg"; p.style.cssText = "text-align:center;margin-top:32px;"; p.textContent = "Owner view only."; main.appendChild(p); return; }
@@ -1678,6 +1696,24 @@ function renderOwnerStats(main) {
         <div><div style="font-size:1.4rem;font-weight:800;">${s.attempts}</div><div style="font-size:.72rem;color:#888;">exams/quizzes</div></div>
         <div><div style="font-size:1.4rem;font-weight:800;">${bm}</div><div style="font-size:.72rem;color:#888;">best full mock (${s.mocks})</div></div>
       </div>`;
+    // Per-consideration (unit) breakdown
+    if (s.byUnit) {
+      const ur = document.createElement("div");
+      ur.style.cssText = "margin-top:12px;border-top:1px solid #f0f0f0;padding-top:9px;";
+      ur.innerHTML = `<div style="font-size:.7rem;color:#aaa;font-weight:700;letter-spacing:.05em;margin-bottom:6px;">BY CONSIDERATION</div>`;
+      const grid = document.createElement("div");
+      grid.style.cssText = "display:flex;gap:18px;flex-wrap:wrap;";
+      ["Appendicular", "Axial", "Torso", "Systemic"].forEach(u => {
+        const b = s.byUnit[u] || {};
+        const acc = (b.acc == null) ? "—" : b.acc + "%";
+        const cell = document.createElement("div");
+        cell.innerHTML = `<div style="font-size:.72rem;color:#888;font-weight:700;">${u}</div>
+          <div style="font-size:1.15rem;font-weight:800;color:${b.acc == null ? "#bbb" : "var(--ink)"};">${acc}</div>
+          <div style="font-size:.68rem;color:#aaa;">${b.practiced || 0} q · ${b.seen || 0} ans</div>`;
+        grid.appendChild(cell);
+      });
+      ur.appendChild(grid); card.appendChild(ur);
+    }
     if (s.recent && s.recent.length) {
       const rl = document.createElement("div"); rl.style.cssText = "margin-top:10px;border-top:1px solid #f0f0f0;padding-top:8px;";
       rl.innerHTML = `<div style="font-size:.72rem;color:#aaa;margin-bottom:4px;">Recent</div>`;
