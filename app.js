@@ -6848,11 +6848,16 @@ function renderSuddenDeath(main) {
   if (!sdAnswered) markQuestionShown("sd" + sdIndex + (q.id || ""));
 
   // Streak header
+  const sdRecord = ((progressState.quizzes && progressState.quizzes["suddenDeath:" + state.sectionKey]) || {}).score || 0;
+  const sdBeatingRecord = sdStreak > sdRecord && sdStreak > 0;
   const streakWrap = document.createElement("div");
   streakWrap.className = "sdStreakWrap";
   streakWrap.innerHTML = `
     <div class="sdStreakLabel">🔥 STREAK</div>
     <div class="sdStreakNum">${sdStreak}</div>
+    <div class="sdRecordLine">${sdBeatingRecord
+      ? `🏆 NEW RECORD! <span style="opacity:.7;">(prev ${sdRecord})</span>`
+      : `🏆 Record: <strong>${Math.max(sdRecord, sdStreak)}</strong>`}</div>
     <div class="sdQCounter">${sdIndex + 1} of ${sdDeck.length}</div>`;
   main.appendChild(streakWrap);
 
