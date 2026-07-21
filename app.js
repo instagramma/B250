@@ -6480,8 +6480,52 @@ function _cumulativeDeck(per) {
   });
   return shuffle(deck);
 }
+// Difficulty-tiered cumulative deck: 50 per block, drawn from an easy / medium / hard slice by
+// catDifficulty (which already folds in Gabe's miss-rate + fuzzy items, so "hard" naturally skews
+// toward his weak spots). "realistic" = representative random draw mirroring the real exam mix.
+function _cumulativeDeckDiff(per, level) {
+  const bl = _cumulativeBlocks();
+  const seen = new Set(); const deck = [];
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
+    let pool = (bl[name] || []).filter(q => { const k = (q.id != null) ? q.id : String(q.q || ""); if (seen.has(k)) return false; seen.add(k); return true; });
+    let chosen;
+    if (level === "realistic" || !level) {
+      chosen = shuffle(pool);
+    } else {
+      const scored = pool.map(q => ({ q, d: catDifficulty(q.id, q) })).sort((a, b) => a.d - b.d);
+      const nP = scored.length;
+      let slice;
+      if (level === "easy")       slice = scored.slice(0, Math.max(per * 2, Math.ceil(nP * 0.40)));            // easiest ~40%
+      else if (level === "medium") slice = scored.slice(Math.floor(nP * 0.33), Math.ceil(nP * 0.72));           // middle band
+      else                         slice = scored.slice(Math.floor(nP * 0.60));                                 // hardest ~40%
+      chosen = shuffle(slice.map(s => s.q));
+    }
+    deck.push(...chosen.slice(0, per));
+  });
+  return shuffle(deck);
+}
 function buildCumulativeExamMenu(list) {
   const SECS = 4800, PER = 50;   // real Final: 50 Appendicular + 50 Axial + 50 Torso + 50 Systemic = 200
+  // ── Final Prep ladder — Easy → Medium → Hard → Realistic (all 200 Q · 50/block · 80 min) ──
+  _mkHdr(list, "🎯 Final Prep — pick your difficulty");
+  const ladder = [
+    ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Lowest-difficulty questions across all 4 units. Build confidence + cover breadth."],
+    ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Mid-difficulty mix. Closest to a normal study set."],
+    ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Hardest questions + your fuzzy/miss-prone items. Built to punish gaps."],
+    ["realistic", "⭐ Realistic — Mirrors the Final", "#0F766E", "#E9F6F4", "Representative random draw — the real exam's difficulty mix."],
+  ];
+  ladder.forEach(([lvl, label, border, bg, meta]) => {
+    const btn = document.createElement("button"); btn.className = "modeBtn";
+    btn.style.cssText = `border:2px solid ${border};background:${bg};`;
+    btn.innerHTML = `<span class="modeLabel">${label}</span><span class="modeMeta">${meta} · <b>200 Qs · 50/unit · 80 min</b></span>`;
+    btn.onclick = () => {
+      const deck = _cumulativeDeckDiff(PER, lvl);
+      if (!deck.length) { alert("No questions available yet."); return; }
+      launchFullExamPool(deck, "Cumulative — " + label.replace(/^[^A-Za-z]+/, "").split(" —")[0], SECS);
+    };
+    list.appendChild(btn);
+  });
+
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
