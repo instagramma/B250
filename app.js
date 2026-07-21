@@ -6665,7 +6665,7 @@ function buildCumulativeExamMenu(list) {
     ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Lowest-difficulty questions across all 4 units. Build confidence + cover breadth."],
     ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Mid-difficulty mix. Closest to a normal study set."],
     ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Hardest questions + your fuzzy/miss-prone items. Built to punish gaps."],
-    ["realistic", "⭐ Realistic — Mirrors the Final", "#0F766E", "#E9F6F4", "Representative random draw — the real exam's difficulty mix."],
+    ["realistic", "⭐ Realistic — Balanced full mock", "#0F766E", "#E9F6F4", "Representative random draw across all 4 blocks — your best baseline diagnostic."],
   ];
   ladder.forEach(([lvl, label, border, bg, meta]) => {
     const btn = document.createElement("button"); btn.className = "modeBtn";
@@ -6682,7 +6682,7 @@ function buildCumulativeExamMenu(list) {
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Exam structure: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · skip &amp; flag</span>`;
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · skip &amp; flag<br><span style="opacity:.75;font-size:.9em;">Balanced diagnostic split — the syllabus doesn't confirm the exact Final ratio.</span></span>`;
   simBtn.onclick = () => { const deck = _cumulativeDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation", SECS); };
   list.appendChild(simBtn);
   _mkHdr(list, "By Block — 50-Q practice test");
@@ -6698,10 +6698,10 @@ function buildCumulativeExamMenu(list) {
   _mkHdr(list, "Review");
   const missBtn = document.createElement("button"); missBtn.className = "modeBtn";
   missBtn.style.cssText = "border:2px solid #C0392B;background:#FDECEA;";
-  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Everything you've gotten wrong across all three units</span>`;
+  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Everything you've gotten wrong across all four blocks (incl. Systemic)</span>`;
   missBtn.onclick = () => {
     let missed = [];
-    ["appendicular","axial","torso"].forEach(k => { try { missed = missed.concat(JSON.parse(localStorage.getItem(ns("missed:" + k)) || "[]")); } catch (e) {} });
+    ["appendicular","axial","torso","systemic"].forEach(k => { try { missed = missed.concat(JSON.parse(localStorage.getItem(ns("missed:" + k)) || "[]")); } catch (e) {} });
     missed = dedupeQs(missed);
     if (!missed.length) { alert("No missed questions recorded yet."); return; }
     missedDeck = shuffle(missed); state.route = "missedReview"; render();
