@@ -1693,23 +1693,26 @@ function renderOwnerStats(main) {
    forcing a "what should I even study" choice, it names ONE highest-yield next action and gives a
    single button to start it. Priority: weakest 0%-ish Martini page → fuzzy drill → a short set. */
 function appendStartHere(wrap) {
-  let page = null, fuzzy = 0;
-  try { const wp = weakestPages("torso", 1); if (wp && wp.length && wp[0].pct < 50) page = wp[0]; } catch (e) {}
-  try { fuzzy = _fuzzyCount(); } catch (e) {}
+  // CUMULATIVE-FIRST: the Final is the priority now — point at the weakest of the 4 Final blocks.
+  let ranked = [];
+  try { ranked = cumulativeRankedBlocks(); } catch (e) {}
   let title, detail, btnLabel, run;
-  if (page) {
-    title = "Read Martini p. " + page.page + " — then test it";
-    detail = "Your weakest page (" + page.pct + "% over " + page.seen + " tries). Read it, close the book, then tap to drill.";
-  } else if (fuzzy > 0) {
-    title = "Drill your " + fuzzy + " fuzzy question" + (fuzzy === 1 ? "" : "s");
-    detail = "The ones you flip between right and wrong. Read the concept first, then re-test cold.";
+  if (ranked && ranked.length) {
+    const wk = ranked[0];
+    title = "Start " + wk.r + " — your biggest Final gap";
+    if (wk.cov < 12) detail = "You've barely practiced " + wk.r + " (" + wk.cov + "% covered). Half the Final is Appendicular + Axial — reactivate it now. Don't plan, just start a few.";
+    else detail = wk.r + " is your weakest Final unit (" + wk.v + "% ready, " + wk.cov + "% covered). Do a few, convert the misses. Just start.";
+    btnLabel = "▶ Start " + wk.r + " now";
+    run = () => startBlockSprint(wk.r, 8);
   } else {
-    title = "Do one short Torso set";
-    detail = "Surface fresh gaps, then convert the misses. Don't plan — just start. Five questions.";
+    // fallback (old Torso behavior) if the cumulative engine isn't available
+    let page = null, fuzzy = 0;
+    try { const wp = weakestPages("torso", 1); if (wp && wp.length && wp[0].pct < 50) page = wp[0]; } catch (e) {}
+    try { fuzzy = _fuzzyCount(); } catch (e) {}
+    if (page) { title = "Read Martini p. " + page.page + " — then test it"; detail = "Your weakest page (" + page.pct + "%). Read it, close the book, then drill."; btnLabel = "▶ Test p. " + page.page + " now"; run = () => { state.sectionKey = "torso"; startPageDrill(page.page); }; }
+    else if (fuzzy > 0) { title = "Drill your " + fuzzy + " fuzzy questions"; detail = "The ones you flip on. Read the concept, then re-test cold."; btnLabel = "▶ Start: drill " + fuzzy + " fuzzy"; run = () => { state.sectionKey = "torso"; startFuzzyDrill(); }; }
+    else { title = "Do one short set"; detail = "Surface fresh gaps, then convert the misses. Just start."; btnLabel = "▶ Start practice"; run = () => { state.sectionKey = "torso"; state.route = "examMenu"; render(); }; }
   }
-  if (page) { btnLabel = "▶ Test p. " + page.page + " now"; run = () => { state.sectionKey = "torso"; startPageDrill(page.page); }; }
-  else if (fuzzy > 0) { btnLabel = "▶ Start: drill " + fuzzy + " fuzzy"; run = () => { state.sectionKey = "torso"; startFuzzyDrill(); }; }
-  else { btnLabel = "▶ Start Torso practice"; run = () => { state.sectionKey = "torso"; state.route = "examMenu"; render(); }; }
   const card = document.createElement("div");
   card.style.cssText = "background:linear-gradient(135deg,var(--ink),var(--ink-2));color:#fff;border-radius:16px;padding:18px 20px;margin:0 0 20px;box-shadow:0 6px 20px rgba(31,56,100,.25);";
   card.innerHTML = `<div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;opacity:.85;">START HERE — ONE THING</div>
@@ -1725,24 +1728,24 @@ function appendStartHere(wrap) {
 /* 10-minute Sprint card — a rotating weak-area micro-session. Names your weakest Torso region + the
    notes to skim, then launches ~5 weakest questions on it. Auto-rotates every 10 min while on home. */
 function appendSprintCard(wrap) {
-  if (state.sectionKey && state.sectionKey !== "torso" && state.sectionKey) { /* torso-focused for now */ }
+  // CUMULATIVE-FIRST: rotate through the 4 Final blocks, weakest first.
   let ranked;
-  try { ranked = sprintRankedRegions(); } catch (e) { return; }
+  try { ranked = cumulativeRankedBlocks(); } catch (e) { return; }
   if (!ranked || !ranked.length) return;
   const wk = ranked[sprintRot % ranked.length];
-  const focus = wk.r, pct = (wk.v != null) ? Math.round(wk.v) : null;
+  const focus = wk.r, pct = wk.v, cov = wk.cov;
   const card = document.createElement("div");
   card.style.cssText = "background:#fff;border:1.5px solid var(--teal);border-radius:16px;padding:16px 18px;margin:0 0 20px;box-shadow:var(--shadow-sm);";
   card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;">
-      <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--teal);">🔁 10-MINUTE SPRINT</div>
-      <button id="sprintNew" style="background:none;border:none;color:var(--muted);font-size:.75rem;font-weight:700;cursor:pointer;">↻ new focus</button>
+      <div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--teal);">🔁 10-MINUTE SPRINT — FINAL</div>
+      <button id="sprintNew" style="background:none;border:none;color:var(--muted);font-size:.75rem;font-weight:700;cursor:pointer;">↻ new unit</button>
     </div>
-    <div style="font-size:1.12rem;font-weight:800;margin:6px 0 4px;color:var(--text);">Skim your <span style="color:var(--teal-2);">${focus}</span> notes${pct != null ? ` — weakest region (${pct}% ready)` : ""}</div>
-    <div style="font-size:.85rem;color:var(--muted);line-height:1.45;margin-bottom:12px;">Read it, then answer ~5 of your weakest ${focus} questions (plus one you write out). Rotates to your next weak spot every 10 min.</div>`;
+    <div style="font-size:1.12rem;font-weight:800;margin:6px 0 4px;color:var(--text);">Sprint <span style="color:var(--teal-2);">${focus}</span> — weakest Final unit (${pct}% ready · ${cov}% covered)</div>
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.45;margin-bottom:12px;">Answer ~8 of your weakest ${focus} questions. Rotates to your next weak unit every 10 min. (All 4 units: Appendicular · Axial · Torso · Systemic.)</div>`;
   const btn = document.createElement("button");
   btn.textContent = "▶ Start " + focus + " sprint";
   btn.style.cssText = "background:var(--teal);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-size:.95rem;font-weight:800;cursor:pointer;";
-  btn.onclick = () => startSprint(focus);
+  btn.onclick = () => startBlockSprint(focus, 8);
   card.appendChild(btn);
   wrap.appendChild(card);
   const nb = card.querySelector("#sprintNew");
@@ -5469,6 +5472,36 @@ function startSprint(focus) {
   fuzzyDeck = deck; fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = deck.length;
   state._drillTitle = "Sprint · " + focus;
   state._sprintNote = focus;      // region → shows a "skim your notes" banner + Open-notes button
+  state._fuzzyBack = "home";
+  state.route = "fuzzyReview"; render();
+}
+// ── Cumulative Final: rank the 4 blocks weakest-first + a short weakest-question block sprint ──
+function cumulativeRankedBlocks() {
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  let bl = {};
+  try { bl = _cumulativeBlocks(); } catch (e) { return []; }
+  const qs = (activeProgress().qstats) || {};
+  return ["Appendicular", "Axial", "Torso", "Systemic"].map(n => {
+    const ids = [...new Set((bl[n] || []).map(q => q.id))];
+    const total = ids.length || 1;
+    let known = 0, seen = 0;
+    ids.forEach(id => { known += qRecall(id, md); if (qs[id]) seen++; });
+    return { r: n, v: Math.round(100 * known / total), cov: Math.round(100 * seen / total), pool: bl[n] || [] };
+  }).sort((a, b) => a.v - b.v);   // weakest first
+}
+function startBlockSprint(block, n) {
+  n = n || 8;
+  let bl = {};
+  try { bl = _cumulativeBlocks(); } catch (e) {}
+  let deck = (bl[block] || []).filter(q => q && q.q && q.options && q.options.length >= 2 && typeof q.correct === "number" && !isDiagramQ(q) && !isFITBQ(q) && !hasDupOptions(q));
+  deck = dedupeQs(deck);
+  if (!deck.length) { alert("No clean questions for " + block + " yet."); return; }
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  deck.sort((a, b) => qRecall(a.id, md) - qRecall(b.id, md));   // weakest current recall first
+  deck = shuffle(deck.slice(0, n).map(q => Object.assign({}, q)));
+  fuzzyDeck = deck; fuzzyIndex = 0; fuzzyAnswered = false; fuzzyRecallRevealed = false; fuzzyStartCount = deck.length;
+  state._drillTitle = "Final Sprint · " + block;
+  state._sprintNote = null;
   state._fuzzyBack = "home";
   state.route = "fuzzyReview"; render();
 }
