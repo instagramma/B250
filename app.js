@@ -6425,7 +6425,7 @@ function buildGenericExamMenu(list, key) {
   const sdPool = dedupeQs([].concat(sectionGRPool(key), sectionCBPool(key), sectionStuviaPool(key)));
   const sdBest = (progressState.quizzes && progressState.quizzes["suddenDeath:" + key]) || {};
   const sdB = document.createElement("button"); sdB.className = "modeBtn";
-  sdB.innerHTML = `<span class="modeIcon">💀</span><span class="modeLabel">Sudden Death</span><span class="modeMeta">Keep going until you miss${sdBest.score ? " · Best streak: " + sdBest.score : ""}</span>`;
+  sdB.innerHTML = `<span class="modeIcon">💀</span><span class="modeLabel">Sudden Death</span><span class="modeMeta">Keep going until you miss${sdBest.bestScore ? " · Best streak: " + sdBest.bestScore : ""}</span>`;
   sdB.onclick = () => {
     if (!sdPool.length) { alert("No questions available yet."); return; }
     sdDeck = shuffle([...sdPool]); sdIndex = 0; sdStreak = 0; sdAnswered = false; sdSelected = -1;
@@ -6708,7 +6708,7 @@ function renderExamMenu(main) {
   const sdBtn = document.createElement("button");
   sdBtn.className = "modeBtn";
   const sdBest = (progressState.quizzes && progressState.quizzes["suddenDeath:" + state.sectionKey]) || {};
-  const sdBestTxt = sdBest.score ? ` · Best streak: ${sdBest.score}` : "";
+  const sdBestTxt = sdBest.bestScore ? ` · Best streak: ${sdBest.bestScore}` : "";
   sdBtn.innerHTML = `<span class="modeIcon">💀</span><span class="modeLabel">Sudden Death</span><span class="modeMeta">Keep going until you miss${sdBestTxt}</span>`;
   sdBtn.onclick = () => {
     // build pool from all available content Qs in section
@@ -6850,7 +6850,7 @@ function renderSuddenDeath(main) {
   if (!sdAnswered) markQuestionShown("sd" + sdIndex + (q.id || ""));
 
   // Streak header
-  const sdRecord = ((progressState.quizzes && progressState.quizzes["suddenDeath:" + state.sectionKey]) || {}).score || 0;
+  const sdRecord = ((progressState.quizzes && progressState.quizzes["suddenDeath:" + state.sectionKey]) || {}).bestScore || 0;
   const sdBeatingRecord = sdStreak > sdRecord && sdStreak > 0;
   const streakWrap = document.createElement("div");
   streakWrap.className = "sdStreakWrap";
@@ -6920,12 +6920,22 @@ function renderSuddenDeath(main) {
 
 /* ─── SUDDEN DEATH END SCREEN ─── */
 function renderSdEnd(main) {
-  // Save best streak
+  // Save best streak — store the RAW streak under bestScore (cloudMerge maxes bestScore, so it syncs).
+  // NOTE: Sudden Death record is a raw streak count, NOT a percentage — do not route through
+  // recordQuizResult (which stores a pct). All SD reads use .bestScore.
   const key = "suddenDeath:" + state.sectionKey;
-  const prev = (progressState.quizzes && progressState.quizzes[key]);
-  if (!prev || sdStreak > prev.score) {
-    recordQuizResult(key, sdStreak, sdDeck.length);
-  }
+  progressState.quizzes = progressState.quizzes || {};
+  const prev = progressState.quizzes[key] || {};
+  const prevBest = prev.bestScore || 0;
+  const isNewRecord = sdStreak > prevBest;
+  progressState.quizzes[key] = Object.assign({}, prev, {
+    bestScore: Math.max(prevBest, sdStreak),
+    lastScore: sdStreak,
+    attempts: (prev.attempts || 0) + 1,
+    lastDate: new Date().toISOString()
+  });
+  saveLocalProgress();
+  saveProgress(true); // immediate flush so the record survives / syncs across devices
   // Log this run once (renderSdEnd can re-render) to the unified History timeline
   if (sdDeck && !sdDeck._logged) {
     sdDeck._logged = true;
@@ -6935,7 +6945,7 @@ function renderSdEnd(main) {
       score: sdStreak, total: sdStreak, pct: null, streak: sdStreak, missed: []
     });
   }
-  const best = (progressState.quizzes && progressState.quizzes[key]);
+  const best = progressState.quizzes[key].bestScore || 0;
 
   const wrap = document.createElement("div");
   wrap.className = "sdEndWrap";
@@ -6943,7 +6953,9 @@ function renderSdEnd(main) {
     <div class="sdEndIcon">${sdStreak > 0 ? "💀" : "😅"}</div>
     <div class="sdEndTitle">Game Over</div>
     <div class="sdEndStreak">You survived <strong>${sdStreak}</strong> question${sdStreak !== 1 ? "s" : ""}</div>
-    ${best ? `<div class="sdEndBest">Best ever: <strong>${best.score}</strong></div>` : ""}
+    ${isNewRecord && sdStreak > 0
+      ? `<div class="sdEndBest">🏆 NEW RECORD! (previous best ${prevBest})</div>`
+      : (best ? `<div class="sdEndBest">Best ever: <strong>${best}</strong></div>` : "")}
   `;
 
   const btnRow = document.createElement("div");
