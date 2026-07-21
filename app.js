@@ -1314,6 +1314,7 @@ function buildTopbar() {
       else if (state.route === "exam" || state.route === "examResults") {
         examStopTimer();
         if (state.examSource === "gr")     { state.examSource = null; state.route = "grMenu"; }
+        else if (state.examSource === "sim") { state.examSource = null; state.route = "examMenu"; }
         else if (state.examSource === "custom") { state.examSource = null; state.route = "customBuilder"; }
         else { state.route = "examPicker"; }
       } else { state.route = "sectionMenu"; state.mode = null; state.subtopicIndex = null; state.cameFromSubtopics = false; }
@@ -4864,8 +4865,8 @@ function renderExamResults(main) {
   retakeBtn.onclick = () => {
     if (state.examSource === "gr") {
       examDeck = shuffle([...filterQuiz(getSection(state.sectionKey).quiz, "content")]);
-    } else if (state.examSource === "custom") {
-      /* custom pool already stored in examDeck at launch */
+    } else if (state.examSource === "custom" || state.examSource === "sim") {
+      /* pool already stored in examDeck at launch */
     } else {
       examDeck = DATA.sections[state.sectionKey].exams[examExamIndex].questions;
     }
@@ -4880,9 +4881,10 @@ function renderExamResults(main) {
   const backBtn = document.createElement("button");
   backBtn.className = "secondaryBtn";
   backBtn.style.marginTop = "10px";
-  backBtn.textContent = (state.examSource === "gr" || state.examSource === "custom") ? "Back" : "Choose a different exam";
+  backBtn.textContent = (state.examSource === "gr" || state.examSource === "custom" || state.examSource === "sim") ? "Back" : "Choose a different exam";
   backBtn.onclick = () => {
     if (state.examSource === "gr") { state.examSource = null; state.route = "grMenu"; }
+    else if (state.examSource === "sim") { state.examSource = null; state.route = "examMenu"; }
     else if (state.examSource === "custom") { state.examSource = null; state.route = "customBuilder"; }
     else { state.route = "examPicker"; }
     render();
@@ -6658,7 +6660,7 @@ function renderExamMenu(main) {
     EXAM_SECONDS = 30;
     examDeck = pool; examIndex = 0; examScore = 0;
     examAnswered = false; examSelected = -1; examTimedOut = false; examAnswerLog = [];
-    state.examSource = "custom"; state.examTitle = "Simulation";
+    state.examSource = "sim"; state.examTitle = "Simulation";
     state.route = "exam"; render();
   };
   list.appendChild(sprintBtn);
@@ -6690,7 +6692,7 @@ function renderExamMenu(main) {
     examDeck = simDeckBuilt;
     examIndex = 0; examScore = 0;
     examAnswered = false; examSelected = -1; examTimedOut = false; examAnswerLog = [];
-    state.examSource = "custom";
+    state.examSource = "sim";
     state.examTitle = "Torso Simulation";
     state.route = "exam";
     render();
