@@ -1303,7 +1303,7 @@ function buildTopbar() {
       else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
       else if (state.route === "lab3d")          { try { if (typeof _l3StopPracticalTimer === "function") _l3StopPracticalTimer(); else if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
-      else if (state.route === "fullExam") { if (confirm("Leave exam? Progress will be lost.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; fullExamDeck = []; state.route = "examMenu"; render(); } return; }
+      else if (state.route === "fullExam") { if (confirm("Leave exam? To keep your place, use ⏸ Pause & save instead. Leaving now discards this session.")) { clearInterval(fullExamTimerInterval); fullExamTimerInterval = null; clearPausedExam(); fullExamDeck = []; state.route = "examMenu"; render(); } return; }
       else if (state.route === "fullExamEnd") { fullExamDeck = []; state.route = "examMenu"; }
       else if (state.route === "catSim") { if (confirm("Leave the adaptive test? Progress will be lost.")) { state.route = "examMenu"; render(); } return; }
       else if (state.route === "catEnd") { state.route = "examMenu"; }
@@ -1793,6 +1793,8 @@ function renderHome(main) {
     <div style="color:#7c8598;font-size:.95rem;margin-top:4px;">Human Anatomy — timed practice, real-exam sims &amp; a coach that tells you what to study next.</div>`;
   wrap.appendChild(hero);
 
+  // Resume a paused exam, if any (offer Resume / Discard & start fresh)
+  try { appendResumeBanner(wrap); } catch (e) {}
   // Start-here card (one unambiguous next action — kills the "what do I even study" paralysis)
   try { appendStartHere(wrap); } catch (e) {}
   // 10-minute rotating Sprint card (weak-area micro-session, auto-refreshes)
@@ -6334,6 +6336,66 @@ function launchFullExamPool(pool, title, seconds) {
   state.examTitle = title || "Simulation";
   state.route = "fullExam"; render();
 }
+
+// ── Pause / save / resume a timed exam (mocks, sims, cumulative, Final-Prep ladder) ──
+function _pausedExamKey() { return ns("pausedExam_v1"); }
+function _agoText(ts) { if (!ts) return "just now"; const m = Math.round((Date.now() - ts) / 60000); if (m < 1) return "just now"; if (m < 60) return m + " min ago"; const h = Math.round(m / 60); return h + " hr ago"; }
+function savePausedExam() {
+  try {
+    if (!fullExamDeck.length) return;
+    const snap = {
+      ts: Date.now(), title: state.examTitle || "Practice exam",
+      sectionKey: state.sectionKey, examSource: state.examSource || null,
+      deck: fullExamDeck, answers: fullExamAnswers, index: fullExamIndex,
+      flags: [...fullExamFlags], secondsLeft: fullExamSecondsLeft, totalSeconds: fullExamTotalSeconds,
+      shuffled: fullExamShuffledOrders, modeSet: fullExamModeSet,
+      studyMode: (typeof getStudyMode === "function" ? getStudyMode() : "closed"),
+      changes: fullExamChanges, revisits: fullExamRevisits, startedAt: fullExamStartedAt
+    };
+    localStorage.setItem(_pausedExamKey(), JSON.stringify(snap));
+  } catch (e) {}
+}
+function loadPausedExam() { try { return JSON.parse(localStorage.getItem(_pausedExamKey()) || "null"); } catch (e) { return null; } }
+function clearPausedExam() { try { localStorage.removeItem(_pausedExamKey()); } catch (e) {} }
+function resumePausedExam() {
+  const s = loadPausedExam();
+  if (!s || !s.deck || !s.deck.length) { clearPausedExam(); return; }
+  fullExamDeck = s.deck;
+  fullExamAnswers = s.answers || new Array(s.deck.length).fill(-1);
+  fullExamIndex = Math.min(s.index || 0, s.deck.length - 1);
+  fullExamFlags = new Set(s.flags || []);
+  fullExamSecondsLeft = (typeof s.secondsLeft === "number") ? s.secondsLeft : (s.totalSeconds || 6000);
+  fullExamTotalSeconds = s.totalSeconds || 6000;
+  fullExamShuffledOrders = s.shuffled || fullExamDeck.map(q => (q.options || []).slice());
+  fullExamModeSet = s.modeSet !== false;
+  fullExamChanges = s.changes || { r2w: 0, w2r: 0, w2w: 0 };
+  fullExamRevisits = s.revisits || 0;
+  fullExamStartedAt = s.startedAt || Date.now();
+  fullExamShowOverview = false; fullExamOvFilter = "all"; fullExamReachedEnd = false; fullExamLogged = false;
+  if (s.studyMode && typeof setStudyMode === "function") setStudyMode(s.studyMode);
+  clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;  // renderFullExam restarts it from secondsLeft
+  state.examTitle = s.title; if (s.sectionKey) state.sectionKey = s.sectionKey; if (s.examSource) state.examSource = s.examSource;
+  state.route = "fullExam"; render();
+}
+// Resume/discard banner — shown on Home + the exam menu when a paused exam exists.
+function appendResumeBanner(container) {
+  const s = loadPausedExam();
+  if (!s || !s.deck || !s.deck.length) return;
+  const n = s.deck.length, ans = (s.answers || []).filter(a => a !== -1).length;
+  const card = document.createElement("div");
+  card.style.cssText = "background:#FFF7ED;border:2px solid #F59E0B;border-radius:14px;padding:14px 16px;margin:0 0 16px;";
+  card.innerHTML = `<div style="font-size:.72rem;font-weight:800;letter-spacing:.08em;color:#B45309;">⏸ PAUSED EXAM</div>
+    <div style="font-weight:800;margin:4px 0;color:var(--text);">${s.title || "Practice exam"} — Q ${Math.min((s.index || 0) + 1, n)}/${n} · ${fmtTime(s.secondsLeft || 0)} left</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;">${ans} answered · saved ${_agoText(s.ts)}</div>`;
+  const row = document.createElement("div"); row.style.cssText = "display:flex;gap:10px;";
+  const res = document.createElement("button"); res.textContent = "▶ Resume where I left off";
+  res.style.cssText = "flex:1;background:#F59E0B;color:#fff;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;";
+  res.onclick = () => resumePausedExam();
+  const dis = document.createElement("button"); dis.textContent = "✕ Discard & start fresh";
+  dis.style.cssText = "flex:1;background:#fff;color:#B45309;border:1px solid #F59E0B;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;";
+  dis.onclick = () => { if (confirm("Discard the paused exam? You'll lose that in-progress session and can start a new one.")) { clearPausedExam(); render(); } };
+  row.appendChild(res); row.appendChild(dis); card.appendChild(row); container.appendChild(card);
+}
 // Exam-eligible, non-diagram GR pool for a section (optionally limited to subtopic indices). Diagram
 // questions are excluded because the full-exam view is text-only (Torso does the same).
 function sectionGRPool(key, indices) {
@@ -6595,6 +6657,9 @@ function renderExamMenu(main) {
 
   const list = document.createElement("div");
   list.className = "modeList";
+
+  // Resume a paused exam, if any
+  try { appendResumeBanner(list); } catch (e) {}
 
   // ── History — every past attempt on one timeline ──
   const nAttempts = allAttempts().length;
@@ -7915,8 +7980,10 @@ function renderFullExam(main) {
         el.textContent = fmtTime(fullExamSecondsLeft);
         el.className = "feTimer" + (fullExamSecondsLeft < 300 ? " urgent" : "");
       }
+      if (fullExamSecondsLeft % 15 === 0) savePausedExam();   // auto-save so "continue later" survives an accidental close
       if (fullExamSecondsLeft <= 0) {
         clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
+        clearPausedExam();
         state.route = "fullExamEnd"; render();
       }
     }, 1000);
@@ -8016,6 +8083,22 @@ function renderFullExam(main) {
       ${fullExamFlags.has(fullExamIndex) ? "⚑ Flagged" : "⚐ Flag"}
     </button>`;
   main.appendChild(statusBar);
+
+  // ⏸ Pause & save — stop the clock, snapshot the session, and return home. Resume later from
+  // the banner on Home / the exam menu, or discard it and start fresh.
+  const pauseRow = document.createElement("div");
+  pauseRow.style.cssText = "text-align:center;margin:6px 0 0;";
+  const pauseBtn = document.createElement("button");
+  pauseBtn.textContent = "⏸ Pause & save — continue later";
+  pauseBtn.style.cssText = "background:none;border:none;color:var(--muted);font-size:.8rem;font-weight:700;cursor:pointer;text-decoration:underline;";
+  pauseBtn.onclick = () => {
+    savePausedExam();
+    clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
+    fullExamDeck = [];
+    state.route = "home"; render();
+  };
+  pauseRow.appendChild(pauseBtn);
+  main.appendChild(pauseRow);
 
   // 📓 Notes launcher during a with-notes mock — opens this question's region doc
   { const _q = fullExamDeck[fullExamIndex]; const nb = _q && notesBtn(_q); if (nb) { nb.style.cssText = "display:block;margin:6px auto 0;background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE;border-radius:10px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;"; main.appendChild(nb); } }
@@ -8124,6 +8207,7 @@ function renderFullExam(main) {
 /* ─── FULL EXAM END SCREEN ─── */
 function renderFullExamEnd(main) {
   clearInterval(fullExamTimerInterval); fullExamTimerInterval = null;
+  clearPausedExam();   // exam finished — no paused session to resume
   if (!fullExamDeck.length) { state.route = "examMenu"; render(); return; }
 
   const total = fullExamDeck.length;
