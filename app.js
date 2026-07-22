@@ -8242,14 +8242,13 @@ function renderPreparednessGeneric(main) {
     </div>`;
   // ── Score-scenario simulator: toggle CURVE / NOTES / LABELING and watch the projected grade move ──
   if (key !== "lab2") {
-    const TOTAL = 200, DIVISOR = 0.65, LABEL_PTS = 40, NOTES_LIFT = 0.25;
-    const scen = { curve: true, notes: true, labeling: true };
+    const TOTAL = 200, DIVISOR = 0.65, LABEL_PTS = 40;
+    const scen = { curve: true, labeling: true };
     const p0 = Math.max(0, Math.min(1, predicted / 100));   // cold closed-book expected fraction
     const letterOf = pct => pct >= 97 ? "A+" : pct >= 90 ? "A" : pct >= 80 ? "B" : pct >= 70 ? "C" : pct >= 60 ? "D" : "F";
     const gradeColor = pct => pct >= 90 ? "#0F766E" : pct >= 80 ? "#2E7D32" : pct >= 70 ? "#B7791F" : "#C0392B";
     function calcScen() {
       let acc = p0;
-      if (scen.notes) acc = acc + NOTES_LIFT * (1 - acc);           // open-book lift (estimate)
       let rawFrac = scen.labeling ? (LABEL_PTS + acc * (TOTAL - LABEL_PTS)) / TOTAL : acc;
       let shown = rawFrac * 100;
       if (scen.curve) shown = rawFrac / DIVISOR * 100;               // Smiley divisor ≈ 65% of Qs = 100% line
@@ -8267,15 +8266,13 @@ function renderPreparednessGeneric(main) {
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           ${chip(scen.curve, "Curve", "Smiley ÷65%")}
-          ${chip(scen.notes, "Open-note", "look-up lift")}
           ${chip(scen.labeling, "20% labeling", "+40 pts printed")}
         </div>
-        <div style="font-size:.7rem;color:#94a3b8;margin-top:8px;line-height:1.4;">Starts from your cold predicted ${Math.round(p0 * 100)}%. <b>Curve</b> = raw ÷ 65% (his 100% line). <b>Open-note</b> and <b>labeling</b> are estimates, not guarantees — the syllabus doesn't fix the labeling share. Turn all three off to see the honest cold floor.</div>`;
+        <div style="font-size:.7rem;color:#94a3b8;margin-top:8px;line-height:1.4;">Starts from your cold predicted ${Math.round(p0 * 100)}%. <b>Curve</b> = raw ÷ 65% (his 100% line). <b>Labeling</b> is an estimate, not a guarantee — the syllabus doesn't fix the labeling share. Turn both off to see the honest cold floor.</div>`;
       card.querySelectorAll("button[data-k]").forEach(b => {
         b.onclick = () => {
           const k = b.getAttribute("data-k");
           if (k === "Curve") scen.curve = !scen.curve;
-          else if (k === "Open-note") scen.notes = !scen.notes;
           else if (k === "20% labeling") scen.labeling = !scen.labeling;
           drawScen();
         };
