@@ -7196,6 +7196,37 @@ function _cumulativeDeckDiff(per, level) {
   // Contiguous, ordered blocks (Appendicular → Axial → Torso → Systemic) — no cross-block shuffle.
   return deck;
 }
+// "Smiley" exam — same 200-Q ordered blueprint as the Simulation (50/block, Append→Axial→Torso→
+// Systemic, text/MC only), but tuned brutal: HARDEST-difficulty questions only, and composed
+// ~10% questions you've actually drilled + ~90% never-seen or seen-very-few-times (≤2). Built to
+// expose blind spots under max difficulty — the "would Smiley's real Final catch me out?" test.
+function _smileyDeck(per) {
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  let bl = {}; try { bl = _cumulativeBlocks(false); } catch (e) { bl = {}; }   // text-only, no diagrams
+  const qs = ((typeof activeProgress === "function" ? activeProgress() : progressState).qstats) || {};
+  const seenN = id => { const s = qs[id]; return s ? (s.seen || 0) : 0; };
+  const seen = new Set(); const deck = [];
+  const nFamiliar = Math.max(1, Math.round(per * 0.10));   // ~5/block you've drilled
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
+    const pool = (bl[name] || []).filter(q => q && q.id != null && !seen.has(_stemKey(q)));
+    // hardest band by catDifficulty (folds in miss-rate + fuzzy)
+    const scored = pool.map(q => ({ q, d: (typeof catDifficulty === "function" ? catDifficulty(q.id, q) : 0), n: seenN(q.id) }))
+      .sort((a, b) => b.d - a.d);
+    const hardBand = scored.slice(0, Math.max(per * 3, Math.ceil(scored.length * 0.45)));
+    const never = shuffle(hardBand.filter(x => x.n === 0));
+    const few = shuffle(hardBand.filter(x => x.n >= 1 && x.n <= 2));
+    const familiar = shuffle(hardBand.filter(x => x.n >= 3));
+    const picked = [];
+    const push = (arr, cap) => { for (const x of arr) { if (picked.length >= cap) break; const k = _stemKey(x.q); if (seen.has(k)) continue; seen.add(k); picked.push(x.q); } };
+    push(never, per - nFamiliar);                 // 90% target: never-seen first
+    push(few, per - nFamiliar);                   // then seen ≤2 times
+    push(familiar, per);                          // 10%: your drilled-hard ones
+    push(shuffle(hardBand), per);                 // backfill from hard band if a block is thin
+    push(shuffle(pool.map(q => ({ q }))), per);   // last resort: any remaining in block
+    deck.push(...picked.slice(0, per));
+  });
+  return deck;                                    // contiguous, ordered blocks — no cross-block shuffle
+}
 // Console regression helper for future bank/app changes. It is read-only and makes no progress edits.
 window.runCumulativeSafetyAudit = function(samples) {
   samples = Math.max(1, Math.min(100, Number(samples) || 20));
@@ -7271,6 +7302,11 @@ function buildCumulativeExamMenu(list) {
   simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · asks whether to include diagram questions<br><span style="opacity:.75;font-size:.9em;">Blocks run in exam order (Append → Axial → Torso → Systemic).</span></span>`;
   simBtn.onclick = () => { const inc = _askIncludeDiagrams(); const deck = _cumulativeDeck(PER, inc); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation" + (inc ? "" : " (text-only)"), SECS); };
   list.appendChild(simBtn);
+  const smiley = document.createElement("button"); smiley.className = "modeBtn";
+  smiley.style.cssText = "border:2px solid #7C2D12;background:linear-gradient(135deg,#FEF2F2,#FFE4E6);";
+  smiley.innerHTML = `<span class="modeIcon">😈</span><span class="modeLabel">The Smiley — hardest &amp; unseen</span><span class="modeMeta">Same 200-Q ordered blueprint, but <b>hardest-difficulty only</b> · ~90% never-seen / barely-seen + ~10% familiar · 80 min<br><span style="opacity:.75;font-size:.9em;">Your toughest blind-spot test. Text/MC only.</span></span>`;
+  smiley.onclick = () => { const deck = _smileyDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "The Smiley", SECS); };
+  list.appendChild(smiley);
   _mkHdr(list, "By Block — 50-Q practice test");
   [["Appendicular","🦴"], ["Axial","🦷"], ["Torso","🫁"], ["Systemic","🩺"]].forEach(([name, icon]) => {
     const pool = (_cumulativeBlocks()[name]) || [];
