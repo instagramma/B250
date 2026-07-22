@@ -6925,13 +6925,14 @@ function _pickCumulativeBlock(pool, per, imageTarget, seen) {
   _takeUniqueQuestions(pool || [], per, seen, picked);
   return picked;
 }
-// Balanced practice blueprint: 50 per block and 10 tested lecture-GR image questions per block
-// (40/200 total). The exact Final distribution is not documented by the syllabus.
+// Balanced practice blueprint: 50 per block, TEXT-ONLY (no diagram/labeling questions in the timed
+// sims — Gabe drills labeling separately via the printed keys + Diagram Galleries). Blocks stay
+// contiguous and in order.
 function _cumulativeDeck(per) {
-  const bl = _cumulativeBlocks(true);
+  const bl = _cumulativeBlocks(false);   // false = exclude diagram/image questions
   const seen = new Set(); const deck = [];
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
-    deck.push(..._pickCumulativeBlock(bl[name] || [], per, 10, seen));
+    deck.push(..._pickCumulativeBlock(bl[name] || [], per, 0, seen));   // imageTarget 0 = no diagrams
   });
   // Keep the four blocks CONTIGUOUS and IN ORDER (Appendicular → Axial → Torso → Systemic),
   // mirroring the real Final's section structure — do NOT shuffle across blocks. Order within a
@@ -7028,7 +7029,7 @@ function buildCumulativeExamMenu(list) {
     ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Text-only low-difficulty questions across all four balanced blocks."],
     ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Text-only mid-difficulty practice across all four balanced blocks."],
     ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Text-only hard questions plus fuzzy and miss-prone items."],
-    ["realistic", "⭐ Course-Faithful Rehearsal", "#0F766E", "#E9F6F4", "Balanced working blueprint with 40 tested lecture Guided Reading image questions."],
+    ["realistic", "⭐ Course-Faithful Rehearsal", "#0F766E", "#E9F6F4", "Balanced working blueprint, text/MC only (no diagram questions — drill labeling separately)."],
   ];
   ladder.forEach(([lvl, label, border, bg, meta]) => {
     const btn = document.createElement("button"); btn.className = "modeBtn";
@@ -7045,7 +7046,7 @@ function buildCumulativeExamMenu(list) {
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · includes 40 tested lecture GR images · 200 Qs · 80 min<br><span style="opacity:.75;font-size:.9em;">Balanced diagnostic split — the syllabus does not confirm the exact Final ratio.</span></span>`;
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · text/MC only, no diagram questions · 200 Qs · 80 min<br><span style="opacity:.75;font-size:.9em;">Drill labeling separately (printed keys + Diagram Galleries). Blocks run in exam order.</span></span>`;
   simBtn.onclick = () => { const deck = _cumulativeDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation", SECS); };
   list.appendChild(simBtn);
   _mkHdr(list, "By Block — 50-Q practice test");
