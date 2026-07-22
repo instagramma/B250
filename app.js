@@ -5920,6 +5920,37 @@ function renderLearnEnd(main) {
   wrap.innerHTML = `<div style="font-size:3rem;margin-bottom:6px;">🧠</div>
     <div style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Learn session complete</div>
     <div style="color:#666;margin-bottom:18px;">First-try accuracy <b style="color:${acc >= 70 ? "#0F766E" : acc >= 50 ? "#B7791F" : "#C0392B"};">${acc}%</b> · ${st.firstRight}/${st.answered} · <b>${st.relearned}</b> relearned after a miss</div>`;
+  // ── Persist this session so performance is TRACKED over time (esp. Least-seen) ──
+  const focusKey = "learn:" + (st.focus || "deep");
+  const focusName = st.focus === "least" ? "Least-seen" : st.focus === "fuzzy" ? "Fuzzy & missed" : "Learn (weak-first)";
+  if (!st._logged && st.answered > 0) {
+    st._logged = true;
+    try { recordAttempt(focusKey, { title: "🧠 " + focusName, kind: "learn", mode: st.focus || "deep", score: st.firstRight, total: st.answered, pct: acc, missed: [] }); } catch (e) {}
+  }
+  // ── Trend: your recent sessions of THIS focus (so you can see how you're doing on the least-seen) ──
+  const hist = ((progressState.examAttempts || {})[focusKey] || []).slice(0, 8);
+  if (hist.length >= 2) {
+    const tc = document.createElement("div");
+    tc.style.cssText = "background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left;";
+    const vals = hist.map(h => h.pct || 0);
+    const avg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+    const first = vals[vals.length - 1], last = vals[0];
+    const trend = last - first;
+    let th = `<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+        <span style="font-weight:800;">📈 Your ${focusName} history</span>
+        <span style="font-size:.8rem;color:#64748b;">avg <b>${avg}%</b> over ${hist.length} · ${trend >= 0 ? "<span style='color:#0F766E;'>▲ +" + trend + "</span>" : "<span style='color:#C0392B;'>▼ " + trend + "</span>"} since first</span></div>`;
+    // tiny inline bar sparkline (oldest → newest, left → right)
+    th += `<div style="display:flex;align-items:flex-end;gap:4px;height:46px;">`;
+    hist.slice().reverse().forEach(h => {
+      const p = h.pct || 0; const col = p >= 70 ? "#0F766E" : p >= 50 ? "#B7791F" : "#C0392B";
+      th += `<div title="${h.date}: ${p}%" style="flex:1;min-width:10px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;">
+          <div style="font-size:.6rem;color:#94a3b8;text-align:center;">${p}</div>
+          <div style="height:${Math.max(6, p * 0.36)}px;background:${col};border-radius:3px 3px 0 0;"></div></div>`;
+    });
+    th += `</div><div style="font-size:.68rem;color:#94a3b8;margin-top:4px;">Oldest → newest (first-try accuracy each session). Also saved to History.</div>`;
+    tc.innerHTML = th;
+    wrap.appendChild(tc);
+  }
   const card = document.createElement("div");
   card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;text-align:left;";
   card.innerHTML = `<div style="font-weight:800;margin-bottom:8px;">Per block (first try)</div>`;
@@ -6928,11 +6959,17 @@ function _pickCumulativeBlock(pool, per, imageTarget, seen) {
 // Balanced practice blueprint: 50 per block, TEXT-ONLY (no diagram/labeling questions in the timed
 // sims — Gabe drills labeling separately via the printed keys + Diagram Galleries). Blocks stay
 // contiguous and in order.
-function _cumulativeDeck(per) {
-  const bl = _cumulativeBlocks(false);   // false = exclude diagram/image questions
+// _askIncludeDiagrams: launch-time prompt so you CHOOSE per session whether the sim includes
+// diagram/labeling questions (default when you cancel = text/MC only).
+function _askIncludeDiagrams() {
+  return confirm("Include diagram / labeling questions in this simulation?\n\nOK = include them (10 per block)\nCancel = skip — text / multiple-choice only");
+}
+function _cumulativeDeck(per, includeImages) {
+  const bl = _cumulativeBlocks(!!includeImages);   // true = allow image questions, false = text only
   const seen = new Set(); const deck = [];
+  const imgTarget = includeImages ? 10 : 0;
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
-    deck.push(..._pickCumulativeBlock(bl[name] || [], per, 0, seen));   // imageTarget 0 = no diagrams
+    deck.push(..._pickCumulativeBlock(bl[name] || [], per, imgTarget, seen));
   });
   // Keep the four blocks CONTIGUOUS and IN ORDER (Appendicular → Axial → Torso → Systemic),
   // mirroring the real Final's section structure — do NOT shuffle across blocks. Order within a
@@ -7029,14 +7066,14 @@ function buildCumulativeExamMenu(list) {
     ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Text-only low-difficulty questions across all four balanced blocks."],
     ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Text-only mid-difficulty practice across all four balanced blocks."],
     ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Text-only hard questions plus fuzzy and miss-prone items."],
-    ["realistic", "⭐ Course-Faithful Rehearsal", "#0F766E", "#E9F6F4", "Balanced working blueprint, text/MC only (no diagram questions — drill labeling separately)."],
+    ["realistic", "⭐ Course-Faithful Rehearsal", "#0F766E", "#E9F6F4", "Balanced working blueprint · asks whether to include diagram questions when you start."],
   ];
   ladder.forEach(([lvl, label, border, bg, meta]) => {
     const btn = document.createElement("button"); btn.className = "modeBtn";
     btn.style.cssText = `border:2px solid ${border};background:${bg};`;
     btn.innerHTML = `<span class="modeLabel">${label}</span><span class="modeMeta">${meta} · <b>200 Qs · 50/block · 80 min</b></span>`;
     btn.onclick = () => {
-      const deck = _cumulativeDeckDiff(PER, lvl);
+      const deck = (lvl === "realistic") ? _cumulativeDeck(PER, _askIncludeDiagrams()) : _cumulativeDeckDiff(PER, lvl);
       if (!deck.length) { alert("No questions available yet."); return; }
       launchFullExamPool(deck, "Cumulative — " + label.replace(/^[^A-Za-z]+/, "").split(" —")[0], SECS);
     };
@@ -7046,8 +7083,8 @@ function buildCumulativeExamMenu(list) {
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · text/MC only, no diagram questions · 200 Qs · 80 min<br><span style="opacity:.75;font-size:.9em;">Drill labeling separately (printed keys + Diagram Galleries). Blocks run in exam order.</span></span>`;
-  simBtn.onclick = () => { const deck = _cumulativeDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation", SECS); };
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · asks whether to include diagram questions<br><span style="opacity:.75;font-size:.9em;">Blocks run in exam order (Append → Axial → Torso → Systemic).</span></span>`;
+  simBtn.onclick = () => { const inc = _askIncludeDiagrams(); const deck = _cumulativeDeck(PER, inc); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation" + (inc ? "" : " (text-only)"), SECS); };
   list.appendChild(simBtn);
   _mkHdr(list, "By Block — 50-Q practice test");
   [["Appendicular","🦴"], ["Axial","🦷"], ["Torso","🫁"], ["Systemic","🩺"]].forEach(([name, icon]) => {
