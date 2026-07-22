@@ -3404,6 +3404,39 @@ function covStats(ids, mode) {
   ids.forEach(id => { const m = _qm(id, mode); if (m && m.s > 0) attempted++; known += qRecall(id, mode); });
   return { total: ids.length, attempted, known: Math.round(known * 10) / 10 };
 }
+// Honest breakdown for a block: separates NEVER-ATTEMPTED (untouched) from tried-and-known vs
+// tried-and-fading/missed, so "unmeasured" can't masquerade as "failing." Also returns a crisp
+// accuracy on ONLY what was tried, plus a data-sufficiency read (how much to trust that accuracy).
+function _blockBreakdown(ids, mode) {
+  let attempted = 0, knownR = 0, knownCount = 0;
+  (ids || []).forEach(id => {
+    const m = _qm(id, mode); const r = qRecall(id, mode);
+    if (m && m.s > 0) { attempted++; knownR += r; if (r >= 0.5) knownCount++; }
+  });
+  const total = (ids || []).length;
+  const acc = attempted ? knownCount / attempted : null;
+  // Wilson 95% half-width on the tried-accuracy proportion (how wide the error bar is).
+  let ci = null;
+  if (attempted > 0 && acc != null) {
+    const z = 1.96, n = attempted, p = acc;
+    const denom = 1 + z * z / n;
+    const hw = (z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / denom;
+    ci = Math.round(hw * 100);
+  }
+  // Confidence tier by sample size on THIS block.
+  let conf = "none";
+  if (attempted >= 60) conf = "reliable";
+  else if (attempted >= 25) conf = "directional";
+  else if (attempted >= 8) conf = "weak";
+  else if (attempted >= 1) conf = "tooFew";
+  return {
+    total, attempted, untouched: total - attempted,
+    knownR: Math.round(knownR * 10) / 10,   // recall-weighted "recalls now"
+    knownCount, missedCount: attempted - knownCount,
+    coverage: total ? attempted / total : 0,
+    acc, accPct: acc == null ? null : Math.round(acc * 100), ci, conf,
+  };
+}
 
 /* ===== BLUEPRINT (exam-composition) pools: Thorax / Abdomen / Pelvis / Systemic =====
    The real Torso exam is ~50 questions per region, so readiness is weighted to that. */
@@ -7964,11 +7997,12 @@ function renderPreparednessGeneric(main) {
     <div style="background:linear-gradient(135deg,#5B21B6 0%,#4338CA 100%);color:#fff;border-radius:16px;padding:20px;margin-bottom:16px;">
       <div style="font-size:.8rem;opacity:.85;font-weight:700;">${md === "closed" ? "CLOSED-BOOK" : "WITH-NOTES"} · SECTION PREPAREDNESS</div>
       <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
-        <div><div style="font-size:2rem;font-weight:800;">${ready}%</div><div style="font-size:.75rem;opacity:.85;">Readiness (known / all)</div></div>
-        <div><div style="font-size:2rem;font-weight:800;">${perf}%</div><div style="font-size:.75rem;opacity:.85;">Performance (known / tried)</div></div>
-        <div><div style="font-size:2rem;font-weight:800;">~${predicted}%</div><div style="font-size:.75rem;opacity:.85;">Predicted score</div></div>
+        <div><div style="font-size:2rem;font-weight:800;">${ready}%</div><div style="font-size:.75rem;opacity:.85;">Readiness (coverage × recall)</div></div>
+        <div><div style="font-size:2rem;font-weight:800;">${perf}%</div><div style="font-size:.75rem;opacity:.85;">Performance (of what you've tried)</div></div>
+        <div><div style="font-size:2rem;font-weight:800;">~${predicted}%</div><div style="font-size:.75rem;opacity:.85;">Predicted (cold, no curve)</div></div>
       </div>
-      <div style="font-size:.75rem;opacity:.8;margin-top:10px;">${cov.attempted}/${cov.total} questions attempted · recall-weighted, decays over time</div>
+      <div style="font-size:.75rem;opacity:.82;margin-top:10px;">${cov.attempted}/${cov.total} attempted (${cov.total ? Math.round(cov.attempted / cov.total * 100) : 0}% of the bank touched) · recall-weighted, decays over time</div>
+      <div style="font-size:.72rem;opacity:.72;margin-top:4px;line-height:1.35;">Readiness counts every untouched question as not-yet-known — it's <b>coverage × memory</b>, not your test score. Performance is closer to how you'd do on what you've actually studied. Predicted is a cold floor: no curve, no open-note, no printed labeling.</div>
     </div>`;
   // Lab 2 only: FOUR separate, honest dimensions — MCQ (above), real-photo stations, labeling, and
   // course-filtered 3D. Never blended into one number until every dimension actually has data, so an
@@ -8015,18 +8049,102 @@ function renderPreparednessGeneric(main) {
     mc.innerHTML = dimHtml;
     wrap.appendChild(mc);
   }
-  // per-region readiness bars
+  // ── Advanced per-block panel: coverage vs competence, honest about what's UNMEASURED ──
   const rc = document.createElement("div");
   rc.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
-  rc.innerHTML = `<div style="font-weight:700;margin-bottom:10px;">By region</div>`;
-  regions.forEach(r => {
-    const c = covStats(r.ids, md), pct = c.total ? Math.round(c.known / c.total * 100) : 0;
-    const row = document.createElement("div"); row.style.cssText = "margin:8px 0;";
-    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:3px;"><span>${r.name}</span><span style="color:#666;">${Math.round(c.known)}/${c.total}</span></div>
-      <div style="height:7px;background:#eee;border-radius:99px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${pct >= 70 ? "#0F766E" : pct >= 40 ? "#B7791F" : "#C0392B"};"></div></div>`;
+  rc.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;">
+      <div style="font-weight:800;">By block — coverage &amp; competence</div>
+      <div style="font-size:.68rem;color:#8a8071;">
+        <span style="display:inline-block;width:9px;height:9px;background:#0F766E;border-radius:2px;"></span> recalls now
+        &nbsp;<span style="display:inline-block;width:9px;height:9px;background:#C0392B;border-radius:2px;"></span> tried, fading/missed
+        &nbsp;<span style="display:inline-block;width:9px;height:9px;background:#E4DAC2;border-radius:2px;"></span> never attempted
+      </div></div>`;
+  const _bd = regions.map(r => ({ name: r.name, ids: r.ids, b: _blockBreakdown(r.ids, md) }));
+  const _confMeta = {
+    reliable:    { txt: "reliable read",    col: "#0F766E" },
+    directional: { txt: "directional",      col: "#2E7D32" },
+    weak:        { txt: "early signal",     col: "#B7791F" },
+    tooFew:      { txt: "too few to trust", col: "#C0392B" },
+    none:        { txt: "no data yet",      col: "#8a8071" },
+  };
+  function _blockVerdict(b) {
+    if (b.attempted < 8) return { label: "Unmeasured", col: "#6D28D9", bg: "#F5F3FF",
+      rec: `Run a cold set — you have ${b.attempted} rep${b.attempted === 1 ? "" : "s"} here, not enough to know.` };
+    if (b.accPct >= 75) return b.coverage < 0.4
+      ? { label: "Strong (thin)", col: "#0F766E", bg: "#ECFDF5", rec: "Accurate so far — widen coverage to lock it in." }
+      : { label: "Solid", col: "#0F766E", bg: "#ECFDF5", rec: "Locked in — maintain with light spaced review." };
+    if (b.accPct >= 55) return { label: "Building", col: "#B7791F", bg: "#FFFBEB", rec: "On the edge — keep drilling; target the missed ones." };
+    return { label: "Weak", col: "#C0392B", bg: "#FEF2F2", rec: "Read first, then drill — accuracy is below guessing-adjusted." };
+  }
+  _bd.forEach(({ name, b }) => {
+    const total = b.total || 1;
+    const gW = Math.max(0, Math.min(100, b.knownR / total * 100));
+    const rW = Math.max(0, Math.min(100 - gW, (b.attempted - b.knownR) / total * 100));
+    const uW = Math.max(0, 100 - gW - rW);
+    const v = _blockVerdict(b);
+    const cm = _confMeta[b.conf] || _confMeta.none;
+    const accTxt = b.accPct == null ? "—" : `${b.accPct}%${b.ci != null ? ` ±${b.ci}` : ""}`;
+    const covPct = Math.round(b.coverage * 100);
+    // reps-to-confidence: how many more attempted to reach a directional (25) then reliable (60) read
+    let repMsg = "";
+    if (b.attempted < 25) repMsg = `+${25 - b.attempted} reps → directional read`;
+    else if (b.attempted < 60) repMsg = `+${60 - b.attempted} reps → reliable read`;
+    else repMsg = "sample is reliable";
+    const row = document.createElement("div");
+    row.style.cssText = "margin:12px 0 14px;";
+    row.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-weight:700;">${name}
+          <span style="font-size:.66rem;font-weight:800;color:${v.col};background:${v.bg};border:1px solid ${v.col}33;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:middle;">${v.label}</span>
+        </span>
+        <span style="font-size:.78rem;color:#666;">touched ${b.attempted}/${b.total} <span style="color:#aaa;">(${covPct}%)</span></span>
+      </div>
+      <div style="display:flex;height:9px;border-radius:99px;overflow:hidden;background:#E4DAC2;">
+        <div style="width:${gW}%;background:#0F766E;"></div>
+        <div style="width:${rW}%;background:#C0392B;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:4px;font-size:.76rem;">
+        <span>Accuracy on tried: <b>${accTxt}</b> <span style="color:#888;">(n=${b.attempted})</span> · <span style="color:${cm.col};font-weight:700;">${cm.txt}</span></span>
+        <span style="color:#8a8071;font-size:.7rem;">${repMsg}</span>
+      </div>
+      <div style="font-size:.74rem;color:${v.col};margin-top:2px;">→ ${v.rec}</div>`;
     rc.appendChild(row);
   });
   wrap.appendChild(rc);
+
+  // ── Data-sufficiency / block-ranking confidence (answers "how many tests do I need") ──
+  const measured = _bd.filter(x => x.b.attempted >= 8 && x.b.accPct != null)
+    .map(x => ({ name: x.name, acc: x.b.accPct, ci: x.b.ci == null ? 50 : x.b.ci, n: x.b.attempted }))
+    .sort((a, b) => b.acc - a.acc);
+  const rank = document.createElement("div");
+  rank.style.cssText = "background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.82rem;line-height:1.5;";
+  let rankHtml = `<div style="font-weight:800;color:var(--ink);margin-bottom:6px;">🎯 How confident is the block ranking?</div>`;
+  if (measured.length < 2) {
+    rankHtml += `Only ${measured.length} block has enough reps (need ≥8 each) to compare. Take a realistic mock or a cold set on the empty blocks and this will start ranking them.`;
+  } else {
+    // count adjacent pairs whose 95% intervals don't overlap = resolved order
+    let resolved = 0, ambiguous = [];
+    for (let i = 0; i < measured.length - 1; i++) {
+      const a = measured[i], c = measured[i + 1];
+      if ((a.acc - a.ci) > (c.acc + c.ci)) resolved++;
+      else ambiguous.push(`${a.name} vs ${c.name}`);
+    }
+    rankHtml += `Current order: ` + measured.map(m => `<b>${m.name}</b> ${m.acc}%±${m.ci} <span style="color:#94a3b8;">(n=${m.n})</span>`).join(" › ") + `.<br>`;
+    if (ambiguous.length === 0) {
+      rankHtml += `<span style="color:#0F766E;font-weight:700;">This order is statistically clear</span> — the error bars don't overlap.`;
+    } else {
+      // estimate reps needed to separate the closest ambiguous pair
+      const gaps = [];
+      for (let i = 0; i < measured.length - 1; i++) gaps.push(Math.abs(measured[i].acc - measured[i + 1].acc));
+      const minGap = Math.min(...gaps.filter(g => g >= 0));
+      const need = minGap >= 20 ? 50 : minGap >= 12 ? 100 : minGap >= 7 ? 150 : 200;
+      rankHtml += `<span style="color:#B7791F;font-weight:700;">Not separable yet</span> where the bars overlap (${ambiguous.join("; ")}). `
+        + `Those blocks differ by only ~${Math.round(minGap)} pts, so you'd need about <b>${need} closed-book questions per block</b> (~${Math.ceil(need / 50)} realistic mock${Math.ceil(need / 50) === 1 ? "" : "s"}, different questions each time) to call it — and if a gap stays under ~10 pts, treat them as tied.`;
+    }
+    rankHtml += `<div style="font-size:.72rem;color:#94a3b8;margin-top:6px;">Rule of thumb: one realistic mock = 50/block resolves gaps &gt;~20 pts; ~3 mocks (~150/block) resolves ~10–14 pt gaps; smaller than that is a statistical tie.</div>`;
+  }
+  rank.innerHTML = rankHtml;
+  wrap.appendChild(rank);
   // latest CAT result, if any
   const catAtt = (progressState.examAttempts && progressState.examAttempts["cat:" + key]) || [];
   if (catAtt.length) {
