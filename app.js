@@ -1259,6 +1259,8 @@ function render() {
   else if (state.route === "catSim")         renderCatSim(main);
   else if (state.route === "catEnd")         renderCatEnd(main);
   else if (state.route === "preparednessGeneric") renderPreparednessGeneric(main);
+  else if (state.route === "learn")          renderLearn(main);
+  else if (state.route === "learnEnd")       renderLearnEnd(main);
 
   saveResumeState();
 }
@@ -1310,6 +1312,8 @@ function buildTopbar() {
       else if (state.route === "simReview")     state.route = "simExam";
       else if (state.route === "missedReview")  { missedDeck = []; state.route = "examMenu"; }
       else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
+      else if (state.route === "learn")         { if (confirm("End this Learn session? Your progress is saved.")) { learnDeck = []; state.route = "learnEnd"; render(); } return; }
+      else if (state.route === "learnEnd")      { learnDeck = []; state.route = state._learnBack || "examMenu"; }
       else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
       else if (state.route === "lab3d")          { try { if (typeof _l3StopPracticalTimer === "function") _l3StopPracticalTimer(); else if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
@@ -5715,6 +5719,220 @@ function renderFuzzyReview(main) {
   });
 }
 
+/* ════════════════════════════════════════════════════════════════════════════════════
+   🧠 LEARN MODE — adaptive relearn / cram engine with IMMEDIATE feedback.
+   Unlike the timed sims (batch feedback at the end), this tells you right/wrong on every
+   question the instant you answer, shows the correct answer + a short "why" + the Martini
+   locator, and adaptively schedules the deck: weakest blocks first, missed & fuzzy & fading
+   items prioritized, misses spaced-requeued a few cards later so they come back before they
+   fade. Built for cramming a comprehensive Final in one sitting. Records to the same engine
+   as every other mode (feeds Preparedness).
+   ════════════════════════════════════════════════════════════════════════════════════ */
+var learnDeck = [], learnIdx = 0, learnAnswered = false, learnUnsure = false;
+var learnStats = null, learnSeenFirst = null;
+function _learnExplain(q) {
+  // Prefer an authored explanation; else a Martini locator from the centralized resolver.
+  const e = q.explanation || q.expl || q.rationale || q.why || q.note || "";
+  if (e && String(e).trim().length > 2) return { text: String(e).trim(), src: "note" };
+  try {
+    if (typeof resolveBookReference === "function") {
+      const r = resolveBookReference(Object.assign({}, q, { id: q.id }));
+      if (r && (r.ch != null || r.srcPage || r.locator)) {
+        const ch = r.ch != null ? "Martini Ch " + r.ch : "Martini";
+        const pg = r.srcPage ? " · p." + r.srcPage : (r.locator && r.locator.page ? " · p." + r.locator.page : "");
+        const sec = r.srcSec ? " (§" + r.srcSec + ")" : "";
+        return { text: "📖 " + ch + pg + sec + " — open your notes/Martini here to lock it in.", src: "ref" };
+      }
+    }
+  } catch (e2) {}
+  return null;
+}
+function _learnBuildDeck(target) {
+  const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
+  let bl = {}; try { bl = _cumulativeBlocks(true); } catch (e) { bl = {}; }
+  const missed = new Set();
+  try { (loadMissedQs() || []).forEach(m => m && m.id && missed.add(m.id)); } catch (e) {}
+  const byBlock = { Appendicular: [], Axial: [], Torso: [], Systemic: [] };
+  const seenKey = new Set();
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(block => {
+    (bl[block] || []).forEach(q => {
+      if (!q || q.id == null) return;
+      if (!q.q && !q.question) return;
+      const k = (typeof _stemKey === "function" ? _stemKey(q) : q.id); if (!k || seenKey.has(k)) return; seenKey.add(k);
+      const r = (typeof qRecall === "function" ? qRecall(q.id, md) : 0.5);
+      const m = (typeof _qm === "function" ? _qm(q.id, md) : null);
+      const attempted = !!(m && m.s > 0);
+      let score = (1 - r) * 40 + Math.random() * 8;
+      if (missed.has(q.id)) score += 100;
+      if (typeof isFuzzy === "function" && isFuzzy(q.id, md)) score += 70;
+      if (!attempted) score += 45;
+      if (typeof catDifficulty === "function") { const d = catDifficulty(q.id, q); if (d > 0) score += d * 6; }
+      byBlock[block].push({ q, score });
+    });
+  });
+  Object.values(byBlock).forEach(a => a.sort((x, y) => y.score - x.score));
+  // interleave weak-first so a single session refreshes ALL four blocks (never all-Torso).
+  const order = ["Axial", "Appendicular", "Systemic", "Torso"];
+  const deck = []; let added = true;
+  while (deck.length < target && added) {
+    added = false;
+    order.forEach(b => { if (deck.length < target && byBlock[b].length) { deck.push(byBlock[b].shift().q); added = true; } });
+  }
+  return deck;
+}
+function _learnBlockOf(q) {
+  try {
+    const bl = _cumulativeBlocks(true);
+    for (const name of ["Appendicular", "Axial", "Torso", "Systemic"]) {
+      if ((bl[name] || []).some(x => x && x.id === q.id)) return name;
+    }
+  } catch (e) {}
+  return "—";
+}
+function startLearn(target) {
+  const t = target || 40;
+  learnDeck = _learnBuildDeck(t);
+  if (!learnDeck.length) { alert("No questions available to learn yet."); return; }
+  learnIdx = 0; learnAnswered = false; learnUnsure = false;
+  learnSeenFirst = {};
+  learnStats = { goal: learnDeck.length, answered: 0, firstRight: 0, firstWrong: 0, relearned: 0,
+    byBlock: { Appendicular: { seen: 0, right: 0 }, Axial: { seen: 0, right: 0 }, Torso: { seen: 0, right: 0 }, Systemic: { seen: 0, right: 0 } } };
+  state._learnBack = (state.route === "learn" || state.route === "learnEnd") ? (state._learnBack || "examMenu") : state.route;
+  state.route = "learn"; render();
+}
+function _learnEnd() { state.route = "learnEnd"; render(); }
+function renderLearn(main) {
+  if (!learnDeck.length) { _learnEnd(); return; }
+  const qi = learnIdx % learnDeck.length;
+  const q = learnDeck[qi];
+  const block = _learnBlockOf(q);
+  const st = learnStats || { goal: 0, answered: 0 };
+  const pct = st.goal ? Math.min(100, Math.round(st.answered / st.goal * 100)) : 0;
+
+  const bar = document.createElement("div");
+  bar.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.86rem;color:#666;";
+  const blockColors = { Appendicular: "#B7791F", Axial: "#4338CA", Torso: "#C0392B", Systemic: "#0F766E", "—": "#888" };
+  bar.innerHTML = `<span style="font-weight:800;color:${blockColors[block]};">🧠 Learn · <span style="background:${blockColors[block]}1a;color:${blockColors[block]};padding:1px 8px;border-radius:99px;font-size:.8rem;">${block}</span></span>
+    <span>${st.answered}/${st.goal} · <span style="color:#0F766E;font-weight:700;">${st.firstRight || 0}✓</span> <span style="color:#C0392B;font-weight:700;">${st.firstWrong || 0}✗</span></span>`;
+  main.appendChild(bar);
+  const pg = document.createElement("div");
+  pg.style.cssText = "height:6px;background:#eee;border-radius:3px;margin-bottom:16px;overflow:hidden;";
+  pg.innerHTML = `<div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#4338CA,#0F766E);border-radius:3px;transition:width .3s;"></div>`;
+  main.appendChild(pg);
+
+  if (q.images && q.images.length) {
+    const iw = document.createElement("div"); iw.style.cssText = "margin-bottom:14px;";
+    q.images.forEach(img => { const el = document.createElement("img"); el.src = "images/" + img; el.loading = "lazy"; el.style.cssText = "width:100%;display:block;border-radius:8px;margin-bottom:6px;cursor:zoom-in;"; el.onclick = () => el.style.maxHeight = el.style.maxHeight ? "" : "none"; iw.appendChild(el); });
+    main.appendChild(iw);
+  }
+  const stem = document.createElement("div");
+  stem.style.cssText = "font-size:1.06rem;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.55;";
+  stem.textContent = q.q || q.question;
+  main.appendChild(stem);
+
+  const fb = document.createElement("div");
+  fb.style.cssText = "min-height:20px;font-size:.95rem;font-weight:700;margin-bottom:10px;";
+  main.appendChild(fb);
+
+  const opts = q.tf ? ["True", "False"] : (q.options || []);
+  const optWrap = document.createElement("div");
+  main.appendChild(optWrap);
+  const advance = (wasCorrect) => {
+    // spaced requeue: a miss comes back ~5 cards later (before it fades); a hit clears.
+    learnDeck.splice(qi, 1);
+    if (!wasCorrect) { const at = Math.min(learnDeck.length, qi + 5); learnDeck.splice(at, 0, q); }
+    if (learnIdx >= learnDeck.length) learnIdx = 0;
+    learnAnswered = false; learnUnsure = false;
+    if (!learnDeck.length) { _learnEnd(); return; }
+    render();
+  };
+  opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "examOption"; btn.textContent = opt;
+    btn.onclick = () => {
+      if (learnAnswered) return; learnAnswered = true;
+      const correct = (i === q.correct);
+      const first = !learnSeenFirst[q.id];
+      if (first) {
+        learnSeenFirst[q.id] = true; learnStats.answered++;
+        const bb = learnStats.byBlock[block]; if (bb) { bb.seen++; if (correct) bb.right++; }
+        if (correct) learnStats.firstRight++; else learnStats.firstWrong++;
+      } else if (correct) { learnStats.relearned++; }
+      document.querySelectorAll(".examOption").forEach((b, j) => { b.disabled = true; if (j === q.correct) b.classList.add("correct"); });
+      if (!correct) btn.classList.add("wrong");
+      fb.textContent = correct ? (first ? "✅ Correct" : "✅ Correct — relearned") : "❌ Not quite";
+      fb.style.color = correct ? "#0F766E" : "#C0392B";
+      try { recordQuestionStat(q, correct, null, learnUnsure); } catch (e) {}
+      // explanation / reference panel
+      const ex = _learnExplain(q);
+      const panel = document.createElement("div");
+      panel.style.cssText = "background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:11px 13px;margin:12px 0;font-size:.9rem;line-height:1.5;";
+      panel.innerHTML = `<div style="font-weight:700;color:#0F766E;margin-bottom:${ex ? "5px" : "0"};">Answer: ${escapeHtml(q.tf ? ["True", "False"][q.correct] : (q.options[q.correct] || ""))}</div>${ex ? `<div style="color:#475569;">${escapeHtml(ex.text)}</div>` : ""}`;
+      main.insertBefore(panel, fb.nextSibling);
+      // continue controls
+      const row = document.createElement("div"); row.style.cssText = "display:flex;gap:10px;margin-top:12px;";
+      const cont = document.createElement("button"); cont.className = "primaryBtn"; cont.style.cssText += "flex:1;margin:0;";
+      cont.textContent = correct ? "Next →" : "Got it → Next";
+      cont.onclick = () => advance(correct);
+      const nb = document.createElement("button"); nb.className = "secondaryBtn"; nb.style.cssText += "margin:0;white-space:nowrap;"; nb.textContent = "📓 Notes";
+      nb.onclick = () => { try { const sec = (typeof qRegionSection === "function" ? qRegionSection(q.id) : null); openNotesPanel(sec || "systemic"); } catch (e) {} };
+      row.append(cont, nb); main.appendChild(row);
+      // keyboard: space/enter continue
+      const onKey = (ev) => { if (ev.key === " " || ev.key === "Enter") { ev.preventDefault(); document.removeEventListener("keydown", onKey); advance(correct); } };
+      document.addEventListener("keydown", onKey);
+    };
+    optWrap.appendChild(btn);
+  });
+  // pre-answer footer: unsure toggle (calibration) + end session
+  const foot = document.createElement("div");
+  foot.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid #eee;";
+  const unsureBtn = document.createElement("button");
+  unsureBtn.style.cssText = "background:none;border:1px solid #cbd5e1;border-radius:99px;padding:5px 12px;font-size:.78rem;color:#64748b;cursor:pointer;";
+  unsureBtn.textContent = "🤔 Mark unsure";
+  unsureBtn.onclick = () => { learnUnsure = !learnUnsure; unsureBtn.style.background = learnUnsure ? "#FEF3C7" : "none"; unsureBtn.style.color = learnUnsure ? "#B7791F" : "#64748b"; unsureBtn.textContent = learnUnsure ? "🤔 Unsure (noted)" : "🤔 Mark unsure"; };
+  const endBtn = document.createElement("button");
+  endBtn.style.cssText = "background:none;border:none;color:#94a3b8;font-size:.8rem;cursor:pointer;text-decoration:underline;";
+  endBtn.textContent = "End session";
+  endBtn.onclick = () => _learnEnd();
+  foot.append(unsureBtn, endBtn);
+  main.appendChild(foot);
+}
+function renderLearnEnd(main) {
+  const st = learnStats || { answered: 0, firstRight: 0, firstWrong: 0, relearned: 0, byBlock: {} };
+  const acc = st.answered ? Math.round(st.firstRight / st.answered * 100) : 0;
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:620px;margin:0 auto;text-align:center;padding:12px;";
+  wrap.innerHTML = `<div style="font-size:3rem;margin-bottom:6px;">🧠</div>
+    <div style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Learn session complete</div>
+    <div style="color:#666;margin-bottom:18px;">First-try accuracy <b style="color:${acc >= 70 ? "#0F766E" : acc >= 50 ? "#B7791F" : "#C0392B"};">${acc}%</b> · ${st.firstRight}/${st.answered} · <b>${st.relearned}</b> relearned after a miss</div>`;
+  const card = document.createElement("div");
+  card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;text-align:left;";
+  card.innerHTML = `<div style="font-weight:800;margin-bottom:8px;">Per block (first try)</div>`;
+  ["Axial", "Appendicular", "Systemic", "Torso"].forEach(b => {
+    const bb = (st.byBlock && st.byBlock[b]) || { seen: 0, right: 0 };
+    const p = bb.seen ? Math.round(bb.right / bb.seen * 100) : null;
+    const col = p == null ? "#94a3b8" : p >= 70 ? "#0F766E" : p >= 50 ? "#B7791F" : "#C0392B";
+    const row = document.createElement("div"); row.style.cssText = "margin:7px 0;";
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.9rem;"><span>${b}</span><span style="color:${col};font-weight:700;">${p == null ? "—" : p + "%"} <span style="color:#aaa;font-weight:400;">(${bb.right}/${bb.seen})</span></span></div>
+      <div style="height:6px;background:#eee;border-radius:99px;overflow:hidden;margin-top:2px;"><div style="height:100%;width:${p || 0}%;background:${col};"></div></div>`;
+    card.appendChild(row);
+  });
+  wrap.appendChild(card);
+  const again = document.createElement("button"); again.className = "primaryBtn"; again.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
+  again.textContent = "🔁 Another round (weakest first)";
+  again.onclick = () => startLearn(learnStats ? learnStats.goal : 40);
+  wrap.appendChild(again);
+  const prep = document.createElement("button"); prep.className = "secondaryBtn"; prep.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
+  prep.textContent = "See updated Preparedness";
+  prep.onclick = () => { state.sectionKey = "cumulative"; state.route = "preparednessGeneric"; render(); };
+  wrap.appendChild(prep);
+  const back = document.createElement("button"); back.className = "secondaryBtn"; back.style.cssText += "width:100%;max-width:none;";
+  back.textContent = "Back to menu";
+  back.onclick = () => { learnDeck = []; state.route = state._learnBack || "examMenu"; render(); };
+  wrap.appendChild(back);
+  main.appendChild(wrap);
+}
+
 /* ─── Lab 2 Model Practical: recognition + self-grade over real class-model photos ───
    Mirrors how the in-person practical actually feels: look at the model, name it, reveal, self-grade.
    `weakOnly` builds the deck from your shakiest stations (by miss-rate). Timed = ~60s/station. */
@@ -6754,6 +6972,15 @@ window.runCumulativeSafetyAudit = function(samples) {
 };
 function buildCumulativeExamMenu(list) {
   const SECS = 4800, BLOCK_SECS = 1200, PER = 50;
+  // ── CRAM: adaptive Learn Mode with immediate feedback (top of the menu) ──
+  _mkHdr(list, "🧠 Cram — learn & relearn (instant feedback)");
+  [[40, "Quick cram", "~15 min"], [80, "Deep cram", "~30 min"]].forEach(([n, label, mins]) => {
+    const lb = document.createElement("button"); lb.className = "modeBtn";
+    lb.style.cssText = "border:2px solid #4338CA;background:linear-gradient(135deg,#EEF2FF,#F5F3FF);";
+    lb.innerHTML = `<span class="modeIcon">🧠</span><span class="modeLabel">Learn Mode — ${label}</span><span class="modeMeta">Tells you right/wrong on every question + the answer &amp; why · adaptive, weakest block first, misses come back · <b>${n} Qs · ${mins}</b></span>`;
+    lb.onclick = () => startLearn(n);
+    list.appendChild(lb);
+  });
   // ── Final Prep ladder — Easy → Medium → Hard → course-faithful rehearsal ──
   _mkHdr(list, "🎯 Final Prep — pick your difficulty");
   const ladder = [
