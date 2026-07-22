@@ -1887,20 +1887,21 @@ function renderHome(main) {
     wrap.appendChild(grid);
   };
 
-  section("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"]);   // course order: Appendicular → Axial → Torso
-  section("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"]);
-
-  // Cumulative — full-width standout
+  // Cumulative Final — PINNED TO THE TOP: this is the focus now, down to the wire before the Final.
   const cum = document.createElement("button");
   cum.className = "homeCard";
-  cum.style.cssText = "display:block;width:100%;text-align:left;margin-top:22px;border:none;border-radius:18px;overflow:hidden;cursor:pointer;background:linear-gradient(135deg,#0F766E,#134E4A);box-shadow:0 6px 20px rgba(15,118,110,.28);";
+  cum.style.cssText = "display:block;width:100%;text-align:left;margin:2px 0 22px;border:none;border-radius:18px;overflow:hidden;cursor:pointer;background:linear-gradient(135deg,#0F766E,#134E4A);box-shadow:0 6px 20px rgba(15,118,110,.28);";
   cum.innerHTML = `<div style="padding:18px 20px;display:flex;align-items:center;gap:14px;">
       <span style="font-size:1.9rem;">${ICONS.cumulative || "🎓"}</span>
-      <span><span style="display:block;font-family:Georgia,serif;font-size:1.25rem;font-weight:800;color:#fff;">Cumulative — Final Review</span>
+      <span><span style="display:block;font-family:Georgia,serif;font-size:.7rem;font-weight:800;letter-spacing:.09em;color:#A7F3D0;">⏰ YOUR FOCUS — FINAL PREP</span>
+      <span style="display:block;font-family:Georgia,serif;font-size:1.25rem;font-weight:800;color:#fff;">Cumulative — Final Review</span>
       <span style="display:block;color:rgba(255,255,255,.85);font-size:.85rem;margin-top:2px;">${META.cumulative || "Everything, mixed — full-course review"}</span></span>
     </div>`;
   cum.onclick = () => { state.sectionKey = "cumulative"; state.route = "sectionMenu"; render(); };
   wrap.appendChild(cum);
+
+  section("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"]);   // course order: Appendicular → Axial → Torso
+  section("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"]);
 
   // Custom Practice — dashed, understated
   const customCard = document.createElement("button");
@@ -5750,6 +5751,7 @@ function _learnExplain(q) {
 function _learnBuildDeck(target, focus) {
   const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
   let bl = {}; try { bl = _cumulativeBlocks(true); } catch (e) { bl = {}; }
+  const qsAll = ((typeof activeProgress === "function" ? activeProgress() : progressState).qstats) || {};
   const missed = new Set();
   try { (loadMissedQs() || []).forEach(m => m && m.id && missed.add(m.id)); } catch (e) {}
   const byBlock = { Appendicular: [], Axial: [], Torso: [], Systemic: [] };
@@ -5766,11 +5768,20 @@ function _learnBuildDeck(target, focus) {
       const r = (typeof qRecall === "function" ? qRecall(q.id, md) : 0.5);
       const m = (typeof _qm === "function" ? _qm(q.id, md) : null);
       const attempted = !!(m && m.s > 0);
-      let score = (1 - r) * 40 + Math.random() * 8;
-      if (isMs) score += 100;
-      if (isFz) score += 70;
-      if (!attempted && focus !== "fuzzy") score += 45;
-      if (typeof catDifficulty === "function") { const d = catDifficulty(q.id, q); if (d > 0) score += d * 6; }
+      let score;
+      if (focus === "least") {
+        // Least-seen first: rank by total exposure ascending (never-seen at the very top). Rebuilt
+        // live from qstats on every launch, so a question you've now seen a lot naturally drops out
+        // of the set and a less-seen one replaces it — the bank is self-updating.
+        const seen = (qsAll[q.id] && qsAll[q.id].seen) || 0;
+        score = 1000 - Math.min(seen, 400) * 2 + Math.random() * 3;
+      } else {
+        score = (1 - r) * 40 + Math.random() * 8;
+        if (isMs) score += 100;
+        if (isFz) score += 70;
+        if (!attempted && focus !== "fuzzy") score += 45;
+        if (typeof catDifficulty === "function") { const d = catDifficulty(q.id, q); if (d > 0) score += d * 6; }
+      }
       byBlock[block].push({ q, score });
     });
   });
@@ -5923,7 +5934,7 @@ function renderLearnEnd(main) {
   });
   wrap.appendChild(card);
   const again = document.createElement("button"); again.className = "primaryBtn"; again.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
-  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : "🔁 Another round (weakest first)";
+  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : (st.focus === "least") ? "🔁 Another least-seen round" : "🔁 Another round (weakest first)";
   again.onclick = () => startLearn(st.goal || 40, st.focus);
   wrap.appendChild(again);
   const prep = document.createElement("button"); prep.className = "secondaryBtn"; prep.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
@@ -6922,7 +6933,10 @@ function _cumulativeDeck(per) {
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
     deck.push(..._pickCumulativeBlock(bl[name] || [], per, 10, seen));
   });
-  return shuffle(deck);
+  // Keep the four blocks CONTIGUOUS and IN ORDER (Appendicular → Axial → Torso → Systemic),
+  // mirroring the real Final's section structure — do NOT shuffle across blocks. Order within a
+  // block is already randomized in _pickCumulativeBlock.
+  return deck;
 }
 // Difficulty-tiered cumulative deck: 50 per block, drawn from an easy / medium / hard slice by
 // catDifficulty (which already folds in Gabe's miss-rate + fuzzy items, so "hard" naturally skews
@@ -6937,19 +6951,32 @@ function _cumulativeDeckDiff(per, level) {
     if (!level) {
       chosen = shuffle(pool);
     } else {
+      const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
       const scored = pool.map(q => ({ q, d: catDifficulty(q.id, q) })).sort((a, b) => a.d - b.d);
       const nP = scored.length;
-      let slice;
-      if (level === "easy")       slice = scored.slice(0, Math.max(per * 2, Math.ceil(nP * 0.40)));            // easiest ~40%
-      else if (level === "medium") slice = scored.slice(Math.floor(nP * 0.33), Math.ceil(nP * 0.72));           // middle band
-      else                         slice = scored.slice(Math.floor(nP * 0.60));                                 // hardest ~40%
-      chosen = shuffle(slice.map(s => s.q));
+      if (level === "easy") {
+        chosen = shuffle(scored.slice(0, Math.max(per * 2, Math.ceil(nP * 0.40))).map(s => s.q));              // easiest ~40%
+      } else if (level === "medium") {
+        chosen = shuffle(scored.slice(Math.floor(nP * 0.33), Math.ceil(nP * 0.72)).map(s => s.q));             // middle band
+      } else {
+        // HARD: hardest ~45% by difficulty, but GUARANTEE never-attempted hard questions get in —
+        // not just your known missed/fuzzy ones. Interleave fresh-hard with seen-hard so a Hard mock
+        // always throws new tough material at you, not only a rerun of what you've already missed.
+        const band = scored.slice(Math.floor(nP * 0.55)).map(s => s.q);
+        const isSeen = q => { const m = (typeof _qm === "function" ? _qm(q.id, md) : null); return !!(m && m.s > 0); };
+        const fresh = shuffle(band.filter(q => !isSeen(q)));
+        const seenH = shuffle(band.filter(q => isSeen(q)));
+        const inter = []; let i = 0, j = 0;
+        while (i < fresh.length || j < seenH.length) { if (i < fresh.length) inter.push(fresh[i++]); if (j < seenH.length) inter.push(seenH[j++]); }
+        chosen = inter;
+      }
     }
     const picked = [];
     _takeUniqueQuestions(chosen, per, seen, picked);
     deck.push(...picked);
   });
-  return shuffle(deck);
+  // Contiguous, ordered blocks (Appendicular → Axial → Torso → Systemic) — no cross-block shuffle.
+  return deck;
 }
 // Console regression helper for future bank/app changes. It is read-only and makes no progress edits.
 window.runCumulativeSafetyAudit = function(samples) {
@@ -6990,6 +7017,11 @@ function buildCumulativeExamMenu(list) {
   fz.innerHTML = `<span class="modeIcon">🎲</span><span class="modeLabel">Learn Mode — Fuzzy &amp; missed only</span><span class="modeMeta">Relearn just the questions you flip-flop on or have gotten wrong · instant feedback + why · <b>up to 50 Qs</b></span>`;
   fz.onclick = () => startLearn(50, "fuzzy");
   list.appendChild(fz);
+  const ls = document.createElement("button"); ls.className = "modeBtn";
+  ls.style.cssText = "border:2px solid #0F766E;background:linear-gradient(135deg,#E9F6F4,#ECFDF5);";
+  ls.innerHTML = `<span class="modeIcon">🧭</span><span class="modeLabel">Learn Mode — Least-seen (new ground)</span><span class="modeMeta">Dynamically serves the questions you've seen least or never — rebuilds every launch, so ones you've now drilled drop out and fresh ones rotate in · instant feedback · <b>60 Qs</b></span>`;
+  ls.onclick = () => startLearn(60, "least");
+  list.appendChild(ls);
   // ── Final Prep ladder — Easy → Medium → Hard → course-faithful rehearsal ──
   _mkHdr(list, "🎯 Final Prep — pick your difficulty");
   const ladder = [
