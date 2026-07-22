@@ -339,7 +339,7 @@ main { padding: 20px 18px 48px; }
 .modeGroupHdr {
   font-weight: 700; font-size: 0.78rem; color: var(--accent);
   margin: 20px 0 8px 2px; text-transform: uppercase; letter-spacing: .08em;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 6px; grid-column: 1 / -1;
 }
 .modeGroupHdr:first-of-type { margin-top: 6px; }
 

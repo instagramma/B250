@@ -6,6 +6,7 @@ const DIAGRAM_RE = /label\s+[A-Z]\b|indicated by|identify the structure|structur
 function isDiagramQ(q) {
   return !!(q && q.images && q.images.length) || (q && DIAGRAM_RE.test(q.q || ""));
 }
+function hasQuestionImage(q) { return !!(q && q.images && q.images.length); }
 /* Fill-in-the-blank items (single answer / no distractors) — fine for flashcard review,
    but excluded from timed Simulations & Practice Exams (they render as a lone option). */
 function isFITBQ(q) { return !!(q && (q.fitb || (q.options || []).length <= 1)); }
@@ -17,6 +18,9 @@ const OUT_OF_SCOPE_IDS = new Set([
   "ST-0499", "ST-0948",          // femoral→popliteal (Appendicular / lower-limb)
   "ST-0001", "ST-0242", "ST-0498" // general ANS "unpaired ganglia" MCQ (Axial nervous-system) — Thorax/Abdomen/Pelvis copies
 ]);
+// Source items whose present wording cannot support one unique answer. Keep them available in the
+// source data with an audit note, but never serve them in scored/adaptive practice until rewritten.
+const QUARANTINED_IDS = new Set(["GR-4148", "GR-5426"]);
 /* A few Stuvia items have a duplicated answer option (line-wrap/parse artifact, e.g. ST-0356
    "Urine is formed in the" shows "kidney and bladder." twice). A duplicate makes the item
    ambiguous, so keep them out of scored/adaptive contexts (still fine for flashcard review). */
@@ -27,7 +31,7 @@ function hasDupOptions(q) {
   for (const o of opts) { const k = String(o).trim().toLowerCase(); if (seen.has(k)) return true; seen.add(k); }
   return false;
 }
-function isExamEligible(q) { return !!q && !isFITBQ(q) && !hasDupOptions(q) && !OUT_OF_SCOPE_IDS.has(q.id); }
+function isExamEligible(q) { return !!q && !isFITBQ(q) && !hasDupOptions(q) && !OUT_OF_SCOPE_IDS.has(q.id) && !QUARANTINED_IDS.has(q.id); }
 /* Normalize a question stem so near-identical duplicates (same stem across GR/Stuvia/CB, or the
    Systemic master set that duplicates section questions) collapse to one key. */
 function _stemKey(q) {
@@ -1100,12 +1104,18 @@ function getSection(key) {
   if (key === "cumulative") {
     // Cumulative FINAL = lecture units only (Appendicular + Axial + Torso). Labs are a SEPARATE
     // practical and are intentionally excluded from the cumulative final review.
-    const merged = { title: "Cumulative (Final Review)", flashcards: [], quiz: [], images: [] };
+    const merged = { title: "Cumulative (Final Review)", flashcards: [], quiz: [], images: [], subtopics: [] };
     for (const k of ["appendicular", "axial", "torso"]) {
       const s = DATA.sections[k];
-      merged.flashcards.push(...s.flashcards);
-      merged.quiz.push(...s.quiz.map(q => ({ ...q })));
-      merged.images.push(...s.images);
+      const unitName = k.charAt(0).toUpperCase() + k.slice(1);
+      merged.flashcards.push(...(s.flashcards || []));
+      merged.quiz.push(...(s.quiz || []).map(q => ({ ...q })));
+      merged.images.push(...(s.images || []));
+      merged.subtopics.push(...(s.subtopics || []).map(t => ({
+        ...t,
+        title: `${unitName} — ${t.title || t.name || "Guided Reading"}`,
+        quiz: (t.quiz || []).map(q => ({ ...q })),
+      })));
     }
     return merged;
   }
@@ -3462,9 +3472,10 @@ function appendRegionBars(main, md, metric) {
    a likely range, and the chance of clearing target cutoffs. */
 var _predVer = 0;        // bumped whenever a question stat changes → invalidates the memo
 var _predMemo = {};
-// DIAG_PRINTED = number of exam points (out of 200) that are printed labeling diagrams, taken
-// verbatim from the GR/Stuvia figures — i.e. ~guaranteed if you have the printed key on exam day.
-const DIAG_PRINTED = 40; // ~20% of the 200-question exam
+// Optional scenario only: the instructor described roughly 20% image-based GR content, but those
+// points are not guaranteed. The default prediction leaves this off and the cumulative rehearsal
+// now tests image questions directly.
+const DIAG_PRINTED = 40;
 function predictExam(mode, runs, diagFloor) {
   const key = mode + "|" + (state.allTime ? 1 : 0) + "|" + _predVer + "|" + (runs || 600) + "|" + (diagFloor ? 1 : 0);
   if (_predMemo[key]) return _predMemo[key];
@@ -3475,7 +3486,7 @@ function predictExam(mode, runs, diagFloor) {
   // Precompute each question's exam-probability ONCE (was recomputed 300k× → froze the browser).
   const P = {}; BLUEPRINT.forEach(([r]) => { P[r] = pools[r].map(o => qExamProb(o.id, mode, o.g)); });
   const total = BLUEPRINT.reduce((a, [, n]) => a + n, 0);   // 200
-  const guaranteed = diagFloor ? DIAG_PRINTED : 0;           // printed diagram points assumed correct
+  const guaranteed = diagFloor ? DIAG_PRINTED : 0;           // explicit what-if assumption, never the default
   const scale = (total - guaranteed) / total;                // shrink each section's simulated count
   const plan = BLUEPRINT.map(([r, n]) => [r, Math.round(n * scale)]);
   const scores = new Array(runs);
@@ -3653,19 +3664,19 @@ function renderExamOutlook(main, md) {
       <div style="flex:1;min-width:120px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 10px;">
         <div style="font-size:.72rem;opacity:.85;">chance ≥ 90%</div><div style="font-size:1.25rem;font-weight:800;">${pred.p90}%</div></div>
     </div>${calLine}`;
-  // ── Diagram-printed toggle (switch) ──
+  // ── Printed-image what-if toggle (switch) ──
   const tog = document.createElement("div");
   tog.style.cssText = "margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.25);display:flex;align-items:center;gap:10px;cursor:pointer;";
   tog.onclick = () => { state.predDiagrams = !state.predDiagrams; render(); };
   const knob = diagOn
     ? `<span style="width:40px;height:22px;border-radius:22px;background:#34D399;position:relative;display:inline-block;flex:0 0 auto;"><span style="position:absolute;top:2px;left:20px;width:18px;height:18px;border-radius:50%;background:#fff;"></span></span>`
     : `<span style="width:40px;height:22px;border-radius:22px;background:rgba(255,255,255,.3);position:relative;display:inline-block;flex:0 0 auto;"><span style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;"></span></span>`;
-  tog.innerHTML = `${knob}<span style="font-size:.82rem;line-height:1.35;">🖼️ <b>Count printed diagram labels as correct</b> ${diagOn ? "<span style=\"opacity:.85;\">(on — +40 pts guaranteed)</span>" : "<span style=\"opacity:.7;\">(off)</span>"}<br><span style="opacity:.8;font-size:.74rem;">~20% of the exam is labeling taken verbatim from GR/Stuvia figures you'll have printed.</span></span>`;
+  tog.innerHTML = `${knob}<span style="font-size:.82rem;line-height:1.35;">🖼️ <b>What-if: assume 40/40 on printed-image items</b> ${diagOn ? "<span style=\"opacity:.85;\">(scenario on)</span>" : "<span style=\"opacity:.7;\">(off)</span>"}<br><span style="opacity:.8;font-size:.74rem;">This is an optimistic scenario, not earned credit or a readiness measurement.</span></span>`;
   card.appendChild(tog);
   const note = document.createElement("div");
   note.style.cssText = "margin-top:8px;font-size:.72rem;opacity:.8;";
   note.textContent = diagOn
-    ? "Monte-Carlo: 40 printed-diagram points assumed correct + 160 questions simulated over the 50/50/50/50 blueprint."
+    ? "What-if scenario: 40 image points assumed correct + 160 questions simulated. Verify the image items directly before trusting this scenario."
     : "Monte-Carlo over the 50/50/50/50 Thorax·Abdomen·Pelvis·Systemic blueprint. Includes guess/elimination credit for unseen questions.";
   card.appendChild(note);
   main.appendChild(card);
@@ -3742,8 +3753,8 @@ function qTextById(id) {
     _qTextIndex = {};
     const add = q => { if (q && q.id && _qTextIndex[q.id] == null) _qTextIndex[q.id] = String(q.q || q.question || ""); };
     try { if (typeof DATA !== "undefined") Object.values(DATA.sections).forEach(s => { (s.subtopics || []).forEach(t => (t.quiz || []).forEach(add)); (s.exams || []).forEach(e => (e.questions || []).forEach(add)); (s.flashcards || []).forEach(add); }); } catch (e) {}
-    try { if (typeof STUVIA_BANK !== "undefined") STUVIA_BANK.forEach(s => (s.questions || []).forEach(add)); } catch (e) {}
-    try { if (typeof CLAUDEBANK !== "undefined") CLAUDEBANK.forEach(s => (s.questions || []).forEach(add)); } catch (e) {}
+    try { [typeof STUVIA_APPENDICULAR !== "undefined" ? STUVIA_APPENDICULAR : [], typeof STUVIA_AXIAL !== "undefined" ? STUVIA_AXIAL : [], typeof STUVIA_BANK !== "undefined" ? STUVIA_BANK : []].forEach(bank => bank.forEach(s => (s.questions || []).forEach(add))); } catch (e) {}
+    try { [typeof CLAUDEBANK_APPENDICULAR !== "undefined" ? CLAUDEBANK_APPENDICULAR : [], typeof CLAUDEBANK_AXIAL !== "undefined" ? CLAUDEBANK_AXIAL : [], typeof CLAUDEBANK !== "undefined" ? CLAUDEBANK : []].forEach(bank => bank.forEach(s => (s.questions || []).forEach(add))); } catch (e) {}
   }
   return _qTextIndex[id] || "";
 }
@@ -4292,7 +4303,9 @@ let _qIndex = null;
 function buildQuestionIndex() {
   if (_qIndex) return _qIndex;
   const idx = {};
-  const add = (q, hintCh) => { if (q && q.id && !idx[q.id]) idx[q.id] = { q: q.q, options: q.options, correct: q.correct, tf: q.tf, hintCh }; };
+  // Preserve attached images and audit/provenance fields. The former reduced index silently stripped
+  // `images`, which made lecture Guided Reading figures impossible to include in cumulative decks.
+  const add = (q, hintCh) => { if (q && q.id && !idx[q.id]) idx[q.id] = { ...q, hintCh: q.hintCh || hintCh }; };
   const subHint = { "Endocrine":19,"Blood":20,"Heart":21,"Vessels and Circulation":22,"Lymphatic":23,"Digestive":25,"Urinary":26,"Reproductive":27,"Embryology and Development":28 };
   if (typeof DATA !== "undefined" && DATA.sections) {
     Object.values(DATA.sections).forEach(sec => {
@@ -6010,14 +6023,14 @@ function renderGrMenu(main) {
     subtopics.forEach(sub => {
       const btn = document.createElement("button");
       btn.className = "modeBtn";
-      const qCount = (sub.quiz || []).length;
+      const qCount = (sub.quiz || []).filter(isExamEligible).length;
       const best = (progressState.quizzes && progressState.quizzes["grTimed:" + state.sectionKey + ":" + sub.title]);
       const bestTxt = best ? ` · Best ${best.score}/${best.total}` : "";
       btn.innerHTML = `<span class="modeIcon">⏱️</span><span class="modeLabel">${sub.title}</span><span class="modeMeta">${qCount} Qs${bestTxt}</span>`;
       btn.onclick = () => {
         // launch timed GR exam directly (sets examSource = "gr", uses subtopic quiz)
         // Include ALL questions (content + diagram/labeling) so the deck matches the "N Qs" count.
-        const quiz = (sub.quiz || []);
+        const quiz = (sub.quiz || []).filter(isExamEligible);
         if (!quiz.length) return;
         state.prevRoute = "grMenu";
         state.examSource = "gr";
@@ -6419,7 +6432,7 @@ function appendResumeBanner(container) {
   if (!s || !s.deck || !s.deck.length) return;
   const n = s.deck.length, ans = (s.answers || []).filter(a => a !== -1).length;
   const card = document.createElement("div");
-  card.style.cssText = "background:#FFF7ED;border:2px solid #F59E0B;border-radius:14px;padding:14px 16px;margin:0 0 16px;";
+  card.style.cssText = "background:#FFF7ED;border:2px solid #F59E0B;border-radius:14px;padding:14px 16px;margin:0 0 16px;grid-column:1 / -1;";
   card.innerHTML = `<div style="font-size:.72rem;font-weight:800;letter-spacing:.08em;color:#B45309;">⏸ PAUSED EXAM</div>
     <div style="font-weight:800;margin:4px 0;color:var(--text);">${s.title || "Practice exam"} — Q ${Math.min((s.index || 0) + 1, n)}/${n} · ${fmtTime(s.secondsLeft || 0)} left</div>
     <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;">${ans} answered · saved ${_agoText(s.ts)}</div>`;
@@ -6595,11 +6608,16 @@ function _isSystemicGroupTitle(title) {
   // SYSTEMIC markers
   return /foundation|introduction|body organization|\bcell\b|tissue|histolog|integument|bone tissue|osseous|ossification|skeletal|muscular|muscle (physiology|tissue)|neural tissue|cross[ -]?section|autonomic|special senses|\bsenses\b|endocrine|\bblood\b|\bheart\b|vessel|circulation|lymphatic|digestive|urinary|reproductive|embryolog|nervous/.test(t);
 }
-function _cumulativeBlocks() {
+function _cumulativeBlocks(includeImages) {
   const idx = buildQuestionIndex();
   // idx maps id→question but the id is the KEY, not a field on the object — re-attach it so
   // dedup + the per-question option-shuffle cache work (they key on q.id).
-  const toQ = ids => dedupeQs(ids.map(id => { const q = idx[id]; return q ? Object.assign({}, q, { id: id }) : null; }).filter(q => q && isExamEligible(q) && !isDiagramQ(q)));
+  const toQ = ids => dedupeQs(ids.map(id => { const q = idx[id]; return q ? Object.assign({}, q, { id: id }) : null; }).filter(q => {
+    if (!q || !isExamEligible(q)) return false;
+    if (!includeImages) return !isDiagramQ(q);
+    // A label-style stem without an attached image is unusable in a timed exam.
+    return !isDiagramQ(q) || hasQuestionImage(q);
+  }));
   // Split a unit's banks into REGIONAL vs SYSTEMIC by group/subtopic title.
   function unitSplit(k) {
     const reg = [], sys = [];
@@ -6623,13 +6641,31 @@ function _cumulativeBlocks() {
     Systemic:     toQ([].concat(ap.sys, ax.sys, torsoSysIds)),   // systemic across ALL units, unified
   };
 }
-// Draw exactly `per` from each block (deduped across blocks), then shuffle into one deck.
+function _takeUniqueQuestions(candidates, count, seen, out) {
+  for (const q of shuffle(candidates || [])) {
+    if (out.length >= count) break;
+    const key = _stemKey(q);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(q);
+  }
+}
+// Draw one balanced block while reserving a course-policy-based image quota. Only selected stems
+// enter `seen`, so unused candidates in an earlier block cannot starve a later block.
+function _pickCumulativeBlock(pool, per, imageTarget, seen) {
+  const picked = [];
+  _takeUniqueQuestions((pool || []).filter(hasQuestionImage), Math.min(per, imageTarget || 0), seen, picked);
+  _takeUniqueQuestions((pool || []).filter(q => !isDiagramQ(q)), per, seen, picked);
+  _takeUniqueQuestions(pool || [], per, seen, picked);
+  return picked;
+}
+// Balanced practice blueprint: 50 per block and 10 tested lecture-GR image questions per block
+// (40/200 total). The exact Final distribution is not documented by the syllabus.
 function _cumulativeDeck(per) {
-  const bl = _cumulativeBlocks();
+  const bl = _cumulativeBlocks(true);
   const seen = new Set(); const deck = [];
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
-    const picked = shuffle(bl[name] || []).filter(q => { const k = (q.id != null) ? q.id : String(q.q || ""); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, per);
-    deck.push(...picked);
+    deck.push(..._pickCumulativeBlock(bl[name] || [], per, 10, seen));
   });
   return shuffle(deck);
 }
@@ -6637,12 +6673,13 @@ function _cumulativeDeck(per) {
 // catDifficulty (which already folds in Gabe's miss-rate + fuzzy items, so "hard" naturally skews
 // toward his weak spots). "realistic" = representative random draw mirroring the real exam mix.
 function _cumulativeDeckDiff(per, level) {
-  const bl = _cumulativeBlocks();
+  if (level === "realistic") return _cumulativeDeck(per);
+  const bl = _cumulativeBlocks(false);
   const seen = new Set(); const deck = [];
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
-    let pool = (bl[name] || []).filter(q => { const k = (q.id != null) ? q.id : String(q.q || ""); if (seen.has(k)) return false; seen.add(k); return true; });
+    let pool = (bl[name] || []).filter(q => !seen.has(_stemKey(q)));
     let chosen;
-    if (level === "realistic" || !level) {
+    if (!level) {
       chosen = shuffle(pool);
     } else {
       const scored = pool.map(q => ({ q, d: catDifficulty(q.id, q) })).sort((a, b) => a.d - b.d);
@@ -6653,24 +6690,49 @@ function _cumulativeDeckDiff(per, level) {
       else                         slice = scored.slice(Math.floor(nP * 0.60));                                 // hardest ~40%
       chosen = shuffle(slice.map(s => s.q));
     }
-    deck.push(...chosen.slice(0, per));
+    const picked = [];
+    _takeUniqueQuestions(chosen, per, seen, picked);
+    deck.push(...picked);
   });
   return shuffle(deck);
 }
+// Console regression helper for future bank/app changes. It is read-only and makes no progress edits.
+window.runCumulativeSafetyAudit = function(samples) {
+  samples = Math.max(1, Math.min(100, Number(samples) || 20));
+  const blocks = _cumulativeBlocks(true);
+  const blockCounts = {};
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(name => {
+    const pool = blocks[name] || [];
+    blockCounts[name] = { total: pool.length, images: pool.filter(hasQuestionImage).length };
+  });
+  const runs = [];
+  for (let i = 0; i < samples; i++) {
+    const deck = _cumulativeDeck(50);
+    runs.push({
+      size: deck.length,
+      images: deck.filter(hasQuestionImage).length,
+      uniqueStems: new Set(deck.map(_stemKey)).size,
+      unusableLabels: deck.filter(q => isDiagramQ(q) && !hasQuestionImage(q)).length,
+      quarantined: deck.filter(q => QUARANTINED_IDS.has(q.id)).map(q => q.id),
+    });
+  }
+  const ok = runs.every(r => r.size === 200 && r.images === 40 && r.uniqueStems === 200 && r.unusableLabels === 0 && r.quarantined.length === 0);
+  return { ok, samples, blockCounts, cumulativeSubtopics: getSection("cumulative").subtopics.length, runs };
+};
 function buildCumulativeExamMenu(list) {
-  const SECS = 4800, PER = 50;   // real Final: 50 Appendicular + 50 Axial + 50 Torso + 50 Systemic = 200
-  // ── Final Prep ladder — Easy → Medium → Hard → Realistic (all 200 Q · 50/block · 80 min) ──
+  const SECS = 4800, BLOCK_SECS = 1200, PER = 50;
+  // ── Final Prep ladder — Easy → Medium → Hard → course-faithful rehearsal ──
   _mkHdr(list, "🎯 Final Prep — pick your difficulty");
   const ladder = [
-    ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Lowest-difficulty questions across all 4 units. Build confidence + cover breadth."],
-    ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Mid-difficulty mix. Closest to a normal study set."],
-    ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Hardest questions + your fuzzy/miss-prone items. Built to punish gaps."],
-    ["realistic", "⭐ Realistic — Balanced full mock", "#0F766E", "#E9F6F4", "Representative random draw across all 4 blocks — your best baseline diagnostic."],
+    ["easy",      "🟢 Easy — Warm-up",        "#2E7D32", "#E8F5E9", "Text-only low-difficulty questions across all four balanced blocks."],
+    ["medium",    "🟡 Medium — Building",      "#B7791F", "#FEF6E7", "Text-only mid-difficulty practice across all four balanced blocks."],
+    ["hard",      "🔴 Hard — Tough (weak-area heavy)", "#C0392B", "#FDECEA", "Text-only hard questions plus fuzzy and miss-prone items."],
+    ["realistic", "⭐ Course-Faithful Rehearsal", "#0F766E", "#E9F6F4", "Balanced working blueprint with 40 tested lecture Guided Reading image questions."],
   ];
   ladder.forEach(([lvl, label, border, bg, meta]) => {
     const btn = document.createElement("button"); btn.className = "modeBtn";
     btn.style.cssText = `border:2px solid ${border};background:${bg};`;
-    btn.innerHTML = `<span class="modeLabel">${label}</span><span class="modeMeta">${meta} · <b>200 Qs · 50/unit · 80 min</b></span>`;
+    btn.innerHTML = `<span class="modeLabel">${label}</span><span class="modeMeta">${meta} · <b>200 Qs · 50/block · 80 min</b></span>`;
     btn.onclick = () => {
       const deck = _cumulativeDeckDiff(PER, lvl);
       if (!deck.length) { alert("No questions available yet."); return; }
@@ -6682,23 +6744,22 @@ function buildCumulativeExamMenu(list) {
   _mkHdr(list, "Cumulative Final — All Lecture Units (no labs)");
   const simBtn = document.createElement("button"); simBtn.className = "modeBtn";
   simBtn.style.cssText = "border:2px solid #0F766E;background:#E9F6F4;";
-  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · 200 Qs · 80 min · skip &amp; flag<br><span style="opacity:.75;font-size:.9em;">Balanced diagnostic split — the syllabus doesn't confirm the exact Final ratio.</span></span>`;
+  simBtn.innerHTML = `<span class="modeIcon">🎓</span><span class="modeLabel">Full Cumulative Simulation ⭐</span><span class="modeMeta">Balanced practice blueprint: <b>50 Appendicular + 50 Axial + 50 Torso + 50 Systemic</b> · includes 40 tested lecture GR images · 200 Qs · 80 min<br><span style="opacity:.75;font-size:.9em;">Balanced diagnostic split — the syllabus does not confirm the exact Final ratio.</span></span>`;
   simBtn.onclick = () => { const deck = _cumulativeDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "Cumulative Simulation", SECS); };
   list.appendChild(simBtn);
   _mkHdr(list, "By Block — 50-Q practice test");
-  const PER_N = 67;
   [["Appendicular","🦴"], ["Axial","🦷"], ["Torso","🫁"], ["Systemic","🩺"]].forEach(([name, icon]) => {
     const pool = (_cumulativeBlocks()[name]) || [];
     const b = document.createElement("button"); b.className = "modeBtn";
-    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${name} — Practice Test</span><span class="modeMeta">${Math.min(PER, pool.length)} Qs · skip &amp; flag</span>`;
-    b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER), name + " (Cumulative)", SECS);
+    b.innerHTML = `<span class="modeIcon">${icon}</span><span class="modeLabel">${name} — Practice Test</span><span class="modeMeta">${Math.min(PER, pool.length)} Qs · 20 min Final pace · skip &amp; flag</span>`;
+    b.onclick = () => launchFullExamPool(shuffle(pool).slice(0, PER), name + " (Cumulative)", BLOCK_SECS);
     list.appendChild(b);
   });
   addCatCard(list, "cumulative");
   _mkHdr(list, "Review");
   const missBtn = document.createElement("button"); missBtn.className = "modeBtn";
   missBtn.style.cssText = "border:2px solid #C0392B;background:#FDECEA;";
-  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Everything you've gotten wrong across all four blocks (incl. Systemic)</span>`;
+  missBtn.innerHTML = `<span class="modeIcon">🔁</span><span class="modeLabel">Missed Questions</span><span class="modeMeta">Everything recorded wrong across all four balanced blocks</span>`;
   missBtn.onclick = () => {
     let missed = [];
     ["appendicular","axial","torso","systemic"].forEach(k => { try { missed = missed.concat(JSON.parse(localStorage.getItem(ns("missed:" + k)) || "[]")); } catch (e) {} });
@@ -7648,7 +7709,7 @@ function catDifficulty(id, q) {
   b += ((Math.abs(_catHash(id)) % 1000) / 1000) * 0.4 - 0.2;
   return Math.max(-2.2, Math.min(2.2, b));
 }
-// Region pools of {id, q, g, b}. Torso = 4 exam regions (25 each); Cumulative = 3 units.
+// Region pools of {id, q, g, b}. Torso and Cumulative each use four balanced blocks.
 function catRegions(key) {
   const idx = buildQuestionIndex();
   const mk = (id) => { const q = idx[id]; if (!q || !q.q || !q.options || q.options.length < 2 || typeof q.correct !== "number") return null; if (isDiagramQ(q) || hasDupOptions(q)) return null; return { id, q, g: _optGuess(q), b: catDifficulty(id, q) }; };
@@ -7870,10 +7931,11 @@ function addCatCard(list, key) {
    ═══════════════════════════════════════════════════════════ */
 function genericRegions(key) {
   if (key === "cumulative") {
-    // Include Stuvia in each unit so cumulative readiness reflects the SAME pool the cumulative
-    // CAT/exam draws from (Appendicular has no Stuvia → sectionStuviaPool returns []). (Audit #5)
-    return [["Appendicular", "appendicular"], ["Axial", "axial"], ["Torso", "torso"]]
-      .map(([name, u]) => ({ name, ids: dedupeQs([].concat(sectionGRPool(u), sectionCBPool(u), sectionStuviaPool(u))).map(q => q.id) }));
+    // Use the exact same four text blocks as cumulative simulation/CAT. Lecture image performance
+    // remains a separately observed score until the readiness model can represent it honestly.
+    const blocks = _cumulativeBlocks(false);
+    return ["Appendicular", "Axial", "Torso", "Systemic"]
+      .map(name => ({ name, ids: (blocks[name] || []).map(q => q.id) }));
   }
   const groups = SECTION_GROUPS[key] || [];
   const out = groups.map(([label, icon, idxs]) => ({ name: label, ids: sectionGRPool(key, idxs).map(q => q.id) }));
@@ -7985,7 +8047,7 @@ function renderPreparednessGeneric(main) {
   }
   const note = document.createElement("div");
   note.style.cssText = "margin-top:12px;font-size:.75rem;color:#aaa;text-align:center;line-height:1.5;";
-  note.textContent = "Experimental for non-Torso sections: readiness/performance are recall-weighted over this section's Guided Readings + Claude Bank. Practice raises them; they fade over time.";
+  note.textContent = "Experimental: readiness/performance are recall-weighted over the eligible Guided Reading, Stuvia, and Claude banks in the same four cumulative blocks. Lecture-image performance is reported separately; practice raises recall estimates and they fade over time.";
   wrap.appendChild(note);
   try { appendProgressGraph(wrap, key); } catch (e) {}
   try { appendTrendsCard(wrap, key); } catch (e) {}
