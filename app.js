@@ -5747,7 +5747,7 @@ function _learnExplain(q) {
   } catch (e2) {}
   return null;
 }
-function _learnBuildDeck(target) {
+function _learnBuildDeck(target, focus) {
   const md = (typeof getStudyMode === "function" ? getStudyMode() : "closed");
   let bl = {}; try { bl = _cumulativeBlocks(true); } catch (e) { bl = {}; }
   const missed = new Set();
@@ -5759,13 +5759,17 @@ function _learnBuildDeck(target) {
       if (!q || q.id == null) return;
       if (!q.q && !q.question) return;
       const k = (typeof _stemKey === "function" ? _stemKey(q) : q.id); if (!k || seenKey.has(k)) return; seenKey.add(k);
+      const isFz = (typeof isFuzzy === "function" && isFuzzy(q.id, md));
+      const isMs = missed.has(q.id);
+      // fuzzy focus: ONLY questions you flip-flop on or have gotten wrong (the shakiest items).
+      if (focus === "fuzzy" && !isFz && !isMs) return;
       const r = (typeof qRecall === "function" ? qRecall(q.id, md) : 0.5);
       const m = (typeof _qm === "function" ? _qm(q.id, md) : null);
       const attempted = !!(m && m.s > 0);
       let score = (1 - r) * 40 + Math.random() * 8;
-      if (missed.has(q.id)) score += 100;
-      if (typeof isFuzzy === "function" && isFuzzy(q.id, md)) score += 70;
-      if (!attempted) score += 45;
+      if (isMs) score += 100;
+      if (isFz) score += 70;
+      if (!attempted && focus !== "fuzzy") score += 45;
       if (typeof catDifficulty === "function") { const d = catDifficulty(q.id, q); if (d > 0) score += d * 6; }
       byBlock[block].push({ q, score });
     });
@@ -5789,13 +5793,13 @@ function _learnBlockOf(q) {
   } catch (e) {}
   return "—";
 }
-function startLearn(target) {
+function startLearn(target, focus) {
   const t = target || 40;
-  learnDeck = _learnBuildDeck(t);
-  if (!learnDeck.length) { alert("No questions available to learn yet."); return; }
+  learnDeck = _learnBuildDeck(t, focus);
+  if (!learnDeck.length) { alert(focus === "fuzzy" ? "No fuzzy or missed questions yet — take a mock or a Learn round first, then come back to relearn the shaky ones." : "No questions available to learn yet."); return; }
   learnIdx = 0; learnAnswered = false; learnUnsure = false;
   learnSeenFirst = {};
-  learnStats = { goal: learnDeck.length, answered: 0, firstRight: 0, firstWrong: 0, relearned: 0,
+  learnStats = { goal: learnDeck.length, focus: focus || null, answered: 0, firstRight: 0, firstWrong: 0, relearned: 0,
     byBlock: { Appendicular: { seen: 0, right: 0 }, Axial: { seen: 0, right: 0 }, Torso: { seen: 0, right: 0 }, Systemic: { seen: 0, right: 0 } } };
   state._learnBack = (state.route === "learn" || state.route === "learnEnd") ? (state._learnBack || "examMenu") : state.route;
   state.route = "learn"; render();
@@ -5919,8 +5923,8 @@ function renderLearnEnd(main) {
   });
   wrap.appendChild(card);
   const again = document.createElement("button"); again.className = "primaryBtn"; again.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
-  again.textContent = "🔁 Another round (weakest first)";
-  again.onclick = () => startLearn(learnStats ? learnStats.goal : 40);
+  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : "🔁 Another round (weakest first)";
+  again.onclick = () => startLearn(st.goal || 40, st.focus);
   wrap.appendChild(again);
   const prep = document.createElement("button"); prep.className = "secondaryBtn"; prep.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
   prep.textContent = "See updated Preparedness";
@@ -6981,6 +6985,11 @@ function buildCumulativeExamMenu(list) {
     lb.onclick = () => startLearn(n);
     list.appendChild(lb);
   });
+  const fz = document.createElement("button"); fz.className = "modeBtn";
+  fz.style.cssText = "border:2px solid #C0392B;background:linear-gradient(135deg,#FDECEA,#FEF2F2);";
+  fz.innerHTML = `<span class="modeIcon">🎲</span><span class="modeLabel">Learn Mode — Fuzzy &amp; missed only</span><span class="modeMeta">Relearn just the questions you flip-flop on or have gotten wrong · instant feedback + why · <b>up to 50 Qs</b></span>`;
+  fz.onclick = () => startLearn(50, "fuzzy");
+  list.appendChild(fz);
   // ── Final Prep ladder — Easy → Medium → Hard → course-faithful rehearsal ──
   _mkHdr(list, "🎯 Final Prep — pick your difficulty");
   const ladder = [
@@ -8231,6 +8240,50 @@ function renderPreparednessGeneric(main) {
       <div style="font-size:.75rem;opacity:.82;margin-top:10px;">${cov.attempted}/${cov.total} attempted (${cov.total ? Math.round(cov.attempted / cov.total * 100) : 0}% of the bank touched) · recall-weighted, decays over time</div>
       <div style="font-size:.72rem;opacity:.72;margin-top:4px;line-height:1.35;">Readiness counts every untouched question as not-yet-known — it's <b>coverage × memory</b>, not your test score. Performance is closer to how you'd do on what you've actually studied. Predicted is a cold floor: no curve, no open-note, no printed labeling.</div>
     </div>`;
+  // ── Score-scenario simulator: toggle CURVE / NOTES / LABELING and watch the projected grade move ──
+  if (key !== "lab2") {
+    const TOTAL = 200, DIVISOR = 0.65, LABEL_PTS = 40, NOTES_LIFT = 0.25;
+    const scen = { curve: true, notes: true, labeling: true };
+    const p0 = Math.max(0, Math.min(1, predicted / 100));   // cold closed-book expected fraction
+    const letterOf = pct => pct >= 97 ? "A+" : pct >= 90 ? "A" : pct >= 80 ? "B" : pct >= 70 ? "C" : pct >= 60 ? "D" : "F";
+    const gradeColor = pct => pct >= 90 ? "#0F766E" : pct >= 80 ? "#2E7D32" : pct >= 70 ? "#B7791F" : "#C0392B";
+    function calcScen() {
+      let acc = p0;
+      if (scen.notes) acc = acc + NOTES_LIFT * (1 - acc);           // open-book lift (estimate)
+      let rawFrac = scen.labeling ? (LABEL_PTS + acc * (TOTAL - LABEL_PTS)) / TOTAL : acc;
+      let shown = rawFrac * 100;
+      if (scen.curve) shown = rawFrac / DIVISOR * 100;               // Smiley divisor ≈ 65% of Qs = 100% line
+      return { shown: Math.round(shown), letter: letterOf(shown) };
+    }
+    const card = document.createElement("div");
+    card.style.cssText = "background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;margin-bottom:16px;";
+    function drawScen() {
+      const r = calcScen();
+      const chip = (on, label, sub) => `<button data-k="${label}" style="flex:1;min-width:120px;border:1.5px solid ${on ? "#4338CA" : "#d8ccb0"};background:${on ? "#EEF2FF" : "#fff"};color:${on ? "#4338CA" : "#8a8071"};border-radius:10px;padding:8px 6px;cursor:pointer;font-size:.8rem;font-weight:700;line-height:1.25;">${on ? "✓ " : ""}${label}<br><span style="font-weight:400;font-size:.68rem;opacity:.8;">${sub}</span></button>`;
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <div style="font-weight:800;">🎚️ Projected grade — what-if</div>
+          <div style="text-align:right;"><span style="font-size:2rem;font-weight:900;color:${gradeColor(r.shown)};">${r.shown}%</span> <span style="font-size:1.1rem;font-weight:800;color:${gradeColor(r.shown)};">${r.letter}</span></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${chip(scen.curve, "Curve", "Smiley ÷65%")}
+          ${chip(scen.notes, "Open-note", "look-up lift")}
+          ${chip(scen.labeling, "20% labeling", "+40 pts printed")}
+        </div>
+        <div style="font-size:.7rem;color:#94a3b8;margin-top:8px;line-height:1.4;">Starts from your cold predicted ${Math.round(p0 * 100)}%. <b>Curve</b> = raw ÷ 65% (his 100% line). <b>Open-note</b> and <b>labeling</b> are estimates, not guarantees — the syllabus doesn't fix the labeling share. Turn all three off to see the honest cold floor.</div>`;
+      card.querySelectorAll("button[data-k]").forEach(b => {
+        b.onclick = () => {
+          const k = b.getAttribute("data-k");
+          if (k === "Curve") scen.curve = !scen.curve;
+          else if (k === "Open-note") scen.notes = !scen.notes;
+          else if (k === "20% labeling") scen.labeling = !scen.labeling;
+          drawScen();
+        };
+      });
+    }
+    drawScen();
+    wrap.appendChild(card);
+  }
   // Lab 2 only: FOUR separate, honest dimensions — MCQ (above), real-photo stations, labeling, and
   // course-filtered 3D. Never blended into one number until every dimension actually has data, so an
   // empty dimension can't silently read as "0% dragging you down" OR get ignored as if it doesn't exist.
