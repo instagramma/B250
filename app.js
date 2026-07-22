@@ -5811,7 +5811,14 @@ function _learnBlockOf(q) {
 }
 function startLearn(target, focus) {
   const t = target || 40;
-  learnDeck = _learnBuildDeck(t, focus);
+  if (focus === "smiley") {
+    // Smiley deck (hardest-difficulty band, ~10% familiar / ~90% never-or-barely-seen), but run
+    // through the Learn flow so you get the answer + why IMMEDIATELY after each question.
+    let d = []; try { d = _smileyDeck(Math.max(8, Math.ceil(t / 4))); } catch (e) { d = []; }
+    learnDeck = shuffle(d).slice(0, t);
+  } else {
+    learnDeck = _learnBuildDeck(t, focus);
+  }
   if (!learnDeck.length) { alert(focus === "fuzzy" ? "No fuzzy or missed questions yet — take a mock or a Learn round first, then come back to relearn the shaky ones." : "No questions available to learn yet."); return; }
   learnIdx = 0; learnAnswered = false; learnUnsure = false;
   learnSeenFirst = {};
@@ -5927,7 +5934,7 @@ function renderLearnEnd(main) {
     <div style="color:#666;margin-bottom:18px;">First-try accuracy <b style="color:${acc >= 70 ? "#0F766E" : acc >= 50 ? "#B7791F" : "#C0392B"};">${acc}%</b> · ${st.firstRight}/${st.answered} · <b>${st.relearned}</b> relearned after a miss</div>`;
   // ── Persist this session so performance is TRACKED over time (esp. Least-seen) ──
   const focusKey = "learn:" + (st.focus || "deep");
-  const focusName = st.focus === "least" ? "Least-seen" : st.focus === "fuzzy" ? "Fuzzy & missed" : "Learn (weak-first)";
+  const focusName = st.focus === "least" ? "Least-seen" : st.focus === "fuzzy" ? "Fuzzy & missed" : st.focus === "smiley" ? "Smiley (hardest+unseen)" : "Learn (weak-first)";
   if (!st._logged && st.answered > 0) {
     st._logged = true;
     try { recordAttempt(focusKey, { title: "🧠 " + focusName, kind: "learn", mode: st.focus || "deep", score: st.firstRight, total: st.answered, pct: acc, missed: [] }); } catch (e) {}
@@ -5970,7 +5977,7 @@ function renderLearnEnd(main) {
   });
   wrap.appendChild(card);
   const again = document.createElement("button"); again.className = "primaryBtn"; again.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
-  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : (st.focus === "least") ? "🔁 Another least-seen round" : "🔁 Another round (weakest first)";
+  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : (st.focus === "least") ? "🔁 Another least-seen round" : (st.focus === "smiley") ? "🔁 Another Smiley round" : "🔁 Another round (weakest first)";
   again.onclick = () => startLearn(st.goal || 40, st.focus);
   wrap.appendChild(again);
   const prep = document.createElement("button"); prep.className = "secondaryBtn"; prep.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
@@ -7307,6 +7314,11 @@ function buildCumulativeExamMenu(list) {
   smiley.innerHTML = `<span class="modeIcon">😈</span><span class="modeLabel">The Smiley — hardest &amp; unseen</span><span class="modeMeta">Same 200-Q ordered blueprint, but <b>hardest-difficulty only</b> · ~90% never-seen / barely-seen + ~10% familiar · 80 min<br><span style="opacity:.75;font-size:.9em;">Your toughest blind-spot test. Text/MC only.</span></span>`;
   smiley.onclick = () => { const deck = _smileyDeck(PER); if (!deck.length) { alert("No questions available yet."); return; } launchFullExamPool(deck, "The Smiley", SECS); };
   list.appendChild(smiley);
+  const smileyLearn = document.createElement("button"); smileyLearn.className = "modeBtn";
+  smileyLearn.style.cssText = "border:2px solid #7C2D12;background:linear-gradient(135deg,#2c1a12,#3a1a1a);color:#fff;";
+  smileyLearn.innerHTML = `<span class="modeIcon">😈</span><span class="modeLabel" style="color:#fff;">The Smiley — Learn Mode (instant feedback)</span><span class="modeMeta" style="color:#e7c9c9;">Same hardest &amp; unseen questions, but tells you right/wrong + the answer &amp; why after each one · <b>50 Qs</b></span>`;
+  smileyLearn.onclick = () => startLearn(50, "smiley");
+  list.appendChild(smileyLearn);
   _mkHdr(list, "By Block — 50-Q practice test");
   [["Appendicular","🦴"], ["Axial","🦷"], ["Torso","🫁"], ["Systemic","🩺"]].forEach(([name, icon]) => {
     const pool = (_cumulativeBlocks()[name]) || [];
