@@ -1261,6 +1261,8 @@ function render() {
   else if (state.route === "preparednessGeneric") renderPreparednessGeneric(main);
   else if (state.route === "learn")          renderLearn(main);
   else if (state.route === "learnEnd")       renderLearnEnd(main);
+  else if (state.route === "arcade")         renderArcade(main);
+  else if (state.route === "arcadeEnd")      renderArcadeEnd(main);
 
   saveResumeState();
 }
@@ -1314,6 +1316,8 @@ function buildTopbar() {
       else if (state.route === "fuzzyReview")   { fuzzyDeck = []; state.route = state._fuzzyBack || "preparedness"; }
       else if (state.route === "learn")         { if (confirm("End this Learn session? Your progress is saved.")) { learnDeck = []; state.route = "learnEnd"; render(); } return; }
       else if (state.route === "learnEnd")      { learnDeck = []; state.route = state._learnBack || "examMenu"; }
+      else if (state.route === "arcade")        { if (confirm("Quit the arcade? This run won't be saved.")) { arcadeDeck = []; state.route = state._arcadeBack || "examMenu"; render(); } return; }
+      else if (state.route === "arcadeEnd")     { arcadeDeck = []; state.route = state._arcadeBack || "examMenu"; }
       else if (state.route === "lab2Station")   { _l2ClearTimer(); l2Deck = []; state.route = "modes"; }
       else if (state.route === "lab3d")          { try { if (typeof _l3StopPracticalTimer === "function") _l3StopPracticalTimer(); else if (l3.pr && l3.pr.timer) clearInterval(l3.pr.timer); _l3Dispose(); } catch (e) {} state.route = "modes"; }
       else if (state.route === "suddenDeath" || state.route === "sdEnd") { sdDeck = []; state.route = "examMenu"; }
@@ -5979,6 +5983,144 @@ function renderLearnEnd(main) {
   main.appendChild(wrap);
 }
 
+/* ════════════════════════════════════════════════════════════════════════════════════
+   🕹️ ANATOMY ARCADE — a visual game mode over the live cumulative banks. 3 lives, combo
+   streaks (×multiplier), XP/levels, confetti, per-block scoring. Immediate right/wrong.
+   Records every answer via recordQuestionStat (feeds Preparedness) + logs the run to History.
+   Text/MC only (no diagrams — clean game UI). Low effort, high dopamine, still real learning.
+   ════════════════════════════════════════════════════════════════════════════════════ */
+var arcadeDeck = [], arcadeIdx = 0, arcadeAnswered = false, arcadeStats = null;
+var ARC_UC = { Appendicular: "#F59E0B", Axial: "#8B7CF6", Torso: "#F06868", Systemic: "#2DD4BF" };
+function _arcadeBuildDeck() {
+  let bl = {}; try { bl = _cumulativeBlocks(false); } catch (e) { bl = {}; }
+  const out = [], seen = new Set();
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(u => {
+    (bl[u] || []).forEach(q => {
+      if (!q || q.id == null || q.tf || q.fitb || q.essay) return;
+      const opts = q.options || [];
+      if (opts.length < 4 || opts.length > 5) return;
+      if (typeof q.correct !== "number" || q.correct >= opts.length) return;
+      if (typeof hasDupOptions === "function" && hasDupOptions(q)) return;
+      if (opts.some(o => String(o).length > 52)) return;   // keep option buttons tidy
+      const k = (typeof _stemKey === "function" ? _stemKey(q) : q.id); if (seen.has(k)) return; seen.add(k);
+      out.push(Object.assign({}, q, { _u: u }));
+    });
+  });
+  return shuffle(out);
+}
+function _arcMult() { return Math.min(1 + Math.floor((arcadeStats.streak) / 3), 5); }
+function startArcade() {
+  arcadeDeck = _arcadeBuildDeck();
+  if (!arcadeDeck.length) { alert("No questions available for the arcade yet."); return; }
+  arcadeIdx = 0; arcadeAnswered = false;
+  arcadeStats = { score: 0, streak: 0, best: 0, lives: 3, xp: 0, level: 1, answered: 0, correct: 0, byU: {}, _logged: false };
+  state._arcadeBack = (state.route === "arcade" || state.route === "arcadeEnd") ? (state._arcadeBack || "examMenu") : state.route;
+  state.route = "arcade"; render();
+}
+function _arcConfetti(host) {
+  const cols = ["#F59E0B", "#8B7CF6", "#F06868", "#2DD4BF", "#FDBA2D"];
+  for (let i = 0; i < 16; i++) {
+    const d = document.createElement("div");
+    d.style.cssText = "position:absolute;top:38%;left:50%;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:5;background:" + cols[i % cols.length];
+    host.appendChild(d);
+    try {
+      d.animate([{ transform: "translate(0,0) rotate(0)", opacity: 1 },
+        { transform: "translate(" + (Math.random() * 280 - 140) + "px," + (Math.random() * -160 - 40) + "px) rotate(" + (Math.random() * 540 - 270) + "deg)", opacity: 0 }],
+        { duration: 900, easing: "ease-out" });
+    } catch (e) {}
+    setTimeout(() => d.remove(), 950);
+  }
+}
+function renderArcade(main) {
+  const st = arcadeStats;
+  if (!arcadeDeck.length || arcadeIdx >= arcadeDeck.length || st.lives <= 0) { state.route = "arcadeEnd"; render(); return; }
+  const q = arcadeDeck[arcadeIdx];
+  const card = document.createElement("div");
+  card.style.cssText = "max-width:560px;margin:0 auto;background:#0f1225;border:1px solid #2c3160;border-radius:20px;padding:18px;position:relative;overflow:hidden;color:#eef0ff;";
+  // HUD
+  const hud = document.createElement("div");
+  hud.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;";
+  hud.innerHTML = `<span style="font-size:1.1rem;letter-spacing:2px;">${"❤️".repeat(st.lives)}${"🖤".repeat(3 - st.lives)}</span>
+    <span style="font-size:.82rem;color:#FDBA2D;font-weight:800;">${st.streak > 1 ? "🔥" + st.streak + " ×" + _arcMult() : ""}</span>
+    <span style="font-weight:800;font-size:1.15rem;" id="arcScore">${st.score}</span>`;
+  card.appendChild(hud);
+  const xpw = document.createElement("div"); xpw.style.cssText = "height:7px;background:#1e2242;border-radius:99px;overflow:hidden;margin-bottom:14px;";
+  xpw.innerHTML = `<div style="height:100%;width:${st.xp % 100}%;background:#8B7CF6;border-radius:99px;transition:width .4s;"></div>`;
+  card.appendChild(xpw);
+  const chip = document.createElement("div");
+  chip.innerHTML = `<span style="display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:99px;background:${ARC_UC[q._u]};color:#0f1225;">${q._u}</span> <span style="color:#9aa0c6;font-size:.72rem;">Q${arcadeIdx + 1} · Lv ${st.level}</span>`;
+  chip.style.marginBottom = "10px"; card.appendChild(chip);
+  const stem = document.createElement("div");
+  stem.style.cssText = "font-size:1.05rem;font-weight:650;line-height:1.5;margin-bottom:16px;";
+  stem.textContent = q.q || q.question; card.appendChild(stem);
+  const fb = document.createElement("div"); fb.style.cssText = "text-align:center;font-weight:800;height:20px;margin-bottom:6px;";
+  const opts = q.options || [];
+  const order = shuffle(opts.map((t, i) => ({ t: t, i: i })));
+  const box = document.createElement("div"); card.appendChild(box);
+  card.appendChild(fb);
+  const start = Date.now();
+  order.forEach(op => {
+    const b = document.createElement("button");
+    b.style.cssText = "display:block;width:100%;text-align:left;background:#171a33;border:1.5px solid #2c3160;color:#eef0ff;border-radius:13px;padding:12px 14px;margin-bottom:9px;font-size:.95rem;cursor:pointer;transition:background .15s,border-color .15s;";
+    b.textContent = op.t;
+    b.onmouseover = () => { if (!arcadeAnswered) { b.style.background = "#1e2242"; } };
+    b.onmouseout = () => { if (!arcadeAnswered) { b.style.background = "#171a33"; } };
+    b.onclick = () => {
+      if (arcadeAnswered) return; arcadeAnswered = true;
+      const correct = (op.i === q.correct);
+      Array.prototype.forEach.call(box.children, c => c.disabled = true);
+      st.answered++; st.byU[q._u] = st.byU[q._u] || { c: 0, t: 0 }; st.byU[q._u].t++;
+      try { recordQuestionStat(q, correct, Date.now() - start, false); } catch (e) {}
+      if (correct) {
+        b.style.background = "rgba(52,211,153,.18)"; b.style.borderColor = "#34D399";
+        st.streak++; if (st.streak > st.best) st.best = st.streak;
+        const gain = 100 * _arcMult(); st.score += gain; st.xp += 25; st.correct++; st.byU[q._u].c++;
+        fb.style.color = "#34D399"; fb.textContent = "✓ +" + gain + (st.streak > 1 ? "  🔥" + st.streak : "");
+        _arcConfetti(card);
+        if (st.xp >= st.level * 100) { st.level++; const fl = document.createElement("div"); fl.textContent = "LEVEL " + st.level + " ⚡"; fl.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#FDBA2D;pointer-events:none;"; card.appendChild(fl); try { fl.animate([{ opacity: 0, transform: "scale(.6)" }, { opacity: 1, transform: "scale(1.1)" }, { opacity: 0, transform: "scale(1)" }], { duration: 950 }); } catch (e) {} setTimeout(() => fl.remove(), 960); }
+      } else {
+        b.style.borderColor = "#FB7185"; b.style.background = "rgba(251,113,133,.15)";
+        Array.prototype.forEach.call(box.children, c => { if (c.textContent === opts[q.correct]) { c.style.borderColor = "#34D399"; c.style.background = "rgba(52,211,153,.18)"; } });
+        st.streak = 0; st.lives--;
+        fb.style.color = "#FB7185"; fb.textContent = st.lives > 0 ? "✗ correct highlighted" : "✗ out of lives!";
+        try { card.animate([{ transform: "translateX(0)" }, { transform: "translateX(-7px)" }, { transform: "translateX(7px)" }, { transform: "translateX(0)" }], { duration: 380 }); } catch (e) {}
+      }
+      const sc = document.getElementById("arcScore"); if (sc) sc.textContent = st.score;
+      setTimeout(() => { arcadeIdx++; arcadeAnswered = false; render(); }, correct ? 1000 : 1550);
+    };
+    box.appendChild(b);
+  });
+  const quit = document.createElement("div");
+  quit.style.cssText = "text-align:center;margin-top:8px;";
+  quit.innerHTML = `<button style="background:none;border:none;color:#6b7099;font-size:.78rem;cursor:pointer;text-decoration:underline;">End run</button>`;
+  quit.querySelector("button").onclick = () => { state.route = "arcadeEnd"; render(); };
+  card.appendChild(quit);
+  main.appendChild(card);
+}
+function renderArcadeEnd(main) {
+  const st = arcadeStats || { score: 0, correct: 0, answered: 0, best: 0, level: 1, byU: {} };
+  const acc = st.answered ? Math.round(st.correct / st.answered * 100) : 0;
+  if (!st._logged && st.answered > 0) { st._logged = true; try { recordAttempt("arcade", { title: "🕹️ Anatomy Arcade", kind: "arcade", score: st.correct, total: st.answered, pct: acc, missed: [] }); } catch (e) {} }
+  const rank = acc >= 90 ? ["S", "#FDBA2D"] : acc >= 75 ? ["A", "#34D399"] : acc >= 60 ? ["B", "#8B7CF6"] : acc >= 45 ? ["C", "#F59E0B"] : ["D", "#FB7185"];
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "max-width:520px;margin:0 auto;background:#0f1225;border:1px solid #2c3160;border-radius:20px;padding:22px;text-align:center;color:#eef0ff;";
+  let html = `<div style="color:#9aa0c6;font-size:.8rem;">${st.lives <= 0 ? "GAME OVER" : "RUN ENDED"}</div>
+    <div style="font-size:3.4rem;font-weight:900;line-height:1;margin:6px 0;color:${rank[1]};">${rank[0]}</div>
+    <div style="font-size:1.6rem;font-weight:800;">${st.score} pts</div>
+    <div style="color:#9aa0c6;font-size:.9rem;margin:6px 0 14px;">${st.correct}/${st.answered} correct (${acc}%) · best 🔥${st.best} · Lv ${st.level}</div>`;
+  ["Appendicular", "Axial", "Torso", "Systemic"].forEach(u => {
+    const p = st.byU[u]; if (!p) return;
+    const pc = Math.round(p.c / p.t * 100);
+    html += `<div style="display:flex;justify-content:space-between;font-size:.9rem;padding:6px 2px;border-top:1px solid #2c3160;"><span style="color:${ARC_UC[u]};font-weight:700;">${u}</span><span>${p.c}/${p.t} · ${pc}%</span></div>`;
+  });
+  wrap.innerHTML = html;
+  const again = document.createElement("button"); again.style.cssText = "display:block;width:100%;background:#8B7CF6;color:#0f1225;border:none;border-radius:13px;padding:14px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;"; again.textContent = "▶ Play again"; again.onclick = startArcade;
+  wrap.appendChild(again);
+  const back = document.createElement("button"); back.style.cssText = "display:block;width:100%;background:transparent;color:#9aa0c6;border:1.5px solid #2c3160;border-radius:13px;padding:12px;font-weight:700;cursor:pointer;margin-top:9px;"; back.textContent = "Back to menu"; back.onclick = () => { arcadeDeck = []; state.route = state._arcadeBack || "examMenu"; render(); };
+  wrap.appendChild(back);
+  main.appendChild(wrap);
+}
+
 /* ─── Lab 2 Model Practical: recognition + self-grade over real class-model photos ───
    Mirrors how the in-person practical actually feels: look at the model, name it, reveal, self-grade.
    `weakOnly` builds the deck from your shakiest stations (by miss-rate). Timed = ~60s/station. */
@@ -7060,6 +7202,11 @@ function buildCumulativeExamMenu(list) {
   ls.innerHTML = `<span class="modeIcon">🧭</span><span class="modeLabel">Learn Mode — Least-seen (new ground)</span><span class="modeMeta">Dynamically serves the questions you've seen least or never — rebuilds every launch, so ones you've now drilled drop out and fresh ones rotate in · instant feedback · <b>60 Qs</b></span>`;
   ls.onclick = () => startLearn(60, "least");
   list.appendChild(ls);
+  const arc = document.createElement("button"); arc.className = "modeBtn";
+  arc.style.cssText = "border:2px solid #FDBA2D;background:linear-gradient(135deg,#1e2242,#2c1a4a);color:#fff;";
+  arc.innerHTML = `<span class="modeIcon">🕹️</span><span class="modeLabel" style="color:#fff;">Anatomy Arcade — game mode</span><span class="modeMeta" style="color:#c9c4ee;">3 lives · combo streaks · XP levels · your live cumulative questions · low effort, high dopamine</span>`;
+  arc.onclick = () => startArcade();
+  list.appendChild(arc);
   // ── Final Prep ladder — Easy → Medium → Hard → course-faithful rehearsal ──
   _mkHdr(list, "🎯 Final Prep — pick your difficulty");
   const ladder = [
