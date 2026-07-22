@@ -703,6 +703,7 @@ let _cloudPushT = null, _cloudBusy = false;
 // idempotent "best across devices" merge — safe to run repeatedly without inflating counts
 function cloudMerge(into, from) {
   into.quizzes = into.quizzes || {}; into.qstats = into.qstats || {}; into.examAttempts = into.examAttempts || {};
+  into.arcadeBest = Math.max(into.arcadeBest || 0, from.arcadeBest || 0);   // Anatomy Arcade high score (best-of across devices)
   // Lab 2 model-station stats (own readiness dimension) — best-of merge across devices.
   // everSeen/trueFirstOk are the LIFETIME-first fact and must stay immutable once set on either side:
   // once true first-pass result is written, no later merge (from any device) may flip it.
@@ -6031,6 +6032,29 @@ function _arcConfetti(host) {
     setTimeout(() => d.remove(), 950);
   }
 }
+// Pull every profile's Anatomy Arcade high score from the cloud (Gabe / Sam / Darren) → leaderboard.
+function _arcadeFetchBoard(host) {
+  if (!host) return;
+  if (typeof sb === "undefined" || !sb) { host.innerHTML = "(leaderboard needs online sync)"; return; }
+  (async function () {
+    try {
+      const res = await sb.from("progress").select("profile,data");
+      const data = res && res.data;
+      if (!data) { host.innerHTML = "(couldn't load scores)"; return; }
+      const cap = s => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+      const rows = data.filter(r => r && r.profile && !/^__/.test(r.profile))
+        .map(r => ({ p: r.profile, b: (r.data && r.data.arcadeBest) || 0 }))
+        .filter(r => r.b > 0).sort((a, b) => b.b - a.b);
+      if (!rows.length) { host.innerHTML = "No scores yet — you're first! 🎉"; return; }
+      const me = String(typeof currentProfile !== "undefined" ? currentProfile : "").toLowerCase();
+      host.innerHTML = rows.map((r, i) => {
+        const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1) + ".";
+        const you = r.p.toLowerCase() === me;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;border-radius:9px;margin:3px 0;${you ? "background:#2c1a4a;border:1px solid #8B7CF6;" : "background:#171a33;"}"><span>${medal} ${cap(r.p)}${you ? ' <span style="color:#8B7CF6;font-weight:700;">(you)</span>' : ''}</span><span style="font-weight:800;color:#FDBA2D;">${r.b}</span></div>`;
+      }).join("");
+    } catch (e) { host.innerHTML = "(leaderboard unavailable)"; }
+  })();
+}
 function renderArcade(main) {
   const st = arcadeStats;
   if (!arcadeDeck.length || arcadeIdx >= arcadeDeck.length || st.lives <= 0) { state.route = "arcadeEnd"; render(); return; }
@@ -6048,7 +6072,8 @@ function renderArcade(main) {
   xpw.innerHTML = `<div style="height:100%;width:${st.xp % 100}%;background:#8B7CF6;border-radius:99px;transition:width .4s;"></div>`;
   card.appendChild(xpw);
   const chip = document.createElement("div");
-  chip.innerHTML = `<span style="display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:99px;background:${ARC_UC[q._u]};color:#0f1225;">${q._u}</span> <span style="color:#9aa0c6;font-size:.72rem;">Q${arcadeIdx + 1} · Lv ${st.level}</span>`;
+  const arcBest = (progressState.arcadeBest || 0);
+  chip.innerHTML = `<span style="display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:99px;background:${ARC_UC[q._u]};color:#0f1225;">${q._u}</span> <span style="color:#9aa0c6;font-size:.72rem;">Q${arcadeIdx + 1} · Lv ${st.level}${arcBest ? " · 🏆 " + arcBest : ""}</span>`;
   chip.style.marginBottom = "10px"; card.appendChild(chip);
   const stem = document.createElement("div");
   stem.style.cssText = "font-size:1.05rem;font-weight:650;line-height:1.5;margin-bottom:16px;";
@@ -6100,20 +6125,33 @@ function renderArcade(main) {
 function renderArcadeEnd(main) {
   const st = arcadeStats || { score: 0, correct: 0, answered: 0, best: 0, level: 1, byU: {} };
   const acc = st.answered ? Math.round(st.correct / st.answered * 100) : 0;
-  if (!st._logged && st.answered > 0) { st._logged = true; try { recordAttempt("arcade", { title: "🕹️ Anatomy Arcade", kind: "arcade", score: st.correct, total: st.answered, pct: acc, missed: [] }); } catch (e) {} }
+  const prevBest = progressState.arcadeBest || 0;
+  const isNewBest = st.score > prevBest;
+  if (!st._logged && st.answered > 0) {
+    st._logged = true;
+    if (isNewBest) { progressState.arcadeBest = st.score; try { saveLocalProgress(); if (typeof saveProgress === "function") saveProgress(true); } catch (e) {} }
+    try { recordAttempt("arcade", { title: "🕹️ Anatomy Arcade", kind: "arcade", score: st.correct, total: st.answered, pct: acc, missed: [] }); } catch (e) {}
+  }
+  const bestNow = Math.max(prevBest, st.score);
   const rank = acc >= 90 ? ["S", "#FDBA2D"] : acc >= 75 ? ["A", "#34D399"] : acc >= 60 ? ["B", "#8B7CF6"] : acc >= 45 ? ["C", "#F59E0B"] : ["D", "#FB7185"];
   const wrap = document.createElement("div");
   wrap.style.cssText = "max-width:520px;margin:0 auto;background:#0f1225;border:1px solid #2c3160;border-radius:20px;padding:22px;text-align:center;color:#eef0ff;";
   let html = `<div style="color:#9aa0c6;font-size:.8rem;">${st.lives <= 0 ? "GAME OVER" : "RUN ENDED"}</div>
     <div style="font-size:3.4rem;font-weight:900;line-height:1;margin:6px 0;color:${rank[1]};">${rank[0]}</div>
     <div style="font-size:1.6rem;font-weight:800;">${st.score} pts</div>
+    ${isNewBest ? `<div style="color:#FDBA2D;font-weight:800;font-size:1rem;margin-top:4px;">🏆 NEW HIGH SCORE!</div>` : `<div style="color:#9aa0c6;font-size:.85rem;margin-top:4px;">🏆 Your best: ${bestNow}</div>`}
     <div style="color:#9aa0c6;font-size:.9rem;margin:6px 0 14px;">${st.correct}/${st.answered} correct (${acc}%) · best 🔥${st.best} · Lv ${st.level}</div>`;
   ["Appendicular", "Axial", "Torso", "Systemic"].forEach(u => {
     const p = st.byU[u]; if (!p) return;
     const pc = Math.round(p.c / p.t * 100);
     html += `<div style="display:flex;justify-content:space-between;font-size:.9rem;padding:6px 2px;border-top:1px solid #2c3160;"><span style="color:${ARC_UC[u]};font-weight:700;">${u}</span><span>${p.c}/${p.t} · ${pc}%</span></div>`;
   });
+  html += `<div style="margin-top:16px;text-align:left;">
+      <div style="font-weight:800;text-align:center;margin-bottom:8px;">🏆 Leaderboard</div>
+      <div id="arcBoard" style="font-size:.9rem;color:#9aa0c6;text-align:center;">Loading scores…</div></div>`;
   wrap.innerHTML = html;
+  // async: pull every profile's arcade high score (Gabe / Sam / Darren) from the cloud
+  _arcadeFetchBoard(wrap.querySelector("#arcBoard"));
   const again = document.createElement("button"); again.style.cssText = "display:block;width:100%;background:#8B7CF6;color:#0f1225;border:none;border-radius:13px;padding:14px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:16px;"; again.textContent = "▶ Play again"; again.onclick = startArcade;
   wrap.appendChild(again);
   const back = document.createElement("button"); back.style.cssText = "display:block;width:100%;background:transparent;color:#9aa0c6;border:1.5px solid #2c3160;border-radius:13px;padding:12px;font-weight:700;cursor:pointer;margin-top:9px;"; back.textContent = "Back to menu"; back.onclick = () => { arcadeDeck = []; state.route = state._arcadeBack || "examMenu"; render(); };
