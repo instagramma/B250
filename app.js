@@ -1926,7 +1926,7 @@ function renderHome(main) {
       <span style="display:block;color:rgba(255,255,255,.85);font-size:.85rem;margin-top:2px;">${META.cumulative || "Everything, mixed — full-course review"}</span></span>
     </div>`;
   cum.onclick = () => { state.sectionKey = "cumulative"; state.route = "sectionMenu"; render(); };
-  wrap.appendChild(cum);
+  // (appended AFTER the Magic Bank button below — Gabe wants Magic Bank on top.)
 
   // ✨ Magic Bank — the gold, shiny, sparkle-on-hover button.
   if (!document.getElementById("mbStyle")) {
@@ -1957,6 +1957,7 @@ function renderHome(main) {
   };
   magic.onclick = () => { startLearn(0, "magic"); };
   wrap.appendChild(magic);
+  wrap.appendChild(cum);
 
   thinGroup("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"], "_openLecture", "📚");
   thinGroup("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"], "_openLab", "🔬");
