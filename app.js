@@ -1686,7 +1686,8 @@ function profileSummary(row) {
   att.sort((a, b) => (b.ts || 0) - (a.ts || 0));
   const mocks = att.filter(a => (a.total || 0) >= 100 && typeof a.pct === "number");
   const bestMock = mocks.length ? Math.max(...mocks.map(a => a.pct)) : null;
-  return { profile: row.profile, updated: row.updated_at, practiced: ids, seen, acc, attempts: att.length, mocks: mocks.length, bestMock, byUnit: byUnit, recent: att.slice(0, 4) };
+  const magic = _magicMemFrom(qs);
+  return { profile: row.profile, updated: row.updated_at, practiced: ids, seen, acc, attempts: att.length, mocks: mocks.length, bestMock, byUnit: byUnit, magic: magic, recent: att.slice(0, 4) };
 }
 function renderOwnerStats(main) {
   if (!isOwner()) { const p = document.createElement("p"); p.className = "comingSoonMsg"; p.style.cssText = "text-align:center;margin-top:32px;"; p.textContent = "Owner view only."; main.appendChild(p); return; }
@@ -1715,6 +1716,18 @@ function renderOwnerStats(main) {
         <div><div style="font-size:1.4rem;font-weight:800;">${s.attempts}</div><div style="font-size:.72rem;color:#888;">exams/quizzes</div></div>
         <div><div style="font-size:1.4rem;font-weight:800;">${bm}</div><div style="font-size:.72rem;color:#888;">best full mock (${s.mocks})</div></div>
       </div>`;
+    // 🪙 Magic Bank memorization (its own score)
+    if (s.magic) {
+      const mg = document.createElement("div");
+      const mp = s.magic.pct;
+      const mcol = mp >= 80 ? "#B7791F" : mp >= 50 ? "#B7791F" : "#a08040";
+      mg.style.cssText = "margin-top:11px;display:flex;align-items:center;gap:10px;background:linear-gradient(120deg,#FEF3C7,#FDE68A);border:1px solid #F0C86A;border-radius:11px;padding:8px 13px;";
+      mg.innerHTML = `<span style="font-size:1.15rem;">🪙</span>
+        <span style="font-weight:800;color:#7c4a00;font-size:.92rem;">Magic Bank</span>
+        <span style="margin-left:auto;font-weight:800;color:${mcol};font-size:1.05rem;">${mp}% <span style="font-weight:600;color:#9a7b3a;font-size:.78rem;">memorized</span></span>
+        <span style="color:#9a7b3a;font-size:.72rem;">${s.magic.memorized}/${s.magic.total} · ${s.magic.attempted} seen</span>`;
+      card.appendChild(mg);
+    }
     // Per-consideration (unit) breakdown
     if (s.byUnit) {
       const ur = document.createElement("div");
@@ -3467,6 +3480,38 @@ function covStats(ids, mode) {
   let attempted = 0, known = 0;
   ids.forEach(id => { const m = _qm(id, mode); if (m && m.s > 0) attempted++; known += qRecall(id, mode); });
   return { total: ids.length, attempted, known: Math.round(known * 10) / 10 };
+}
+/* Magic Bank memorization — "how much did we memorize" of the 99. Its OWN readiness score,
+   separate from the cumulative-block readiness (Magic-Bank ids aren't in the 4 blocks). Recall-
+   weighted (a correct answer decays over time) and takes the best recall across whatever study
+   mode was used. Works on ANY profile's qstats object, so class stats can show it per person. */
+function _magicMemFrom(qs) {
+  if (typeof MAGIC_BANK === "undefined" || !MAGIC_BANK || !MAGIC_BANK.length) return null;
+  qs = qs || {};
+  let attempted = 0, known = 0;
+  MAGIC_BANK.forEach(function (q) {
+    const st = qs[q.id]; if (!st || !st.m) return;
+    let best = 0, tried = false;
+    Object.keys(st.m).forEach(function (md) {
+      const mm = st.m[md]; if (!mm) return;
+      if (mm.s > 0) tried = true;
+      let r = 0;
+      if (mm.last === 1) {
+        if (!mm.S || !mm.t) r = 1;
+        else r = Math.min(1, Math.pow(2, -((Date.now() - mm.t) / 86400000) / mm.S));
+        if (mm.flLast && r > 0.7) r = 0.7;
+      }
+      if (r > best) best = r;
+    });
+    if (tried) attempted++;
+    known += best;
+  });
+  const total = MAGIC_BANK.length;
+  return { total: total, attempted: attempted, memorized: Math.round(known * 10) / 10, pct: total ? Math.round(known / total * 100) : 0 };
+}
+/* Current signed-in profile's Magic Bank memorization. */
+function magicReadiness() {
+  try { return _magicMemFrom((activeProgress().qstats) || {}); } catch (e) { return null; }
 }
 // Honest breakdown for a block: separates NEVER-ATTEMPTED (untouched) from tried-and-known vs
 // tried-and-fading/missed, so "unmeasured" can't masquerade as "failing." Also returns a crisp
@@ -5992,9 +6037,25 @@ function renderLearnEnd(main) {
   wrap.innerHTML = `<div style="font-size:3rem;margin-bottom:6px;">🧠</div>
     <div style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Learn session complete</div>
     <div style="color:#666;margin-bottom:18px;">First-try accuracy <b style="color:${acc >= 70 ? "#0F766E" : acc >= 50 ? "#B7791F" : "#C0392B"};">${acc}%</b> · ${st.firstRight}/${st.answered} · <b>${st.relearned}</b> relearned after a miss</div>`;
+  // ── 🪙 Magic Bank: show the running memorization score ("how much did we memorize" of the 99) ──
+  if (st.focus === "magic") {
+    const mg = magicReadiness();
+    if (mg) {
+      const mcol = mg.pct >= 85 ? "#0F766E" : mg.pct >= 60 ? "#B7791F" : "#C0392B";
+      const mc = document.createElement("div");
+      mc.style.cssText = "background:linear-gradient(120deg,#FEF3C7,#FDE68A);border:1.5px solid #F0C86A;border-radius:16px;padding:16px 18px;margin-bottom:16px;text-align:left;";
+      mc.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.5rem;">🪙</span>
+          <div style="font-family:Georgia,serif;font-weight:900;color:#3a2400;">Magic Bank memorized</div>
+          <div style="margin-left:auto;font-size:1.9rem;font-weight:900;color:${mcol};">${mg.pct}%</div></div>
+        <div style="height:9px;background:#fff6db;border:1px solid #eeddb0;border-radius:99px;overflow:hidden;margin:11px 0 7px;"><div style="height:100%;width:${mg.pct}%;background:linear-gradient(90deg,#F59E0B,#FCD34D);"></div></div>
+        <div style="font-size:.78rem;color:#5a3d0a;"><b>${mg.memorized}/${mg.total}</b> memorized · <b>${mg.attempted}/${mg.total}</b> seen · this is your Magic Bank readiness (also in Final Preparedness &amp; Class Stats).</div>`;
+      wrap.appendChild(mc);
+    }
+  }
   // ── Persist this session so performance is TRACKED over time (esp. Least-seen) ──
   const focusKey = "learn:" + (st.focus || "deep");
-  const focusName = st.focus === "least" ? "Least-seen" : st.focus === "fuzzy" ? "Fuzzy & missed" : st.focus === "smiley" ? "Smiley (hardest+unseen)" : "Learn (weak-first)";
+  const focusName = st.focus === "magic" ? "Magic Bank" : st.focus === "least" ? "Least-seen" : st.focus === "fuzzy" ? "Fuzzy & missed" : st.focus === "smiley" ? "Smiley (hardest+unseen)" : "Learn (weak-first)";
   if (!st._logged && st.answered > 0) {
     st._logged = true;
     try { recordAttempt(focusKey, { title: "🧠 " + focusName, kind: "learn", mode: st.focus || "deep", score: st.firstRight, total: st.answered, pct: acc, missed: [] }); } catch (e) {}
@@ -6037,7 +6098,7 @@ function renderLearnEnd(main) {
   });
   wrap.appendChild(card);
   const again = document.createElement("button"); again.className = "primaryBtn"; again.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
-  again.textContent = (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : (st.focus === "least") ? "🔁 Another least-seen round" : (st.focus === "smiley") ? "🔁 Another Smiley round" : "🔁 Another round (weakest first)";
+  again.textContent = (st.focus === "magic") ? "🪙 Another Magic Bank round" : (st.focus === "fuzzy") ? "🔁 Another fuzzy round" : (st.focus === "least") ? "🔁 Another least-seen round" : (st.focus === "smiley") ? "🔁 Another Smiley round" : "🔁 Another round (weakest first)";
   again.onclick = () => startLearn(st.goal || 40, st.focus);
   wrap.appendChild(again);
   const prep = document.createElement("button"); prep.className = "secondaryBtn"; prep.style.cssText += "width:100%;max-width:none;margin-bottom:10px;";
@@ -8603,6 +8664,31 @@ function renderPreparednessGeneric(main) {
       <div style="font-size:.75rem;opacity:.82;margin-top:10px;">${cov.attempted}/${cov.total} attempted (${cov.total ? Math.round(cov.attempted / cov.total * 100) : 0}% of the bank touched) · recall-weighted, decays over time</div>
       <div style="font-size:.72rem;opacity:.72;margin-top:4px;line-height:1.35;">Readiness counts every untouched question as not-yet-known — it's <b>coverage × memory</b>, not your test score. Performance is closer to how you'd do on what you've actually studied. Predicted is a cold floor: no curve, no open-note, no printed labeling.</div>
     </div>`;
+  // ── 🪙 Magic Bank — its OWN readiness score ("how much did we memorize" of the 99) ──
+  if (key === "cumulative" && typeof MAGIC_BANK !== "undefined" && MAGIC_BANK && MAGIC_BANK.length) {
+    const mg = magicReadiness();
+    if (mg) {
+      const mcol = mg.pct >= 85 ? "#0F766E" : mg.pct >= 60 ? "#B7791F" : "#C0392B";
+      const verdict = mg.pct >= 85 ? "Locked in — keep it warm with a quick pass." : mg.pct >= 60 ? "Getting there — another Magic Bank round or two." : (mg.attempted < mg.total ? "Barely started — run the Magic Bank to lock these in." : "Shaky — re-drill the misses in the Magic Bank.");
+      const mcard = document.createElement("div");
+      mcard.style.cssText = "background:linear-gradient(120deg,#FEF3C7,#FDE68A);border:1.5px solid #F0C86A;border-radius:16px;padding:16px 18px;margin-bottom:16px;";
+      mcard.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.6rem;">🪙</span>
+          <div><div style="font-family:Georgia,serif;font-weight:900;color:#3a2400;font-size:1.05rem;">Magic Bank readiness</div>
+          <div style="font-size:.74rem;color:#7c4a00;">How much of the 99 you've memorized · recall-weighted, decays over time</div></div>
+          <div style="margin-left:auto;text-align:right;"><div style="font-size:2rem;font-weight:900;color:${mcol};line-height:1;">${mg.pct}%</div><div style="font-size:.7rem;color:#7c4a00;">memorized</div></div>
+        </div>
+        <div style="height:9px;background:#fff6db;border:1px solid #eeddb0;border-radius:99px;overflow:hidden;margin:12px 0 8px;"><div style="height:100%;width:${mg.pct}%;background:linear-gradient(90deg,#F59E0B,#FCD34D);"></div></div>
+        <div style="font-size:.78rem;color:#5a3d0a;"><b>${mg.memorized}/${mg.total}</b> memorized · <b>${mg.attempted}/${mg.total}</b> seen · ${escapeHtml(verdict)}</div>`;
+      const mbtn = document.createElement("button");
+      mbtn.style.cssText = "margin-top:12px;width:100%;background:#F59E0B;color:#3a2400;border:none;border-radius:11px;padding:11px;font-weight:800;font-size:.92rem;cursor:pointer;";
+      mbtn.textContent = mg.pct >= 85 ? "🪙 Quick refresh pass" : "🪙 Drill the Magic Bank now";
+      mbtn.onclick = () => { try { startLearn(0, "magic"); } catch (e) {} };
+      mcard.appendChild(mbtn);
+      wrap.appendChild(mcard);
+    }
+  }
   // ── Score-scenario simulator: toggle CURVE / NOTES / LABELING and watch the projected grade move ──
   if (key !== "lab2") {
     const TOTAL = 200, DIVISOR = 0.65, LABEL_PTS = 40;
