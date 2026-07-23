@@ -5922,6 +5922,7 @@ function renderLearn(main) {
 
   const opts = q.tf ? ["True", "False"] : (q.options || []);
   const optWrap = document.createElement("div");
+  optWrap.className = "options";  // full-width padded option rows (bigger tap targets)
   main.appendChild(optWrap);
   const advance = (wasCorrect) => {
     // spaced requeue: a miss comes back ~5 cards later (before it fades); a hit clears.
@@ -5934,7 +5935,7 @@ function renderLearn(main) {
   };
   opts.forEach((opt, i) => {
     const btn = document.createElement("button");
-    btn.className = "examOption"; btn.textContent = opt;
+    btn.className = "option"; btn.textContent = opt;
     btn.onclick = () => {
       if (learnAnswered) return; learnAnswered = true;
       const correct = (i === q.correct);
@@ -5944,8 +5945,8 @@ function renderLearn(main) {
         const bb = learnStats.byBlock[block]; if (bb) { bb.seen++; if (correct) bb.right++; }
         if (correct) learnStats.firstRight++; else learnStats.firstWrong++;
       } else if (correct) { learnStats.relearned++; }
-      document.querySelectorAll(".examOption").forEach((b, j) => { b.disabled = true; if (j === q.correct) b.classList.add("correct"); });
-      if (!correct) btn.classList.add("wrong");
+      optWrap.querySelectorAll(".option").forEach((b, j) => { b.disabled = true; if (j === q.correct) b.classList.add("correct"); });
+      if (!correct) btn.classList.add("incorrect");
       fb.textContent = correct ? (first ? "✅ Correct" : "✅ Correct — relearned") : "❌ Not quite";
       fb.style.color = correct ? "#0F766E" : "#C0392B";
       try { recordQuestionStat(q, correct, null, learnUnsure); } catch (e) {}
