@@ -1850,10 +1850,16 @@ function renderHome(main) {
 
   // Resume a paused exam, if any (offer Resume / Discard & start fresh)
   try { appendResumeBanner(wrap); } catch (e) {}
-  // Start-here card (one unambiguous next action — kills the "what do I even study" paralysis)
-  try { appendStartHere(wrap); } catch (e) {}
-  // 10-minute rotating Sprint card (weak-area micro-session, auto-refreshes)
-  try { appendSprintCard(wrap); } catch (e) {}
+  // Final Preparedness — quick redundant shortcut to the cumulative readiness page (replaces the
+  // old Start-here + Sprint cards).
+  const prepBtn = document.createElement("button");
+  prepBtn.style.cssText = "display:block;width:100%;text-align:left;margin:2px 0 12px;border:1.5px solid #4338CA;background:#EEF2FF;border-radius:14px;padding:13px 18px;cursor:pointer;";
+  prepBtn.innerHTML = `<div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1.5rem;">🎯</span>
+      <span><span style="display:block;font-family:Georgia,serif;font-size:1.08rem;font-weight:800;color:#312E81;">Final Preparedness</span>
+      <span style="display:block;color:#5b57b3;font-size:.83rem;">Readiness, coverage &amp; predicted grade — cumulative.</span></span></div>`;
+  prepBtn.onclick = () => { state.sectionKey = "cumulative"; state.route = "preparednessGeneric"; render(); };
+  wrap.appendChild(prepBtn);
 
   // Live question count (subtopics are the source of truth; s.quiz can lag after edits like the T/F add).
   const qCount = (s) => {
@@ -1892,6 +1898,23 @@ function renderHome(main) {
     wrap.appendChild(grid);
   };
 
+  // Thin, collapsible group: one slim button that expands to the section cards on tap (keeps the
+  // home page short — no scrolling to reach the Final tools).
+  const thinGroup = (label, hint, keys, flag, icon) => {
+    const open = !!state[flag];
+    const btn = document.createElement("button");
+    btn.style.cssText = "display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #ece7dd;border-radius:12px;padding:11px 16px;margin-top:10px;cursor:pointer;box-shadow:0 1px 6px rgba(31,56,100,.05);";
+    btn.innerHTML = `<span style="display:flex;align-items:center;gap:10px;min-width:0;"><span style="font-size:1.15rem;">${icon}</span><span style="font-family:Georgia,serif;font-size:1.05rem;font-weight:800;color:#0F766E;">${label}</span><span style="color:#9aa2b1;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hint}</span></span><span style="color:#9aa2b1;font-size:.8rem;">${open ? "▲" : "▼"}</span>`;
+    btn.onclick = () => { state[flag] = !state[flag]; render(); };
+    wrap.appendChild(btn);
+    if (open) {
+      const grid = document.createElement("div");
+      grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:10px;";
+      keys.forEach(k => { const s = DATA.sections[k]; if (s) grid.appendChild(makeCard(k, s)); });
+      wrap.appendChild(grid);
+    }
+  };
+
   // Cumulative Final — PINNED TO THE TOP: this is the focus now, down to the wire before the Final.
   const cum = document.createElement("button");
   cum.className = "homeCard";
@@ -1905,8 +1928,38 @@ function renderHome(main) {
   cum.onclick = () => { state.sectionKey = "cumulative"; state.route = "sectionMenu"; render(); };
   wrap.appendChild(cum);
 
-  section("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"]);   // course order: Appendicular → Axial → Torso
-  section("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"]);
+  // ✨ Magic Bank — the gold, shiny, sparkle-on-hover button.
+  if (!document.getElementById("mbStyle")) {
+    const mbs = document.createElement("style"); mbs.id = "mbStyle";
+    mbs.textContent = "@keyframes mbShim{0%{background-position:0 0}100%{background-position:300% 0}}"
+      + "@keyframes mbSweep{0%{transform:translateX(-160%) skewX(-20deg)}55%,100%{transform:translateX(420%) skewX(-20deg)}}"
+      + "#mbBtn{transition:transform .12s ease, filter .12s ease;}"
+      + "#mbBtn .mbshine{position:absolute;top:0;left:0;height:100%;width:38%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.8),transparent);transform:skewX(-20deg);animation:mbSweep 2.8s ease-in-out infinite;pointer-events:none;z-index:1;}"
+      + "#mbBtn:hover{transform:translateY(-2px) scale(1.006);filter:brightness(1.07) saturate(1.18);box-shadow:0 10px 30px rgba(245,158,11,.55),inset 0 1px 0 rgba(255,255,255,.6);}";
+    document.head.appendChild(mbs);
+  }
+  const magic = document.createElement("button"); magic.id = "mbBtn";
+  magic.style.cssText = "position:relative;overflow:hidden;display:block;width:100%;text-align:left;margin:2px 0 16px;border:none;border-radius:16px;padding:16px 20px;cursor:pointer;background:linear-gradient(120deg,#FDE68A,#F59E0B,#FCD34D,#F59E0B,#FDE68A);background-size:300% 100%;animation:mbShim 3.6s linear infinite;box-shadow:0 6px 24px rgba(245,158,11,.45),inset 0 1px 0 rgba(255,255,255,.55);";
+  magic.innerHTML = `<div class="mbshine"></div>
+    <div style="position:relative;z-index:2;display:flex;align-items:center;gap:14px;">
+      <span style="font-size:1.9rem;filter:drop-shadow(0 1px 2px rgba(146,64,14,.5));">🪙</span>
+      <span><span style="display:block;font-family:Georgia,serif;font-size:.66rem;font-weight:900;letter-spacing:.16em;color:#7c4a00;">✦　✦　✦</span>
+      <span style="display:block;font-family:Georgia,serif;font-size:1.4rem;font-weight:900;color:#3a2400;text-shadow:0 1px 0 rgba(255,255,255,.5);">Magic Bank</span>
+      <span style="display:block;color:#6b4a10;font-size:.82rem;font-weight:600;">Tap for a little anatomy magic ✨</span></span></div>`;
+  magic.onmouseenter = () => {
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span"); s.textContent = "✨";
+      s.style.cssText = "position:absolute;pointer-events:none;z-index:3;left:" + (8 + Math.random() * 84) + "%;top:" + (18 + Math.random() * 64) + "%;font-size:" + (9 + Math.random() * 11) + "px;";
+      magic.appendChild(s);
+      try { s.animate([{ transform: "translate(0,0) scale(.4) rotate(0)", opacity: 1 }, { transform: "translate(" + (Math.random() * 70 - 35) + "px," + (-20 - Math.random() * 45) + "px) scale(1.25) rotate(" + (Math.random() * 200 - 100) + "deg)", opacity: 0 }], { duration: 700 + Math.random() * 500, easing: "ease-out" }); } catch (e) {}
+      setTimeout(() => s.remove(), 1300);
+    }
+  };
+  magic.onclick = () => { startArcade(); };
+  wrap.appendChild(magic);
+
+  thinGroup("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"], "_openLecture", "📚");
+  thinGroup("Lab", "Lab manual, worksheets & practicals", ["lab1", "lab2"], "_openLab", "🔬");
 
   // Custom Practice — dashed, understated
   const customCard = document.createElement("button");
