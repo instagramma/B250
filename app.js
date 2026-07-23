@@ -1945,7 +1945,7 @@ function renderHome(main) {
       <span style="font-size:1.9rem;filter:drop-shadow(0 1px 2px rgba(146,64,14,.5));">🪙</span>
       <span><span style="display:block;font-family:Georgia,serif;font-size:.66rem;font-weight:900;letter-spacing:.16em;color:#7c4a00;">✦　✦　✦</span>
       <span style="display:block;font-family:Georgia,serif;font-size:1.4rem;font-weight:900;color:#3a2400;text-shadow:0 1px 0 rgba(255,255,255,.5);">Magic Bank</span>
-      <span style="display:block;color:#6b4a10;font-size:.82rem;font-weight:600;">Tap for a little anatomy magic ✨</span></span></div>`;
+      <span style="display:block;color:#6b4a10;font-size:.82rem;font-weight:600;">99 hand-picked questions · instant answers ✨</span></span></div>`;
   magic.onmouseenter = () => {
     for (let i = 0; i < 14; i++) {
       const s = document.createElement("span"); s.textContent = "✨";
@@ -1955,7 +1955,7 @@ function renderHome(main) {
       setTimeout(() => s.remove(), 1300);
     }
   };
-  magic.onclick = () => { startArcade(); };
+  magic.onclick = () => { startLearn(0, "magic"); };
   wrap.appendChild(magic);
 
   thinGroup("Lecture", "Regional & systemic anatomy", ["appendicular", "axial", "torso"], "_openLecture", "📚");
@@ -5864,7 +5864,12 @@ function _learnBlockOf(q) {
 }
 function startLearn(target, focus) {
   const t = target || 40;
-  if (focus === "smiley") {
+  if (focus === "magic") {
+    // Magic Bank: Gabe's 99-question practice test, run through the Learn flow so every answer
+    // gives immediate right/wrong + the "why" for memorization. Whole bank, reshuffled each run.
+    const src = (typeof MAGIC_BANK !== "undefined" && MAGIC_BANK) ? MAGIC_BANK.slice() : [];
+    learnDeck = shuffle(src);
+  } else if (focus === "smiley") {
     // Smiley deck (hardest-difficulty band, ~10% familiar / ~90% never-or-barely-seen), but run
     // through the Learn flow so you get the answer + why IMMEDIATELY after each question.
     let d = []; try { d = _smileyDeck(Math.max(8, Math.ceil(t / 4))); } catch (e) { d = []; }
